@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/springsecurity">
 <head>
     <meta charset="UTF-8">
@@ -775,7 +775,7 @@
         const urlMarcarAsistencia = /*[[@{/calendario/api/marcar-asistencia}]]*/ '/calendario/api/marcar-asistencia';
     </script>
     <script>
-        // Modales estilo Mattfuncional: alerta y confirmar eliminación
+        // Modales estilo MiGimVirtual: alerta y confirmar eliminación
         (function() {
             var modalAlerta = document.getElementById('modalAlertaDashboard');
             var modalAlertaMsg = document.getElementById('modalAlertaDashboardMensaje');
@@ -897,7 +897,7 @@
         const filtroTipo = document.getElementById('filtroTipoAsistencia');
         const filtroDia = document.getElementById('filtroDia');
         const filtroHora = document.getElementById('filtroHora');
-        const filtrosStorageKey = 'mattfuncional_filtros_alumnos';
+        const filtrosStorageKey = 'MiGimVirtual_filtros_alumnos';
 
         function guardarFiltros() {
             const payload = {

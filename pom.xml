@@ -4,13 +4,13 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.mattfuncional</groupId>
-    <artifactId>mattfuncional</artifactId>
+    <groupId>com.migimvirtual</groupId>
+    <artifactId>migimvirtual</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <packaging>jar</packaging>
 
-    <name>Mattfuncional</name>
-    <description>Sistema de gestión del gimnasio Mat Funcional</description>
+    <name>MiGimVirtual</name>
+    <description>App de gestión de gimnasio virtual - ejercicios, series, rutinas y hoja por token</description>
 
     <parent>
         <groupId>org.springframework.boot</groupId>

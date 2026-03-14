@@ -18,8 +18,8 @@
 
 | Usuario | Correo | Contraseña |
 |---------|--------|------------|
-| Profesor/Admin | profesor@mattfuncional.com | profesor |
-| Developer | developer@mattfuncional.com | Qbasic.1977.mattfuncional |
+| Profesor/Admin | profesor@migimvirtual.com | profesor |
+| Developer | developer@migimvirtual.com | Qbasic.1977.migimvirtual |
 
 Tras iniciar sesión se redirige al **Panel del profesor** (`/profesor/{id}`).
 
@@ -27,10 +27,10 @@ Tras iniciar sesión se redirige al **Panel del profesor** (`/profesor/{id}`).
 
 ## 1. Qué es este proyecto
 
-- **Nombre:** Mattfuncional (evolución de MiGym).
+- **Nombre:** MiGimVirtual (evolución desde Mattfuncional).
 - **Qué hace:** App para un profesor/entrenador: gestiona **alumnos** (ficha, sin login), **ejercicios**, **series**, **rutinas** (asignación por alumno, enlace público por token), **calendario semanal** con asistencia (presente/ausente) y **progreso** (modal en ficha del alumno).
 - **Quién usa:** Roles **DEVELOPER** (super admin), **ADMIN** y **AYUDANTE**. No hay panel alumno ni panel admin separado.
-- **Stack:** Spring Boot, Thymeleaf, MySQL, Bootstrap. Código en `src/main/java/com/mattfuncional/` (controladores, servicios, entidades, repositorios, config, dto, enums).
+- **Stack:** Spring Boot, Thymeleaf, MySQL, Bootstrap. Código en `src/main/java/com/migimvirtual/` (controladores, servicios, entidades, repositorios, config, dto, enums).
 
 ---
 

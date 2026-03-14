@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
@@ -56,14 +56,14 @@
         </div>
     </div>
 
-    <div th:if="${param.ok != null}" class="alert alert-success alert-mattfuncional"><i class="fas fa-check-circle me-2"></i>Operación realizada correctamente.</div>
-    <div th:if="${param.error == 'notfound'}" class="alert alert-danger alert-mattfuncional"><i class="fas fa-exclamation-circle me-2"></i>Usuario no encontrado.</div>
-    <div th:if="${param.error == 'developer-locked'}" class="alert alert-warning alert-mattfuncional"><i class="fas fa-lock me-2"></i>No está permitido modificar el usuario developer.</div>
-    <div th:if="${param.error == 'no-permitido'}" class="alert alert-danger alert-mattfuncional"><i class="fas fa-ban me-2"></i>No tenés permiso para eliminar ese usuario.</div>
-    <div th:if="${param.error == 'self-rol'}" class="alert alert-warning alert-mattfuncional"><i class="fas fa-user-shield me-2"></i>No podés cambiar tu propio rol a otro que no sea Admin.</div>
-    <div th:if="${errorMessage != null}" class="alert alert-danger alert-mattfuncional"><i class="fas fa-exclamation-circle me-2"></i><span th:text="${errorMessage}">Error</span></div>
+    <div th:if="${param.ok != null}" class="alert alert-success alert-MiGimVirtual"><i class="fas fa-check-circle me-2"></i>Operación realizada correctamente.</div>
+    <div th:if="${param.error == 'notfound'}" class="alert alert-danger alert-MiGimVirtual"><i class="fas fa-exclamation-circle me-2"></i>Usuario no encontrado.</div>
+    <div th:if="${param.error == 'developer-locked'}" class="alert alert-warning alert-MiGimVirtual"><i class="fas fa-lock me-2"></i>No está permitido modificar el usuario developer.</div>
+    <div th:if="${param.error == 'no-permitido'}" class="alert alert-danger alert-MiGimVirtual"><i class="fas fa-ban me-2"></i>No tenés permiso para eliminar ese usuario.</div>
+    <div th:if="${param.error == 'self-rol'}" class="alert alert-warning alert-MiGimVirtual"><i class="fas fa-user-shield me-2"></i>No podés cambiar tu propio rol a otro que no sea Admin.</div>
+    <div th:if="${errorMessage != null}" class="alert alert-danger alert-MiGimVirtual"><i class="fas fa-exclamation-circle me-2"></i><span th:text="${errorMessage}">Error</span></div>
 
-    <div th:if="${correosDuplicados != null && !correosDuplicados.isEmpty()}" class="alert alert-warning alert-dismissible fade show alert-mattfuncional">
+    <div th:if="${correosDuplicados != null && !correosDuplicados.isEmpty()}" class="alert alert-warning alert-dismissible fade show alert-MiGimVirtual">
         <strong><i class="fas fa-exclamation-triangle me-1"></i> Correos duplicados en la base de datos</strong>
         <p class="mb-1 mt-2 small">Revisá los correos en la tabla <code>usuario</code> o <code>profesor</code>.</p>
         <ul class="mb-0 small">
@@ -140,7 +140,7 @@
     </div>
 </div>
 
-<!-- Modal confirmación (estilo Mattfuncional) -->
+<!-- Modal confirmación (estilo MiGimVirtual) -->
     <div class="modal fade" id="modalConfirmar" tabindex="-1">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">

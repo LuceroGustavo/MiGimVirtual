@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
@@ -162,7 +162,7 @@
             <li th:each="e : ${importAlumnosResult['errores']}" th:text="${e}">error</li>
         </ul>
     </div>
-    <div th:if="${depuracionResult}" class="alert alert-mattfuncional mb-3 admin-alert-item" th:classappend="${depuracionResult['success']} ? 'alert-success' : 'alert-danger'" role="alert">
+    <div th:if="${depuracionResult}" class="alert alert-MiGimVirtual mb-3 admin-alert-item" th:classappend="${depuracionResult['success']} ? 'alert-success' : 'alert-danger'" role="alert">
         <span th:if="${depuracionResult['success']}"><i class="fas fa-check-circle me-2"></i>
             <strong>Depuración completada.</strong>
             <span th:if="${depuracionResult['tipo'] == 'asistencias'}">

@@ -1,18 +1,18 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5">
-    <title>Hoja de Rutina - Mattfuncional</title>
+    <title>Hoja de Rutina - MiGimVirtual</title>
     <!-- Open Graph / WhatsApp: preview al compartir enlace -->
     <meta property="og:type" content="website">
-    <meta property="og:title" content="Mattfuncional te ha enviado una rutina">
+    <meta property="og:title" content="MiGimVirtual te ha enviado una rutina">
     <meta property="og:description" content="Tu profesor te ha compartido una rutina de entrenamiento. Ábrela para ver los ejercicios.">
     <meta property="og:image" th:content="${ogImageUrl}">
     <meta property="og:url" th:content="${ogPageUrl}">
     <meta property="og:locale" content="es_AR">
     <meta name="twitter:card" content="summary">
-    <meta name="twitter:title" content="Mattfuncional te ha enviado una rutina">
+    <meta name="twitter:title" content="MiGimVirtual te ha enviado una rutina">
     <meta name="twitter:description" content="Tu profesor te ha compartido una rutina de entrenamiento. Ábrela para ver los ejercicios.">
     <meta name="twitter:image" th:content="${ogImageUrl}">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -344,11 +344,11 @@
     </script>
 </head>
 <body th:classappend="${esVistaEscritorio == true} ? 'vista-escritorio' : ''">
-<!-- Timbre: logo, Mattfuncional, nombre rutina, fecha (sin Copiar enlace en vista alumno) -->
+<!-- Timbre: logo, MiGimVirtual, nombre rutina, fecha (sin Copiar enlace en vista alumno) -->
 <header class="hoja-header">
     <div class="hoja-header-left">
-        <img class="hoja-header-logo" src="/img/logo.png" alt="Mattfuncional" onerror="this.src='/img/not_imagen.png'">
-        <span class="hoja-header-marca">Mattfuncional</span>
+        <img class="hoja-header-logo" src="/img/logo.png" alt="MiGimVirtual" onerror="this.src='/img/not_imagen.png'">
+        <span class="hoja-header-marca">MiGimVirtual</span>
     </div>
     <h1 class="hoja-header-titulo" th:text="${rutina.nombre}">Nombre rutina</h1>
     <div class="hoja-header-right">

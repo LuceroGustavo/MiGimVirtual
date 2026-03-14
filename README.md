@@ -1,10 +1,11 @@
-# Mattfuncional
+# MiGimVirtual
 
-App para gestión de alumnos, ejercicios, series, rutinas y asistencia (evolución de MiGym). Panel único de profesor.
+App de gestión de gimnasio virtual: ejercicios, series, rutinas y hoja por token. Panel único de profesor (evolución desde Mattfuncional).
 
-**Documentación:** Toda la documentación del proyecto está en la carpeta **`Documentacion/`**. Para tener contexto rápido (sobre todo si trabajás desde otra PC o le pedís contexto a la IA):
+**Documentación:** En la carpeta **`Documentacion/`**:
 
-1. Leé **`Documentacion/LEEME_PRIMERO.md`** – Ahí está el resumen del proyecto, dónde está cada cosa en el código y el índice de todos los documentos.
-2. Después, según lo que necesites: **`AVANCES_DEL_APP.md`** (lo implementado), **`AYUDA_MEMORIA.md`** (mejoras pendientes), **`PLAN_DE_DESARROLLO_UNIFICADO.md`** (visión y fases).
+1. **`Documentacion/LEEME_PRIMERO.md`** – Contexto del proyecto, acceso y dónde está cada cosa en el código.
+2. **`Documentacion/PLAN_DE_DESARROLLO_MIGIMVIRTUAL.md`** – Plan de desarrollo (BD, renombre, eliminaciones, responsive).
+3. Según necesidad: AYUDA_MEMORIA.md, DOCUMENTACION_UNIFICADA.md, BASE_PARA_APP_VIRTUAL.md.
 
-**Stack:** Spring Boot, Thymeleaf, MySQL, Bootstrap. Código en `src/main/java/com/mattfuncional/`.
+**Stack:** Spring Boot, Thymeleaf, MySQL, Bootstrap. Código en `src/main/java/com/migimvirtual/`.

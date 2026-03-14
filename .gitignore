@@ -40,6 +40,7 @@ application-local.yml
 
 # Contraseña BD en servidor (no versionar)
 .matt_db_password
+.migimvirtual_db_password
 
 # Carpeta uploads (imágenes de ejercicios): no versionar; gestionar por backup
 uploads/

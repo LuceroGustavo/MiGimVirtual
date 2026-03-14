@@ -1,9 +1,9 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Calendario Semanal - Mattfuncional</title>
+    <title>Calendario Semanal - MiGimVirtual</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link th:href="@{/style.css}" rel="stylesheet">
@@ -279,13 +279,13 @@
                             <thead class="table-light">
                                 <tr>
                                     <th>Hora</th>
-                                    <th th:each="dia : ${T(com.mattfuncional.enums.DiaSemana).values()}" th:text="${dia}">LUNES</th>
+                                    <th th:each="dia : ${T(com.migimvirtual.enums.DiaSemana).values()}" th:text="${dia}">LUNES</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr th:each="i, iterStat : ${#numbers.sequence(0, calendario.slotsPorDia[T(com.mattfuncional.enums.DiaSemana).LUNES].size() - 1)}">
-                                    <td th:text="${calendario.slotsPorDia[T(com.mattfuncional.enums.DiaSemana).LUNES][i].horarioFormateado}"></td>
-                                    <td th:each="dia : ${T(com.mattfuncional.enums.DiaSemana).values()}"
+                                <tr th:each="i, iterStat : ${#numbers.sequence(0, calendario.slotsPorDia[T(com.migimvirtual.enums.DiaSemana).LUNES].size() - 1)}">
+                                    <td th:text="${calendario.slotsPorDia[T(com.migimvirtual.enums.DiaSemana).LUNES][i].horarioFormateado}"></td>
+                                    <td th:each="dia : ${T(com.migimvirtual.enums.DiaSemana).values()}"
                                         th:with="slot=${calendario.slotsPorDia[dia][i]}"
                                         th:classappend="${slot.capacidadActual == slot.capacidadMaxima ? 'table-danger' : (slot.capacidadActual > 0 ? 'table-warning' : 'table-success')}"
                                         style="cursor:pointer; position:relative;"
