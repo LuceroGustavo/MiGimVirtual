@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Listado de Ejercicios - Mattfuncional</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="/style.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css" />
+  <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin="" />
+  <link rel="stylesheet" as="style" onload="this.rel='stylesheet'" href="https://fonts.googleapis.com/css2?display=swap&amp;family=Lexend%3Awght%40400%3B500%3B700%3B900&amp;family=Noto+Sans%3Awght%40400%3B500%3B700%3B900" />
+  <link rel="icon" type="image/x-icon" href="data:image/x-icon;base64," />
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        .navbar {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .navbar-brand {
+            color: white !important;
+            font-weight: bold;
+            font-size: 1.5rem;
+        }
+        
+        .nav-link {
+            color: rgba(255,255,255,0.9) !important;
+        }
+        
+        .nav-link:hover {
+            color: white !important;
+        }
+        
+        .hero-section {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.9) 0%, rgba(118, 75, 162, 0.9) 100%), 
+                        url('/img/inicio.png') center/cover;
+            color: white;
+            padding: 2.5rem 0 1.5rem 0;
+            border-radius: 15px;
+            margin-bottom: 1.5rem;
+            text-align: center;
+            position: relative;
+        }
+        
+        .hero-title {
+            font-size: 2.2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .hero-subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            margin-bottom: 1.2rem;
+        }
+        
+        .ejercicios-disponibles {
+            position: absolute;
+            top: 1.2rem;
+            right: 2rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 20px;
+            padding: 0.5rem 1.2rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+            box-shadow: 0 2px 10px rgba(102, 126, 234, 0.15);
+        }
+        
+        .search-container {
+            max-width: 500px;
+            margin: 0 auto;
+        }
+        
+        .search-input {
+            border-radius: 25px;
+            border: none;
+            padding: 1rem 1.5rem;
+            font-size: 1rem;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        
+        .search-btn {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            border: none;
+            border-radius: 25px;
+            padding: 1rem 2rem;
+            color: white;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .search-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(40, 167, 69, 0.4);
+        }
+        
+        .filter-section {
+            background: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+        }
+        
+        .filter-label {
+            font-weight: 600;
+            color: #495057;
+            margin-bottom: 0.5rem;
+        }
+        
+        .filter-select {
+            border-radius: 10px;
+            border: 2px solid #e9ecef;
+            padding: 0.75rem 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .filter-select:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+        }
+        
+        .section-title {
+            color: #2c3e50;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+        
+        .swiper-container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .swiper-slide {
+            width: 320px;
+            height: 420px;
+            border-radius: 20px;
+            background: white;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            transition: all 0.4s cubic-bezier(.4,2,.6,1);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            border: 2px solid transparent;
+        }
+        
+        .swiper-slide .exercise-image {
+            width: 100%;
+            height: 180px;
+            object-fit: contain;
+            background: #f8f9fa;
+            border-radius: 20px 20px 0 0;
+            margin-bottom: 0.5rem;
+        }
+        
+        .swiper-slide .exercise-content {
+            padding: 1.2rem 1rem 1rem 1rem;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            flex: 1;
+        }
+        
+        .muscle-group-badge {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            display: inline-block;
+            margin-bottom: 0.5rem;
+        }
+        
+        .exercise-name {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 0.5rem;
+            line-height: 1.3;
+        }
+        
+        .exercise-description {
+            color: #6c757d;
+            font-size: 0.9rem;
+            line-height: 1.4;
+            margin-bottom: 1rem;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        
+        .add-exercise-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            padding: 0.75rem 1.5rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+        
+        .add-exercise-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+            color: white;
+        }
+        
+        .swiper-pagination {
+            margin-top: 2rem;
+        }
+        
+        .swiper-pagination-bullet {
+            background: #667eea;
+            opacity: 0.5;
+            transition: all 0.3s ease;
+        }
+        
+        .swiper-pagination-bullet-active {
+            opacity: 1;
+            transform: scale(1.2);
+        }
+        
+        .swiper-slide.swiper-slide-active {
+            transform: scale(1.08);
+            box-shadow: 0 20px 40px rgba(102, 126, 234, 0.3);
+            border: 3px solid #667eea;
+            z-index: 2;
+            opacity: 1;
+        }
+        
+        .swiper-slide:not(.swiper-slide-active) {
+            opacity: 0.7;
+            transform: scale(0.92);
+            border: 2px solid #e9ecef;
+        }
+        
+        .floating-action-btn {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            box-shadow: 0 4px 20px rgba(102, 126, 234, 0.4);
+            transition: all 0.3s ease;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .floating-action-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 25px rgba(102, 126, 234, 0.6);
+            color: white;
+        }
+        
+        .floating-action-btn i {
+            font-size: 1.5rem;
+        }
+        
+        @media (max-width: 900px) {
+            .swiper-slide {
+                width: 90vw;
+                height: 340px;
+            }
+        }
+    </style>
+</head>
+<body class="bg-slate-50" style='font-family: Lexend, "Noto Sans", sans-serif;'>
+  <div class="min-h-screen flex flex-col">
+    <!-- Nuevo Header Moderno -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm py-3 px-5 mb-4">
+      <div class="container-fluid">
+        <a class="navbar-brand d-flex align-items-center gap-2 fw-bold fs-4 text-primary" href="/">
+          <i class="fas fa-dumbbell"></i> Mattfuncional
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav ms-auto gap-3">
+            <li class="nav-item"><a class="nav-link" href="#">Inicio</a></li>
+            <li class="nav-item"><a class="nav-link" href="#">Explorar</a></li>
+            <li class="nav-item"><a class="nav-link" href="#">Entrenamientos</a></li>
+            <li class="nav-item"><a class="nav-link" href="#">Programas</a></li>
+            <li class="nav-item"><a class="nav-link" href="#">Colecciones</a></li>
+          </ul>
+        </div>
+          </div>
+    </nav>
+    <!-- Hero Section -->
+    <section class="container mb-4">
+      <div class="bg-gradient-to-r from-blue-500 to-purple-600 rounded-4 shadow-lg p-4 text-white text-center mb-4">
+        <h1 class="display-5 fw-bold mb-2"><i class="fas fa-dumbbell me-2"></i>Catálogo de Ejercicios</h1>
+        <p class="lead mb-0">Explora y selecciona los mejores ejercicios para tu rutina</p>
+              </div>
+    </section>
+    <!-- Filtros Modernos -->
+    <section class="container mb-4">
+      <form id="filterForm" method="get" action="/exercise/lista" class="row g-3 align-items-end justify-content-center bg-white rounded-4 shadow-sm p-3 mx-0">
+        <div class="col-md-6 col-lg-4">
+          <label for="grupoId" class="form-label fw-semibold">Filtrar por Grupo Muscular</label>
+          <select id="grupoId" name="grupoId" class="form-select form-select-lg" onchange="submitFilterForm()">
+            <option value="" th:selected="${selectedGrupoId == null}">Todos</option>
+            <option th:each="grupo : ${gruposMusculares}" th:value="${grupo.id}" th:text="${grupo.nombre}" th:selected="${selectedGrupoId != null && selectedGrupoId == grupo.id}"></option>
+          </select>
+              </div>
+        <div class="col-md-6 col-lg-4">
+          <label for="searchInput" class="form-label fw-semibold">Buscar ejercicio</label>
+          <input type="text" class="form-control form-control-lg" placeholder="Buscar ejercicios..." id="searchInput">
+              </div>
+        <div class="col-12 col-lg-2 d-flex align-items-end">
+          <button type="button" class="btn btn-outline-secondary w-100" onclick="clearFilter()">
+            <i class="fas fa-times me-2"></i>Limpiar Filtro
+            </button>
+        </div>
+      </form>
+    </section>
+    <!-- Título de la lista -->
+    <section class="container mb-2">
+      <h2 class="fw-bold fs-3 text-primary text-center mb-3"><i class="fas fa-list me-2"></i>Lista de Ejercicios</h2>
+    </section>
+    <!-- Carrusel de ejercicios con Splide.js y selección múltiple -->
+    <section class="container mb-5">
+      <div id="splide" class="splide">
+        <div class="splide__track">
+          <ul class="splide__list">
+            <li th:each="exercise : ${exercises}" class="splide__slide">
+              <div class="card h-100 shadow-sm border-0 rounded-4 overflow-hidden position-relative exercise-card" th:attr="data-id=${exercise.id}">
+                <!-- Checkbox selección -->
+                <input type="checkbox" class="form-check-input position-absolute top-0 end-0 m-2 select-exercise" th:attr="data-id=${exercise.id}" style="z-index:2; width:1.3em; height:1.3em;">
+                <div class="bg-light d-flex align-items-center justify-content-center" style="height:180px; cursor:pointer;">
+                  <a th:if="${exercise.videoUrl != null and !#strings.isEmpty(exercise.videoUrl)}" th:href="${exercise.videoUrl}" target="_blank" style="display:block;width:100%;height:100%;position:relative;">
+                    <img class="img-fluid" style="max-height:160px; object-fit:contain;" th:if="${exercise.imagen != null}" th:src="${exercise.imagen.url}" alt="Exercise Image" />
+                    <img class="img-fluid" style="max-height:160px; object-fit:contain;" th:if="${exercise.imagen == null}" src="/img/not_imagen.png" alt="Imagen por defecto" />
+                    <span style="position:absolute;top:10px;right:10px;background:rgba(255,0,0,0.85);color:white;padding:4px 8px;border-radius:8px;font-size:0.95em;display:flex;align-items:center;gap:4px;z-index:3;">
+                      <i class="fas fa-play-circle"></i> Video
+                    </span>
+                  </a>
+                  <div th:if="${exercise.videoUrl == null or #strings.isEmpty(exercise.videoUrl)}" data-bs-toggle="modal" th:attr="data-bs-target='#exerciseModal'" th:attrappend="data-id=${exercise.id}" style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;">
+                  <img class="img-fluid" style="max-height:160px; object-fit:contain;" th:if="${exercise.imagen != null}" th:src="${exercise.imagen.url}" th:alt="${'Imagen de ' + exercise.name}" onerror="this.src='/img/not_imagen.png'" />
+                  <img class="img-fluid" style="max-height:160px; object-fit:contain;" th:if="${exercise.imagen == null}" src="/img/not_imagen.png" alt="Imagen por defecto" />
+                  </div>
+                </div>
+                <div class="card-body d-flex flex-column justify-content-between">
+                  <div>
+                    <span class="badge bg-success mb-2" th:text="${exercise.grupos != null ? #strings.listJoin(exercise.grupos.![nombre], ', ') : ''}">Grupo Muscular</span>
+                    <h5 class="card-title fw-bold mb-1 exercise-title" style="cursor:pointer;" data-bs-toggle="modal" th:attr="data-bs-target='#exerciseModal'" th:attrappend="data-id=${exercise.id}" th:text="${exercise.name}">Nombre</h5>
+                    <p class="card-text text-muted small mb-2" th:text="${exercise.description}">Descripción</p>
+                  </div>
+                  <button type="button" class="btn btn-outline-primary w-100 mt-2 add-single-btn" th:attr="data-id=${exercise.id}">
+                    <i class="fas fa-plus me-2"></i>Agregar a Rutina
+                  </button>
+                </div>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <!-- Botón flotante para agregar seleccionados -->
+      <button id="addSelectedBtn" class="btn btn-success position-fixed" style="bottom:2rem; right:2rem; z-index:1050; display:none;">
+        <i class="fas fa-check-double me-2"></i>Agregar seleccionados a rutina
+      </button>
+    </section>
+    <!-- Modal de detalle de ejercicio -->
+    <div class="modal fade" id="exerciseModal" tabindex="-1" aria-labelledby="exerciseModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exerciseModalLabel">Detalle de Ejercicio</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+          </div>
+          <div class="modal-body">
+            <div id="modalContent">
+              <!-- Aquí se cargará el detalle dinámicamente -->
+              <div class="text-center text-muted">Cargando...</div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-primary" id="addFromModalBtn"><i class="fas fa-plus me-2"></i>Agregar a Rutina</button>
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Fin Splide -->
+  </div>
+
+  <!-- Modal alerta (estilo Mattfuncional) -->
+  <div class="modal fade" id="modalAlertaExerciseLista" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header modal-confirmar-header">
+          <h5 class="modal-title"><i class="fas fa-info-circle me-2"></i>Información</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+        </div>
+        <div class="modal-body" id="modalAlertaExerciseListaMensaje"></div>
+        <div class="modal-footer modal-confirmar-footer">
+          <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Aceptar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.4/dist/js/splide.min.js"></script>
+  <script>
+    // Inicializar Splide
+    document.addEventListener('DOMContentLoaded', function () {
+      function mostrarAlerta(msg) {
+        var el = document.getElementById('modalAlertaExerciseListaMensaje');
+        var m = document.getElementById('modalAlertaExerciseLista');
+        if (el) el.textContent = msg || '';
+        if (m && typeof bootstrap !== 'undefined') (new bootstrap.Modal(m)).show();
+      }
+
+      new Splide('#splide', {
+        type: 'slide',
+        perPage: 3,
+        perMove: 1,
+        gap: '2rem',
+        pagination: true,
+        arrows: true,
+        breakpoints: {
+          1200: { perPage: 2 },
+          768: { perPage: 1 }
+        }
+      }).mount();
+
+      // Selección múltiple y feedback visual
+      const selected = new Set();
+      const addSelectedBtn = document.getElementById('addSelectedBtn');
+      document.querySelectorAll('.select-exercise').forEach(cb => {
+        cb.addEventListener('change', function() {
+          const card = this.closest('.exercise-card');
+          if (this.checked) {
+            selected.add(this.getAttribute('data-id'));
+            card.classList.add('border-success', 'shadow-lg');
+          } else {
+            selected.delete(this.getAttribute('data-id'));
+            card.classList.remove('border-success', 'shadow-lg');
+          }
+          addSelectedBtn.style.display = selected.size > 0 ? 'block' : 'none';
+        });
+      });
+      // Botón flotante para agregar seleccionados
+      addSelectedBtn.addEventListener('click', function() {
+        if (selected.size === 0) return;
+        // Aquí puedes enviar los IDs seleccionados a tu backend o lógica JS
+        mostrarAlerta('Ejercicios agregados a rutina: ' + Array.from(selected).join(', '));
+        // Feedback visual
+        addSelectedBtn.classList.add('btn-success');
+        setTimeout(()=>addSelectedBtn.classList.remove('btn-success'), 1000);
+      });
+
+      // Modal de detalle
+      let currentModalId = null;
+      document.querySelectorAll('.exercise-title, .bg-light[data-bs-toggle="modal"]').forEach(el => {
+        el.addEventListener('click', function() {
+          const id = this.getAttribute('data-id');
+          currentModalId = id;
+          // Aquí deberías cargar los datos reales del ejercicio (puedes usar AJAX si tienes endpoint)
+          // Por ahora, solo demo:
+          const card = document.querySelector('.exercise-card[data-id="'+id+'"]');
+          const img = card.querySelector('img')?.outerHTML || '';
+          const name = card.querySelector('.card-title')?.textContent || '';
+          const desc = card.querySelector('.card-text')?.textContent || '';
+          const badge = card.querySelector('.badge')?.outerHTML || '';
+          document.getElementById('modalContent').innerHTML = `
+            <div class='text-center mb-3'>${img}</div>
+            <h4 class='fw-bold text-center mb-2'>${name}</h4>
+            <div class='text-center mb-2'>${badge}</div>
+            <p class='text-muted text-center'>${desc}</p>
+          `;
+        });
+      });
+      // Botón agregar desde modal
+      document.getElementById('addFromModalBtn').addEventListener('click', function() {
+        if (!currentModalId) return;
+        // Aquí puedes agregar el ejercicio a la rutina
+        mostrarAlerta('Ejercicio agregado a rutina: ' + currentModalId);
+        // Feedback visual
+        const card = document.querySelector('.exercise-card[data-id="'+currentModalId+'"]');
+        card.classList.add('border-success', 'shadow-lg');
+        card.querySelector('.select-exercise').checked = true;
+        selected.add(currentModalId);
+        addSelectedBtn.style.display = 'block';
+      });
+      // Botón agregar individual
+      document.querySelectorAll('.add-single-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+          const id = this.getAttribute('data-id');
+          mostrarAlerta('Ejercicio agregado a rutina: ' + id);
+          const card = document.querySelector('.exercise-card[data-id="'+id+'"]');
+          card.classList.add('border-success', 'shadow-lg');
+          card.querySelector('.select-exercise').checked = true;
+          selected.add(id);
+          addSelectedBtn.style.display = 'block';
+        });
+      });
+      // Scroll restore
+      const scrollY = localStorage.getItem('scrollY');
+      if (scrollY !== null) {
+        window.scrollTo(0, parseFloat(scrollY));
+        localStorage.removeItem('scrollY');
+      }
+    });
+    function submitFilterForm() {
+      localStorage.setItem('scrollY', window.scrollY);
+      document.getElementById('filterForm').submit();
+    }
+    function clearFilter() {
+      document.getElementById('muscleGroup').value = '';
+      submitFilterForm();
+    }
+  </script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.4/dist/css/splide.min.css" />
+  <style>
+    .splide__slide {
+      padding: 0.5rem 0;
+    }
+    .splide__slide .card {
+      transition: box-shadow 0.3s, transform 0.3s, border 0.3s;
+    }
+    .splide__slide.is-active .card {
+      box-shadow: 0 8px 32px rgba(102,126,234,0.18), 0 1.5px 8px rgba(0,0,0,0.08);
+      transform: scale(1.04);
+      border: 2px solid #667eea;
+    }
+    .exercise-card.border-success {
+      border: 2px solid #28a745 !important;
+    }
+    .splide__arrow {
+      background: #667eea;
+      color: #fff;
+      border-radius: 50%;
+      width: 2.5rem;
+      height: 2.5rem;
+      box-shadow: 0 2px 8px rgba(102,126,234,0.15);
+    }
+    .splide__pagination__page.is-active {
+      background: #667eea;
+    }
+    #addSelectedBtn {
+      box-shadow: 0 4px 20px rgba(40,167,69,0.18);
+      font-size: 1.1rem;
+      padding: 0.9rem 2rem;
+    }
+  </style>
+</body>
+</html>

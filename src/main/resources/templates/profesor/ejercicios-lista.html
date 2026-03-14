@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Mis Ejercicios - Panel del Profesor</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="/style.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        /* Tarjetas mismo tamaño que panel administrador / dashboard */
+        .ejercicios-module-card {
+            border: none;
+            border-radius: 1.5rem;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+            min-width: 200px;
+            min-height: 160px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: #37474f;
+            transition: transform 0.15s;
+        }
+        .ejercicios-module-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+        }
+        .ejercicios-module-card.card-link {
+            text-decoration: none;
+            color: inherit;
+        }
+        .ejercicios-module-card.card-link:hover {
+            color: inherit;
+        }
+        .ejercicios-module-card i {
+            font-size: 2.8rem;
+            margin-bottom: 0.5rem;
+            color: #5e35b1;
+        }
+        .ejercicios-module-card .stat {
+            font-size: 2.2rem;
+            font-weight: bold;
+            color: #37474f;
+        }
+        .ejercicios-module-card .label {
+            font-size: 1rem;
+            font-weight: 500;
+            color: #546e7a;
+        }
+        .card-ejercicios-total { background: linear-gradient(135deg, #e1bee7 60%, #d1c4e9 100%); }
+        .card-ejercicios-grupos { background: linear-gradient(135deg, #c8e6c9 60%, #b2dfdb 100%); }
+        .card-ejercicios-crear { background: linear-gradient(135deg, #fff9c4 60%, #ffe082 100%); }
+        
+        .btn-nuevo {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
+        }
+        
+        .btn-nuevo:hover {
+            background: linear-gradient(135deg, #20c997 0%, #28a745 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(40, 167, 69, 0.4);
+            color: white;
+        }
+        
+        .btn-volver {
+            background: linear-gradient(135deg, #6c757d 0%, #495057 100%);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(108, 117, 125, 0.3);
+        }
+        
+        .btn-volver:hover {
+            background: linear-gradient(135deg, #495057 0%, #6c757d 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(108, 117, 125, 0.4);
+            color: white;
+        }
+        
+        .search-filter-section {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            border: 1px solid rgba(102, 126, 234, 0.1);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+        
+        .search-input {
+            border: 2px solid rgba(102, 126, 234, 0.2);
+            border-radius: 10px;
+            padding: 10px 15px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: white;
+        }
+        
+        .search-input:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            outline: none;
+        }
+        
+        .table thead {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .table tbody tr:hover {
+            background-color: #f8f9ff;
+            transition: background-color 0.2s ease;
+        }
+        
+        .exercise-image {
+            width: 50px;
+            height: 50px;
+            object-fit: cover;
+            border-radius: 8px;
+            border: 2px solid #dee2e6;
+        }
+        
+        .exercise-image:hover {
+            transform: scale(1.1);
+            transition: transform 0.2s ease;
+        }
+
+        /* Modal Ver ejercicio – en acorde con series y rutinas */
+        .modal-ejercicio-overlay {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: rgba(0,0,0,0.6);
+            display: none; justify-content: center; align-items: center;
+            z-index: 2000;
+            padding: 1rem;
+        }
+        .modal-ejercicio-box {
+            background: #fff;
+            border-radius: 1.25rem;
+            box-shadow: 0 12px 48px rgba(0,0,0,0.2), 0 0 0 1px rgba(102, 126, 234, 0.15);
+            max-width: 520px;
+            width: 92vw;
+            max-height: 90vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+        .modal-ejercicio-header {
+            background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+            color: #fff;
+            padding: 0.85rem 1.25rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.5rem;
+        }
+        .modal-ejercicio-header .modal-ejercicio-close {
+            width: 2rem; height: 2rem;
+            border: none;
+            background: rgba(255,255,255,0.2);
+            color: #fff;
+            border-radius: 50%;
+            font-size: 1.35rem;
+            line-height: 1;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+            transition: background 0.2s;
+        }
+        .modal-ejercicio-header .modal-ejercicio-close:hover {
+            background: rgba(255,255,255,0.35);
+        }
+        .modal-ejercicio-body {
+            padding: 1.5rem 1.25rem;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .modal-ejercicio-img-wrap {
+            width: 100%;
+            border-radius: 1rem;
+            overflow: hidden;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            margin-bottom: 1rem;
+            border: 1px solid #e9ecef;
+        }
+        .modal-ejercicio-img-wrap img {
+            width: 100%;
+            height: 280px;
+            object-fit: contain;
+            display: block;
+        }
+        .modal-ejercicio-badge {
+            background: linear-gradient(135deg, #e1bee7 60%, #d1c4e9 100%);
+            color: #5e35b1;
+            font-weight: 600;
+            padding: 0.4rem 0.9rem;
+            border-radius: 2rem;
+            margin-bottom: 0.75rem;
+            font-size: 0.9rem;
+            letter-spacing: 0.02em;
+        }
+        .modal-ejercicio-nombre {
+            font-weight: 700;
+            font-size: 1.4rem;
+            color: #212529;
+            margin-bottom: 0.5rem;
+            text-align: center;
+        }
+        .modal-ejercicio-desc {
+            color: #6c757d;
+            font-size: 1rem;
+            line-height: 1.45;
+            text-align: center;
+            margin-bottom: 0.25rem;
+        }
+        .modal-ejercicio-hint {
+            font-size: 0.8rem;
+            color: #adb5bd;
+            margin-top: 0.75rem;
+        }
+    </style>
+</head>
+<body class="bg-light">
+
+<!-- Navbar fragment -->
+<div th:replace="fragments/navbar :: navbar"></div>
+
+<div class="container-fluid py-4 px-4" style="background: linear-gradient(135deg, #e8eaf6 0%, #f3e5f5 100%); min-height: 100vh;">
+    <!-- Título sin tarjeta (estilo panel del profesor) -->
+    <div class="text-center mb-4">
+        <div class="d-flex justify-content-center align-items-center mb-2">
+            <i class="fa-solid fa-dumbbell fa-2x me-2" style="color:#9575cd;"></i>
+            <h1 class="fw-bold mb-0">Mis Ejercicios</h1>
+        </div>
+    </div>
+
+    <!-- Mensajes de éxito/error -->
+    <div th:if="${param.success != null}" class="alert alert-success alert-dismissible fade show" role="alert">
+        <i class="fas fa-check-circle me-2"></i>
+        <span th:if="${param.success[0] == 'predeterminados_cargados'}">Ejercicios predeterminados cargados correctamente.<span th:if="${param.total != null}" th:text="' Total: ' + ${param.total[0]} + ' ejercicios.'"></span></span>
+        <span th:if="${param.success[0] == 'ejercicio_eliminado'}">Ejercicio eliminado exitosamente.</span>
+        <span th:if="${param.success[0] == 'ejercicio_creado'}">Ejercicio creado exitosamente.</span>
+        <span th:if="${param.success[0] == 'ejercicio_actualizado'}">Ejercicio actualizado exitosamente.</span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    <div th:if="${param.error != null}" class="alert alert-danger alert-dismissible fade show" role="alert">
+        <i class="fas fa-exclamation-triangle me-2"></i>
+        <span th:if="${param.error[0] == 'carga_predeterminados'}">Error al cargar ejercicios predeterminados. Revisa los logs.</span>
+        <span th:if="${param.error[0] == 'no_autorizado'}">No tienes autorización para realizar esta acción.</span>
+        <span th:if="${param.error[0] == 'ejercicio_no_encontrado'}">El ejercicio no fue encontrado.</span>
+        <span th:if="${param.error[0] == 'no_se_puede_eliminar_predeterminado'}">No se pueden eliminar ejercicios predeterminados.</span>
+        <span th:if="${param.error[0] == 'sin_permisos'}">No tienes permisos para eliminar este ejercicio.</span>
+        <span th:if="${param.error[0] == 'sin_permisos_editar'}">No tienes permisos para editar este ejercicio. Los ejercicios predeterminados (del sistema) solo pueden ser editados por el administrador.</span>
+        <span th:if="${param.error[0] == 'error_eliminar'}">Error al eliminar el ejercicio. Por favor, intenta nuevamente.</span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+
+    <!-- Modal confirmar eliminar ejercicio -->
+    <div class="modal fade" id="modalConfirmarEliminarEjercicio" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header modal-confirmar-header">
+                    <h5 class="modal-title"><i class="fas fa-exclamation-circle me-2"></i>Confirmar</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body" id="modalConfirmarEliminarEjercicioMensaje">¿Estás seguro?</div>
+                <div class="modal-footer modal-confirmar-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-danger" id="btnConfirmarEliminarEjercicio"><i class="fas fa-trash me-1"></i>Eliminar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tarjetas: mismo tamaño que panel administrador -->
+    <div class="d-flex flex-row flex-wrap justify-content-center align-items-center gap-4 mb-4">
+        <div class="ejercicios-module-card card-ejercicios-total" style="min-width: 260px; min-height: 160px;">
+            <i class="fas fa-dumbbell"></i>
+            <div class="stat" th:text="${totalEjercicios}">0</div>
+            <div class="label">Total disponibles</div>
+        </div>
+        <a th:href="@{/profesor/mis-grupos-musculares}" class="ejercicios-module-card card-ejercicios-grupos card-link" style="min-width: 260px; min-height: 160px;" title="Grupos musculares">
+            <i class="fas fa-layer-group"></i>
+            <div class="label">Crear grupo musculares</div>
+        </a>
+        <a th:href="@{/profesor/mis-ejercicios/nuevo}" class="ejercicios-module-card card-ejercicios-crear card-link" style="min-width: 260px; min-height: 160px;" title="Crear ejercicio">
+            <i class="fas fa-plus"></i>
+            <div class="label">Crear ejercicios</div>
+        </a>
+    </div>
+
+    <!-- Search and Filter Section -->
+    <div class="search-filter-section">
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label for="searchExercise" class="form-label fw-bold">
+                    <i class="fas fa-search me-2 text-primary"></i>Buscar ejercicio
+                </label>
+                <input type="text" class="form-control search-input" id="searchExercise" 
+                       placeholder="Buscar por nombre o descripción...">
+            </div>
+            <div class="col-md-6 mb-3">
+                <label for="filterMuscleGroup" class="form-label fw-bold">
+                    <i class="fas fa-filter me-2 text-primary"></i>Filtrar por Grupo Muscular
+                </label>
+                <select class="form-select search-input" id="filterMuscleGroup">
+                    <option value="">Todos los grupos musculares</option>
+                    <option th:each="grupo : ${gruposMusculares}" 
+                            th:value="${grupo.nombre}" 
+                            th:text="${grupo.nombre}">
+                    </option>
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <!-- Actualizar imágenes: enlace GET (sin form ni _csrf) para no cortar el render de la tabla -->
+    <div class="card border-primary mb-3">
+        <div class="card-body py-2 px-3 d-flex flex-wrap align-items-center gap-2">
+            <span class="fw-bold text-primary"><i class="fas fa-sync-alt me-1"></i>Imágenes desde carpeta:</span>
+            <a th:href="@{/profesor/mis-ejercicios/actualizar-imagenes(confirm=1)}" class="btn btn-sm btn-outline-primary">
+                Actualizar imágenes de ejercicios
+            </a>
+            <span class="small text-muted">Colocá en <em>uploads/ejercicios/</em> los archivos 1.webp, 2.webp, … 60.webp y hacé clic para relacionarlos con los ejercicios predeterminados.</span>
+        </div>
+    </div>
+    <div th:if="${imagenesActualizadas != null}" class="alert alert-success alert-dismissible fade show mb-3" role="alert">
+        <i class="fas fa-check-circle me-2"></i>Se actualizaron las imágenes de <strong th:text="${imagenesActualizadas}">0</strong> ejercicios desde la carpeta <em>uploads/ejercicios/</em>.
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+
+    <!-- Contenedor de la tabla -->
+    <div class="table-responsive">
+        <div th:if="${ejercicios == null or ejercicios.empty}" class="text-center py-5">
+            <i class="fas fa-dumbbell fa-3x text-muted mb-3"></i>
+            <h5 class="text-muted">No hay ejercicios disponibles</h5>
+            <p class="text-muted">Crea tu primer ejercicio para comenzar</p>
+            <a th:href="@{/profesor/mis-ejercicios/nuevo}" class="btn btn-primary">
+                <i class="fas fa-plus me-2"></i>Crear Ejercicio
+            </a>
+        </div>
+
+        <div th:unless="${ejercicios == null or ejercicios.empty}">
+            <table class="table table-hover mb-0">
+                <thead>
+                    <tr>
+                        <th class="text-center">#</th>
+                        <th class="text-center">Nombre</th>
+                        <th class="text-center">Descripción</th>
+                        <th class="text-center">Tipo</th>
+                        <th class="text-center">Grupos Musculares</th>
+                        <th class="text-center">Imagen</th>
+                        <th class="text-center">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="ejercicio, iterStat : ${ejercicios}" 
+                        class="text-center ejercicio-row"
+                        th:data-name="${ejercicio.name}"
+                        th:data-description="${ejercicio.description != null ? ejercicio.description : ''}"
+                        th:data-img="${ejercicio.imagen != null ? ejercicio.imagen.url : '/img/not_imagen.png'}"
+                        th:data-groups="${ejercicio.grupos != null ? #strings.listJoin(ejercicio.grupos.![nombre], ', ') : ''}">
+                        <td th:text="${iterStat.index + 1}">#</td>
+                        <td>
+                            <span th:text="${ejercicio.name}">Nombre del Ejercicio</span>
+                        </td>
+                        <td th:text="${ejercicio.description}">Descripción del ejercicio</td>
+                        <td th:text="${ejercicio.type}">Tipo</td>
+                        <td>
+                            <span th:each="grupo : ${ejercicio.grupos != null ? ejercicio.grupos : {}}" 
+                                  class="badge bg-primary me-1"
+                                  th:text="${grupo.nombre}">Grupo</span>
+                        </td>
+                        <td class="text-center">
+                            <img th:if="${ejercicio.imagen != null && ejercicio.imagen.url != null}" 
+                                 th:src="${ejercicio.imagen.url}"
+                                 th:alt="${'Imagen de ' + ejercicio.name}"
+                                 class="exercise-image"
+                                 onerror="this.src='/img/not_imagen.png'">
+                            <img th:unless="${ejercicio.imagen != null && ejercicio.imagen.url != null}" 
+                                 src="/img/not_imagen.png"
+                                 alt="Sin imagen"
+                                 class="exercise-image">
+                        </td>
+                        <td class="text-center align-middle">
+                            <div class="d-flex flex-nowrap justify-content-center gap-1">
+                                <button type="button" 
+                                        class="btn btn-primary btn-sm btn-ver-ejercicio" 
+                                        title="Ver">
+                                    <i class="fas fa-eye"></i> Ver
+                                </button>
+                                <a th:href="@{/profesor/mis-ejercicios/editar/{id}(id=${ejercicio.id})}" 
+                                   class="btn btn-warning btn-sm text-dark" title="Editar">
+                                    <i class="fas fa-pencil-alt"></i> Editar
+                                </a>
+                                <button type="button" 
+                                        class="btn btn-danger btn-sm"
+                                        th:onclick="'confirmarEliminacion(' + ${ejercicio.id} + ')'"
+                                        title="Eliminar">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+    function initializeSearchAndFilter() {
+        const searchInput = document.getElementById('searchExercise');
+        const filterSelect = document.getElementById('filterMuscleGroup');
+        
+        // Search functionality
+        searchInput.addEventListener('input', function() {
+            filterExercises();
+        });
+        
+        // Filter functionality
+        filterSelect.addEventListener('change', function() {
+            filterExercises();
+        });
+    }
+
+    function filterExercises() {
+        const searchTerm = document.getElementById('searchExercise').value.toLowerCase();
+        const selectedGroup = document.getElementById('filterMuscleGroup').value;
+        const exerciseRows = document.querySelectorAll('tbody tr');
+        
+        exerciseRows.forEach(row => {
+            const exerciseName = row.cells[1].textContent.toLowerCase();
+            const exerciseDescription = row.cells[2].textContent.toLowerCase();
+            const muscleGroups = Array.from(row.cells[4].querySelectorAll('.badge'))
+                .map(badge => badge.textContent);
+            
+            const matchesSearch = exerciseName.includes(searchTerm) || 
+                                exerciseDescription.includes(searchTerm);
+            const matchesGroup = !selectedGroup || muscleGroups.includes(selectedGroup);
+            
+            if (matchesSearch && matchesGroup) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
+        });
+    }
+    
+    // Variable para guardar el id pendiente de eliminar (modal estilo Mattfuncional)
+    var pendingDeleteEjercicioId = null;
+    function confirmarEliminacion(id) {
+        pendingDeleteEjercicioId = id;
+        var modalEl = document.getElementById('modalConfirmarEliminarEjercicio');
+        var msgEl = document.getElementById('modalConfirmarEliminarEjercicioMensaje');
+        if (msgEl) msgEl.textContent = '¿Estás seguro de que querés eliminar este ejercicio?';
+        if (modalEl && typeof bootstrap !== 'undefined') (new bootstrap.Modal(modalEl)).show();
+    }
+    
+    // Modal Ver ejercicio – estilo en acorde con series y rutinas (cabecera gradiente, tarjeta con sombra)
+    document.addEventListener('DOMContentLoaded', function() {
+        var btnConfirmarEliminar = document.getElementById('btnConfirmarEliminarEjercicio');
+        var modalEliminar = document.getElementById('modalConfirmarEliminarEjercicio');
+        if (btnConfirmarEliminar && modalEliminar) {
+            btnConfirmarEliminar.addEventListener('click', function() {
+                if (pendingDeleteEjercicioId != null) {
+                    (new bootstrap.Modal(modalEliminar)).hide();
+                    window.location.href = '/profesor/mis-ejercicios/eliminar/' + pendingDeleteEjercicioId;
+                }
+            });
+        }
+        initializeSearchAndFilter();
+
+        const overlay = document.createElement('div');
+        overlay.id = 'modalVerEjercicioOverlay';
+        overlay.className = 'modal-ejercicio-overlay';
+
+        const modal = document.createElement('div');
+        modal.id = 'modalVerEjercicio';
+        modal.className = 'modal-ejercicio-box';
+        overlay.appendChild(modal);
+        document.body.appendChild(overlay);
+
+        function cerrarModal() {
+            overlay.style.display = 'none';
+            modal.innerHTML = '';
+        }
+        overlay.addEventListener('click', function(e) {
+            if (e.target === overlay) cerrarModal();
+        });
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') cerrarModal();
+        });
+
+        document.querySelectorAll('.btn-ver-ejercicio').forEach(function(btn) {
+            btn.addEventListener('click', function(e) {
+                e.preventDefault();
+                const row = btn.closest('tr.ejercicio-row');
+                if (!row) return;
+                const name = row.dataset.name || '';
+                const description = row.dataset.description || '';
+                const imgUrl = row.dataset.img || '/img/not_imagen.png';
+                const groups = row.dataset.groups || '';
+
+                modal.innerHTML = '';
+
+                var header = document.createElement('div');
+                header.className = 'modal-ejercicio-header';
+                header.innerHTML = '<span><i class="fas fa-eye me-2"></i>Ver ejercicio</span>';
+                var closeBtn = document.createElement('button');
+                closeBtn.type = 'button';
+                closeBtn.className = 'modal-ejercicio-close';
+                closeBtn.setAttribute('aria-label', 'Cerrar');
+                closeBtn.innerHTML = '&times;';
+                closeBtn.addEventListener('click', cerrarModal);
+                header.appendChild(closeBtn);
+                modal.appendChild(header);
+
+                var body = document.createElement('div');
+                body.className = 'modal-ejercicio-body';
+
+                var imgWrap = document.createElement('div');
+                imgWrap.className = 'modal-ejercicio-img-wrap';
+                var img = document.createElement('img');
+                img.src = imgUrl;
+                img.alt = name;
+                img.onerror = function() { this.src = '/img/not_imagen.png'; };
+                imgWrap.appendChild(img);
+                body.appendChild(imgWrap);
+
+                if (groups) {
+                    var badge = document.createElement('div');
+                    badge.className = 'modal-ejercicio-badge';
+                    badge.textContent = groups;
+                    body.appendChild(badge);
+                }
+                var nombreDiv = document.createElement('div');
+                nombreDiv.className = 'modal-ejercicio-nombre';
+                nombreDiv.textContent = name;
+                body.appendChild(nombreDiv);
+                if (description) {
+                    var descDiv = document.createElement('div');
+                    descDiv.className = 'modal-ejercicio-desc';
+                    descDiv.textContent = description;
+                    body.appendChild(descDiv);
+                }
+                var hint = document.createElement('div');
+                hint.className = 'modal-ejercicio-hint';
+                hint.textContent = 'Clic fuera o Escape para cerrar';
+                body.appendChild(hint);
+
+                modal.appendChild(body);
+                overlay.style.display = 'flex';
+            });
+        });
+
+        console.log('Lista de ejercicios inicializada correctamente');
+    });
+</script>
+
+</body>
+</html>

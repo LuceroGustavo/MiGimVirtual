@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Depuración de datos - Mattfuncional</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/style.css">
+    <style>
+        body { background: linear-gradient(135deg, #e8eaf6 0%, #f3e5f5 100%); min-height: 100vh; }
+        .dep-card { border-radius: 1rem; box-shadow: 0 4px 16px rgba(0,0,0,0.06); height: 100%; }
+        .dep-card .card-header { border-radius: 1rem 1rem 0 0; font-weight: 600; padding: 0.75rem 1rem; }
+        .dep-card .card-body { padding: 1.25rem; }
+        .dep-warning-box { background: #fff3cd; border: 1px solid #ffc107; border-radius: 0.5rem; padding: 0.75rem 1rem; font-size: 0.9rem; }
+        .dep-info-box { background: #e7f3ff; border: 1px solid #0d6efd; border-radius: 0.5rem; padding: 0.75rem 1rem; font-size: 0.9rem; }
+    </style>
+</head>
+<body>
+<div th:if="${param.embed == null || param.embed.isEmpty()}" th:replace="~{fragments/navbar :: navbar}"></div>
+
+<div th:fragment="contenido" class="admin-depuracion-fragment">
+<div class="container py-4 admin-section-content">
+    <div class="text-center mb-3">
+        <h1 class="fw-bold mb-1 fs-4"><i class="fas fa-broom me-2" style="color:#5e35b1;"></i>Depuración de datos</h1>
+        <p class="text-muted mb-0 small">Eliminar registros antiguos para mantener la base de datos ligera</p>
+    </div>
+    <div class="d-flex justify-content-end mb-3">
+        <a th:if="${(param.embed == null || param.embed.isEmpty()) && (param.fragment == null || param.fragment.isEmpty())}" th:href="@{/profesor/administracion}" class="btn btn-outline-secondary btn-sm">
+            <i class="fas fa-arrow-left me-2"></i>Volver a Administración
+        </a>
+    </div>
+
+    <div class="row g-3">
+        <!-- Tarjeta 1: Registro de asistencias -->
+        <div class="col-12 col-md-6">
+            <div class="card dep-card">
+                <div class="card-header bg-warning bg-opacity-10 text-dark">
+                    <i class="fas fa-clipboard-check me-2"></i>Registro de asistencias e inasistencias
+                </div>
+                <div class="card-body">
+                    <div class="dep-info-box mb-3">
+                        <strong class="d-block mb-2">¿Qué hace?</strong>
+                        <p class="mb-0 small">Elimina todos los registros de presente/ausente con fecha <strong>anterior</strong> a la que seleccionás. Por ejemplo: si elegís <strong>12/12/2025</strong>, se borran todos los registros del día 11/12/2025 y hacia atrás. Los registros del 12/12/2025 en adelante se conservan.</p>
+                    </div>
+                    <div class="dep-warning-box mb-3">
+                        <i class="fas fa-exclamation-triangle me-2"></i><strong>Acción irreversible.</strong> No se puede deshacer. Hacé un backup de alumnos antes si querés conservar el historial.
+                    </div>
+                    <form th:action="@{/profesor/depuracion/asistencias}" method="post" class="form-depuracion-asistencias">
+                        <div class="mb-3">
+                            <label for="fechaAsistencias" class="form-label fw-semibold">Eliminar registros con fecha anterior a:</label>
+                            <input type="date" id="fechaAsistencias" name="fechaLimite" class="form-control" required>
+                        </div>
+                        <button type="button" class="btn btn-warning btn-confirmar-depuracion" data-msg="¿Estás seguro? Se eliminarán permanentemente todos los registros de asistencias con fecha anterior a la seleccionada." data-input-id="fechaAsistencias">
+                            <i class="fas fa-trash-alt me-1"></i>Eliminar asistencias antiguas
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tarjeta 2: Rutinas asignadas -->
+        <div class="col-12 col-md-6">
+            <div class="card dep-card">
+                <div class="card-header bg-danger bg-opacity-10 text-danger">
+                    <i class="fas fa-list-check me-2"></i>Rutinas asignadas a alumnos
+                </div>
+                <div class="card-body">
+                    <div class="dep-info-box mb-3">
+                        <strong class="d-block mb-2">¿Qué hace?</strong>
+                        <p class="mb-0 small">Elimina todas las rutinas asignadas a alumnos cuya fecha de creación es <strong>anterior</strong> a la que seleccionás. Por ejemplo: si elegís <strong>12/12/2025</strong>, se borran las asignaciones creadas antes de esa fecha. Las rutinas plantilla (Mis Rutinas) no se tocan.</p>
+                    </div>
+                    <div class="dep-warning-box mb-3">
+                        <i class="fas fa-exclamation-triangle me-2"></i><strong>Acción irreversible.</strong> No se puede deshacer. Los alumnos perderán el acceso a esos enlaces de rutina.
+                    </div>
+                    <form th:action="@{/profesor/depuracion/rutinas-asignadas}" method="post" class="form-depuracion-rutinas">
+                        <div class="mb-3">
+                            <label for="fechaRutinas" class="form-label fw-semibold">Eliminar asignaciones creadas antes de:</label>
+                            <input type="date" id="fechaRutinas" name="fechaLimite" class="form-control" required>
+                        </div>
+                        <button type="button" class="btn btn-danger btn-confirmar-depuracion" data-msg="¿Estás seguro? Se eliminarán permanentemente todas las rutinas asignadas creadas antes de la fecha seleccionada." data-input-id="fechaRutinas">
+                            <i class="fas fa-trash-alt me-1"></i>Eliminar rutinas asignadas antiguas
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal alerta (fecha requerida) -->
+<div class="modal fade" id="modalAlertaDepuracion" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header modal-confirmar-header">
+                <h5 class="modal-title"><i class="fas fa-calendar-times me-2"></i>Fecha requerida</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <div class="modal-body" id="modalAlertaDepuracionMensaje">Seleccioná una fecha primero.</div>
+            <div class="modal-footer modal-confirmar-footer">
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Aceptar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal confirmación (estilo Mattfuncional) -->
+<div class="modal fade" id="modalConfirmarDepuracion" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header modal-confirmar-header">
+                <h5 class="modal-title"><i class="fas fa-exclamation-circle me-2"></i>Confirmar</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <div class="modal-body" id="modalConfirmarDepuracionMensaje">¿Está seguro?</div>
+            <div class="modal-footer modal-confirmar-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-primary" id="modalConfirmarDepuracionBtn">Confirmar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+(function() {
+    var modalEl = document.getElementById('modalConfirmarDepuracion');
+    var modalInst = modalEl && typeof bootstrap !== 'undefined' ? new bootstrap.Modal(modalEl) : null;
+    function confirmar(mensaje) {
+        return new Promise(function(resolve) {
+            if (!modalEl || !modalInst) { resolve(false); return; }
+            var msgEl = document.getElementById('modalConfirmarDepuracionMensaje');
+            var btnEl = document.getElementById('modalConfirmarDepuracionBtn');
+            if (msgEl) msgEl.textContent = mensaje || '¿Está seguro?';
+            function cleanup() {
+                if (btnEl) btnEl.removeEventListener('click', onConfirm);
+                if (modalEl) modalEl.removeEventListener('hidden.bs.modal', onHide);
+            }
+            function onConfirm() {
+                cleanup();
+                modalInst.hide();
+                resolve(true);
+            }
+            function onHide() {
+                cleanup();
+                resolve(false);
+            }
+            if (btnEl) btnEl.addEventListener('click', onConfirm);
+            if (modalEl) modalEl.addEventListener('hidden.bs.modal', onHide);
+            modalInst.show();
+        });
+    }
+    function mostrarAlerta(mensaje) {
+        var modalAlerta = document.getElementById('modalAlertaDepuracion');
+        var msgEl = document.getElementById('modalAlertaDepuracionMensaje');
+        if (modalAlerta && msgEl && typeof bootstrap !== 'undefined') {
+            if (msgEl) msgEl.textContent = mensaje || 'Seleccioná una fecha primero.';
+            (new bootstrap.Modal(modalAlerta)).show();
+        }
+    }
+    document.querySelectorAll('.btn-confirmar-depuracion').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            var inputId = this.getAttribute('data-input-id');
+            var input = inputId ? document.getElementById(inputId) : null;
+            if (!input || !input.value || input.value.trim() === '') {
+                mostrarAlerta('Seleccioná una fecha antes de continuar.');
+                return;
+            }
+            var msg = this.getAttribute('data-msg') || '¿Está seguro?';
+            var form = this.closest('form');
+            confirmar(msg).then(function(ok) {
+                if (ok && form) form.submit();
+            });
+        });
+    });
+})();
+</script>
+</div>
+</body>
+</html>

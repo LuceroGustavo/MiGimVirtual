@@ -1,0 +1,77 @@
+/* Footer Styles */
+.footer {
+    background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+    color: white;
+    padding: 1.5rem 0;
+    margin-top: 3rem;
+    border-radius: 20px 20px 0 0;
+    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.1);
+}
+
+.footer-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.footer-brand {
+    display: flex;
+    align-items: center;
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+.footer-brand i {
+    color: #fdcb6e;
+    font-size: 1.3rem;
+}
+
+.brand-name {
+    background: linear-gradient(135deg, #fdcb6e 0%, #e17055 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    font-weight: 700;
+}
+
+.footer-info {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 0.9rem;
+    color: #bdc3c7;
+}
+
+.developer strong {
+    color: #fdcb6e;
+    font-weight: 600;
+}
+
+.separator {
+    color: #7f8c8d;
+    font-weight: bold;
+}
+
+.year {
+    color: #95a5a6;
+}
+
+/* Responsive Footer */
+@media (max-width: 768px) {
+    .footer-content {
+        flex-direction: column;
+        text-align: center;
+        gap: 1rem;
+    }
+    
+    .footer-info {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    
+    .separator {
+        display: none;
+    }
+}

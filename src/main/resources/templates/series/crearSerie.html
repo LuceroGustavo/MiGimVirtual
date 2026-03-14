@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <title th:text="${editMode ? 'Modificar Serie - Mattfuncional' : 'Crear Nueva Serie - Mattfuncional'}">Crear Nueva Serie - Mattfuncional</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.4/dist/css/splide.min.css">
+    <link href="/style.css" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(135deg, #e3f2fd 0%, #ede7f6 100%);
+            min-height: 100vh;
+        }
+        .profile-badge {
+            background: #fff;
+            border-radius: 2rem;
+            padding: 0.25rem 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+        }
+        .logout-btn {
+            background: #e57373;
+            color: #fff;
+            border: none;
+            border-radius: 1.5rem;
+            padding: 0.4rem 1.2rem;
+            font-weight: 500;
+            transition: background 0.2s;
+        }
+        .logout-btn:hover {
+            background: #c62828;
+        }
+        .main-title {
+            font-size: 2.1rem;
+            font-weight: bold;
+            color: #333;
+            margin-top: 2rem;
+            margin-bottom: 1.2rem;
+            text-align: center;
+        }
+        .ejercicios-section {
+            background: #fff;
+            border-radius: 1.2rem;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.09);
+            padding: 2rem 1.5rem 1.5rem 1.5rem;
+            margin-bottom: 2.5rem;
+        }
+        .ejercicios-header {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #1976d2;
+            margin-bottom: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.7rem;
+        }
+        .splide__slide {
+            padding: 0 !important;
+            margin: 0 !important;
+            width: 220px !important; /* Fijar el ancho del slide para evitar espacios excesivos */
+            max-width: 100vw;
+        }
+        .splide__list {
+            gap: 0.5rem !important; /* Ajustar el gap para reducir separación */
+        }
+        .ejercicio-card {
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: border-color 0.3s, transform 0.3s;
+            border-radius: 1.2rem;
+            background: #fff;
+            box-shadow: 0 2px 8px rgba(25, 118, 210, 0.07);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            height: 320px;
+            width: 100%; /* Cambiado de 200px a 100% para ocupar todo el slide */
+            margin: 0;
+            overflow: hidden;
+        }
+        .ejercicio-card:hover {
+            transform: translateY(-5px) scale(1.03);
+            border-color: #1976d2;
+        }
+        .ejercicio-card.selected {
+            border-color: #1976d2;
+            box-shadow: 0 0 10px rgba(25, 118, 210, 0.15);
+        }
+        .ejercicio-card .grupo-muscular-badge {
+            width: 100%;
+            background: linear-gradient(90deg, #e8f5e9 60%, #b2dfdb 100%);
+            color: #388e3c;
+            font-size: 0.98rem;
+            font-weight: 600;
+            text-align: center;
+            padding: 0.45rem 0.2rem 0.35rem 0.2rem;
+            border-radius: 1.2rem 1.2rem 0 0;
+            letter-spacing: 0.5px;
+        }
+        .ejercicio-card img {
+            width: 100%;
+            height: 210px;
+            object-fit: contain;
+            background: #f8f9fa;
+            margin-top: 10px;
+        }
+        .ejercicio-card .card-body {
+            width: 100%;
+            padding: 0;
+        }
+        .ejercicio-card .card-title {
+            font-size: 1.08rem;
+            font-weight: 600;
+            color: #1976d2;
+            background: linear-gradient(90deg, #e3f2fd 60%, #b3e5fc 100%);
+            border-radius: 0 0 1.2rem 1.2rem;
+            padding: 0.5rem 0.5rem 0.5rem 0.5rem;
+            margin-bottom: 0;
+            margin-top: auto;
+            text-align: center;
+        }
+        .form-section {
+            background: #fff;
+            border-radius: 1.2rem;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.09);
+            padding: 2rem 1.5rem 1.5rem 1.5rem;
+            margin-bottom: 2.5rem;
+        }
+        .form-section .card-header {
+            background: linear-gradient(90deg, #1976d2 0%, #7e57c2 100%);
+            color: #fff;
+            border-radius: 1rem 1rem 0 0;
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+        .btn-primary {
+            background: linear-gradient(90deg, #1976d2 0%, #7e57c2 100%);
+            border: none;
+            border-radius: 1.5rem;
+            font-weight: 600;
+            font-size: 1.1rem;
+            padding: 0.7rem 1.5rem;
+            box-shadow: 0 2px 8px rgba(25, 118, 210, 0.07);
+            transition: background 0.2s;
+        }
+        .btn-primary:hover {
+            background: linear-gradient(90deg, #7e57c2 0%, #1976d2 100%);
+        }
+        @media (max-width: 991px) {
+            .ejercicios-section, .form-section { padding: 1rem 0.3rem; }
+        }
+    </style>
+</head>
+<body>
+    <div th:replace="fragments/navbar :: navbar"></div>
+
+    <div class="container-fluid" style="max-width: 1400px;">
+        <div class="main-title">
+            <i class="fa-solid fa-dumbbell me-2" style="color:#7e57c2;"></i><span th:if="${editMode}" th:text="'Modificar Serie'">Modificar Serie</span><span th:unless="${editMode}" th:text="'Crear Nueva Serie'">Crear Nueva Serie</span>
+        </div>
+
+        <!-- Carrusel de ejercicios -->
+        <div class="ejercicios-section mb-4">
+            <div class="ejercicios-header">
+                <i class="fa-solid fa-running"></i> Ejercicios Disponibles
+                        </div>
+            <div class="row mb-3 g-2 align-items-center">
+                <div class="col-md-7 col-12">
+                    <input type="text" id="filtro-ejercicio" class="form-control" placeholder="Buscar ejercicio...">
+                </div>
+                <div class="col-md-5 col-12 mt-2 mt-md-0 text-md-end">
+                    <select id="filtro-musculo" class="form-select w-auto d-inline-block">
+                        <option value="" th:selected="${selectedGrupoId == null}">Todos los grupos musculares</option>
+                        <option th:each="grupo : ${gruposMusculares}"
+                                th:value="${grupo.nombre}"
+                                th:text="${grupo.nombre}"
+                                th:selected="${selectedGrupoId != null && selectedGrupoId == grupo.id}"></option>
+                    </select>
+                </div>
+            </div>
+                            <section id="ejercicios-carousel" class="splide" aria-label="Carrusel de Ejercicios">
+                                <div class="splide__track">
+                                    <ul class="splide__list">
+                                        <li th:each="ejercicio : ${ejercicios}" class="splide__slide" 
+                                            th:data-id="${ejercicio.id}"
+                                            th:data-nombre="${ejercicio.name}"
+                                            th:data-musculos="${ejercicio.grupos != null ? #strings.listJoin(ejercicio.grupos.![nombre], ',') : ''}">
+                                            <div class="card ejercicio-card">
+                                <div class="grupo-muscular-badge" th:text="${ejercicio.grupos != null ? #strings.listJoin(ejercicio.grupos.![nombre], ', ') : ''}">Grupo Muscular</div>
+                                                <img th:if="${ejercicio.imagen != null}" th:src="${ejercicio.imagen.url}" class="card-img-top" th:alt="${ejercicio.name}">
+                                                <img th:if="${ejercicio.imagen == null}" th:src="@{/img/not_imagen.png}" class="card-img-top" alt="Imagen no disponible">
+                                                <div class="card-body text-center">
+                                                    <h6 class="card-title" th:text="${ejercicio.name}">Nombre del Ejercicio</h6>
+                                                </div>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </section>
+                </div>
+
+        <!-- Mensaje cuando no hay ejercicios -->
+        <div th:if="${ejercicios == null or ejercicios.isEmpty()}" class="text-center py-5">
+            <i class="fas fa-search fa-3x text-muted mb-3"></i>
+            <h4 class="text-muted">No se encontraron ejercicios</h4>
+            <p class="text-muted">No hay ejercicios que coincidan con los filtros aplicados</p>
+            <a href="/series/crear" class="btn btn-primary">
+                <i class="fas fa-times me-1"></i>Limpiar Filtros
+            </a>
+        </div>
+
+        <!-- Formulario de la serie -->
+        <div class="form-section mb-5">
+            <div class="card-header mb-3">
+                <i class="fa-solid fa-edit me-2"></i><span th:if="${editMode}" th:text="'Modificar Serie'">Modificar Serie</span><span th:unless="${editMode}" th:text="'Crear Nueva Serie'">Crear Nueva Serie</span>
+            </div>
+            <form id="serieForm">
+                <div class="row g-4">
+                    <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="nombre" class="form-label fw-bold">Nombre de la Serie</label>
+                                <input type="text" id="nombre" class="form-control" required placeholder="Ej: Lunes - Pecho y Tríceps">
+                            </div>
+                            <div class="mb-3">
+                                <label for="descripcion" class="form-label fw-bold">Descripción (Opcional)</label>
+                                <textarea id="descripcion" class="form-control" rows="3" placeholder="Añade notas o una descripción..."></textarea>
+                            </div>
+                            <div class="mb-3">
+                                <label for="repeticionesSerie" class="form-label fw-bold">Vueltas de la serie</label>
+                                <div class="input-group">
+                                    <input type="number" id="repeticionesSerie" class="form-control" value="1" min="1" max="10" required>
+                                    <span class="input-group-text">vueltas</span>
+                                </div>
+                                <small class="form-text text-muted">Cantidad de vueltas (veces que se repite la serie completa en la rutina)</small>
+                            </div>
+                    </div>
+                    <div class="col-md-6">
+                        <h6 class="fw-bold">Ejercicios en esta Serie</h6>
+                        <p class="small text-muted mb-2">Usá las flechas para cambiar el orden de los ejercicios.</p>
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Ejercicio</th>
+                                        <th style="width: 120px;">Cantidad</th>
+                                        <th style="width: 150px;">Unidad</th>
+                                        <th style="width: 120px;">Peso (kg)</th>
+                                        <th style="width: 140px;">Orden / Acción</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tabla-ejercicios-serie">
+                                    <!-- Los ejercicios seleccionados se añadirán aquí con JS -->
+                                </tbody>
+                            </table>
+                            <div id="no-ejercicios" class="text-center text-muted mt-3">
+                            <p>Aún no has añadido ejercicios. Selecciona un ejercicio del carrusel de arriba.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="d-grid mt-4">
+                    <button type="submit" class="btn btn-primary btn-lg"><i class="fa-solid fa-save me-2"></i>Guardar Serie Plantilla</button>
+            </div>
+        </form>
+        </div>
+    </div>
+
+    <!-- Modal alerta (éxito/error/info) estilo Mattfuncional -->
+    <div class="modal fade" id="modalAlertaSerie" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header modal-confirmar-header" id="modalAlertaSerieHeader">
+                    <h5 class="modal-title"><i class="fas fa-info-circle me-2"></i>Información</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body" id="modalAlertaSerieMensaje"></div>
+                <div class="modal-footer modal-confirmar-footer">
+                    <button type="button" class="btn btn-primary" id="modalAlertaSerieBtn" data-bs-dismiss="modal">Aceptar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.4/dist/js/splide.min.js"></script>
+    <script type="application/json" id="serie-data-json" th:if="${editMode and serieDTOJson != null}">[( ${serieDTOJson} )]</script>
+    <script th:inline="javascript">
+    /*<![CDATA[*/
+    const editMode = /*[[${editMode}]]*/ false;
+    const serieData = (function() {
+        if (!editMode) return null;
+        const el = document.getElementById('serie-data-json');
+        if (!el || !el.textContent) return null;
+        try { return JSON.parse(el.textContent); } catch (e) { return null; }
+    })();
+    /*]]>*/
+    </script>
+    <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var modalAlertaEl = document.getElementById('modalAlertaSerie');
+        var modalAlertaMensaje = document.getElementById('modalAlertaSerieMensaje');
+        function mostrarAlerta(mensaje, opciones) {
+            opciones = opciones || {};
+            if (modalAlertaMensaje) modalAlertaMensaje.textContent = mensaje || '';
+            var redirectUrl = opciones.redirectUrl;
+            function onHidden() {
+                if (modalAlertaEl) modalAlertaEl.removeEventListener('hidden.bs.modal', onHidden);
+                if (redirectUrl) window.location.href = redirectUrl;
+            }
+            if (redirectUrl && modalAlertaEl) modalAlertaEl.addEventListener('hidden.bs.modal', onHidden);
+            if (modalAlertaEl && typeof bootstrap !== 'undefined') (new bootstrap.Modal(modalAlertaEl)).show();
+        }
+
+        const carousel = document.getElementById('ejercicios-carousel');
+        const tablaEjerciciosSerie = document.getElementById('tabla-ejercicios-serie');
+        const noEjerciciosMsg = document.getElementById('no-ejercicios');
+        const filtroEjercicio = document.getElementById('filtro-ejercicio');
+        const filtroMusculo = document.getElementById('filtro-musculo');
+        const serieForm = document.getElementById('serieForm');
+        
+        // Guardar los datos de los ejercicios en JS
+        const ejerciciosData = Array.from(document.querySelectorAll('#ejercicios-carousel .splide__slide')).map(slide => ({
+            id: slide.dataset.id,
+            nombre: slide.dataset.nombre,
+            musculos: (slide.dataset.musculos || '').split(',').map(m => m.trim().toUpperCase()),
+            imgSrc: slide.querySelector('img') ? slide.querySelector('img').getAttribute('src') : '',
+            imgAlt: slide.querySelector('img') ? slide.querySelector('img').getAttribute('alt') : '',
+            grupoMuscular: slide.querySelector('.grupo-muscular-badge') ? slide.querySelector('.grupo-muscular-badge').textContent : '',
+        }));
+
+        let splide = null;
+
+        function renderCarrusel(ejercicios) {
+            const ul = carousel.querySelector('.splide__list');
+            ul.innerHTML = '';
+            ejercicios.forEach(ejercicio => {
+                const li = document.createElement('li');
+                li.className = 'splide__slide';
+                li.setAttribute('data-id', ejercicio.id);
+                li.setAttribute('data-nombre', ejercicio.nombre);
+                li.setAttribute('data-musculos', ejercicio.musculos.join(','));
+                li.innerHTML = `
+                    <div class="card ejercicio-card">
+                        <div class="grupo-muscular-badge">${ejercicio.grupoMuscular}</div>
+                        <img src="${ejercicio.imgSrc}" class="card-img-top" alt="${ejercicio.imgAlt}">
+                        <div class="card-body text-center">
+                            <h6 class="card-title">${ejercicio.nombre}</h6>
+                        </div>
+                    </div>
+                `;
+                ul.appendChild(li);
+            });
+            // El clic se maneja con un solo listener delegado en carousel (más abajo) para evitar duplicados
+        }
+
+        function filtrarEjercicios() {
+            const texto = filtroEjercicio.value.toLowerCase();
+            const musculo = filtroMusculo.value.toUpperCase();
+            const ejerciciosFiltrados = ejerciciosData.filter(ejercicio => {
+                const coincideMusculo = musculo === '' || ejercicio.musculos.includes(musculo);
+                const coincideTexto = ejercicio.nombre.toLowerCase().includes(texto);
+                return coincideMusculo && coincideTexto;
+            });
+            if (splide) splide.destroy();
+            renderCarrusel(ejerciciosFiltrados);
+            splide = new Splide('#ejercicios-carousel', {
+                type: 'slide',
+                perPage: 3,
+                perMove: 1,
+                gap: '0.3rem',
+                pagination: false,
+                breakpoints: {
+                    576: { perPage: 2, gap: '0.15rem' },
+                }
+            }).mount();
+        }
+
+        // Inicializar Splide con todos los ejercicios
+        filtrarEjercicios();
+        filtroEjercicio.addEventListener('input', filtrarEjercicios);
+        filtroMusculo.addEventListener('change', filtrarEjercicios);
+
+        function actualizarVistaTabla() {
+            noEjerciciosMsg.style.display = tablaEjerciciosSerie.rows.length === 0 ? 'block' : 'none';
+        }
+
+        // --- INICIALIZACIÓN PARA MODO EDICIÓN ---
+        if (editMode && serieData) {
+            // Rellenar campos simples
+            document.getElementById('nombre').value = serieData.nombre;
+            document.getElementById('descripcion').value = serieData.descripcion;
+            document.getElementById('repeticionesSerie').value = serieData.repeticionesSerie || 1;
+
+            // Cambiar texto del botón (el título ya se muestra "Modificar Serie" desde el servidor)
+            document.querySelector('button[type="submit"]').innerHTML = '<i class="fas fa-save me-2"></i>Guardar Cambios';
+
+
+            // Rellenar la tabla de ejercicios pre-seleccionados
+            if (serieData.ejercicios) {
+                serieData.ejercicios.forEach(ejercicio => {
+                    const slide = carousel.querySelector(`.splide__slide[data-id="${ejercicio.ejercicioId}"]`);
+                    if (slide) {
+                        const nombre = slide.dataset.nombre;
+                        const card = slide.querySelector('.ejercicio-card');
+                        card.classList.add('selected');
+
+                        const fila = tablaEjerciciosSerie.insertRow();
+                        fila.dataset.id = ejercicio.ejercicioId;
+                        fila.innerHTML = `
+                            <td>${nombre}</td>
+                            <td><input type="number" class="form-control valor-input" value="${ejercicio.valor || 1}" required min="1"></td>
+                            <td>
+                                <select class="form-select unidad-select">
+                                    <option value="reps" ${ejercicio.unidad === 'reps' ? 'selected' : ''}>Repeticiones</option>
+                                    <option value="min" ${ejercicio.unidad === 'min' ? 'selected' : ''}>Minutos</option>
+                                    <option value="seg" ${ejercicio.unidad === 'seg' ? 'selected' : ''}>Segundos</option>
+                                </select>
+                            </td>
+                            <td>
+                                <input type="number" class="form-control peso-input" min="0" placeholder="Ej: 10" value="${ejercicio.peso !== null ? ejercicio.peso : ''}">
+                                <div class="form-check mt-1">
+                                    <input class="form-check-input sin-peso-check" type="checkbox" ${ejercicio.peso === null ? 'checked' : ''}>
+                                    <label class="form-check-label">No requiere peso</label>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="btn-group btn-group-sm">
+                                    <button type="button" class="btn btn-outline-secondary btn-subir-ejercicio" title="Subir"><i class="fas fa-arrow-up"></i></button>
+                                    <button type="button" class="btn btn-outline-secondary btn-bajar-ejercicio" title="Bajar"><i class="fas fa-arrow-down"></i></button>
+                                    <button type="button" class="btn btn-danger btn-sm eliminar-btn"><i class="fas fa-trash-alt"></i></button>
+                                </div>
+                            </td>
+                        `;
+                    }
+                });
+                actualizarVistaTabla();
+            }
+        }
+
+        carousel.addEventListener('click', function (e) {
+            const slide = e.target.closest('.splide__slide');
+            if (!slide) return;
+
+            const id = slide.dataset.id;
+            const nombre = slide.dataset.nombre;
+            const card = slide.querySelector('.ejercicio-card');
+            // Permitir añadir el mismo ejercicio varias veces (reps/peso distintos)
+            card.classList.add('selected');
+
+            const fila = tablaEjerciciosSerie.insertRow();
+            fila.dataset.id = id;
+            fila.innerHTML = `
+                <td>${nombre}</td>
+                <td><input type="number" class="form-control valor-input" value="1" required min="1"></td>
+                <td>
+                    <select class="form-select unidad-select">
+                        <option value="reps" selected>Repeticiones</option>
+                        <option value="min">Minutos</option>
+                        <option value="seg">Segundos</option>
+                    </select>
+                </td>
+                <td>
+                    <input type="number" class="form-control peso-input" min="0" placeholder="Ej: 10">
+                    <div class="form-check mt-1">
+                        <input class="form-check-input sin-peso-check" type="checkbox">
+                        <label class="form-check-label">No requiere peso</label>
+                    </div>
+                </td>
+                <td>
+                    <div class="btn-group btn-group-sm">
+                        <button type="button" class="btn btn-outline-secondary btn-subir-ejercicio" title="Subir"><i class="fas fa-arrow-up"></i></button>
+                        <button type="button" class="btn btn-outline-secondary btn-bajar-ejercicio" title="Bajar"><i class="fas fa-arrow-down"></i></button>
+                        <button type="button" class="btn btn-danger btn-sm eliminar-btn"><i class="fas fa-trash-alt"></i></button>
+                    </div>
+                </td>
+            `;
+
+            actualizarVistaTabla();
+        });
+
+        tablaEjerciciosSerie.addEventListener('click', function(e) {
+            const subirBtn = e.target.closest('.btn-subir-ejercicio');
+            const bajarBtn = e.target.closest('.btn-bajar-ejercicio');
+            if (subirBtn) {
+                e.preventDefault();
+                const fila = subirBtn.closest('tr');
+                const prev = fila.previousElementSibling;
+                if (prev && prev.tagName === 'TR') {
+                    tablaEjerciciosSerie.insertBefore(fila, prev);
+                }
+                return;
+            }
+            if (bajarBtn) {
+                e.preventDefault();
+                const fila = bajarBtn.closest('tr');
+                const next = fila.nextElementSibling;
+                if (next && next.tagName === 'TR') {
+                    tablaEjerciciosSerie.insertBefore(next, fila);
+                }
+                return;
+            }
+            const eliminarBtn = e.target.closest('.eliminar-btn');
+            if (eliminarBtn) {
+                const fila = eliminarBtn.closest('tr');
+                const id = fila.dataset.id;
+                fila.remove();
+                // Desmarcar la tarjeta solo si no queda ninguna fila de ese ejercicio
+                const quedanFilasConEsteEjercicio = Array.from(tablaEjerciciosSerie.rows).some(row => row.dataset.id === id);
+                if (!quedanFilasConEsteEjercicio) {
+                    const slide = carousel.querySelector(`.splide__slide[data-id="${id}"]`);
+                    if (slide) slide.querySelector('.ejercicio-card').classList.remove('selected');
+                }
+                actualizarVistaTabla();
+            }
+        });
+
+        serieForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const nombreSerie = document.getElementById('nombre').value;
+            if (!nombreSerie.trim()) {
+                mostrarAlerta('Por favor, introduce un nombre para la serie.');
+                return;
+            }
+
+            const ejerciciosParaEnviar = [];
+            const filas = tablaEjerciciosSerie.rows;
+
+            if (filas.length === 0) {
+                mostrarAlerta('Debes añadir al menos un ejercicio a la serie.');
+                return;
+            }
+            
+            for (const fila of filas) {
+                const valorInput = fila.querySelector('.valor-input');
+                const unidadSelect = fila.querySelector('.unidad-select');
+                
+                const valor = parseInt(valorInput.value, 10);
+                if (!valor || valor <= 0) {
+                    mostrarAlerta('Por favor, define un número válido para todos los ejercicios.');
+                    valorInput.focus();
+                    return;
+                }
+
+                ejerciciosParaEnviar.push({
+                    ejercicioId: fila.dataset.id,
+                    valor: valor,
+                    unidad: unidadSelect.value,
+                    peso: fila.querySelector('.sin-peso-check').checked ? null : (fila.querySelector('.peso-input').value ? parseInt(fila.querySelector('.peso-input').value, 10) : null)
+                });
+            }
+
+            const serieDTO = {
+                nombre: nombreSerie,
+                descripcion: document.getElementById('descripcion').value,
+                repeticionesSerie: parseInt(document.getElementById('repeticionesSerie').value, 10),
+                ejercicios: ejerciciosParaEnviar
+            };
+
+            // Determinar la URL y el método (Crear vs Editar)
+            const url = editMode ? `/series/editar/${serieData.id}` : '/series/crear-plantilla';
+            const method = editMode ? 'PUT' : 'POST';
+
+            try {
+                const response = await fetch(url, {
+                    method: method,
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(serieDTO)
+                });
+
+                if (response.ok) {
+                    const successMessage = editMode ? '¡Serie actualizada exitosamente!' : '¡Serie creada exitosamente!';
+                    mostrarAlerta(successMessage, { redirectUrl: '/profesor/dashboard?tab=series' });
+                } else {
+                    const errorData = await response.json();
+                    mostrarAlerta('Error al procesar la serie: ' + (errorData.message || 'Error desconocido'));
+                }
+            } catch (error) {
+                console.error('Error en la petición:', error);
+                mostrarAlerta('Ocurrió un error: ' + error.message);
+            }
+        });
+
+        actualizarVistaTabla();
+    });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html> 

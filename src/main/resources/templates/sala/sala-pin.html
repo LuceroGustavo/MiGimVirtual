@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Ingresar código - Mattfuncional</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body { margin: 0; padding: 0; background: #0a0a0a; color: #fff; min-height: 100vh; display: flex; align-items: center; justify-content: center; font-family: sans-serif; }
+        .pin-container { text-align: center; padding: 2rem; }
+        .pin-container h1 { font-size: 1.75rem; color: #81c784; margin-bottom: 1.5rem; }
+        .pin-display { font-size: 2.5rem; letter-spacing: 0.5rem; margin-bottom: 2rem; min-height: 3rem; color: #fff; }
+        .pin-keypad { display: inline-grid; grid-template-columns: repeat(3, 1fr); gap: 0.75rem; max-width: 280px; margin: 0 auto 1.5rem; }
+        .pin-btn { width: 72px; height: 72px; font-size: 1.75rem; font-weight: 700; border: 2px solid #333; border-radius: 12px; background: #1e1e1e; color: #fff; cursor: pointer; transition: background 0.2s; }
+        .pin-btn:hover, .pin-btn:focus { background: #333; outline: none; }
+        .pin-btn:active { background: #81c784; color: #0a0a0a; }
+        .pin-btn.btn-borrar { font-size: 1rem; }
+        .pin-btn.btn-entrar { grid-column: span 2; background: #2e7d32; color: #fff; }
+        .pin-btn.btn-entrar:hover { background: #388e3c; }
+        .pin-btn.btn-entrar:disabled { opacity: 0.5; cursor: not-allowed; }
+        .pin-error { color: #f44336; margin-top: 1rem; font-size: 1rem; }
+    </style>
+</head>
+<body>
+<div class="pin-container">
+    <h1><i class="fa-solid fa-tv me-2"></i>Ingresar código de 4 dígitos</h1>
+    <div class="pin-display" id="pinDisplay">****</div>
+    <div class="pin-keypad">
+        <button type="button" class="pin-btn" data-n="1">1</button>
+        <button type="button" class="pin-btn" data-n="2">2</button>
+        <button type="button" class="pin-btn" data-n="3">3</button>
+        <button type="button" class="pin-btn" data-n="4">4</button>
+        <button type="button" class="pin-btn" data-n="5">5</button>
+        <button type="button" class="pin-btn" data-n="6">6</button>
+        <button type="button" class="pin-btn" data-n="7">7</button>
+        <button type="button" class="pin-btn" data-n="8">8</button>
+        <button type="button" class="pin-btn" data-n="9">9</button>
+        <button type="button" class="pin-btn pin-btn-borrar btn-borrar"><i class="fa-solid fa-delete-left"></i></button>
+        <button type="button" class="pin-btn" data-n="0">0</button>
+        <button type="button" class="pin-btn btn-entrar" id="btnEntrar" disabled>Entrar</button>
+    </div>
+    <div class="pin-error" id="pinError" style="display: none;">Código incorrecto. Intentá de nuevo.</div>
+</div>
+
+<script th:inline="javascript">
+    const token = [[${token}]];
+    let pin = '';
+
+    function updateDisplay() {
+        document.getElementById('pinDisplay').textContent = pin.length === 0 ? '****' : '*'.repeat(pin.length);
+        document.getElementById('btnEntrar').disabled = pin.length !== 4;
+        document.getElementById('pinError').style.display = 'none';
+    }
+
+    document.querySelectorAll('.pin-btn[data-n]').forEach(btn => {
+        btn.addEventListener('click', function() {
+            if (pin.length < 4) {
+                pin += this.getAttribute('data-n');
+                updateDisplay();
+            }
+        });
+    });
+
+    document.querySelector('.pin-btn-borrar').addEventListener('click', function() {
+        pin = pin.slice(0, -1);
+        updateDisplay();
+    });
+
+    document.getElementById('btnEntrar').addEventListener('click', function() {
+        if (pin.length !== 4) return;
+        this.disabled = true;
+        fetch('/sala/verificar-pin', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ token: token, codigo: pin })
+        }).then(function(r) {
+            if (r.ok) {
+                window.location.href = '/sala/' + token;
+            } else {
+                pin = '';
+                updateDisplay();
+                document.getElementById('pinError').style.display = 'block';
+                document.getElementById('btnEntrar').disabled = false;
+            }
+        }).catch(function() {
+            pin = '';
+            updateDisplay();
+            document.getElementById('pinError').style.display = 'block';
+            document.getElementById('btnEntrar').disabled = false;
+        });
+    });
+    updateDisplay();
+</script>
+</body>
+</html>

@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin="" />
+    <link
+      rel="stylesheet"
+      as="style"
+      onload="this.rel='stylesheet'"
+      href="https://fonts.googleapis.com/css2?display=swap&amp;family=Lexend%3Awght%40400%3B500%3B700%3B900&amp;family=Noto+Sans%3Awght%40400%3B500%3B700%3B900"
+    />
+
+    <title>Mattfuncional - Gesti?n de Gimnasio</title>
+    <link rel="icon" type="image/x-icon" th:href="@{/img/logo matt.jpeg}" href="/img/logo%20matt.jpeg" />
+
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="/css/footer.css" rel="stylesheet">
+</head>
+<body>
+    <div class="relative flex size-full min-h-screen flex-col bg-[#f8fcfb] group/design-root overflow-x-hidden" style='font-family: Lexend, "Noto Sans", sans-serif;'>
+      <div class="layout-container flex h-full grow flex-col">
+        <!-- Header con navbar mejorado -->
+        <header class="flex items-center justify-between whitespace-nowrap border-b border-solid border-b-[#e7f3f1] px-10 py-3 bg-gradient-to-r from-blue-600 to-purple-600 shadow-lg">
+          <div class="flex items-center gap-4 text-white">
+            <div class="size-10">
+              <img th:src="@{/img/logo matt.jpeg}" src="/img/logo%20matt.jpeg" alt="Logo Mattfuncional" class="w-10 h-10 rounded-full object-cover" onerror="this.src='/img/not_imagen.png'">
+            </div>
+            <h2 class="text-white text-xl font-bold leading-tight tracking-[-0.015em]">Mattfuncional</h2>
+          </div>
+          
+          <!-- Botones de navegaci?n -->
+          <div class="flex items-center gap-4">
+            <!-- Usuario NO autenticado -->
+            <div th:if="${#authentication.principal == 'anonymousUser'}" class="flex items-center gap-4">
+              <a href="/login" class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-full h-10 px-4 bg-white text-blue-600 text-sm font-bold leading-normal tracking-[0.015em] hover:bg-gray-100 transition-colors">
+                <i class="fas fa-sign-in-alt mr-2"></i>
+                <span class="truncate">Iniciar Sesi?n</span>
+              </a>
+              <a href="/login" class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-full h-10 px-4 bg-transparent border-2 border-white text-white text-sm font-bold leading-normal tracking-[0.015em] hover:bg-white hover:text-blue-600 transition-colors">
+                <i class="fas fa-sign-in-alt mr-2"></i>
+                <span class="truncate">Iniciar Sesi?n</span>
+              </a>
+        </div>
+            
+            <!-- Usuario autenticado -->
+            <div th:if="${#authentication.principal != 'anonymousUser'}" class="flex items-center gap-4">
+              <span class="text-white text-sm font-medium">
+                <i class="fas fa-user me-2"></i>
+                <span th:if="${usuarioActual != null}" th:text="${usuarioActual.nombre}">Usuario</span>
+                <span th:if="${usuarioActual == null}" th:text="${#authentication.principal.username}">Usuario</span>
+              </span>
+              <a href="/logout" class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-full h-10 px-4 bg-red-500 text-white text-sm font-bold leading-normal tracking-[0.015em] hover:bg-red-600 transition-colors">
+                <i class="fas fa-sign-out-alt mr-2"></i>
+                <span class="truncate">Cerrar Sesi?n</span>
+              </a>
+            </div>
+          </div>
+        </header>
+        
+        <!-- Contenido principal -->
+        <div class="px-40 flex flex-1 justify-center py-5">
+          <div class="layout-content-container flex flex-col max-w-[960px] flex-1">
+            <div class="@container">
+              <div class="@[480px]:p-4">
+                <!-- Hero: video de fondo Matt + poster/fallback -->
+                <div
+                  class="flex min-h-[480px] flex-col gap-6 @[480px]:gap-8 @[480px]:rounded-xl items-center justify-center p-4 relative overflow-hidden rounded-xl"
+                  style="min-height: 520px;"
+                >
+                  <!-- Video de fondo (animaci?n Matt) -->
+                  <video
+                    class="absolute inset-0 w-full h-full object-cover"
+                    autoplay
+                    muted
+                    loop
+                    playsinline
+                    poster="/img/publica/fondo%20matt.jpeg"
+                    aria-hidden="true"
+                  >
+                    <source th:src="@{/img/publica/video matt.mp4}" src="/img/publica/video%20matt.mp4" type="video/mp4" />
+                  </video>
+                  <!-- Overlay para legibilidad del texto -->
+                  <div class="absolute inset-0 bg-black/40 z-0" aria-hidden="true"></div>
+                  <!-- Contenido central -->
+                  <div class="flex flex-col gap-4 text-center z-10">
+                    <h1
+                      class="text-white text-5xl font-black leading-tight tracking-[-0.033em] @[480px]:text-6xl @[480px]:font-black @[480px]:leading-tight @[480px]:tracking-[-0.033em] drop-shadow-lg"
+                    >
+                      Mattfuncional
+                    </h1>
+                    <h2 class="text-white text-lg font-normal leading-normal @[480px]:text-xl @[480px]:font-normal @[480px]:leading-normal drop-shadow-md">
+                      Gesti?n del gimnasio Mat Funcional
+                    </h2>
+                    <p class="text-white/90 text-sm @[480px]:text-base max-w-md mx-auto drop-shadow-sm">
+                      Administra alumnos, rutinas, ejercicios y m?s con nuestra plataforma completa y f?cil de usar
+                    </p>
+                  </div>
+                  
+                  <!-- Botones de acci?n -->
+                  <div class="flex flex-col sm:flex-row gap-4 z-10">
+                    <!-- Bot?n para usuarios no autenticados -->
+                    <a th:if="${#authentication.principal == 'anonymousUser'}" href="/login"
+                      class="flex min-w-[160px] cursor-pointer items-center justify-center overflow-hidden rounded-full h-12 px-6 @[480px]:h-14 @[480px]:px-8 bg-gradient-to-r from-blue-500 to-purple-600 text-white text-base font-bold leading-normal tracking-[0.015em] @[480px]:text-lg @[480px]:font-bold @[480px]:leading-normal @[480px]:tracking-[0.015em] hover:from-blue-600 hover:to-purple-700 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105"
+                    >
+                      <i class="fas fa-rocket mr-2"></i>
+                      <span class="truncate">Comenzar Ahora</span>
+                    </a>
+                    <!-- Bot?n para usuarios autenticados -->
+                    <a th:if="${#authentication.principal != 'anonymousUser'}" 
+                      th:href="${usuarioActual != null && (usuarioActual.rol == 'ADMIN' or usuarioActual.rol == 'AYUDANTE' or usuarioActual.rol == 'DEVELOPER') ? '/profesor/dashboard' : '/'}"
+                       class="flex min-w-[160px] cursor-pointer items-center justify-center overflow-hidden rounded-full h-12 px-6 @[480px]:h-14 @[480px]:px-8 bg-gradient-to-r from-green-500 to-blue-600 text-white text-base font-bold leading-normal tracking-[0.015em] @[480px]:text-lg @[480px]:font-bold @[480px]:leading-normal @[480px]:tracking-[0.015em] hover:from-green-600 hover:to-blue-700 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105"
+                    >
+                      <i class="fas fa-tachometer-alt mr-2"></i>
+                      <span class="truncate">Ir al Panel</span>
+                    </a>
+                    <a href="/demo"
+                      class="flex min-w-[160px] cursor-pointer items-center justify-center overflow-hidden rounded-full h-12 px-6 @[480px]:h-14 @[480px]:px-8 bg-transparent border-2 border-white text-white text-base font-bold leading-normal tracking-[0.015em] @[480px]:text-lg @[480px]:font-bold @[480px]:leading-normal @[480px]:tracking-[0.015em] hover:bg-white hover:text-blue-600 transition-all duration-300"
+                    >
+                      <i class="fas fa-play mr-2"></i>
+                      <span class="truncate">Ver Demo</span>
+            </a>
+        </div>
+
+                  <!-- Caracter?sticas destacadas -->
+                  <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8 z-10">
+                    <div class="text-center text-white">
+                      <div class="bg-white/20 backdrop-blur-sm rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-3">
+                        <i class="fas fa-users text-2xl"></i>
+                      </div>
+                      <h3 class="font-bold text-lg mb-2">Gesti?n de Alumnos</h3>
+                      <p class="text-sm text-white/80">Administra perfiles, rutinas y progreso de tus alumnos</p>
+                    </div>
+                    <div class="text-center text-white">
+                      <div class="bg-white/20 backdrop-blur-sm rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-3">
+                        <i class="fas fa-dumbbell text-2xl"></i>
+                      </div>
+                      <h3 class="font-bold text-lg mb-2">Ejercicios y Rutinas</h3>
+                      <p class="text-sm text-white/80">Crea y personaliza rutinas con ejercicios detallados</p>
+                    </div>
+                    <div class="text-center text-white">
+                      <div class="bg-white/20 backdrop-blur-sm rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-3">
+                        <i class="fas fa-chart-line text-2xl"></i>
+                        </div>
+                      <h3 class="font-bold text-lg mb-2">Seguimiento</h3>
+                      <p class="text-sm text-white/80">Monitorea el progreso y resultados de tus alumnos</p>
+                    </div>
+                  </div>
+                </div>
+                <!-- Carrusel de im?genes del gimnasio (publica) -->
+                <div class="mt-8">
+                  <h2 class="text-xl font-bold text-gray-800 mb-4 text-center">Conoc? el espacio</h2>
+                  <div id="carouselPublica" class="carousel slide rounded-xl overflow-hidden shadow-lg" data-bs-ride="carousel">
+                    <div class="carousel-inner">
+                      <div class="carousel-item active">
+                        <img th:src="@{/img/publica/1.png}" src="/img/publica/1.png" class="d-block w-100" style="object-fit: cover; height: 320px;" alt="Mattfuncional" />
+                      </div>
+                      <div class="carousel-item">
+                        <img th:src="@{/img/publica/2.png}" src="/img/publica/2.png" class="d-block w-100" style="object-fit: cover; height: 320px;" alt="Mattfuncional" />
+                      </div>
+                      <div class="carousel-item">
+                        <img th:src="@{/img/publica/3.png}" src="/img/publica/3.png" class="d-block w-100" style="object-fit: cover; height: 320px;" alt="Mattfuncional" />
+                      </div>
+                      <div class="carousel-item">
+                        <img th:src="@{/img/publica/4.jpg}" src="/img/publica/4.jpg" class="d-block w-100" style="object-fit: cover; height: 320px;" alt="Mattfuncional" />
+                      </div>
+                      <div class="carousel-item">
+                        <img th:src="@{/img/publica/5.jpg}" src="/img/publica/5.jpg" class="d-block w-100" style="object-fit: cover; height: 320px;" alt="Mattfuncional" />
+                      </div>
+                      <div class="carousel-item">
+                        <img th:src="@{/img/publica/6.jpg}" src="/img/publica/6.jpg" class="d-block w-100" style="object-fit: cover; height: 320px;" alt="Mattfuncional" />
+                      </div>
+                    </div>
+                    <button class="carousel-control-prev" type="button" data-bs-target="#carouselPublica" data-bs-slide="prev">
+                      <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                      <span class="visually-hidden">Anterior</span>
+                    </button>
+                    <button class="carousel-control-next" type="button" data-bs-target="#carouselPublica" data-bs-slide="next">
+                      <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                      <span class="visually-hidden">Siguiente</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer Fragment -->
+    <div th:replace="fragments/footer :: footer"></div>
+    
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html> 

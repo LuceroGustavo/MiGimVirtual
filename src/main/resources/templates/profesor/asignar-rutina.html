@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/springsecurity">
+<head>
+    <meta charset="UTF-8">
+    <title>Asignar Rutina - Panel del Profesor</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="/css/footer.css" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        .main-container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            margin: 20px auto;
+            padding: 30px;
+        }
+        
+        .hero-title {
+            color: #2c3e50;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.2rem;
+        }
+        
+        .hero-subtitle {
+            color: #7f8c8d;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 1.1rem;
+        }
+        
+        .btn-volver {
+            background: linear-gradient(135deg, #636e72 0%, #b2bec3 100%);
+            border: none;
+            color: white;
+            font-weight: 600;
+            padding: 10px 20px;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-volver:hover {
+            background: linear-gradient(135deg, #b2bec3 0%, #636e72 100%);
+            transform: translateY(-2px);
+            color: white;
+        }
+        
+        .alumno-info {
+            background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%);
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            border-left: 4px solid #667eea;
+        }
+        
+                 .serie-card {
+             border: 2px solid #e9ecef;
+             border-radius: 12px;
+             transition: all 0.3s ease;
+             cursor: pointer;
+             background: white;
+             margin-bottom: 12px;
+             position: relative;
+             padding: 1rem;
+             min-height: 140px;
+         }
+        
+        .serie-card:hover {
+            border-color: #fdcb6e;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(253, 203, 110, 0.2);
+        }
+        
+        .serie-card.asignada {
+            border-color: #28a745;
+            background-color: #f8fff9;
+            cursor: not-allowed;
+        }
+        
+        .serie-card.selected {
+            border-color: #fdcb6e;
+            background: linear-gradient(135deg, #fdcb6e 0%, #e17055 100%);
+            color: white;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(253, 203, 110, 0.3);
+        }
+        
+        .serie-card.selected h6,
+        .serie-card.selected p,
+        .serie-card.selected .text-muted,
+        .serie-card.selected .h5,
+        .serie-card.selected small {
+            color: white !important;
+        }
+        
+        .btn-asignar {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            color: white;
+            font-weight: 600;
+            padding: 12px 30px;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-asignar:hover {
+            background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+            transform: translateY(-2px);
+            color: white;
+        }
+        
+                 .card-header-custom {
+             background: linear-gradient(135deg, #fdcb6e 0%, #e17055 100%);
+             color: white;
+             border-radius: 15px 15px 0 0;
+             padding: 1rem 1.5rem;
+         }
+    </style>
+</head>
+<body>
+
+<!-- Navbar fragment -->
+<div th:replace="fragments/navbar :: navbar"></div>
+
+<div class="container-fluid">
+    <div class="main-container">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <a th:href="@{/profesor/{id}(id=${profesor.id})}" class="btn btn-volver">
+                <i class="fas fa-arrow-left me-2"></i>Volver al Dashboard
+            </a>
+        </div>
+        
+        <h1 class="hero-title">
+            <i class="fas fa-dumbbell me-3"></i>Asignar Rutina
+        </h1>
+        <p class="hero-subtitle">Asigna rutinas de entrenamiento a tus alumnos</p>
+
+        <!-- Información del Alumno -->
+        <div class="alumno-info">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <h4 class="mb-2">
+                        <i class="fas fa-user me-2"></i>
+                        <span th:text="${alumno.nombre}">Nombre del Alumno</span>
+                    </h4>
+                    <p class="mb-1">
+                        <strong>Edad:</strong> <span th:text="${alumno.edad}">Edad</span> años
+                    </p>
+                    <p class="mb-1">
+                        <strong>Sexo:</strong> <span th:text="${alumno.sexo}">Sexo</span>
+                    </p>
+                    <p class="mb-0">
+                        <strong>Peso:</strong> <span th:text="${alumno.peso}">Peso</span> kg
+                    </p>
+                </div>
+                <div class="col-md-4 text-md-end">
+                    <div class="text-center">
+                        <div class="h2 text-primary mb-0" th:text="${rutinasAsignadas != null ? rutinasAsignadas.size() : 0}">0</div>
+                        <small class="text-muted">Rutinas Asignadas</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mensaje de error -->
+        <div th:if="${errorMessage}" class="alert alert-danger" role="alert">
+            <i class="fas fa-exclamation-triangle me-2"></i>
+            <span th:text="${errorMessage}"></span>
+        </div>
+
+        <!-- Formulario de Asignación -->
+        <div class="card">
+                         <div class="card-header-custom">
+                 <div class="d-flex justify-content-between align-items-center">
+                     <h5 class="mb-0">
+                         <i class="fas fa-dumbbell me-2"></i>Seleccionar Rutina para Asignar
+                         <span class="badge bg-light text-dark ms-2" id="selectedCount">0 seleccionadas</span>
+                     </h5>
+                     <div class="text-white">
+                         <small>
+                             <i class="fas fa-layer-group me-1"></i>
+                             <span th:text="${rutinasPlantilla != null ? rutinasPlantilla.size() : 0}">0</span> rutinas disponibles
+                         </small>
+                     </div>
+                 </div>
+             </div>
+            
+            
+            
+            <div class="card-body" style="max-height: 500px; overflow-y: auto;">
+                
+                
+                                 <div th:if="${rutinasPlantilla != null and !rutinasPlantilla.isEmpty()}">
+                     <div class="row">
+                         <div th:each="rutina : ${rutinasPlantilla}" class="col-lg-4 col-md-6 col-sm-6 mb-3">
+                             <div class="serie-card" th:classappend="${rutinasAsignadas != null and rutinasAsignadas.contains(rutina)} ? 'asignada'" 
+                                  th:data-serie-id="${rutina.id}">
+                                 <div class="d-flex justify-content-between align-items-start mb-2">
+                                     <h6 class="mb-1 text-truncate" style="max-width: 200px;" th:text="${rutina.nombre}">Nombre de la Rutina</h6>
+                                     <div class="d-flex gap-1 align-items-center">
+                                         <a th:href="@{/rutinas/ver/{id}(id=${rutina.id})}" class="btn btn-outline-info btn-sm" target="_blank" rel="noopener">
+                                             <i class="fas fa-eye"></i>
+                                         </a>
+                                         <span th:if="${rutinasAsignadas != null and rutinasAsignadas.contains(rutina)}" 
+                                               class="badge bg-success">
+                                             <i class="fas fa-check me-1"></i>Asignada
+                                         </span>
+                                     </div>
+                                 </div>
+                                 
+                                 <p class="text-muted mb-2 small" style="font-size: 0.85rem; line-height: 1.2;" th:text="${rutina.descripcion}">Descripción de la rutina</p>
+                                 
+                                 <div class="row text-center mb-2">
+                                     <div class="col-4">
+                                         <div class="h6 text-primary mb-0" th:text="${rutina.series != null ? rutina.series.size() : 0}">0</div>
+                                         <small class="text-muted" style="font-size: 0.75rem;">Series</small>
+                                     </div>
+                                     <div class="col-4">
+                                         <div class="h6 text-info mb-0" th:text="${rutina.categoria != null ? rutina.categoria : 'N/A'}">N/A</div>
+                                         <small class="text-muted" style="font-size: 0.75rem;">Categoría</small>
+                                     </div>
+                                     <div class="col-4">
+                                         <div class="h6 text-muted mb-0">Asignada</div>
+                                         <small class="text-muted" style="font-size: 0.75rem;">Rutina</small>
+                                     </div>
+                                 </div>
+                                 
+                                 <!-- Checkbox oculto para la selección -->
+                                 <input type="checkbox" name="selectedSeries" th:value="${rutina.id}" class="d-none serie-checkbox">
+                             </div>
+                         </div>
+                     </div>
+                    
+                    <!-- Nota para el alumno y botón de asignación (visible cuando hay rutina seleccionada) -->
+                    <div id="botonAsignacion" class="mt-4 p-3 border rounded bg-light" style="display: none;">
+                        <form th:action="@{/profesor/asignar-rutina/{id}(id=${alumno.id})}" method="post">
+                            <input type="hidden" id="serieSeleccionada" name="rutinaPlantillaId" value="">
+                            <div class="mb-3">
+                                <label for="notaParaAlumno" class="form-label fw-bold">
+                                    <i class="fas fa-comment-dots me-1"></i>Nota o reseña para el alumno <span class="text-muted fw-normal">(opcional)</span>
+                                </label>
+                                <textarea id="notaParaAlumno" name="notaParaAlumno" class="form-control" rows="3" maxlength="2000"
+                                          placeholder="Ej: Enfocate en la técnica esta semana. Cualquier duda escribime."></textarea>
+                                <small class="text-muted">El alumno verá este mensaje al abrir el enlace de la rutina. Podés cambiarla después desde la ficha del alumno.</small>
+                            </div>
+                            <div class="text-center">
+                                <button type="submit" class="btn btn-asignar btn-lg">
+                                    <i class="fas fa-dumbbell me-2"></i>Asignar Rutina Seleccionada
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                
+                                 <div th:if="${rutinasPlantilla == null or rutinasPlantilla.isEmpty()}" class="text-center py-4">
+                     <i class="fas fa-dumbbell fa-2x text-muted mb-3"></i>
+                     <h6 class="text-muted">No hay rutinas plantilla disponibles</h6>
+                     <p class="text-muted small mb-3">Primero debes crear rutinas plantilla para poder asignarlas a tus alumnos.</p>
+                     <a th:href="@{/rutinas/crear}" class="btn btn-asignar btn-sm">
+                         <i class="fas fa-plus me-2"></i>Crear Nueva Rutina
+                     </a>
+                 </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+ <script>
+ // Variables globales
+ let selectedCount = 0;
+ let selectedCards = new Set();
+
+// Función para alternar selección de tarjeta
+function toggleCardSelection(card) {
+    if (card.classList.contains('asignada')) {
+        return; // No permitir seleccionar rutinas ya asignadas
+    }
+    
+    const rutinaId = card.getAttribute('data-serie-id');
+    const checkbox = card.querySelector('.serie-checkbox');
+    
+    if (card.classList.contains('selected')) {
+        // Deseleccionar
+        card.classList.remove('selected');
+        selectedCards.delete(rutinaId);
+        selectedCount--;
+        if (checkbox) checkbox.checked = false;
+    } else {
+        // Seleccionar
+        card.classList.add('selected');
+        selectedCards.add(rutinaId);
+        selectedCount++;
+        if (checkbox) checkbox.checked = true;
+    }
+    
+    updateCounter();
+    showAssignmentButton();
+    updateHiddenInput();
+}
+
+// Función para actualizar contador
+function updateCounter() {
+    const countBadge = document.getElementById('selectedCount');
+    if (countBadge) {
+        countBadge.textContent = `${selectedCount} seleccionada(s)`;
+    }
+}
+
+// Función para mostrar/ocultar botón de asignación
+function showAssignmentButton() {
+    const botonAsignacion = document.getElementById('botonAsignacion');
+    if (botonAsignacion) {
+        if (selectedCount > 0) {
+            botonAsignacion.style.display = 'block';
+        } else {
+            botonAsignacion.style.display = 'none';
+        }
+    }
+}
+
+// Función para actualizar input hidden
+function updateHiddenInput() {
+    const inputHidden = document.getElementById('serieSeleccionada');
+    if (inputHidden && selectedCards.size > 0) {
+        // Tomar la primera rutina seleccionada
+        const firstSelected = Array.from(selectedCards)[0];
+        inputHidden.value = firstSelected;
+    }
+}
+
+ // Inicialización cuando el DOM esté listo
+ document.addEventListener('DOMContentLoaded', function() {
+     // Configurar event listeners para las tarjetas
+     const cards = document.querySelectorAll('.serie-card');
+     
+     cards.forEach((card) => {
+         card.addEventListener('click', function(e) {
+             // Evitar que el click en elementos internos active/desactive la selección
+             if (e.target.closest('.btn') || e.target.closest('input') || e.target.closest('label')) {
+                 return;
+             }
+             
+             toggleCardSelection(this);
+         });
+     });
+ });
+</script>
+
+<!-- Footer Fragment -->
+<div th:replace="fragments/footer :: footer"></div>
+
+</body>
+</html>

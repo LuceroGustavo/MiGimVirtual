@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/springsecurity">
+<head>
+    <meta charset="UTF-8">
+    <title>Nuevo Alumno</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/style.css">
+    <style>
+        body {
+            background: linear-gradient(120deg, #e3f0ff 0%, #f8fbff 100%);
+            min-height: 100vh;
+        }
+        .form-card {
+            background: #fff;
+            border-radius: 18px;
+            box-shadow: 0 6px 32px rgba(33, 150, 243, 0.10), 0 1.5px 6px rgba(33, 150, 243, 0.08);
+            padding: 2.5rem 2.5rem 2rem 2.5rem;
+            max-width: 1100px;
+            margin: 2.5rem auto;
+        }
+        .form-title {
+            color: #1976d2;
+            font-weight: 700;
+            margin-bottom: 2rem;
+            text-align: center;
+            background: #1976d2;
+            color: #fff;
+            border-radius: 12px 12px 0 0;
+            padding: 1.2rem 0 1rem 0;
+            box-shadow: 0 2px 8px rgba(33, 150, 243, 0.08);
+        }
+        .form-label {
+            color: #1976d2;
+            font-weight: 600;
+        }
+        .form-control, .form-select {
+            border-radius: 8px;
+            border: 1.5px solid #b6d4fe;
+        }
+        .form-control:focus, .form-select:focus {
+            border-color: #1976d2;
+            box-shadow: 0 0 0 2px #1976d233;
+        }
+        .estado-select {
+            font-weight: 600;
+        }
+        .estado-activo {
+            background: #d9f6e5;
+            border-color: #9bd9b5;
+            color: #1f5a3d;
+        }
+        .estado-inactivo {
+            background: #ffe0e0;
+            border-color: #f3a6a6;
+            color: #7a2d2d;
+        }
+        .avatar-img {
+            width: 60px;
+            height: 60px;
+            object-fit: cover;
+            border-radius: 50%;
+            border: 2.5px solid #b6d4fe;
+            transition: border-color 0.2s;
+        }
+        .avatar-img:hover, .avatar-option input[type=radio]:checked + img {
+            border-color: #1976d2 !important;
+        }
+        .form-check-input:checked {
+            background-color: #1976d2;
+            border-color: #1976d2;
+        }
+        .form-check-label {
+            color: #1976d2;
+            font-weight: 500;
+        }
+        .btn-primary {
+            background: linear-gradient(90deg, #1976d2 60%, #64b5f6 100%);
+            border: none;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+        .btn-primary:hover {
+            background: linear-gradient(90deg, #1565c0 60%, #1976d2 100%);
+        }
+        @media (max-width: 991px) {
+            .form-card {
+                padding: 1.2rem 0.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+<!-- Navbar fragment -->
+<div th:replace="fragments/navbar :: navbar"></div>
+<div class="container-fluid">
+    <div class="form-card">
+        <div class="form-title">
+            <i class="fas" th:classappend="${editMode} ? 'fa-user-edit' : 'fa-user-plus'"></i>
+            <span th:text="${editMode} ? 'Editar Alumno' : 'Crear Nuevo Alumno'"></span>
+        </div>
+        <div class="p-2">
+            <!-- Mensaje de error -->
+            <div th:if="${errorMessage}" class="alert alert-danger" role="alert">
+                <i class="fas fa-exclamation-triangle me-2"></i>
+                <span th:text="${errorMessage}"></span>
+            </div>
+            <form th:action="${editMode} ? @{'/profesor/alumnos/editar/' + ${usuario.id}} : @{/profesor/alumnos/nuevo}" th:object="${usuario}" method="post">
+                <input type="hidden" th:if="${editMode}" th:field="*{id}" />
+                <div class="row">
+                    <div class="col-md-8"></div>
+                    <div class="col-md-4 mb-3">
+                        <label for="estadoAlumno" class="form-label">Estado del Alumno</label>
+                        <select class="form-select estado-select" id="estadoAlumno" th:field="*{estadoAlumno}">
+                            <option value="ACTIVO">Activo</option>
+                            <option value="INACTIVO">Inactivo</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <label for="nombre" class="form-label">Nombre Completo</label>
+                        <input type="text" class="form-control" id="nombre" th:field="*{nombre}" required>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label for="correo" class="form-label">Correo Electrónico <span class="text-muted small">(opcional)</span></label>
+                        <input type="email" class="form-control" id="correo" th:field="*{correo}" placeholder="Ej: alumno@ejemplo.com">
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label for="celular" class="form-label">Celular</label>
+                        <input type="text" class="form-control" id="celular" th:field="*{celular}" placeholder="Ej: 11 1234 5678">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <label for="edad" class="form-label">Edad</label>
+                        <input type="number" class="form-control" id="edad" th:field="*{edad}">
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label for="sexo" class="form-label">Sexo</label>
+                        <select class="form-select" id="sexo" th:field="*{sexo}">
+                            <option value="">Seleccionar...</option>
+                            <option value="Masculino">Masculino</option>
+                            <option value="Femenino">Femenino</option>
+                            <option value="Otro">Otro</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4 mb-3" th:if="${editMode}">
+                        <label for="historialEstado" class="form-label">Historial de Estado</label>
+                        <textarea class="form-control" id="historialEstado" th:field="*{historialEstado}" rows="2" readonly></textarea>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="tipoAsistencia" class="form-label fw-bold">Tipo de Asistencia</label>
+                        <select class="form-select" id="tipoAsistencia" th:field="*{tipoAsistencia}" required onchange="mostrarSelectorHorarios()">
+                            <option value="" disabled selected>Seleccionar...</option>
+                            <option value="PRESENCIAL">Presencial</option>
+                            <option value="ONLINE">Virtual</option>
+                            <option value="SEMIPRESENCIAL">Semipresencial</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="row" id="selectorHorariosRow">
+                    <div class="col-12 mb-4">
+                        <div class="card">
+                            <div class="card-header bg-primary text-white">
+                                <h5 class="mb-0">
+                                    <i class="fas fa-clock me-2"></i>Selector de Horarios Visual
+                                </h5>
+                                <small>Haz clic en los slots para seleccionar los horarios de asistencia</small>
+                            </div>
+                            <div class="card-body">
+                                <div class="horario-selector">
+                                    <!-- Datos de horarios existentes (edición): el JS los lee para precargar el calendario -->
+                                    <div id="horariosExistentesData" class="d-none" th:attr="data-horarios=${editMode} ? ${horariosExistentesJson} : '[]'"></div>
+                                    <div id="horarioGrid" class="horario-grid"></div>
+                                    <!-- Información de horarios seleccionados -->
+                                    <div class="mt-3">
+                                        <h6>Horarios Seleccionados:</h6>
+                                        <div id="horariosSeleccionados" class="badge-container">
+                                            <!-- Se llena dinámicamente -->
+                                        </div>
+                                        <input type="hidden" id="horariosJson" name="horariosJson" value="">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="notasProfesor" class="form-label">Notas del profesor</label>
+                        <textarea class="form-control" id="notasProfesor" th:field="*{notasProfesor}" rows="2"></textarea>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="objetivosPersonales" class="form-label">Objetivos personales</label>
+                        <textarea class="form-control" id="objetivosPersonales" th:field="*{objetivosPersonales}" rows="2" placeholder="Ej: Bajar de peso, ganar masa, etc"></textarea>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="restriccionesMedicas" class="form-label">Restricciones médicas</label>
+                        <textarea class="form-control" id="restriccionesMedicas" th:field="*{restriccionesMedicas}" rows="2" placeholder="Ej: Lesiones, alergias, etc"></textarea>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <label for="contactoEmergenciaNombre" class="form-label">Nombre contacto de emergencia</label>
+                        <input type="text" class="form-control" id="contactoEmergenciaNombre" th:field="*{contactoEmergenciaNombre}">
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <label for="contactoEmergenciaTelefono" class="form-label">Teléfono contacto de emergencia</label>
+                        <input type="text" class="form-control" id="contactoEmergenciaTelefono" th:field="*{contactoEmergenciaTelefono}">
+                    </div>
+                </div>
+                <hr class="my-4">
+                <h5 class="mb-3 text-primary"><i class="fas fa-ruler-combined me-2"></i>Historial físico (opcional)</h5>
+                <div class="row">
+                    <div class="col-md-3 mb-3">
+                        <label class="form-label">Fecha de medición</label>
+                        <input type="date" class="form-control" name="medicionFisicaFecha">
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <label class="form-label">Peso (kg)</label>
+                        <input type="number" step="0.1" class="form-control" name="medicionFisicaPeso" id="medicionFisicaPeso">
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <label class="form-label">Altura (cm)</label>
+                        <input type="number" step="0.1" class="form-control" name="medicionFisicaAltura" id="medicionFisicaAltura">
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <label class="form-label">Cintura (cm)</label>
+                        <input type="number" step="0.1" class="form-control" name="medicionFisicaCintura">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-3 mb-3">
+                        <label class="form-label">Pecho (cm)</label>
+                        <input type="number" step="0.1" class="form-control" name="medicionFisicaPecho">
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <label class="form-label">Cadera (cm)</label>
+                        <input type="number" step="0.1" class="form-control" name="medicionFisicaCadera">
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <label class="form-label">Bíceps (cm)</label>
+                        <input type="number" step="0.1" class="form-control" name="medicionFisicaBiceps">
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <label class="form-label">Muslo (cm)</label>
+                        <input type="number" step="0.1" class="form-control" name="medicionFisicaMuslo">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12 mb-3">
+                        <button type="button" class="btn btn-info" onclick="calcularIMC()">Calcular IMC</button>
+                        <div id="resultadoIMC" class="mt-2 text-primary fw-bold"></div>
+                        <div id="interpretacionIMC" class="mt-1"></div>
+                        <div id="tablaIMC" class="mt-1"></div>
+                        <div id="rangoPesoIMC" class="mt-1"></div>
+                        <div class="mt-2 text-muted fw-bold" style="font-size:0.95em;">
+                            Estos valores son estimativos. Para una evaluación personalizada y segura, consulte siempre a un profesional de la salud o nutricionista.
+                        </div>
+                    </div>
+                </div>
+                <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
+                    <button type="submit" class="btn btn-primary btn-lg">
+                        <i class="fas fa-save me-2"></i>
+                        <span th:text="${editMode} ? 'Guardar Cambios' : 'Crear Alumno'"></span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<style>
+/* Estilos para el selector de horarios */
+.horario-selector {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.horario-grid {
+    display: grid;
+    grid-template-columns: 80px repeat(7, 1fr);
+    gap: 1px;
+    background: #e9ecef;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.header-cell {
+    background: #0b6cda;
+    color: white;
+    padding: 12px 8px;
+    text-align: center;
+    font-weight: 600;
+    font-size: 0.9rem;
+    border-bottom: 2px solid #dee2e6;
+}
+
+.hora-row {
+    display: contents;
+}
+
+.hora-cell {
+    background: #f8f9fa;
+    padding: 8px 4px;
+    text-align: center;
+    font-size: 0.8rem;
+    color: #6c757d;
+    border-right: 2px solid #dee2e6;
+    font-weight: 500;
+}
+
+.slot-cell {
+    background: white;
+    padding: 8px;
+    min-height: 40px;
+    border: 1px solid #e9ecef;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.slot-cell:hover {
+    background: #e3f2fd;
+    transform: scale(1.02);
+    z-index: 10;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+}
+
+.slot-cell.selected {
+    background: linear-gradient(135deg, #4caf50 0%, #66bb6a 100%);
+    color: white;
+    font-weight: 600;
+    box-shadow: 0 2px 8px rgba(76, 175, 80, 0.3);
+}
+
+.slot-cell.selected::after {
+    content: '✓';
+    font-size: 1.2rem;
+    font-weight: bold;
+}
+
+.slot-cell.selected:hover {
+    background: linear-gradient(135deg, #388e3c 0%, #4caf50 100%);
+}
+
+.badge-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 10px;
+}
+
+.horario-badge {
+    background: linear-gradient(135deg, #0b6cda 0%, #1e88e5 100%);
+    color: white;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.horario-badge .remove-btn {
+    background: rgba(255,255,255,0.2);
+    border: none;
+    color: white;
+    border-radius: 50%;
+    width: 18px;
+    height: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.7rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.horario-badge .remove-btn:hover {
+    background: rgba(255,255,255,0.3);
+    transform: scale(1.1);
+}
+
+@media (max-width: 768px) {
+    .horario-grid {
+        grid-template-columns: 60px repeat(7, 1fr);
+        font-size: 0.7rem;
+    }
+    
+    .slot-cell {
+        min-height: 30px;
+        padding: 4px;
+    }
+    
+    .header-cell {
+        padding: 8px 4px;
+        font-size: 0.8rem;
+    }
+}
+</style>
+
+<script>
+// Variables globales para el selector de horarios
+let horariosSeleccionados = new Map(); // Map<dia, Set<hora>>
+
+// Función para alternar un slot
+function toggleSlot(element, dia, hora) {
+    const key = `${dia}-${hora}`;
+    
+    if (element.classList.contains('selected')) {
+        // Deseleccionar
+        element.classList.remove('selected');
+        if (horariosSeleccionados.has(dia)) {
+            horariosSeleccionados.get(dia).delete(hora);
+            if (horariosSeleccionados.get(dia).size === 0) {
+                horariosSeleccionados.delete(dia);
+            }
+        }
+    } else {
+        // Seleccionar
+        element.classList.add('selected');
+        if (!horariosSeleccionados.has(dia)) {
+            horariosSeleccionados.set(dia, new Set());
+        }
+        horariosSeleccionados.get(dia).add(hora);
+    }
+    
+    actualizarHorariosSeleccionados();
+}
+
+// Función para actualizar la visualización de horarios seleccionados
+function actualizarHorariosSeleccionados() {
+    const container = document.getElementById('horariosSeleccionados');
+    const jsonInput = document.getElementById('horariosJson');
+    
+    container.innerHTML = '';
+    let horariosArray = [];
+    
+    horariosSeleccionados.forEach((horas, dia) => {
+        horas.forEach(hora => {
+            const horaFormateada = formatearHora(hora);
+            const badge = document.createElement('div');
+            badge.className = 'horario-badge';
+            badge.innerHTML = `
+                <span>${dia} ${horaFormateada}</span>
+                <button type="button" class="remove-btn" onclick="removerHorario('${dia}', ${hora})">
+                    <i class="fas fa-times"></i>
+                </button>
+            `;
+            container.appendChild(badge);
+            
+            horariosArray.push({
+                dia: dia,
+                hora: hora,
+                horaFormateada: horaFormateada
+            });
+        });
+    });
+    
+    // Actualizar el input hidden con el JSON
+    jsonInput.value = JSON.stringify(horariosArray);
+}
+
+// Función para formatear hora
+function formatearHora(hora) {
+    const horaInt = Math.floor(hora);
+    return `${horaInt.toString().padStart(2, '0')}:00`;
+}
+
+// Función para remover un horario específico
+function removerHorario(dia, hora) {
+    const key = `${dia}-${hora}`;
+    const element = document.querySelector(`[data-dia="${dia}"][data-hora="${hora}"]`);
+    
+    if (element) {
+        element.classList.remove('selected');
+    }
+    
+    if (horariosSeleccionados.has(dia)) {
+        horariosSeleccionados.get(dia).delete(hora);
+        if (horariosSeleccionados.get(dia).size === 0) {
+            horariosSeleccionados.delete(dia);
+        }
+    }
+    
+    actualizarHorariosSeleccionados();
+}
+
+// Función para limpiar todos los horarios
+function limpiarHorarios() {
+    horariosSeleccionados.clear();
+    document.querySelectorAll('.slot-cell.selected').forEach(cell => {
+        cell.classList.remove('selected');
+    });
+    actualizarHorariosSeleccionados();
+}
+
+// Inicializar cuando el DOM esté listo
+document.addEventListener('DOMContentLoaded', function() {
+    actualizarHorariosSeleccionados();
+    
+    // Si estamos en modo edición, cargar horarios existentes desde el JSON que envía el servidor
+    const editMode = document.querySelector('input[name="id"]') !== null;
+    if (editMode) {
+        cargarHorariosExistentes();
+    }
+    mostrarSelectorHorarios(); // Mostrar/ocultar al cargar según valor
+});
+
+// Función para cargar horarios existentes en modo edición (lee JSON desde data-horarios)
+function cargarHorariosExistentes() {
+    var el = document.getElementById('horariosExistentesData');
+    var jsonStr = (el && el.getAttribute('data-horarios')) ? el.getAttribute('data-horarios') : '[]';
+    var horariosExistentes = [];
+    try {
+        horariosExistentes = JSON.parse(jsonStr);
+    } catch (e) {
+        console.warn('No se pudieron parsear horarios existentes:', e);
+    }
+    if (horariosExistentes && horariosExistentes.length > 0) {
+        horariosExistentes.forEach(function(horario) {
+            var dia = horario.dia;
+            var horaStr = horario.horaEntrada || '';
+            var hora = parseInt(horaStr.split(":")[0], 10);
+            if (!dia || isNaN(hora)) return;
+            var element = document.querySelector('[data-dia="' + dia + '"][data-hora="' + hora + '"]');
+            if (element) {
+                element.classList.add('selected');
+                if (!horariosSeleccionados.has(dia)) {
+                    horariosSeleccionados.set(dia, new Set());
+                }
+                horariosSeleccionados.get(dia).add(hora);
+            }
+        });
+        actualizarHorariosSeleccionados();
+    }
+}
+
+// Días y horas para la grilla
+const DIAS = ["LUNES", "MARTES", "MIERCOLES", "JUEVES", "VIERNES", "SABADO", "DOMINGO"];
+const HORAS = [];
+for (let h = 6; h < 21; h++) {
+    HORAS.push({label: `${h}:00`, value: h});
+}
+
+// Generar la grilla de horarios
+function generarGrillaHorarios() {
+    const grid = document.getElementById('horarioGrid');
+    grid.innerHTML = '';
+    // Header
+    let header = document.createElement('div');
+    header.className = 'header-cell';
+    header.textContent = 'Hora';
+    grid.appendChild(header);
+    DIAS.forEach(dia => {
+        let cell = document.createElement('div');
+        cell.className = 'header-cell';
+        cell.textContent = dia;
+        grid.appendChild(cell);
+    });
+    // Filas de horas
+    HORAS.forEach(horaObj => {
+        let horaCell = document.createElement('div');
+        horaCell.className = 'hora-cell';
+        horaCell.textContent = horaObj.label;
+        grid.appendChild(horaCell);
+        DIAS.forEach(dia => {
+            let slot = document.createElement('div');
+            slot.className = 'slot-cell';
+            slot.setAttribute('data-dia', dia);
+            slot.setAttribute('data-hora', horaObj.value);
+            slot.onclick = function() { toggleSlot(this, dia, horaObj.value); };
+            grid.appendChild(slot);
+        });
+    });
+}
+
+generarGrillaHorarios();
+
+function mostrarSelectorHorarios() {
+    var tipo = document.getElementById('tipoAsistencia').value;
+    var row = document.getElementById('selectorHorariosRow');
+    if(tipo === 'PRESENCIAL' || tipo === 'SEMIPRESENCIAL') {
+        row.style.display = 'flex';
+    } else {
+        row.style.display = 'none';
+        // Limpiar horarios seleccionados si cambia a online
+        limpiarHorarios();
+    }
+}
+
+function actualizarEstadoAlumnoEstilo() {
+    var select = document.getElementById('estadoAlumno');
+    if (!select) return;
+    select.classList.remove('estado-activo', 'estado-inactivo');
+    if (select.value === 'ACTIVO') {
+        select.classList.add('estado-activo');
+    } else if (select.value === 'INACTIVO') {
+        select.classList.add('estado-inactivo');
+    }
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    actualizarEstadoAlumnoEstilo();
+    var estadoSelect = document.getElementById('estadoAlumno');
+    if (estadoSelect) {
+        estadoSelect.addEventListener('change', actualizarEstadoAlumnoEstilo);
+    }
+});
+</script>
+
+<!-- Horarios existentes se pasan vía data-horarios en #horariosExistentesData y se parsean en cargarHorariosExistentes() -->
+
+<script>
+function calcularIMC() {
+    var peso = parseFloat(document.getElementById('medicionFisicaPeso').value);
+    var altura = parseFloat(document.getElementById('medicionFisicaAltura').value);
+    var resultado = document.getElementById('resultadoIMC');
+    var interpretacion = document.getElementById('interpretacionIMC');
+    var tabla = document.getElementById('tablaIMC');
+    var rangoPeso = document.getElementById('rangoPesoIMC');
+    if (!peso || !altura || altura <= 0) {
+        resultado.textContent = 'Por favor, ingresa peso y altura válidos.';
+        interpretacion.textContent = '';
+        tabla.innerHTML = '';
+        rangoPeso.textContent = '';
+        return;
+    }
+    var imc = peso / Math.pow(altura / 100, 2);
+    resultado.textContent = 'IMC: ' + imc.toFixed(2);
+    // Interpretación
+    var texto = '';
+    if (imc < 18.5) texto = 'Bajo peso';
+    else if (imc < 25) texto = 'Normal';
+    else if (imc < 30) texto = 'Sobrepeso';
+    else texto = 'Obesidad';
+    interpretacion.textContent = 'Interpretación: ' + texto;
+    // Tabla de rangos
+    tabla.innerHTML = `<table class="table table-sm table-bordered w-auto mt-2"><thead><tr><th>IMC</th><th>Clasificación</th></tr></thead><tbody><tr><td>&lt; 18.5</td><td>Bajo peso</td></tr><tr><td>18.5 - 24.9</td><td>Normal</td></tr><tr><td>25 - 29.9</td><td>Sobrepeso</td></tr><tr><td>≥ 30</td><td>Obesidad</td></tr></tbody></table>`;
+    // Rango de peso saludable
+    var alturaM = altura / 100;
+    var pesoMin = 18.5 * Math.pow(alturaM, 2);
+    var pesoMax = 24.9 * Math.pow(alturaM, 2);
+    rangoPeso.textContent = 'Rango de peso saludable para tu estatura: ' + pesoMin.toFixed(1) + ' kg - ' + pesoMax.toFixed(1) + ' kg';
+}
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html> 

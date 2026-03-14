@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Manual del usuario - Mattfuncional</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body { background: linear-gradient(135deg, #e8eaf6 0%, #f3e5f5 100%); min-height: 100vh; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        .manual-container { max-width: 900px; margin: 0 auto; padding: 2rem 1rem; }
+        .manual-title { color: #5e35b1; font-weight: 700; margin-bottom: 1.5rem; }
+        .manual h2 { font-size: 1.35rem; color: #37474f; border-bottom: 2px solid #b39ddb; padding-bottom: 0.4rem; margin-top: 2rem; }
+        .manual h3 { font-size: 1.1rem; color: #546e7a; margin-top: 1.2rem; }
+        .manual ul { padding-left: 1.25rem; }
+        .manual li { margin-bottom: 0.4rem; }
+        .manual p { margin-bottom: 0.8rem; }
+        .manual .nav-interna { background: #fff; border-radius: 12px; padding: 1rem 1.25rem; margin-bottom: 2rem; box-shadow: 0 2px 12px rgba(0,0,0,0.06); }
+        .manual .nav-interna a { color: #5e35b1; text-decoration: none; display: block; padding: 0.35rem 0; }
+        .manual .nav-interna a:hover { text-decoration: underline; }
+        .manual .card-section { background: #fff; border-radius: 12px; padding: 1.5rem; margin-bottom: 1rem; box-shadow: 0 2px 12px rgba(0,0,0,0.06); }
+        .manual table { font-size: 0.95rem; }
+        .manual table th { background: #ede7f6; color: #37474f; }
+        .manual .icon-item { margin-bottom: 0.5rem; }
+    </style>
+</head>
+<body>
+    <div th:if="${param.embed == null || param.embed.isEmpty()}" th:replace="~{fragments/navbar :: navbar}"></div>
+
+    <div th:fragment="contenido" class="manual-container admin-section-content">
+        <style>
+            .admin-section-content.manual-container { max-width: 900px; margin: 0 auto; padding: 2rem 1rem; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+            .admin-section-content .manual-title { color: #5e35b1; font-weight: 700; margin-bottom: 1.5rem; }
+            .admin-section-content .manual h2 { font-size: 1.35rem; color: #37474f; border-bottom: 2px solid #b39ddb; padding-bottom: 0.4rem; margin-top: 2rem; }
+            .admin-section-content .manual h3 { font-size: 1.1rem; color: #546e7a; margin-top: 1.2rem; }
+            .admin-section-content .manual ul { padding-left: 1.25rem; }
+            .admin-section-content .manual li { margin-bottom: 0.4rem; }
+            .admin-section-content .manual p { margin-bottom: 0.8rem; }
+            .admin-section-content .manual .nav-interna { background: #fff; border-radius: 12px; padding: 1rem 1.25rem; margin-bottom: 2rem; box-shadow: 0 2px 12px rgba(0,0,0,0.06); }
+            .admin-section-content .manual .nav-interna a { color: #5e35b1; text-decoration: none; display: block; padding: 0.35rem 0; }
+            .admin-section-content .manual .nav-interna a:hover { text-decoration: underline; }
+            .admin-section-content .manual .card-section { background: #fff; border-radius: 12px; padding: 1.5rem; margin-bottom: 1rem; box-shadow: 0 2px 12px rgba(0,0,0,0.06); }
+            .admin-section-content .manual table { font-size: 0.95rem; }
+            .admin-section-content .manual table th { background: #ede7f6; color: #37474f; }
+            .admin-section-content .manual .icon-item { margin-bottom: 0.5rem; }
+        </style>
+        <div class="manual">
+            <h1 class="manual-title"><i class="fa-solid fa-book me-2"></i>Manual del usuario</h1>
+            <p class="text-muted">Para profesores, administradores y ayudantes. Cómo usar el panel de Mattfuncional a diario.</p>
+
+            <!-- Navegación rápida -->
+            <nav class="nav-interna">
+                <strong class="d-block mb-2">Contenido</strong>
+                <a href="#acceso">1. Acceso al sistema</a>
+                <a href="#panel">2. Panel del profesor</a>
+                <a href="#alumnos">3. Alumnos</a>
+                <a href="#ejercicios">4. Ejercicios</a>
+                <a href="#grupos">5. Grupos musculares</a>
+                <a href="#series">6. Series</a>
+                <a href="#rutinas">7. Rutinas</a>
+                <a href="#calendario">8. Calendario semanal</a>
+                <a href="#presentismo">9. Presentismo (asistencia)</a>
+                <a href="#progreso">10. Progreso del alumno</a>
+                <a href="#pizarra">11. Pizarra en sala (TV)</a>
+                <a href="#usuarios">12. Usuarios del sistema</a>
+                <a href="#administracion">13. Administración del sistema</a>
+                <a href="#resumen">14. Resumen rápido</a>
+            </nav>
+
+            <div class="card-section" id="acceso">
+                <h2>1. Acceso al sistema</h2>
+                <p>Solo pueden iniciar sesión usuarios con rol <strong>ADMIN</strong>, <strong>AYUDANTE</strong> o <strong>DEVELOPER</strong>. Los alumnos no tienen usuario ni contraseña; se gestionan desde el panel.</p>
+                <p>Ingresá con <strong>correo electrónico</strong> y <strong>contraseña</strong>. Si las olvidás, un administrador puede restablecerlas desde <strong>Usuarios del sistema</strong> (o Administrar sistema).</p>
+                <p>Después de ingresar se abre el <strong>Panel del profesor</strong> (dashboard).</p>
+            </div>
+
+            <div class="card-section" id="panel">
+                <h2>2. Panel del profesor</h2>
+                <p>En el panel ves un resumen con cuatro tarjetas:</p>
+                <ul>
+                    <li><strong>Alumnos</strong> (total) — con acceso rápido a crear alumno.</li>
+                    <li><strong>Series</strong> (total) — con acceso rápido a crear serie.</li>
+                    <li><strong>Rutinas</strong> (total) — con acceso rápido a crear rutina.</li>
+                    <li><strong>Calendario Semanal</strong> — abre el calendario en nueva pestaña.</li>
+                </ul>
+                <p>Botones principales:</p>
+                <ul>
+                    <li><strong>Ver Ejercicios</strong> — lista de ejercicios (predeterminados y propios).</li>
+                    <li><strong>Administrar sistema</strong> — usuarios, página pública, backups.</li>
+                    <li><strong>Pizarra</strong> — pizarra digital para mostrar en TV en la sala.</li>
+                </ul>
+                <p>Pestañas: <strong>Mis Alumnos</strong>, <strong>Mis Series</strong>, <strong>Mis Rutinas</strong> y <strong>Asignaciones</strong> para trabajar con cada módulo sin salir del panel.</p>
+            </div>
+
+            <div class="card-section" id="alumnos">
+                <h2>3. Alumnos</h2>
+                <h3>Lista (Mis Alumnos)</h3>
+                <p>Se muestran todos los alumnos con: nombre, estado (Activo/Inactivo), tipo de asistencia, celular, columna <strong>Presente</strong> (estado del día) y acciones.</p>
+                <p><strong>Filtros:</strong> por nombre, estado, tipo (presencial/virtual/semipresencial), día y horario. Los filtros se recuerdan al volver a la página.</p>
+                <p><strong>Acciones:</strong> Ver (ficha), Editar, Dar presente (cicla Pendiente → Presente → Ausente), Asignar rutina. Los alumnos inactivos no permiten asignar rutina ni dar presente.</p>
+                <h3>Crear alumno</h3>
+                <p>Desde el ícono “+” en la tarjeta Alumnos o desde la pestaña. Completás: nombre, edad, sexo, peso, correo (interno), celular, tipo de asistencia (Presencial/Virtual/Semipresencial), horarios (días y franjas) y detalle (ej. “2 veces por semana”). Los alumnos <strong>no tienen usuario ni contraseña</strong>; la rutina se comparte por enlace o WhatsApp.</p>
+                <h3>Editar alumno</h3>
+                <p>Desde la lista, <strong>Editar</strong>. Podés cambiar datos personales, estado (Activo/Inactivo), fechas de alta/baja, horarios y detalle de asistencia.</p>
+                <h3>Ficha del alumno (detalle)</h3>
+                <p>Al hacer clic en <strong>Ver</strong> se abre la ficha con: datos personales y estado, <strong>historial de asistencia</strong>, <strong>resumen mensual de asistencias</strong> (modal por mes), <strong>progreso</strong> (observaciones, grupos trabajados, marcar presente/ausente para una fecha), y <strong>Rutinas del alumno</strong> (tabla con fecha, rutina, categoría, series, estado ACTIVA/INACTIVA, reseña y acciones: Ver, Copiar enlace, Inactivar/Activar, WhatsApp). Botón <strong>Inactivar todas las rutinas</strong> para pasar todas a INACTIVA. Solo las rutinas asignadas tienen enlace público; si están inactivas, la hoja muestra "Rutina inactiva". Desde la ficha también podés <strong>Asignar rutina</strong>.</p>
+            </div>
+
+            <div class="card-section" id="ejercicios">
+                <h2>4. Ejercicios (Mis Ejercicios)</h2>
+                <p>Acceso desde <strong>Ver Ejercicios</strong> en el panel. Hay ejercicios <strong>predeterminados del sistema</strong> (marcados con estrellita turquesa) y <strong>ejercicios propios</strong> del profesor.</p>
+                <p>Podés <strong>buscar</strong> por nombre o descripción y <strong>filtrar</strong> por grupo muscular.</p>
+                <p><strong>Acciones:</strong> Ver (detalle), Editar, Eliminar. Los predeterminados también se pueden editar o eliminar.</p>
+                <p><strong>Crear ejercicio:</strong> Desde la tarjeta “Crear ejercicios” o botón Nuevo. Completás nombre, descripción, tipo, grupos musculares y opcionalmente imagen o video. Las imágenes de los predeterminados se cargan solas si existen en el servidor.</p>
+                <p>Desde Mis Ejercicios también podés ir a <strong>Grupos musculares</strong> (tarjeta “Crear grupo musculares”) para gestionar los grupos antes de crear ejercicios.</p>
+            </div>
+
+            <div class="card-section" id="grupos">
+                <h2>5. Grupos musculares</h2>
+                <p>Acceso desde el panel (<strong>Ver Ejercicios</strong> → tarjeta “Crear grupo musculares”) o desde <strong>/profesor/mis-grupos-musculares</strong>.</p>
+                <p>El sistema trae grupos por defecto: <strong>BRAZOS, PIERNAS, PECHO, ESPALDA, CARDIO, ELONGACIÓN</strong> (marcados con estrellita; no se pueden editar ni eliminar). Vos podés <strong>crear grupos propios</strong> y usarlos al crear o editar ejercicios.</p>
+                <p>Acciones: listar, crear, editar y eliminar (solo los grupos propios).</p>
+            </div>
+
+            <div class="card-section" id="series">
+                <h2>6. Series</h2>
+                <p><strong>Mis Series</strong> muestra la lista de series. Cada serie agrupa varios ejercicios (con repeticiones, peso, etc.).</p>
+                <p><strong>Crear serie:</strong> Desde el ícono “+” en la tarjeta Series o desde la pestaña. Definís nombre y agregás ejercicios desde el selector, con repeticiones y orden. Podés <strong>subir/bajar</strong> el orden de los ejercicios en la serie.</p>
+                <p><strong>Editar serie:</strong> Mismo flujo; podés agregar o quitar ejercicios y cambiar el orden.</p>
+                <p><strong>Ver serie:</strong> Abre la vista de la serie con sus ejercicios.</p>
+            </div>
+
+            <div class="card-section" id="rutinas">
+                <h2>7. Rutinas</h2>
+                <p><strong>Mis Rutinas</strong> muestra la lista de rutinas (plantillas). Una rutina se arma con <strong>una o más series</strong>. Desde aquí solo podés <strong>Ver</strong> (vista privada, con sesión), <strong>Editar</strong> y <strong>Eliminar</strong>. Las rutinas de Mis Rutinas <strong>no tienen enlace público</strong>: son plantillas que primero hay que <strong>asignar</strong> a un alumno.</p>
+                <p><strong>Crear rutina:</strong> Nombre y descripción; elegís series (por clic en tarjetas). La lista “Series seleccionadas” permite <strong>subir/bajar</strong> para definir el orden antes de guardar.</p>
+                <p><strong>Editar rutina:</strong> Podés cambiar detalles, agregar o quitar series y reordenar con Subir/Bajar.</p>
+                <p><strong>Asignaciones (enlace público):</strong> Las <strong>únicas</strong> rutinas que se pueden enviar por enlace o WhatsApp son las <strong>asignadas</strong> a un alumno. Primero asignás la rutina desde la <strong>ficha del alumno</strong> (Asignar rutina) o desde la pestaña <strong>Asignaciones</strong> del panel; esa asignación genera un <strong>enlace único</strong> (hoja pública). Ese enlace se puede <strong>Copiar</strong> o enviar por <strong>WhatsApp</strong> (abre WhatsApp con el celular del alumno si está cargado y el mensaje con el enlace). Si intentás abrir el enlace de una rutina que no fue asignada, no se mostrará la hoja.</p>
+                <p><strong>Hoja de rutina:</strong> El enlace de una <strong>asignación</strong> abre una <strong>hoja pública</strong> (sin login) para que el alumno la vea en el celular o en papel. Si la asignación está <strong>inactiva</strong>, la hoja muestra el mensaje "Rutina inactiva" en lugar del contenido.</p>
+                <h3>7.1 Estado de la asignación (ACTIVA / INACTIVA)</h3>
+                <p>Cada rutina <strong>asignada</strong> a un alumno tiene un estado: <strong>ACTIVA</strong> o <strong>INACTIVA</strong>.</p>
+                <ul>
+                    <li><strong>ACTIVA:</strong> El enlace de la hoja muestra la rutina completa. El alumno puede verla y usarla.</li>
+                    <li><strong>INACTIVA:</strong> El enlace de la hoja muestra la pantalla "Rutina inactiva" (sin contenido). Sirve para dejar de dar acceso sin borrar el historial de la asignación.</li>
+                </ul>
+                <p><strong>Dónde gestionar el estado:</strong></p>
+                <ul>
+                    <li><strong>En la ficha del alumno</strong>, en la tabla "Rutinas del Alumno": por cada rutina tenés <strong>Inactivar</strong> o <strong>Activar</strong> (según el estado actual). También hay un botón <strong>Inactivar todas las rutinas</strong> para pasar todas las rutinas de ese alumno a INACTIVA de una vez.</li>
+                    <li><strong>En la pestaña Asignaciones</strong> del panel: en la tabla "Rutinas Asignadas" cada fila tiene <strong>Inactivar</strong> o <strong>Activar</strong> (y Ver, Copiar enlace, Eliminar). Podés filtrar por nombre de alumno.</li>
+                </ul>
+                <p><em>Resumen: solo las rutinas asignadas tienen enlace público; ese enlace puede estar ACTIVO (muestra la hoja) o INACTIVO (muestra "Rutina inactiva").</em></p>
+            </div>
+
+            <div class="card-section" id="calendario">
+                <h2>8. Calendario semanal</h2>
+                <p><strong>Acceso:</strong> Botón <strong>Calendario Semanal</strong> en el panel (se abre en nueva pestaña).</p>
+                <p>Vista de la semana con días en columnas y franjas horarias. En cada celda aparecen los alumnos que tienen asistencia ese día/hora (según su horario o excepciones).</p>
+                <p><strong>Presente / Ausente / Pendiente:</strong> Junto a cada alumno hay un <strong>punto</strong> (verde = presente, rojo = ausente, gris = pendiente). Un <strong>clic</strong> en el punto <strong>cicla</strong>: Pendiente → Presente → Ausente → Pendiente. Los cambios se guardan al instante y se ven en la columna “Presente” de Mis Alumnos y en el historial de la ficha.</p>
+                <p><strong>Clic en el nombre del alumno</strong> en la celda abre la <strong>ficha del alumno</strong>.</p>
+                <p><strong>Excepciones (recuperar clase):</strong> Podés agregar a un alumno a un día/horario que no es su horario habitual (botón “+” en la celda si está habilitado). Ese alumno aparece con etiqueta “Ex” y también podés marcarle presente/ausente desde el calendario.</p>
+            </div>
+
+            <div class="card-section" id="presentismo">
+                <h2>9. Presentismo (asistencia)</h2>
+                <p>Podés marcar asistencia de dos formas:</p>
+                <ul>
+                    <li><strong>Desde el Calendario semanal:</strong> puntos verde/rojo/gris por alumno y slot; clic para ciclar estado.</li>
+                    <li><strong>Desde Mis Alumnos:</strong> columna “Presente (fecha del día)” con botón que cicla Pendiente → Presente → Ausente → Pendiente (solo para alumnos presenciales que tienen horario el día actual).</li>
+                </ul>
+                <p>Lo que marques en uno se refleja en el otro y en el historial de la ficha del alumno.</p>
+            </div>
+
+            <div class="card-section" id="progreso">
+                <h2>10. Progreso del alumno</h2>
+                <p>Desde la <strong>ficha del alumno</strong>, el botón o sección <strong>Progreso</strong> abre un modal donde podés:</p>
+                <ul>
+                    <li>Cargar <strong>observaciones</strong> (texto libre).</li>
+                    <li>Indicar <strong>grupos musculares</strong> trabajados (checkboxes).</li>
+                    <li>Marcar <strong>presente/ausente</strong> para una fecha concreta.</li>
+                </ul>
+                <p>El historial de progreso y el resumen mensual de asistencias se ven en la misma ficha.</p>
+            </div>
+
+            <div class="card-section" id="pizarra">
+                <h2>11. Pizarra en sala (TV)</h2>
+                <p><strong>Objetivo:</strong> Mostrar en una TV en la sala la rutina o ejercicios del día (pizarra digital).</p>
+                <p><strong>Desde el panel:</strong> Botón <strong>Pizarra</strong>. Creás una pizarra, elegís número de columnas (1 a 6). En el <strong>editor</strong> arrastrás ejercicios a cada columna; podés editar el <strong>título de columna</strong> (ej. nombre del alumno) y <strong>peso/repeticiones</strong> en cada tarjeta. Los cambios se guardan al salir del campo o al soltar un ejercicio. Podés agregar o quitar columnas desde el editor.</p>
+                <p><strong>Vista TV:</strong> Una URL tipo <strong>/sala/{token}</strong> se abre en la TV (o en otra pestaña). Ahí se ve la pizarra en pantalla completa; el botón <strong>Actualizar</strong> refresca el contenido cuando cambies algo desde el panel.</p>
+            </div>
+
+            <div class="card-section" id="usuarios">
+                <h2>12. Usuarios del sistema</h2>
+                <p>Solo visible para <strong>ADMIN</strong> y <strong>DEVELOPER</strong>. Acceso desde <strong>Administrar sistema</strong> en el panel.</p>
+                <p>Podés listar usuarios con login (ADMIN, AYUDANTE, DEVELOPER), <strong>editar</strong> nombre, correo, rol y contraseña. El usuario DEVELOPER del sistema no se puede eliminar ni cambiar de rol desde esta pantalla.</p>
+                <p><strong>Mi perfil:</strong> Cada usuario puede cambiar su propia contraseña o datos si la app lo permite.</p>
+            </div>
+
+            <div class="card-section" id="administracion">
+                <h2>13. Administración del sistema</h2>
+                <p>Desde <strong>Administrar sistema</strong> en el panel accedés al panel de administración con las siguientes secciones. Solo visible para roles <strong>ADMIN</strong> y <strong>DEVELOPER</strong>.</p>
+
+                <h3 id="administracion-usuarios">13.1 Administración de usuarios del sistema</h3>
+                <p>Gestioná los usuarios que pueden iniciar sesión en Mattfuncional (ADMIN, AYUDANTE, DEVELOPER).</p>
+                <ul>
+                    <li><strong>Listado de usuarios:</strong> Se muestra una tabla con nombre, correo, rol y acciones (Editar, Eliminar).</li>
+                    <li><strong>Crear usuario:</strong> Botón "+ Crear usuario". Completás nombre, correo, rol y contraseña. El correo debe ser único.</li>
+                    <li><strong>Editar usuario:</strong> Podés cambiar nombre, correo, rol y contraseña. El usuario <strong>DEVELOPER</strong> del sistema no se puede modificar ni eliminar (protección del sistema).</li>
+                    <li><strong>Eliminar usuario:</strong> Solo ADMIN puede eliminar otros usuarios (no a sí mismo). El DEVELOPER puede eliminar a cualquiera. Al eliminar se pide confirmación.</li>
+                    <li><strong>Mi perfil:</strong> Cada usuario puede editar su propio nombre y correo desde esta misma pantalla. El rol solo lo cambia un ADMIN o DEVELOPER.</li>
+                </ul>
+
+                <h3>13.2 Administración de la página pública</h3>
+                <p>Configurá la landing del gimnasio que ven los visitantes (antes de registrarse).</p>
+                <ul>
+                    <li><strong>Planes y precios:</strong> Creá y editá los planes que se muestran en la página /planes. Cada plan tiene nombre, descripción, precio y orden. Podés eliminar planes que ya no usés.</li>
+                    <li><strong>Días y horarios:</strong> Configurá los horarios de atención que se muestran en la página pública.</li>
+                    <li><strong>Consultas recibidas:</strong> Las consultas enviadas desde el formulario de contacto de la página pública aparecen aquí. Podés marcarlas como vistas y eliminarlas.</li>
+                </ul>
+
+                <h3 id="administracion-backup">13.3 Sistema de backups</h3>
+                <p>Exportá e importá datos para respaldo o migración.</p>
+                <p><strong>Ejercicios, series, rutinas y grupos musculares:</strong></p>
+                <ul>
+                    <li><strong>Exportar:</strong> Generá un archivo ZIP con todos los ejercicios, rutinas plantilla, series, grupos musculares e imágenes. Se descarga al instante.</li>
+                    <li><strong>Importar:</strong> Subí un ZIP exportado. Podés elegir qué importar (grupos, ejercicios, rutinas, series). Dos modos:
+                        <ul>
+                            <li><strong>Agregar:</strong> Importa solo lo que no existe. Los datos actuales se conservan. Ideal para sumar ejercicios o rutinas nuevas sin borrar nada.</li>
+                            <li><strong>Suplantar:</strong> Borra los datos actuales de las categorías marcadas y los reemplaza con los del backup. Acción irreversible. Usalo cuando querés restaurar un backup completo.</li>
+                        </ul>
+                    </li>
+                </ul>
+                <p><strong>Backup de alumnos:</strong></p>
+                <ul>
+                    <li><strong>Exportar backup:</strong> Generá un JSON con todos los alumnos (datos, mediciones, asistencias). Sirve para respaldo.</li>
+                    <li><strong>Exportar a Excel:</strong> Solo para reportes; no se usa para importar.</li>
+                    <li><strong>Importar alumnos:</strong> Subí un JSON exportado. <strong>Agregar</strong> suma alumnos nuevos (por correo); <strong>Suplantar</strong> borra los actuales y reemplaza con los del archivo.</li>
+                </ul>
+
+                <h3 id="administracion-depuracion">13.4 Depuración de datos</h3>
+                <p>Eliminá registros antiguos para mantener la base de datos ligera. <strong>Acciones irreversibles.</strong> Hacé un backup de alumnos antes si querés conservar el historial.</p>
+                <ul>
+                    <li><strong>Registro de asistencias e inasistencias:</strong> Eliminá todos los registros de presente/ausente con fecha <strong>anterior</strong> a la que seleccionás. Ejemplo: si elegís 12/12/2025, se borran los registros del 11/12/2025 y hacia atrás. Los del 12/12 en adelante se conservan.</li>
+                    <li><strong>Rutinas asignadas a alumnos:</strong> Eliminá las asignaciones creadas antes de una fecha. Las rutinas plantilla (Mis Rutinas) no se tocan. Los alumnos perderán el acceso a esos enlaces.</li>
+                </ul>
+                <p>En ambos casos debés <strong>seleccionar una fecha</strong> antes de confirmar. Si no hay fecha, el sistema te lo indicará.</p>
+            </div>
+
+            <div class="card-section" id="resumen">
+                <h2>14. Resumen rápido</h2>
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Quiero…</th>
+                            <th>Dónde</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>Ver o editar alumnos</td><td>Panel → Mis Alumnos</td></tr>
+                        <tr><td>Dar presente hoy</td><td>Mis Alumnos (columna Presente) o Calendario semanal</td></tr>
+                        <tr><td>Crear o editar ejercicios</td><td>Ver Ejercicios / Mis Ejercicios</td></tr>
+                        <tr><td>Gestionar grupos musculares</td><td>Mis Ejercicios → Crear grupo musculares</td></tr>
+                        <tr><td>Armar series o rutinas</td><td>Mis Series, Mis Rutinas</td></tr>
+                        <tr><td>Asignar rutina a un alumno</td><td>Ficha del alumno → Asignar rutina (o pestaña Asignaciones)</td></tr>
+                        <tr><td>Compartir rutina (enlace público)</td><td>Solo rutinas asignadas: en la ficha del alumno o en Asignaciones → Copiar enlace o WhatsApp</td></tr>
+                        <tr><td>Inactivar o activar una rutina asignada</td><td>Ficha del alumno (tabla Rutinas del alumno) o Asignaciones → Inactivar / Activar</td></tr>
+                        <tr><td>Inactivar todas las rutinas de un alumno</td><td>Ficha del alumno → Inactivar todas las rutinas</td></tr>
+                        <tr><td>Marcar semana en calendario</td><td>Calendario semanal (puntos verde/rojo/gris)</td></tr>
+                        <tr><td>Ver ficha de un alumno desde el calendario</td><td>Clic en el nombre del alumno en la celda</td></tr>
+                        <tr><td>Recuperar clase (día por excepción)</td><td>Calendario semanal → botón “+” en la celda</td></tr>
+                        <tr><td>Registrar progreso del alumno</td><td>Ficha del alumno → Progreso</td></tr>
+                        <tr><td>Pizarra para la TV</td><td>Pizarra → crear/editar → abrir URL en la TV</td></tr>
+                        <tr><td>Gestionar usuarios del sistema</td><td>Administrar sistema → Usuarios</td></tr>
+                        <tr><td>Configurar página pública y ver consultas</td><td>Administrar sistema → Página pública</td></tr>
+                        <tr><td>Exportar o importar ejercicios/rutinas</td><td>Administrar sistema → Sistema de backups</td></tr>
+                        <tr><td>Depurar asistencias o rutinas antiguas</td><td>Administrar sistema → Depuración de datos</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <p class="text-muted small mt-4"><i class="fa-solid fa-circle-info me-1"></i> Última actualización: Febrero 2026.</p>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

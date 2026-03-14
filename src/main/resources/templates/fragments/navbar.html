@@ -1,0 +1,47 @@
+<!-- fragments/navbar.html - Mattfuncional. Fondo unificado y texto negro en todas las vistas. -->
+<nav th:fragment="navbar" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/springsecurity"
+     class="navbar navbar-expand-lg navbar-matt shadow-sm"
+     style="background-image: url('/img/fondo-navbar.png'); background-size: cover; background-position: center; background-color: #e0e0e0;">
+    <style>
+        .navbar-matt .navbar-brand span, .navbar-matt .text-navbar { color: #000 !important; }
+        .navbar-matt .btn-outline-navbar { border-color: #333; color: #000 !important; }
+        .navbar-matt .btn-outline-navbar:hover { background: rgba(0,0,0,0.08); color: #000 !important; border-color: #000; }
+        .navbar-matt .navbar-brand .logo-circle { width: 48px; height: 48px; border-radius: 50%; object-fit: cover; flex-shrink: 0; }
+    </style>
+    <div class="container-fluid">
+        <a class="navbar-brand d-flex align-items-center" th:href="@{/}">
+            <img th:src="@{/img/logo.png}" alt="Logo Mattfuncional" class="logo-circle me-2" onerror="this.src='/img/not_imagen.png'">
+            <span class="fw-bold h4 mb-0">Mattfuncional</span>
+        </a>
+
+        <a href="javascript:history.back()" class="btn btn-outline-navbar ms-3"><i class="fas fa-arrow-left"></i> Volver</a>
+
+        <div class="ms-auto">
+            <div sec:authorize="isAuthenticated()" class="d-flex align-items-center"
+                 th:with="currentUser=${#authentication.principal}">
+
+                <a th:if="${currentUser.rol == 'ADMIN' or currentUser.rol == 'AYUDANTE' or currentUser.rol == 'DEVELOPER'}" th:href="@{/profesor/dashboard}" class="btn btn-outline-navbar me-3">
+                    <i class="fas fa-tachometer-alt me-1"></i> Ir a mi Panel
+                </a>
+                <a th:if="${currentUser.rol == 'ADMIN' or currentUser.rol == 'DEVELOPER'}" th:href="@{/profesor/pagina-publica}" class="btn btn-outline-navbar me-3 position-relative" title="Consultas recibidas">
+                    <i class="fas fa-envelope"></i>
+                    <span th:if="${cantidadConsultas != null && cantidadConsultas > 0}" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" th:text="${cantidadConsultas}">0</span>
+                </a>
+                <div class="text-end me-3 text-navbar">
+                    <div class="fw-bold" th:text="${currentUser.nombre}">Nombre</div>
+                    <small class="text-muted" th:text="${currentUser.correo}">usuario@correo.com</small>
+                </div>
+                <img th:src="${currentUser.avatar != null and !#strings.isEmpty(currentUser.avatar) and currentUser.avatar != 'null' and currentUser.avatar != '/img/not_imagen.png' ? currentUser.avatar : '/img/avatar1.png'}"
+                     alt="Avatar" style="width: 45px; height: 45px;" class="rounded-circle border border-secondary"
+                     onerror="this.src='/img/avatar1.png'">
+                <a th:href="@{/logout}" class="btn btn-danger ms-3">Salir</a>
+            </div>
+
+            <div sec:authorize="!isAuthenticated()">
+                <a th:href="@{/login}" class="btn btn-dark fw-bold">
+                    <i class="fas fa-sign-in-alt me-1"></i> Iniciar sesión
+                </a>
+            </div>
+        </div>
+    </div>
+</nav>

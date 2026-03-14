@@ -1,0 +1,771 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="'Pizarra: ' + ${pizarra.nombre}">Editor de pizarra</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/style.css">
+    <meta name="_csrf" th:content="${_csrf?.token}">
+    <meta name="_csrf_header" th:content="${_csrf?.headerName}">
+    <style>
+        .pizarra-editor { display: flex; gap: 1rem; min-height: 140vh; max-width: 100%; min-width: 0; overflow-x: hidden; }
+        .ejercicios-panel { width: 200px; flex-shrink: 0; max-height: 140vh; overflow-y: auto; border: 2px solid #0d6efd; border-radius: 12px; padding: 0.75rem; background: #f8f9fa; }
+        .ejercicios-panel .ejercicio-draggable { cursor: grab; margin-bottom: 0.5rem; }
+        .ejercicios-panel .ejercicio-draggable:active { cursor: grabbing; }
+        .ejercicios-panel .ejercicio-mini .p-2 { overflow: hidden; min-width: 0; }
+        .ejercicios-panel .ejercicio-mini .p-2 strong { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; display: block; }
+        .columnas-panel { flex: 1; display: flex; gap: 0.5rem; overflow-x: auto; min-width: 0; overflow-y: visible; -webkit-overflow-scrolling: touch; }
+        .pizarra-columna { min-width: 178px; flex: 0 0 auto; width: 178px; background: #f8f9fa; border-radius: 12px; padding: 0.75rem; border: 2px dashed #dee2e6; }
+        .pizarra-columna.drag-over { border-color: #0d6efd; background: #e7f1ff; }
+        .columna-titulo { font-weight: 700; margin-bottom: 0.75rem; background: #333; color: #fff; padding: 0.5rem; border-radius: 8px; text-align: center; display: flex; align-items: center; gap: 0.35rem; }
+        .columna-titulo input { background: transparent; border: none; color: #fff; text-align: center; flex: 1; min-width: 0; font-weight: 700; }
+        .columna-titulo .col-vueltas-wrap { display: flex; align-items: center; gap: 0.2rem; flex-shrink: 0; }
+        .columna-titulo .col-vueltas-wrap label { font-size: 0.7rem; color: rgba(255,255,255,0.9); margin: 0; white-space: nowrap; }
+        .columna-titulo .col-vueltas-select { font-size: 0.75rem; padding: 0.15rem 0.25rem; width: auto; min-width: 2.5rem; background: #444; color: #fff; border: 1px solid rgba(255,255,255,0.3); border-radius: 4px; }
+        .columna-titulo .btn-quitar-col { padding: 0.15rem 0.35rem; font-size: 0.75rem; color: #fff; border-color: rgba(255,255,255,0.6); }
+        .columna-titulo .btn-quitar-col:hover { background: rgba(255,255,255,0.2); color: #fff; }
+        .pizarra-item { background: #fff; border-radius: 10px; padding: 0.5rem; margin-bottom: 0.5rem; box-shadow: 0 1px 4px rgba(0,0,0,0.08); cursor: move; }
+        .pizarra-item .grupo-badge { font-size: 0.7rem; background: #e8f5e9; color: #2e7d32; padding: 0.2rem 0.4rem; border-radius: 4px; }
+        .pizarra-item img { width: 100%; height: 80px; object-fit: contain; }
+        .pizarra-item .item-nombre { font-size: 0.85rem; font-weight: 600; }
+        .pizarra-item .item-peso-reps { font-size: 0.85rem; display: flex; gap: 0.25rem; margin-top: 0.35rem; align-items: center; }
+        .pizarra-item .item-peso-reps input { width: 42px; font-size: 0.85rem; padding: 0.25rem; flex-shrink: 0; }
+        .pizarra-item .item-fila-unidad { display: flex; align-items: center; justify-content: space-between; gap: 0.35rem; margin-top: 0.25rem; }
+        .pizarra-item .item-fila-unidad select.item-unidad { font-size: 0.8rem; padding: 0.25rem 1.5rem 0.25rem 0.3rem; width: auto; min-width: 4rem; max-width: 68px; background-position: right 0.35rem center; }
+        .pizarra-item .item-fila-unidad .btn-eliminar-item { flex-shrink: 0; }
+        .pizarra-item.dragging { opacity: 0.6; }
+        .pizarra-item.drag-over-item { border: 2px dashed #0d6efd; }
+        .btn-group-orden-item .btn { font-size: 0.65rem; }
+        .drop-zone { min-height: 100px; }
+        .ejercicio-mini { border: 1px solid #dee2e6; border-radius: 8px; overflow: hidden; }
+        .ejercicio-mini img { height: 60px; object-fit: contain; }
+    </style>
+</head>
+<body>
+<div th:replace="fragments/navbar :: navbar"></div>
+<div class="container-fluid py-4" th:with="pizarraId=${pizarra.id}">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <div class="d-flex align-items-center gap-2">
+            <input type="text" id="pizarraNombre" class="form-control form-control-lg" style="max-width: 300px;"
+                   th:value="${pizarra.nombre}" placeholder="Nombre de la pizarra">
+            <button type="button" class="btn btn-primary" id="btnGuardar"><i class="fa-solid fa-save me-1"></i>Guardar</button>
+        </div>
+        <div class="d-flex align-items-center gap-2">
+            <button type="button" class="btn btn-info" id="btnActualizarTV" title="La TV se actualizará automáticamente en unos segundos">
+                <i class="fa-solid fa-arrows-rotate me-1"></i>Actualizar en TV
+            </button>
+            <button type="button" class="btn btn-success" id="btnTransmitirTV" th:attr="data-pizarra-id=${pizarra.id}">
+                <i class="fa-solid fa-tv me-1"></i>Transmitir en TV
+            </button>
+            <button type="button" class="btn btn-outline-primary" id="btnInsertarExistente">
+                <i class="fa-solid fa-file-import me-1"></i>Insertar pizarra existente
+            </button>
+            <a th:href="@{/profesor/pizarra}" class="btn btn-outline-secondary">Volver</a>
+            <a th:href="@{/profesor/pizarra/lista}" class="btn btn-outline-secondary">Administrar pizarras</a>
+        </div>
+    </div>
+
+    <!-- Modal Transmitir en TV: código de 4 dígitos y enlace (conexión global por profesor) -->
+    <div class="modal fade" id="modalTransmitirTV" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="fa-solid fa-tv me-2"></i>Transmitir en TV</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p class="text-muted small mb-2">Un solo enlace para todo el día. El código es <strong>opcional</strong>.</p>
+                    <ul class="text-muted small mb-3">
+                        <li><strong>Para que el TV abra sin pedir código:</strong> dejá el cuadro vacío (o hacé clic en «Sin código») y luego <em>Guardar y ver enlace</em>.</li>
+                        <li><strong>Para pedir un código de 4 dígitos en el TV:</strong> ingresá el código (ej: 1234) y luego <em>Guardar y ver enlace</em>.</li>
+                    </ul>
+                    <div id="transmitirMsgYaConfigurado" class="alert alert-info py-2 small" style="display: none;" role="alert">
+                        Tenés un código de 4 dígitos configurado (no se puede mostrar por seguridad). Para cambiarlo, ingresá el nuevo código abajo y guardá. Para quitar el código, hacé clic en «Sin código» y guardá.
+                    </div>
+                    <div class="mb-3">
+                        <label for="inputPinSala" class="form-label">Código de 4 dígitos (opcional)</label>
+                        <input type="text" id="inputPinSala" class="form-control" maxlength="4" pattern="[0-9]*" inputmode="numeric" placeholder="Vacío = el TV abre sin código" autocomplete="off">
+                        <div class="d-flex align-items-center gap-2 mt-1">
+                            <button type="button" class="btn btn-link btn-sm p-0 text-primary" id="btnSinCodigo">Sin código</button>
+                            <span id="msgSinCodigoAplicado" class="text-success small" style="display: none;">Campo vaciado. Guardá para que el TV abra sin código.</span>
+                        </div>
+                    </div>
+                    <div id="transmitirEnlaceBox" style="display: none;">
+                        <label class="form-label">Enlace para abrir en el navegador del TV</label>
+                        <div class="input-group mb-2">
+                            <input type="text" id="transmitirEnlaceUrl" class="form-control" readonly>
+                            <button type="button" class="btn btn-outline-primary" id="btnCopiarEnlace"><i class="fa-solid fa-copy me-1"></i>Copiar</button>
+                        </div>
+                        <button type="button" class="btn btn-outline-warning btn-sm" id="btnCambiarEnlace" title="Genera un enlace nuevo; el anterior deja de funcionar. Tenés que poner el código de nuevo.">
+                            <i class="fa-solid fa-link-slash me-1"></i>Cambiar enlace (generar uno nuevo)
+                        </button>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                    <button type="button" class="btn btn-success" id="btnGuardarPinYEnlace"><i class="fa-solid fa-check me-1"></i>Guardar y ver enlace</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Insertar pizarra existente -->
+    <div class="modal fade" id="modalInsertarExistente" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="fa-solid fa-file-import me-2"></i>Insertar pizarra existente</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p class="text-muted small">Se reemplazará el contenido actual de la pizarra por el de la seleccionada.</p>
+                    <p class="text-muted mb-0" id="msgCargandoInsertar" style="display: none;">Cargando listado...</p>
+                    <div class="list-group" id="listaPizarrasInsertar">
+                        <!-- Se llena por JS al abrir el modal (GET /profesor/pizarra/api/listado) -->
+                    </div>
+                    <p class="text-muted mb-0 mt-2" id="msgNoOtrasPizarras" style="display: none;">No hay otras pizarras guardadas.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Guardar pizarra: solicitar nombre y guardar con fecha -->
+    <div class="modal fade" id="modalGuardarPizarra" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="fa-solid fa-save me-2"></i>Guardar pizarra</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p class="text-muted small">Se creará una <strong>nueva pizarra</strong> con el nombre que indiques (la actual se mantiene para seguir editando). Podés usar la fecha, ej: Lunes 10/02.</p>
+                    <div class="mb-3">
+                        <label for="inputNombreGuardar" class="form-label">Nombre de la nueva pizarra</label>
+                        <input type="text" id="inputNombreGuardar" class="form-control" placeholder="Ej: Lunes 10/02">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-primary" id="btnConfirmarGuardar"><i class="fa-solid fa-check me-1"></i>Guardar como nueva</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="pizarra-editor">
+        <!-- Panel de ejercicios -->
+        <div class="ejercicios-panel card p-3">
+            <h6 class="mb-2">Ejercicios</h6>
+            <input type="text" id="filtro-ejercicio" class="form-control form-control-sm mb-2" placeholder="Buscar...">
+            <select id="filtro-grupo" class="form-select form-select-sm mb-2">
+                <option value="">Todos los grupos</option>
+                <option th:each="g : ${gruposMusculares}" th:value="${g.id}" th:text="${g.nombre}"></option>
+            </select>
+            <div id="lista-ejercicios">
+                <div th:each="ej : ${ejercicios}" class="ejercicio-draggable ejercicio-mini" draggable="true"
+                     th:data-id="${ej.id}"
+                     th:data-nombre="${ej.name}"
+                     th:data-grupo-ids="${ej.grupos != null ? #strings.listJoin(ej.grupos.![id], ',') : ''}">
+                    <img th:if="${ej.imagen != null}" th:src="${ej.imagen.url}" alt="">
+                    <img th:if="${ej.imagen == null}" src="/img/not_imagen.png" alt="">
+                    <div class="p-2">
+                        <small class="d-block text-muted" th:text="${ej.grupos != null ? #strings.listJoin(ej.grupos.![nombre], ', ') : ''}"></small>
+                        <strong th:text="${ej.name}" th:attr="title=${ej.name}"></strong>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Columnas -->
+        <div class="columnas-panel flex-grow-1 d-flex align-items-flex-start gap-2">
+            <div th:each="col, iterStat : ${pizarra.columnas}" class="pizarra-columna" th:attr="data-columna-id=${col.id}">
+                <div class="columna-titulo">
+                    <input type="text" th:value="${col.titulo}" placeholder="Título" class="col-titulo-input"
+                           th:attr="data-col-id=${col.id}">
+                    <div class="col-vueltas-wrap">
+                        <label for="col-vueltas-${col.id}" class="visually-hidden">Vueltas</label>
+                        <select class="col-vueltas-select" th:attr="data-col-id=${col.id}" id="col-vueltas-${col.id}" title="Vueltas (pasadas)">
+                            <option value="">—</option>
+                            <option th:each="n : ${#numbers.sequence(1, 9)}" th:value="${n}" th:text="${n}" th:selected="${col.vueltas != null and col.vueltas == n}"></option>
+                        </select>
+                    </div>
+                    <button type="button" class="btn btn-outline-light btn-quitar-col btn-quitar-columna"
+                            th:attr="data-columna-id=${col.id}"
+                            th:if="${pizarra.columnas.size() > 1}"
+                            title="Quitar columna"><i class="fa-solid fa-times"></i></button>
+                </div>
+                <div class="drop-zone columna-items" th:attr="data-columna-id=${col.id}">
+                    <div th:each="item : ${col.items}" class="pizarra-item" draggable="true" th:attr="data-item-id=${item.id}, data-exercise-id=${item.exercise.id}">
+                        <div class="d-flex justify-content-between align-items-start mb-1">
+                            <span class="grupo-badge" th:text="${item.exercise.grupos != null ? #strings.listJoin(item.exercise.grupos.![nombre], ', ') : ''}"></span>
+                            <span class="btn-group-orden btn-group-orden-item">
+                                <button type="button" class="btn btn-sm btn-outline-secondary py-0 px-1 btn-subir-item" th:attr="data-item-id=${item.id}" title="Subir"><i class="fa-solid fa-chevron-up"></i></button>
+                                <button type="button" class="btn btn-sm btn-outline-secondary py-0 px-1 btn-bajar-item" th:attr="data-item-id=${item.id}" title="Bajar"><i class="fa-solid fa-chevron-down"></i></button>
+                            </span>
+                        </div>
+                        <img th:if="${item.exercise.imagen != null}" th:src="${item.exercise.imagen.url}" alt="">
+                        <img th:if="${item.exercise.imagen == null}" src="/img/not_imagen.png" alt="">
+                        <div class="item-nombre" th:text="${item.exercise.name}"></div>
+                        <div class="item-peso-reps">
+                            <input type="number" placeholder="kg" th:value="${item.peso}" class="item-peso" min="0" th:attr="data-item-id=${item.id}" title="Peso en kg (dejar vacío si no aplica)">
+                            <input type="number" placeholder="cant." th:value="${item.repeticiones}" class="item-reps" min="0" th:attr="data-item-id=${item.id}" title="Cantidad según la unidad">
+                        </div>
+                        <div class="item-fila-unidad">
+                            <select class="item-unidad form-select form-select-sm" th:attr="data-item-id=${item.id}" title="Repeticiones, segundos o minutos">
+                                <option value="reps" th:selected="${item.unidad == null or item.unidad == 'reps'}">reps</option>
+                                <option value="s" th:selected="${item.unidad == 's' or item.unidad == 'seg'}">seg</option>
+                                <option value="min" th:selected="${item.unidad == 'min'}">min</option>
+                            </select>
+                            <button type="button" class="btn btn-sm btn-outline-danger btn-eliminar-item" th:attr="data-item-id=${item.id}" title="Eliminar"><i class="fa-solid fa-trash"></i></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div th:if="${pizarra.columnas.size() < 6}" class="pizarra-columna align-self-stretch d-flex align-items-center justify-content-center" style="min-width: 110px;">
+                <button type="button" class="btn btn-outline-primary btn-agregar-columna" id="btnAgregarColumna" title="Agregar columna (máx. 6)">
+                    <i class="fa-solid fa-plus me-1"></i>Agregar columna
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modalAlertaPizarraEditor" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header modal-confirmar-header">
+                <h5 class="modal-title"><i class="fas fa-info-circle me-2"></i>Información</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <div class="modal-body" id="modalAlertaPizarraEditorMensaje"></div>
+            <div class="modal-footer modal-confirmar-footer">
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Aceptar</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="modalConfirmarPizarraEditor" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header modal-confirmar-header">
+                <h5 class="modal-title"><i class="fas fa-exclamation-circle me-2"></i>Confirmar</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <div class="modal-body" id="modalConfirmarPizarraEditorMensaje"></div>
+            <div class="modal-footer modal-confirmar-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-primary" id="modalConfirmarPizarraEditorBtn">Confirmar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script th:inline="javascript">
+    const pizarraId = [[${pizarra.id}]];
+    var tokenSalaActual = /*[[${tokenSala != null ? tokenSala : ''}]]*/ '';
+    var salaTienePinActual = /*[[${salaTienePin != null && salaTienePin}]]*/ false;
+    const csrfHeader = document.querySelector('meta[name="_csrf_header"]')?.getAttribute('content') || 'X-CSRF-TOKEN';
+    const csrfToken = document.querySelector('meta[name="_csrf"]')?.getAttribute('content') || '';
+
+    function mostrarAlerta(msg) {
+        var el = document.getElementById('modalAlertaPizarraEditorMensaje');
+        var m = document.getElementById('modalAlertaPizarraEditor');
+        if (el) el.textContent = msg || '';
+        if (m && typeof bootstrap !== 'undefined') (new bootstrap.Modal(m)).show();
+    }
+    function confirmar(mensaje) {
+        return new Promise(function(resolve) {
+            var modalEl = document.getElementById('modalConfirmarPizarraEditor');
+            var msgEl = document.getElementById('modalConfirmarPizarraEditorMensaje');
+            var btnEl = document.getElementById('modalConfirmarPizarraEditorBtn');
+            if (!modalEl || !btnEl || typeof bootstrap === 'undefined') { resolve(false); return; }
+            if (msgEl) msgEl.textContent = mensaje || '¿Estás seguro?';
+            function cleanup() {
+                btnEl.removeEventListener('click', onConfirm);
+                modalEl.removeEventListener('hidden.bs.modal', onHide);
+            }
+            function onConfirm() { cleanup(); bootstrap.Modal.getInstance(modalEl).hide(); resolve(true); }
+            function onHide() { cleanup(); resolve(false); }
+            btnEl.addEventListener('click', onConfirm);
+            modalEl.addEventListener('hidden.bs.modal', onHide);
+            (new bootstrap.Modal(modalEl)).show();
+        });
+    }
+
+    function postHeaders() {
+        const h = { 'Content-Type': 'application/json' };
+        if (csrfToken) h[csrfHeader] = csrfToken;
+        return h;
+    }
+
+    document.getElementById('btnGuardar').addEventListener('click', function() {
+        document.getElementById('inputNombreGuardar').value = document.getElementById('pizarraNombre').value.trim() || '';
+        new bootstrap.Modal(document.getElementById('modalGuardarPizarra')).show();
+    });
+    document.getElementById('btnConfirmarGuardar').addEventListener('click', function() {
+        var nombre = document.getElementById('inputNombreGuardar').value.trim();
+        if (!nombre) { mostrarAlerta('Escribí un nombre para la nueva pizarra.'); return; }
+        var titulos = [];
+        document.querySelectorAll('.col-titulo-input').forEach(function(inp) { titulos.push(inp.value.trim()); });
+        var vueltas = [];
+        document.querySelectorAll('.col-vueltas-select').forEach(function(sel) { var v = sel.value.trim(); vueltas.push(v === '' ? null : parseInt(v, 10)); });
+        var nombreActual = document.getElementById('pizarraNombre').value.trim();
+        // Primero sincronizar el estado actual del panel al servidor
+        fetch('/profesor/pizarra/actualizar-basico', {
+            method: 'POST',
+            headers: postHeaders(),
+            body: JSON.stringify({ id: pizarraId, nombre: nombreActual || 'Panel en vivo', titulos: titulos, vueltas: vueltas })
+        }).then(function(r1) {
+            if (!r1.ok) { mostrarAlerta('Error al sincronizar.'); return; }
+            // Luego crear una nueva pizarra con el nombre indicado (copia del contenido actual)
+            return fetch('/profesor/pizarra/guardar-como-nueva', {
+                method: 'POST',
+                headers: postHeaders(),
+                body: JSON.stringify({ pizarraId: pizarraId, nombre: nombre })
+            });
+        }).then(function(r2) {
+            if (!r2) return;
+            return r2.json().then(function(data) {
+                bootstrap.Modal.getInstance(document.getElementById('modalGuardarPizarra')).hide();
+                if (r2.ok && data.ok) {
+                    mostrarAlerta(data.mensaje || 'Pizarra guardada como \"' + nombre + '\". Seguís editando en el panel.');
+                } else {
+                    mostrarAlerta(data.error || 'Error al guardar');
+                }
+            });
+        }).catch(function() { mostrarAlerta('Error al guardar'); });
+    });
+
+    document.getElementById('btnActualizarTV').addEventListener('click', function() {
+        guardarNombreYTitulos()
+            .then(function(r) {
+                if (r.ok) {
+                    mostrarAlerta('Los cambios se actualizarán en la TV en menos de 30 segundos.');
+                } else {
+                    mostrarAlerta('Error al guardar. Revisá el contenido e intentá de nuevo.');
+                }
+            })
+            .catch(function() { mostrarAlerta('Error al guardar.'); });
+    });
+
+    document.getElementById('btnInsertarExistente').addEventListener('click', function() {
+        var cont = document.getElementById('listaPizarrasInsertar');
+        var msgCargando = document.getElementById('msgCargandoInsertar');
+        var msgNoOtras = document.getElementById('msgNoOtrasPizarras');
+        cont.innerHTML = '';
+        msgNoOtras.style.display = 'none';
+        msgNoOtras.textContent = 'No hay otras pizarras guardadas.';
+        msgCargando.style.display = 'block';
+        new bootstrap.Modal(document.getElementById('modalInsertarExistente')).show();
+        fetch('/profesor/pizarra/api/listado', { headers: postHeaders() })
+            .then(function(r) { return r.ok ? r.json() : Promise.reject(); })
+            .then(function(lista) {
+                msgCargando.style.display = 'none';
+                var otras = lista.filter(function(p) { return p.id !== pizarraId; });
+                otras.forEach(function(p) {
+                    var a = document.createElement('a');
+                    a.href = '#';
+                    a.className = 'list-group-item list-group-item-action pizarra-option';
+                    a.setAttribute('data-id', p.id);
+                    a.textContent = (p.nombre || 'Pizarra') + ' (' + (p.cantidadColumnas || 0) + ' col.)';
+                    cont.appendChild(a);
+                });
+                msgNoOtras.style.display = otras.length === 0 ? 'block' : 'none';
+            })
+            .catch(function() {
+                msgCargando.style.display = 'none';
+                msgNoOtras.style.display = 'block';
+                msgNoOtras.textContent = 'Error al cargar el listado. Intentá de nuevo.';
+            });
+    });
+    document.getElementById('modalInsertarExistente').addEventListener('click', function(e) {
+        var t = e.target.closest('.pizarra-option');
+        if (!t) return;
+        e.preventDefault();
+        var origenId = t.getAttribute('data-id');
+        if (!origenId) return;
+        fetch('/profesor/pizarra/clonar', {
+            method: 'POST',
+            headers: postHeaders(),
+            body: JSON.stringify({ pizarraOrigenId: parseInt(origenId, 10), pizarraDestinoId: pizarraId })
+        }).then(function(r) {
+            if (r.ok) location.reload();
+            else r.json().then(function(d) { mostrarAlerta(d.error || 'Error'); });
+        }).catch(function() { mostrarAlerta('Error'); });
+    });
+
+    function guardarNombreYTitulos() {
+        const nombre = document.getElementById('pizarraNombre').value.trim();
+        const titulos = [];
+        document.querySelectorAll('.col-titulo-input').forEach(inp => titulos.push(inp.value.trim()));
+        const vueltas = [];
+        document.querySelectorAll('.col-vueltas-select').forEach(sel => { const v = sel.value.trim(); vueltas.push(v === '' ? null : parseInt(v, 10)); });
+        return fetch('/profesor/pizarra/actualizar-basico', {
+            method: 'POST',
+            headers: postHeaders(),
+            body: JSON.stringify({ id: pizarraId, nombre, titulos, vueltas })
+        });
+    }
+
+    // Auto-guardar nombre y títulos: al salir del campo (blur) y al dejar de escribir (debounce) para que la TV actualice
+    let debounceGuardar = null;
+    function programarGuardadoNombreYTitulos() {
+        if (debounceGuardar) clearTimeout(debounceGuardar);
+        debounceGuardar = setTimeout(function() {
+            debounceGuardar = null;
+            guardarNombreYTitulos();
+        }, 500);
+    }
+    document.getElementById('pizarraNombre').addEventListener('blur', function() { guardarNombreYTitulos(); });
+    document.getElementById('pizarraNombre').addEventListener('input', programarGuardadoNombreYTitulos);
+    document.querySelectorAll('.col-titulo-input').forEach(inp => {
+        inp.addEventListener('blur', function() { guardarNombreYTitulos(); });
+        inp.addEventListener('input', programarGuardadoNombreYTitulos);
+    });
+    document.querySelectorAll('.col-vueltas-select').forEach(sel => {
+        sel.addEventListener('change', function() { guardarNombreYTitulos(); });
+    });
+
+    // Agregar columna (máx. 6)
+    const btnAgregarCol = document.getElementById('btnAgregarColumna');
+    if (btnAgregarCol) btnAgregarCol.addEventListener('click', function() {
+        fetch('/profesor/pizarra/agregar-columna', {
+            method: 'POST',
+            headers: postHeaders(),
+            body: JSON.stringify({ pizarraId })
+        }).then(r => {
+            if (r.ok) location.reload();
+            else r.json().then(d => mostrarAlerta(d.error || 'No se pudo agregar'));
+        }).catch(() => mostrarAlerta('Error al agregar columna'));
+    });
+
+    // Quitar columna (mín. 1)
+    document.querySelectorAll('.btn-quitar-columna').forEach(btn => {
+        btn.addEventListener('click', function() {
+            var self = this;
+            confirmar('¿Quitar esta columna? Se borrarán los ejercicios que tenga.').then(function(ok) {
+                if (!ok) return;
+                const columnaId = self.getAttribute('data-columna-id');
+                fetch('/profesor/pizarra/quitar-columna', {
+                    method: 'POST',
+                    headers: postHeaders(),
+                    body: JSON.stringify({ columnaId })
+                }).then(r => {
+                    if (r.ok) location.reload();
+                    else r.json().then(d => mostrarAlerta(d.error || 'No se pudo quitar'));
+                }).catch(() => mostrarAlerta('Error al quitar columna'));
+            });
+        });
+    });
+
+    // Modal Transmitir en TV (conexión global: un token por profesor)
+    var modalTransmitir = new bootstrap.Modal(document.getElementById('modalTransmitirTV'));
+    document.getElementById('btnTransmitirTV').addEventListener('click', function() {
+        document.getElementById('inputPinSala').value = '';
+        var enlaceBox = document.getElementById('transmitirEnlaceBox');
+        var msgYa = document.getElementById('transmitirMsgYaConfigurado');
+        if (tokenSalaActual) {
+            document.getElementById('transmitirEnlaceUrl').value = window.location.origin + '/sala/' + tokenSalaActual;
+            enlaceBox.style.display = 'block';
+            msgYa.style.display = salaTienePinActual ? 'block' : 'none';
+        } else {
+            enlaceBox.style.display = 'none';
+            msgYa.style.display = 'none';
+        }
+        modalTransmitir.show();
+    });
+    document.getElementById('btnSinCodigo').addEventListener('click', function() {
+        var input = document.getElementById('inputPinSala');
+        input.value = '';
+        input.placeholder = 'Vacío = el TV abre sin código';
+        var msg = document.getElementById('msgSinCodigoAplicado');
+        msg.style.display = 'inline';
+        setTimeout(function() { msg.style.display = 'none'; }, 3000);
+    });
+    document.getElementById('btnGuardarPinYEnlace').addEventListener('click', function() {
+        var pin = document.getElementById('inputPinSala').value.trim();
+        if (pin.length > 0 && (pin.length !== 4 || !/^\d{4}$/.test(pin))) {
+            mostrarAlerta('El código debe tener exactamente 4 dígitos.');
+            return;
+        }
+        fetch('/profesor/pizarra/transmitir', {
+            method: 'POST',
+            headers: postHeaders(),
+            body: JSON.stringify({ pizarraId: pizarraId, pin: pin || '' })
+        }).then(function(r) {
+            return r.json().then(function(data) {
+                if (r.ok && data.token) {
+                    tokenSalaActual = data.token;
+                    salaTienePinActual = pin.length > 0;
+                    var url = window.location.origin + '/sala/' + data.token;
+                    document.getElementById('transmitirEnlaceUrl').value = url;
+                    document.getElementById('transmitirEnlaceBox').style.display = 'block';
+                    document.getElementById('transmitirMsgYaConfigurado').style.display = salaTienePinActual ? 'block' : 'none';
+                } else {
+                    mostrarAlerta(data.error || 'Error al guardar');
+                }
+            });
+        }).catch(function() { mostrarAlerta('Error al guardar'); });
+    });
+    document.getElementById('btnCopiarEnlace').addEventListener('click', function() {
+        var input = document.getElementById('transmitirEnlaceUrl');
+        input.select();
+        navigator.clipboard.writeText(input.value).then(function() { mostrarAlerta('Enlace copiado'); }).catch(function() { mostrarAlerta('Copiá el enlace manualmente'); });
+    });
+    document.getElementById('btnCambiarEnlace').addEventListener('click', function() {
+        confirmar('Se generará un enlace nuevo. El enlace actual dejará de funcionar. ¿Continuar?').then(function(ok) {
+            if (!ok) return;
+            fetch('/profesor/pizarra/transmitir/nuevo-enlace', {
+                method: 'POST',
+                headers: postHeaders(),
+                body: JSON.stringify({ pizarraId: pizarraId })
+            }).then(function(r) {
+                return r.json().then(function(data) {
+                    if (r.ok && data.token) {
+                        tokenSalaActual = data.token;
+                        salaTienePinActual = false;
+                        document.getElementById('transmitirEnlaceUrl').value = window.location.origin + '/sala/' + data.token;
+                        document.getElementById('transmitirEnlaceBox').style.display = 'block';
+                        document.getElementById('transmitirMsgYaConfigurado').style.display = 'none';
+                        document.getElementById('inputPinSala').value = '';
+                        mostrarAlerta('Enlace nuevo generado. Opcional: ingresá un código de 4 dígitos y hacé clic en "Guardar y ver enlace".');
+                    } else {
+                        mostrarAlerta(data.error || 'Error al generar enlace');
+                    }
+                });
+            }).catch(function() { mostrarAlerta('Error al generar enlace'); });
+        });
+    });
+
+    // Filtros ejercicios
+    function filtrarEjercicios() {
+        const texto = document.getElementById('filtro-ejercicio').value.toLowerCase();
+        const grupoId = document.getElementById('filtro-grupo').value;
+        document.querySelectorAll('.ejercicio-draggable').forEach(el => {
+            const nom = (el.dataset.nombre || '').toLowerCase();
+            const grupoIds = (el.dataset.grupoIds || '');
+            const matchTexto = !texto || nom.includes(texto);
+            const matchGrupo = !grupoId || grupoIds.split(',').includes(grupoId);
+            el.style.display = matchTexto && matchGrupo ? '' : 'none';
+        });
+    }
+    document.getElementById('filtro-ejercicio').addEventListener('input', filtrarEjercicios);
+    document.getElementById('filtro-grupo').addEventListener('change', filtrarEjercicios);
+
+    // Drag and drop
+    let draggedElement = null;
+    document.querySelectorAll('.ejercicio-draggable').forEach(el => {
+        el.addEventListener('dragstart', e => {
+            draggedElement = el;
+            e.dataTransfer.setData('text/plain', el.dataset.id);
+            e.dataTransfer.effectAllowed = 'copy';
+        });
+    });
+
+    function bindItemDrag(card) {
+        card.addEventListener('dragstart', function(e) {
+            draggedElement = card;
+            const col = card.closest('.pizarra-columna');
+            const columnaId = col ? col.dataset.columnaId : '';
+            const exerciseId = card.dataset.exerciseId || '';
+            const peso = card.querySelector('.item-peso') ? card.querySelector('.item-peso').value : '';
+            const reps = card.querySelector('.item-reps') ? card.querySelector('.item-reps').value : '';
+            const unidadSel = card.querySelector('.item-unidad');
+            const unidad = unidadSel ? unidadSel.value : 'reps';
+            card.classList.add('dragging');
+            e.dataTransfer.setData('text/plain', ''); // algunos navegadores exigen algo
+            e.dataTransfer.setData('application/json', JSON.stringify({
+                source: 'item',
+                itemId: card.dataset.itemId,
+                exerciseId: exerciseId,
+                columnaId: columnaId,
+                peso: peso ? parseInt(peso, 10) : null,
+                reps: reps ? parseInt(reps, 10) : null,
+                unidad: unidad
+            }));
+            e.dataTransfer.effectAllowed = 'copyMove';
+        });
+        card.addEventListener('dragend', function() {
+            card.classList.remove('dragging');
+            document.querySelectorAll('.pizarra-item.drag-over-item').forEach(x => x.classList.remove('drag-over-item'));
+        });
+    }
+    document.querySelectorAll('.pizarra-item').forEach(card => bindItemDrag(card));
+
+    document.querySelectorAll('.pizarra-columna').forEach(col => {
+        const dropZone = col.querySelector('.columna-items');
+        col.addEventListener('dragover', e => {
+            e.preventDefault();
+            col.classList.add('drag-over');
+            e.dataTransfer.dropEffect = 'copy';
+        });
+        col.addEventListener('dragleave', e => {
+            if (!col.contains(e.relatedTarget)) col.classList.remove('drag-over');
+        });
+        col.addEventListener('drop', e => {
+            e.preventDefault();
+            col.classList.remove('drag-over');
+            const columnaId = col.dataset.columnaId;
+            if (!columnaId) return;
+            const json = e.dataTransfer.getData('application/json');
+            if (json) {
+                try {
+                    const d = JSON.parse(json);
+                    if (d.source === 'item') {
+                        if (d.columnaId === columnaId) {
+                            // Reordenar dentro de la misma columna
+                            const items = Array.from(dropZone.querySelectorAll('.pizarra-item'));
+                            let insertIndex = 0;
+                            for (let i = 0; i < items.length; i++) {
+                                const r = items[i].getBoundingClientRect();
+                                if (e.clientY > r.top + r.height / 2) insertIndex = i + 1;
+                                else { insertIndex = i; break; }
+                            }
+                            const idxDragged = items.indexOf(draggedElement);
+                            if (idxDragged >= 0 && (insertIndex !== idxDragged && insertIndex !== idxDragged + 1)) {
+                                const ref = insertIndex >= dropZone.children.length ? null : dropZone.children[insertIndex];
+                                dropZone.insertBefore(draggedElement, ref);
+                                const orderedIds = Array.from(dropZone.querySelectorAll('.pizarra-item')).map(it => it.dataset.itemId).map(Number);
+                                fetch('/profesor/pizarra/reordenar-items', {
+                                    method: 'POST',
+                                    headers: postHeaders(),
+                                    body: JSON.stringify({ columnaId: Number(columnaId), itemIds: orderedIds })
+                                }).catch(() => mostrarAlerta('Error al reordenar'));
+                            }
+                        } else {
+                            // Copiar a otra columna
+                            agregarItem(Number(columnaId), Number(d.exerciseId), dropZone, draggedElement, d.peso, d.reps, d.unidad);
+                        }
+                        return;
+                    }
+                } catch (err) { /* no es item */ }
+            }
+            const exerciseId = e.dataTransfer.getData('text/plain');
+            if (!exerciseId) return;
+            agregarItem(Number(columnaId), Number(exerciseId), dropZone, draggedElement, null, null, 'reps');
+        });
+    });
+
+    function agregarItem(columnaId, exerciseId, dropZone, draggedEl, peso, reps, unidad) {
+        const u = unidad || 'reps';
+        const body = { columnaId, exerciseId, peso: peso != null ? peso : null, repeticiones: reps != null ? reps : null, unidad: u };
+        fetch('/profesor/pizarra/agregar-item', {
+            method: 'POST',
+            headers: postHeaders(),
+            body: JSON.stringify(body)
+        }).then(r => r.json()).then(data => {
+            if (!data || !data.id) { mostrarAlerta('Error al agregar'); return; }
+            const nombre = (draggedEl && draggedEl.querySelector('.item-nombre')) ? draggedEl.querySelector('.item-nombre').textContent : (draggedEl && draggedEl.querySelector('strong')) ? draggedEl.querySelector('strong').textContent : 'Ejercicio';
+            const grupos = (draggedEl && draggedEl.querySelector('.grupo-badge')) ? draggedEl.querySelector('.grupo-badge').textContent : (draggedEl && draggedEl.querySelector('small')) ? draggedEl.querySelector('small').textContent : '';
+            const imgSrc = (draggedEl && draggedEl.querySelector('img')) ? draggedEl.querySelector('img').src : '/img/not_imagen.png';
+            const card = crearTarjetaItem(data.id, nombre, grupos, imgSrc, exerciseId, peso, reps, u);
+            dropZone.appendChild(card);
+            bindItemEvents(card);
+            bindItemDrag(card);
+        }).catch(() => mostrarAlerta('Error al agregar'));
+    }
+
+    function crearTarjetaItem(itemId, ejercicioNombre, grupoTexto, imgSrc, exerciseId, pesoVal, repsVal, unidadVal) {
+        const div = document.createElement('div');
+        div.className = 'pizarra-item';
+        div.draggable = true;
+        div.setAttribute('data-item-id', itemId);
+        if (exerciseId) div.setAttribute('data-exercise-id', exerciseId);
+        const pv = (pesoVal != null && pesoVal !== '') ? (' value="' + pesoVal + '"') : '';
+        const rv = (repsVal != null && repsVal !== '') ? (' value="' + repsVal + '"') : '';
+        const u = unidadVal || 'reps';
+        const selReps = u === 'reps' ? ' selected' : '';
+        const selS = (u === 's' || u === 'seg') ? ' selected' : '';
+        const selMin = u === 'min' ? ' selected' : '';
+        div.innerHTML = '<div class="d-flex justify-content-between align-items-start mb-1">' +
+            '<span class="grupo-badge">' + (grupoTexto || '').replace(/</g, '&lt;') + '</span>' +
+            '<span class="btn-group-orden btn-group-orden-item">' +
+            '<button type="button" class="btn btn-sm btn-outline-secondary py-0 px-1 btn-subir-item" data-item-id="' + itemId + '" title="Subir"><i class="fa-solid fa-chevron-up"></i></button>' +
+            '<button type="button" class="btn btn-sm btn-outline-secondary py-0 px-1 btn-bajar-item" data-item-id="' + itemId + '" title="Bajar"><i class="fa-solid fa-chevron-down"></i></button>' +
+            '</span></div>' +
+            '<img src="' + (imgSrc || '/img/not_imagen.png') + '" alt="">' +
+            '<div class="item-nombre">' + (ejercicioNombre || '').replace(/</g, '&lt;') + '</div>' +
+            '<div class="item-peso-reps">' +
+            '<input type="number" placeholder="kg" class="item-peso" min="0" data-item-id="' + itemId + '"' + pv + ' title="Peso en kg (vacío si no aplica)">' +
+            '<input type="number" placeholder="cant." class="item-reps" min="0" data-item-id="' + itemId + '"' + rv + ' title="Cantidad">' +
+            '</div>' +
+            '<div class="item-fila-unidad">' +
+            '<select class="item-unidad form-select form-select-sm" data-item-id="' + itemId + '" title="reps / seg / min">' +
+            '<option value="reps"' + selReps + '>reps</option><option value="s"' + selS + '>seg</option><option value="min"' + selMin + '>min</option>' +
+            '</select>' +
+            '<button type="button" class="btn btn-sm btn-outline-danger btn-eliminar-item" data-item-id="' + itemId + '" title="Eliminar"><i class="fa-solid fa-trash"></i></button>' +
+            '</div>';
+        return div;
+    }
+
+    function reordenarColumnaDesdeDOM(dropZone, columnaId) {
+        const orderedIds = Array.from(dropZone.querySelectorAll('.pizarra-item')).map(it => it.dataset.itemId).map(Number);
+        fetch('/profesor/pizarra/reordenar-items', {
+            method: 'POST',
+            headers: postHeaders(),
+            body: JSON.stringify({ columnaId: Number(columnaId), itemIds: orderedIds })
+        }).catch(() => mostrarAlerta('Error al reordenar'));
+    }
+
+    function enviarActualizarItem(card) {
+        const itemId = card.getAttribute('data-item-id');
+        const pesoInp = card.querySelector('.item-peso');
+        const repsInp = card.querySelector('.item-reps');
+        const unidadSel = card.querySelector('.item-unidad');
+        const peso = pesoInp && pesoInp.value ? parseInt(pesoInp.value, 10) : null;
+        const reps = repsInp && repsInp.value ? parseInt(repsInp.value, 10) : null;
+        const unidad = (unidadSel && unidadSel.value) ? unidadSel.value : 'reps';
+        fetch('/profesor/pizarra/actualizar-item', {
+            method: 'POST',
+            headers: postHeaders(),
+            body: JSON.stringify({ itemId, peso, repeticiones: reps, unidad: unidad })
+        });
+    }
+
+    function bindItemEvents(card) {
+        const itemId = card.getAttribute('data-item-id');
+        [card.querySelector('.item-peso'), card.querySelector('.item-reps'), card.querySelector('.item-unidad')].forEach(el => {
+            if (!el) return;
+            el.addEventListener('change', function() { enviarActualizarItem(card); });
+        });
+        card.querySelector('.btn-eliminar-item').addEventListener('click', function() {
+            confirmar('¿Eliminar este ejercicio?').then(function(ok) {
+                if (!ok) return;
+                fetch('/profesor/pizarra/eliminar-item', {
+                    method: 'POST',
+                    headers: postHeaders(),
+                    body: JSON.stringify({ itemId })
+                }).then(r => { if (r.ok) card.remove(); });
+            });
+        });
+        const dropZone = card.closest('.columna-items');
+        const columnaId = card.closest('.pizarra-columna') && card.closest('.pizarra-columna').dataset.columnaId;
+        const btnSubir = card.querySelector('.btn-subir-item');
+        const btnBajar = card.querySelector('.btn-bajar-item');
+        if (btnSubir && dropZone && columnaId) {
+            btnSubir.addEventListener('click', function() {
+                const prev = card.previousElementSibling;
+                if (prev && prev.classList.contains('pizarra-item')) {
+                    dropZone.insertBefore(card, prev);
+                    reordenarColumnaDesdeDOM(dropZone, columnaId);
+                }
+            });
+        }
+        if (btnBajar && dropZone && columnaId) {
+            btnBajar.addEventListener('click', function() {
+                const next = card.nextElementSibling;
+                if (next && next.classList.contains('pizarra-item')) {
+                    dropZone.insertBefore(next, card);
+                    reordenarColumnaDesdeDOM(dropZone, columnaId);
+                }
+            });
+        }
+    }
+
+    // Actualizar peso/reps (tarjetas cargadas al inicio)
+    document.querySelectorAll('.pizarra-item').forEach(card => bindItemEvents(card));
+</script>
+</body>
+</html>

@@ -1,0 +1,23 @@
+Página pública – imágenes y video
+
+--- Relación de aspecto para los videos de presentación ---
+Escritorio (pantalla ancha): 2:1
+  - Archivo: video-inicial.mp4
+  - Resolución sugerida: 1920×960 (2:1).
+  - Se muestra cuando el ancho de pantalla es >= 768px.
+
+Móvil (celular, vertical): 9:16
+  - Archivo: video-movil.mp4
+  - Resolución sugerida: 1080×1920 (9:16), formato vertical tipo stories/Reels.
+  - Se muestra cuando el ancho de pantalla es < 768px.
+--- Fin recomendación ---
+
+Archivos que usa la página:
+- fondo-inicial.png        → poster del video (mientras carga) y fondo del primer slide
+- video-inicial.mp4        → video del hero en ESCRITORIO (2:1)
+- video-movil.mp4           → video del hero en MÓVIL (9:16)
+- inicio.png                → logo circular en el navbar
+- 1.png, 2.png, 3.png       → slides 2, 3, 4 del carrusel
+- 4.jpg, 5.jpg, 6.jpg       → sección "Rasgos que nos caracterizan"
+
+Cuando el cliente pase fotos propias del gimnasio, reemplazar estos archivos (mismo nombre) en esta carpeta.

@@ -1,0 +1,48 @@
+# Build
+build/
+out/
+target/
+*.class
+*.jar
+*.war
+!gradle/wrapper/gradle-wrapper.jar
+
+# Gradle
+.gradle/
+!gradle/wrapper/
+
+# IDE
+.idea/
+*.iml
+*.ipr
+*.iws
+.project
+.classpath
+.settings/
+.vscode/
+
+# Logs y temporales
+*.log
+logs/
+*.pid
+*.tmp
+*.bak
+*.swp
+*~
+
+# Sistema
+.DS_Store
+Thumbs.db
+
+# Spring Boot
+application-local.properties
+application-local.yml
+
+# Contraseña BD en servidor (no versionar)
+.matt_db_password
+
+# Carpeta uploads (imágenes de ejercicios): no versionar; gestionar por backup
+uploads/
+
+# Carpeta backups (ya no se usa: export/import es ZIP y descarga directa)
+backups/

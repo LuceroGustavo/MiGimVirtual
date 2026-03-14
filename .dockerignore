@@ -1,0 +1,39 @@
+# Archivos y carpetas a ignorar en el build de Docker
+
+# Archivos de desarrollo
+.git
+.gitignore
+README.md
+CHANGELOG.md
+*.md
+
+# Archivos de IDE
+.idea/
+.vscode/
+*.iml
+*.ipr
+*.iws
+
+# Archivos de Maven
+target/
+!target/*.jar
+
+# Archivos de sistema
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Archivos temporales
+*.tmp
+*.temp
+
+# Archivos de configuración local
+application-local.properties
+application-dev.properties
+
+# Historial y documentación
+historial/
+debug.bat
+debug.ps1 

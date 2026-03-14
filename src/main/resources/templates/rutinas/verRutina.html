@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5">
+    <title>Hoja de Rutina - Mattfuncional</title>
+    <!-- Open Graph / WhatsApp: preview al compartir enlace -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Mattfuncional te ha enviado una rutina">
+    <meta property="og:description" content="Tu profesor te ha compartido una rutina de entrenamiento. Ábrela para ver los ejercicios.">
+    <meta property="og:image" th:content="${ogImageUrl}">
+    <meta property="og:url" th:content="${ogPageUrl}">
+    <meta property="og:locale" content="es_AR">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="Mattfuncional te ha enviado una rutina">
+    <meta name="twitter:description" content="Tu profesor te ha compartido una rutina de entrenamiento. Ábrela para ver los ejercicios.">
+    <meta name="twitter:image" th:content="${ogImageUrl}">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            padding: 0;
+            background: #0d1117;
+            color: #e6edf3;
+            min-height: 100vh;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            -webkit-text-size-adjust: 100%;
+        }
+        /* Timbre (sin navbar, sin botones Volver/Iniciar sesión) */
+        .hoja-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.75rem;
+            padding: 0.5rem 1rem;
+            flex-shrink: 0;
+            background: #161b22;
+            border-bottom: 1px solid #30363d;
+        }
+        .hoja-header-left {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            flex-shrink: 0;
+        }
+        .hoja-header-logo {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+        .hoja-header-marca {
+            color: #fff;
+            font-weight: 700;
+            font-size: clamp(0.9rem, 1.4vw, 1.15rem);
+            margin: 0;
+        }
+        .hoja-header-titulo {
+            flex: 1;
+            font-size: clamp(1.7rem, 3.2vw, 2.4rem);
+            font-weight: 700;
+            color: #7ee787;
+            text-align: center;
+            margin: 0;
+        }
+        .hoja-header-right {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            flex-shrink: 0;
+        }
+        .hoja-header-fecha {
+            color: #fff;
+            font-size: clamp(0.75rem, 1.2vw, 0.95rem);
+            font-weight: 600;
+            white-space: nowrap;
+        }
+        .hoja-copiar {
+            color: #7ee787;
+            font-size: 0.8rem;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+        .hoja-copiar:hover { color: #9ee79f; }
+        /* Contenedor principal */
+        .hoja-container { padding: 1rem; max-width: 1200px; margin: 0 auto; }
+        /* Reseña del profesor */
+        .resena-profesor {
+            background: #161b22;
+            border-left: 4px solid #3b82f6;
+            border-radius: 8px;
+            padding: 1rem 1.25rem;
+            margin-bottom: 1.5rem;
+            border: 1px solid #30363d;
+        }
+        .resena-profesor h6 {
+            color: #58a6ff;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+        .resena-profesor p { color: #c9d1d9; margin: 0; }
+        /* Series: color por serie (misma paleta que sala) */
+        .hoja-serie {
+            border: 3px solid #30363d;
+            border-radius: 10px;
+            padding: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+        .hoja-serie:nth-child(1) { border-color: #f97316; }
+        .hoja-serie:nth-child(2) { border-color: #22c55e; }
+        .hoja-serie:nth-child(3) { border-color: #eab308; }
+        .hoja-serie:nth-child(4) { border-color: #3b82f6; }
+        .hoja-serie:nth-child(5) { border-color: #d946ef; }
+        .hoja-serie:nth-child(6) { border-color: #06b6d4; }
+        .hoja-serie-titulo {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            background: linear-gradient(135deg, #21262d 0%, #161b22 100%);
+            color: #c9d1d9;
+            padding: 0.6rem 0.9rem;
+            font-weight: 700;
+            font-size: clamp(1.6rem, 3vw, 2.2rem);
+            border-radius: 6px;
+            margin-bottom: 0.75rem;
+            border: 1px solid #30363d;
+        }
+        .hoja-serie-titulo-punto {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+        .hoja-serie:nth-child(1) .hoja-serie-titulo-punto { background: #f97316; }
+        .hoja-serie:nth-child(2) .hoja-serie-titulo-punto { background: #22c55e; }
+        .hoja-serie:nth-child(3) .hoja-serie-titulo-punto { background: #eab308; }
+        .hoja-serie:nth-child(4) .hoja-serie-titulo-punto { background: #3b82f6; }
+        .hoja-serie:nth-child(5) .hoja-serie-titulo-punto { background: #d946ef; }
+        .hoja-serie:nth-child(6) .hoja-serie-titulo-punto { background: #06b6d4; }
+        .hoja-serie-vueltas {
+            margin-left: auto;
+            color: #f97316;
+            font-weight: 700;
+            font-size: clamp(1.5rem, 2.6vw, 2rem);
+            white-space: nowrap;
+        }
+        .ejercicios-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 1rem;
+        }
+        /* Vista escritorio (rutina no asignada): fijo 3 columnas, no responsive, peso/reps más chicos */
+        body.vista-escritorio .ejercicios-grid {
+            grid-template-columns: repeat(3, 1fr);
+        }
+        body.vista-escritorio .sala-item-wrap .item-peso,
+        body.vista-escritorio .sala-item-wrap .item-reps {
+            font-size: 0.85rem;
+            padding: 0.25rem 0.45rem;
+            min-height: 1.4em;
+        }
+        /* Tarjetas verticales (como creación de series): imagen grande, peso/reps superpuestos en esquina derecha */
+        .sala-item-wrap {
+            display: flex;
+            flex-direction: column;
+            border-radius: 12px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        .sala-item-wrap:hover { transform: scale(1.02); }
+        .sala-item-wrap .item-titulo {
+            background: #000;
+            color: #fff;
+            font-size: clamp(1.4rem, 2.2vw, 1.8rem);
+            font-weight: 700;
+            padding: 0.5rem 0.6rem;
+            line-height: 1.2;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        .sala-item-wrap .sala-item {
+            position: relative;
+            border-radius: 0 0 12px 12px;
+            overflow: hidden;
+            border: 1px solid #30363d;
+            border-top: none;
+            background: #fff;
+            /* Imagen vertical grande como en creación de series */
+            min-height: 220px;
+            height: 240px;
+        }
+        @media (max-width: 576px) {
+            .sala-item-wrap .sala-item { min-height: 260px; height: 280px; }
+        }
+        .sala-item-wrap .item-imagen-wrap {
+            position: absolute;
+            inset: 0;
+            background: #fff;
+        }
+        .sala-item-wrap .item-imagen-wrap img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            object-position: center center;
+        }
+        /* Peso arriba a la derecha, repeticiones abajo (como en /series/ver) */
+        .sala-item-wrap .item-datos {
+            position: absolute;
+            right: 0;
+            top: 0;
+            bottom: 0;
+            width: auto;
+            min-width: 2.8rem;
+            max-width: 40%;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 0.5rem;
+            pointer-events: none;
+            z-index: 2;
+        }
+        .sala-item-wrap .item-imagen-wrap { z-index: 0; }
+        .sala-item-wrap .item-datos > * { pointer-events: auto; }
+        .sala-item-wrap .item-peso,
+        .sala-item-wrap .item-reps {
+            font-size: clamp(1.2rem, 2.2vw, 1.5rem);
+            font-weight: 700;
+            color: #7ee787;
+            padding: 0.4rem 0.6rem;
+            text-align: right;
+            background: rgba(0, 0, 0, 0.75);
+            border-radius: 8px;
+            width: fit-content;
+            min-height: 1.8em;
+            align-self: flex-end;
+            flex-shrink: 0;
+        }
+        .sala-item-wrap .item-reps { margin-top: auto; }
+        @media (max-width: 576px) {
+            .hoja-container { padding: 0.75rem; }
+            .hoja-header { flex-wrap: wrap; }
+            .hoja-header-titulo { order: 3; width: 100%; text-align: center; }
+            .ejercicios-grid { grid-template-columns: 1fr; }
+            /* Vista escritorio: mantener 3 columnas incluso en móvil (no responsive) */
+            body.vista-escritorio .ejercicios-grid { grid-template-columns: repeat(3, 1fr); }
+        }
+    </style>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const overlay = document.createElement('div');
+            overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.85);display:none;z-index:2000;justify-content:center;align-items:center;overflow-y:auto;padding:0.5rem';
+            overlay.id = 'zoomOverlay';
+
+            const modal = document.createElement('div');
+            modal.style.cssText = 'background:#161b22;border:2px solid #30363d;border-radius:20px;padding:0;width:96vw;max-width:920px;max-height:96vh;overflow-y:auto;display:flex;flex-direction:column;align-items:stretch;color:#e6edf3;position:relative';
+            modal.id = 'zoomModal';
+            overlay.appendChild(modal);
+            document.body.appendChild(overlay);
+
+            function closeZoom() { overlay.style.display = 'none'; modal.innerHTML = ''; }
+            overlay.addEventListener('click', function(e) { if (e.target === overlay) closeZoom(); });
+            modal.addEventListener('click', function(e) { if (e.target === modal) closeZoom(); });
+            document.addEventListener('keydown', function(e) { if (e.key === 'Escape') closeZoom(); });
+
+            document.querySelectorAll('.sala-item-wrap').forEach(card => {
+                card.addEventListener('click', function(e) {
+                    if (e.target.closest('a')) return;
+                    const img = card.querySelector('.item-imagen-wrap img');
+                    const imgClone = img ? img.cloneNode(true) : null;
+                    const nombre = card.querySelector('.item-titulo')?.textContent || '';
+                    const desc = card.getAttribute('data-desc') || '';
+                    const reps = card.querySelector('.item-reps')?.textContent || '';
+                    const pesoEl = card.querySelector('.item-peso');
+                    const peso = pesoEl ? pesoEl.textContent : '';
+
+                    modal.innerHTML = '';
+                    const closeBtn = document.createElement('button');
+                    closeBtn.setAttribute('type', 'button');
+                    closeBtn.innerHTML = '&times;';
+                    closeBtn.style.cssText = 'position:absolute;top:0.5rem;right:0.75rem;z-index:10;width:2.5rem;height:2.5rem;border:none;background:rgba(255,255,255,0.1);color:#e6edf3;font-size:1.75rem;line-height:1;border-radius:50%;cursor:pointer';
+                    closeBtn.addEventListener('click', closeZoom);
+                    modal.appendChild(closeBtn);
+
+                    const content = document.createElement('div');
+                    content.style.cssText = 'padding:1.25rem 1.5rem;flex:1;display:flex;flex-direction:column';
+
+                    var nombreDiv = document.createElement('h2');
+                    nombreDiv.textContent = nombre;
+                    nombreDiv.style.cssText = 'font-weight:700;font-size:clamp(1.4rem, 4vw, 1.8rem);margin:0 0 0.75rem 0;color:#fff;order:1';
+                    content.appendChild(nombreDiv);
+
+                    var imgWrap = document.createElement('div');
+                    imgWrap.style.cssText = 'position:relative;width:100%;background:#fff;border-radius:12px;overflow:hidden;order:2';
+                    if (imgClone) {
+                        imgClone.style.cssText = 'width:100%;height:min(72vh, 520px);object-fit:contain;display:block';
+                        imgClone.alt = nombre;
+                        imgWrap.appendChild(imgClone);
+                    }
+                    var badgeStyle = 'position:absolute;right:0.5rem;padding:0.4rem 0.65rem;border-radius:8px;font-weight:700;font-size:clamp(1.1rem, 2.8vw, 1.4rem);color:#7ee787;background:rgba(0,0,0,0.75);pointer-events:none';
+                    var esTiempo = (reps || '').toLowerCase().includes(' min') || (reps || '').toLowerCase().includes(' seg');
+                    var repsText = reps && reps !== '—' ? ((esTiempo ? 'Tiempo: ' : 'Reps: ') + reps) : ((esTiempo ? 'Tiempo: —' : 'Reps: —'));
+                    var pesoText = (peso && peso !== '—') ? ('Peso: ' + peso) : '';
+                    if (pesoText) {
+                        var pesoSpan = document.createElement('span');
+                        pesoSpan.style.cssText = badgeStyle + ';top:0.5rem;';
+                        pesoSpan.textContent = pesoText;
+                        imgWrap.appendChild(pesoSpan);
+                    }
+                    var repsSpan = document.createElement('span');
+                    repsSpan.style.cssText = badgeStyle + ';bottom:0.5rem;';
+                    repsSpan.textContent = repsText;
+                    imgWrap.appendChild(repsSpan);
+                    content.appendChild(imgWrap);
+
+                    if (desc) {
+                        var descDiv = document.createElement('p');
+                        descDiv.textContent = desc;
+                        descDiv.style.cssText = 'color:#8b949e;font-size:clamp(1rem, 2.5vw, 1.15rem);margin:0.75rem 0 0 0;line-height:1.4;order:3';
+                        content.appendChild(descDiv);
+                    }
+                    const videoUrl = card.getAttribute('data-video-url');
+                    const hasVideo = videoUrl && videoUrl !== 'null' && String(videoUrl).trim() !== '';
+                    if (hasVideo) {
+                        var a = document.createElement('a');
+                        a.href = videoUrl;
+                        a.target = '_blank';
+                        a.rel = 'noopener';
+                        a.innerHTML = '<i class="fas fa-play-circle"></i> Ver video';
+                        a.style.cssText = 'display:inline-block;margin-top:0.75rem;color:#58a6ff;font-weight:600;font-size:clamp(1.1rem, 2.5vw, 1.3rem);order:4';
+                        content.appendChild(a);
+                    }
+                    modal.appendChild(content);
+                    overlay.style.display = 'flex';
+                });
+            });
+
+        });
+    </script>
+</head>
+<body th:classappend="${esVistaEscritorio == true} ? 'vista-escritorio' : ''">
+<!-- Timbre: logo, Mattfuncional, nombre rutina, fecha (sin Copiar enlace en vista alumno) -->
+<header class="hoja-header">
+    <div class="hoja-header-left">
+        <img class="hoja-header-logo" src="/img/logo.png" alt="Mattfuncional" onerror="this.src='/img/not_imagen.png'">
+        <span class="hoja-header-marca">Mattfuncional</span>
+    </div>
+    <h1 class="hoja-header-titulo" th:text="${rutina.nombre}">Nombre rutina</h1>
+    <div class="hoja-header-right">
+        <span class="hoja-header-fecha" th:text="${fechaFormateada}">Fecha</span>
+    </div>
+</header>
+
+<div class="hoja-container">
+    <!-- Mensaje del profesor -->
+    <div th:if="${rutina.notaParaAlumno != null && !#strings.isEmpty(rutina.notaParaAlumno)}" class="resena-profesor">
+        <h6><i class="fas fa-comment-dots me-2"></i>Mensaje de tu profesor</h6>
+        <p class="mb-0" th:text="${rutina.notaParaAlumno}">Nota para el alumno.</p>
+    </div>
+
+    <!-- Series con color por serie -->
+    <div th:each="serie : ${rutina.series}" class="hoja-serie">
+        <div class="hoja-serie-titulo">
+            <span class="hoja-serie-titulo-punto"></span>
+            <span th:text="${serie.nombre != null && !#strings.isEmpty(serie.nombre) ? serie.nombre : 'Sin título'}">Nombre serie</span>
+            <span class="hoja-serie-vueltas" th:if="${serie.repeticionesSerie != null && serie.repeticionesSerie >= 1}" th:text="|x${serie.repeticionesSerie} vueltas|">x4 vueltas</span>
+        </div>
+        <div class="ejercicios-grid">
+            <div th:each="serieEjercicio : ${serie.serieEjercicios}" class="sala-item-wrap"
+                 th:attr="data-desc=${serieEjercicio.exercise.description}, data-video-url=${(serieEjercicio.exercise.videoUrl != null && !#strings.isEmpty(serieEjercicio.exercise.videoUrl)) ? serieEjercicio.exercise.videoUrl : null}"
+                 th:with="repsDisplay=${serieEjercicio.valor != null ? (serieEjercicio.valor + ' ' + (serieEjercicio.unidad == null or #strings.toLowerCase(serieEjercicio.unidad) == 'reps' ? 'rep.' : #strings.toLowerCase(serieEjercicio.unidad) == 'min' ? 'min' : #strings.toLowerCase(serieEjercicio.unidad) == 'seg' or #strings.toLowerCase(serieEjercicio.unidad) == 's' ? 'seg' : (serieEjercicio.unidad != null ? serieEjercicio.unidad : 'rep.'))) : '—'}">
+                <div class="item-titulo" th:text="${serieEjercicio.exercise.name}">Ejercicio</div>
+                <div class="sala-item">
+                    <div class="item-imagen-wrap">
+                        <img th:if="${serieEjercicio.exercise.imagen != null}" th:src="${serieEjercicio.exercise.imagen.url}" alt="">
+                        <img th:if="${serieEjercicio.exercise.imagen == null}" src="/img/not_imagen.png" alt="">
+                    </div>
+                    <div class="item-datos">
+                        <!-- Peso arriba a la derecha (igual que /series/ver): th:if + th:text como en verSerie.html -->
+                        <div class="item-peso" th:if="${serieEjercicio.peso != null}" th:text="${serieEjercicio.peso} + ' kg'">25 kg</div>
+                        <div class="item-peso" th:if="${serieEjercicio.peso == null}">Sin peso</div>
+                        <div class="item-reps" th:text="${repsDisplay}">-</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

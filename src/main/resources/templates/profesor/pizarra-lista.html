@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Pizarra - Mattfuncional</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+<div th:replace="fragments/navbar :: navbar"></div>
+<div class="container py-4">
+    <h1 class="mb-4"><i class="fa-solid fa-tv me-2"></i>Pizarra</h1>
+    <p class="text-muted mb-4">Crea y gestiona pizarras para mostrar ejercicios en el TV de la sala.</p>
+
+    <a th:href="@{/profesor/pizarra/panel}" class="btn btn-primary mb-4">
+        <i class="fa-solid fa-tv me-2"></i>Ir al panel de pizarra
+    </a>
+
+    <div th:if="${pizarras != null and !pizarras.isEmpty()}" class="card">
+        <div class="card-body">
+            <h5 class="card-title">Pizarras guardadas</h5>
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Columnas</th>
+                            <th>Última modificación</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="p : ${pizarras}">
+                            <td th:text="${p.nombre}">Nombre</td>
+                            <td th:text="${p.cantidadColumnas}">1</td>
+                            <td th:text="${p.fechaModificacion != null ? #temporals.format(p.fechaModificacion, 'dd/MM/yyyy HH:mm') : '-'}">-</td>
+                            <td>
+                                <a th:href="@{/profesor/pizarra/editar/{id}(id=${p.id})}" class="btn btn-sm btn-primary me-1">
+                                    <i class="fa-solid fa-pen"></i>
+                                </a>
+                                <button type="button" class="btn btn-sm btn-success me-1 btn-transmitir-tv" title="Transmitir en TV"
+                                        th:attr="data-pizarra-id=${p.id}, data-token=${p.token}">
+                                    <i class="fa-solid fa-tv"></i>
+                                </button>
+                                <form th:action="@{/profesor/pizarra/eliminar/{id}(id=${p.id})}" method="post" class="d-inline form-eliminar-pizarra-lista">
+                                    <button type="button" class="btn btn-sm btn-danger btn-confirmar-eliminar-pizarra-lista" data-msg="¿Eliminar esta pizarra?"><i class="fa-solid fa-trash"></i></button>
+                                </form>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div th:if="${pizarras == null or pizarras.isEmpty()}" class="alert alert-info">
+        No hay pizarras guardadas. Creá una nueva para empezar.
+    </div>
+</div>
+
+<!-- Modal confirmar eliminar pizarra -->
+<div class="modal fade" id="modalConfirmarEliminarPizarraLista" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header modal-confirmar-header">
+                <h5 class="modal-title"><i class="fas fa-exclamation-circle me-2"></i>Confirmar</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <div class="modal-body" id="modalConfirmarEliminarPizarraListaMensaje"></div>
+            <div class="modal-footer modal-confirmar-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-danger" id="btnConfirmarEliminarPizarraLista"><i class="fas fa-trash me-1"></i>Eliminar</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Modal alerta -->
+<div class="modal fade" id="modalAlertaPizarraLista" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header modal-confirmar-header">
+                <h5 class="modal-title"><i class="fas fa-info-circle me-2"></i>Información</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <div class="modal-body" id="modalAlertaPizarraListaMensaje"></div>
+            <div class="modal-footer modal-confirmar-footer">
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Aceptar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Transmitir en TV -->
+<div class="modal fade" id="modalTransmitirTV" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title"><i class="fa-solid fa-tv me-2"></i>Transmitir en TV</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p class="text-muted small">Opcional: código de 4 dígitos para que en el TV pidan el código antes de ver la pizarra. Dejá vacío para abrir sin código.</p>
+                <div class="mb-3">
+                    <label for="inputPinSalaLista" class="form-label">Código de 4 dígitos</label>
+                    <input type="text" id="inputPinSalaLista" class="form-control" maxlength="4" pattern="[0-9]*" inputmode="numeric" placeholder="Ej: 1234" autocomplete="off">
+                    <button type="button" class="btn btn-link btn-sm p-0 mt-1" id="btnSinCodigoLista">Sin código</button>
+                </div>
+                <div id="transmitirEnlaceBoxLista" style="display: none;">
+                    <label class="form-label">Enlace para abrir en el navegador del TV</label>
+                    <div class="input-group">
+                        <input type="text" id="transmitirEnlaceUrlLista" class="form-control" readonly>
+                        <button type="button" class="btn btn-outline-primary" id="btnCopiarEnlaceLista"><i class="fa-solid fa-copy me-1"></i>Copiar</button>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                <button type="button" class="btn btn-success" id="btnGuardarPinYEnlaceLista"><i class="fa-solid fa-check me-1"></i>Guardar y ver enlace</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+(function() {
+    function mostrarAlerta(msg) {
+        var el = document.getElementById('modalAlertaPizarraListaMensaje');
+        var m = document.getElementById('modalAlertaPizarraLista');
+        if (el) el.textContent = msg || '';
+        if (m && typeof bootstrap !== 'undefined') (new bootstrap.Modal(m)).show();
+    }
+    var formEliminarPizarra = null;
+    var modalConfirmar = document.getElementById('modalConfirmarEliminarPizarraLista');
+    var modalConfirmarMsg = document.getElementById('modalConfirmarEliminarPizarraListaMensaje');
+    var btnConfirmar = document.getElementById('btnConfirmarEliminarPizarraLista');
+    if (modalConfirmar && typeof bootstrap !== 'undefined') {
+        var modalInst = new bootstrap.Modal(modalConfirmar);
+        document.querySelectorAll('.btn-confirmar-eliminar-pizarra-lista').forEach(function(btn) {
+            btn.addEventListener('click', function() {
+                formEliminarPizarra = this.closest('form');
+                if (modalConfirmarMsg) modalConfirmarMsg.textContent = this.getAttribute('data-msg') || '¿Eliminar esta pizarra?';
+                modalInst.show();
+            });
+        });
+        if (btnConfirmar) btnConfirmar.addEventListener('click', function() { modalInst.hide(); if (formEliminarPizarra) formEliminarPizarra.submit(); });
+    }
+
+    var modalTransmitir = new bootstrap.Modal(document.getElementById('modalTransmitirTV'));
+    var pizarraIdSel = null, tokenSel = null;
+    document.querySelectorAll('.btn-transmitir-tv').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            pizarraIdSel = this.getAttribute('data-pizarra-id');
+            tokenSel = this.getAttribute('data-token');
+            document.getElementById('inputPinSalaLista').value = '';
+            document.getElementById('transmitirEnlaceBoxLista').style.display = 'none';
+            modalTransmitir.show();
+        });
+    });
+    document.getElementById('btnSinCodigoLista').addEventListener('click', function() {
+        document.getElementById('inputPinSalaLista').value = '';
+    });
+    document.getElementById('btnGuardarPinYEnlaceLista').addEventListener('click', function() {
+        var pin = document.getElementById('inputPinSalaLista').value.trim();
+        if (pin.length > 0 && (pin.length !== 4 || !/^\d{4}$/.test(pin))) {
+            mostrarAlerta('El código debe tener exactamente 4 dígitos.');
+            return;
+        }
+        fetch('/profesor/pizarra/transmitir', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': document.querySelector('meta[name="_csrf"]')?.content || '' },
+            body: JSON.stringify({ pizarraId: pizarraIdSel, pin: pin || '' })
+        }).then(function(r) {
+            return r.json().then(function(data) {
+                if (r.ok && data.token) {
+                    document.getElementById('transmitirEnlaceUrlLista').value = window.location.origin + '/sala/' + data.token;
+                    document.getElementById('transmitirEnlaceBoxLista').style.display = 'block';
+                } else {
+                    mostrarAlerta(data.error || 'Error al guardar');
+                }
+            });
+        }).catch(function() { mostrarAlerta('Error al guardar'); });
+    });
+    document.getElementById('btnCopiarEnlaceLista').addEventListener('click', function() {
+        var input = document.getElementById('transmitirEnlaceUrlLista');
+        input.select();
+        navigator.clipboard.writeText(input.value).then(function() { mostrarAlerta('Enlace copiado'); }).catch(function() { mostrarAlerta('Copiá el enlace manualmente'); });
+    });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,3 @@
+# Script para servidor Linux: siempre LF
+mattfuncional text eol=lf
+scripts/servidor/*.sh text eol=lf
