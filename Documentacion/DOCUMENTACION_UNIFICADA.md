@@ -1,6 +1,16 @@
 # Documentación unificada – Referencias y resúmenes
 
-Contenido importante reunido de los documentos que antes estaban dispersos. Para contexto del proyecto usá [LEEME_PRIMERO.md](LEEME_PRIMERO.md), [AYUDA_MEMORIA.md](AYUDA_MEMORIA.md) y [PLAN_DE_DESARROLLO_UNIFICADO.md](PLAN_DE_DESARROLLO_UNIFICADO.md).
+Contenido importante reunido de los documentos del proyecto. Para contexto: [LEEME_PRIMERO.md](LEEME_PRIMERO.md), [AYUDA_MEMORIA.md](AYUDA_MEMORIA.md) y [PLAN_DE_DESARROLLO_MIGIMVIRTUAL.md](PLAN_DE_DESARROLLO_MIGIMVIRTUAL.md).
+
+---
+
+## 0. Evolución MiGimVirtual (realizada)
+
+- **Proyecto:** Nombre MiGimVirtual; paquete `com.migimvirtual`; clase principal `MigimvirtualApplication`.
+- **Base de datos:** `migimvirtual` (URL en `application*.properties`); se crea al arrancar si no existe; tablas con `ddl-auto=update`.
+- **Credenciales de desarrollo:** `profesor@migimvirtual.com` / `profesor`; `developer@migimvirtual.com` / `Qbasic.1977.migimvirtual`.
+- **Marca:** Navbar con logo `mgvirtual_logo1.png` y fondo `fondo-navbar.png`. Página pública: carrusel con videos `video_mgvirtual_inicio_escritorio.mp4` (escritorio) y `Video_mgvirtual_inicio_movil.mp4` (móvil).
+- **Servidor:** Menú `./migimvirtual`; scripts `reset_db_migimvirtual.sql` / `reset_db_migimvirtual.sh`; variables `MIGIMVIRTUAL_DB_USER`, `MIGIMVIRTUAL_DB_PASSWORD`.
 
 ---
 
@@ -51,7 +61,7 @@ Permite eliminar registros antiguos para mantener la base de datos ligera. Dos t
 
 ### 2.2 Modales y avisos unificados (confirmaciones y alertas)
 
-**Estado:** Completado (febrero 2026). En toda la app las confirmaciones y avisos usan modales con estilo Mattfuncional (cabecera morada `.modal-confirmar-header`, pie `.modal-confirmar-footer` en `style.css`), reemplazando `alert()` y `confirm()` nativos del navegador.
+**Estado:** Completado (febrero 2026). En toda la app las confirmaciones y avisos usan modales con estilo MiGimVirtual (cabecera morada `.modal-confirmar-header`, pie `.modal-confirmar-footer` en `style.css`), reemplazando `alert()` y `confirm()` nativos del navegador.
 
 **Vistas con modal de confirmación y/o alerta:**
 
@@ -78,7 +88,7 @@ Permite eliminar registros antiguos para mantener la base de datos ligera. Dos t
 
 ## 3. Despliegue y servidor
 
-**Resumen:** App en VPS Donweb. Acceso SSH: `ssh -p 5638 root@149.50.144.53`. Aplicación en puerto 8080. Si PowerShell está bloqueado, usar Consola VNC de Donweb y menú `./iniciar-menu.sh` / `screen -r mattfuncional`. **Límite de subida (Nginx):** Para restaurar backups grandes, configurar `client_max_body_size` (ej. 50M) en la config de Nginx; ver archivo de ejemplo en `servidor/nginx-detodoya.conf`.
+**Resumen:** App en VPS Donweb. Acceso SSH: `ssh -p 5638 root@149.50.144.53`. Aplicación en puerto 8080. Si PowerShell está bloqueado, usar Consola VNC de Donweb y menú `./migimvirtual` / `screen -r migimvirtual`. **Límite de subida (Nginx):** Para restaurar backups grandes, configurar `client_max_body_size` (ej. 50M) en la config de Nginx; ver archivo de ejemplo en `servidor/nginx-detodoya.conf`.
 
 **Detalle completo:** [servidor/DESPLIEGUE-SERVIDOR.md](servidor/DESPLIEGUE-SERVIDOR.md) (acceso SSH, Consola VNC, menú, Nginx, reinicio, backups en servidor).
 

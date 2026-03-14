@@ -51,33 +51,41 @@ Tras iniciar sesión se redirige al **Panel del profesor** (`/profesor/{id}`).
 
 ## 3. Estructura de la documentación (todo en `Documentacion/`)
 
-Quedan **cuatro archivos** principales más la carpeta de servidor:
-
 | Archivo | Para qué sirve |
 |---------|-----------------|
-| **LEEME_PRIMERO.md** (este) | Contexto del proyecto, acceso, dónde está cada cosa en el código. |
-| **AYUDA_MEMORIA.md** | Lista rápida de pendientes de ejercicios/vistas; nota sobre eliminar alumno y backup. Sistema de backup terminado (resumen). |
-| **PLAN_DE_DESARROLLO_UNIFICADO.md** | Visión, fases, checklist y pendientes detallados (único plan de desarrollo). |
-| **DOCUMENTACION_UNIFICADA.md** | Resúmenes: lo implementado, backup y exportación, Excel alumnos, despliegue, manual (índice), referencias técnicas. |
-| **BASE_PARA_APP_VIRTUAL.md** | Contexto para fork: app 100 % virtual (quitar asistencias, pizarra, alumnos presenciales; 100 % responsive). |
+| **LEEME_PRIMERO.md** (este) | Contexto del proyecto, acceso, evolución realizada, dónde está cada cosa. |
+| **PLAN_DE_DESARROLLO_MIGIMVIRTUAL.md** | Plan de desarrollo: fases (BD, renombre, eliminaciones virtual, responsive), subplan de lo que se quita. |
+| **DOCUMENTACION_UNIFICADA.md** | Resúmenes: lo implementado, backup, Excel alumnos, despliegue, manual (índice), referencias técnicas. |
+| **AYUDA_MEMORIA.md** | Lista rápida de pendientes (ejercicios/vistas), eliminar alumno, backup terminado. |
 
 **Carpeta `servidor/`:** Despliegue en VPS (SSH, Nginx, menú). Ver `servidor/DESPLIEGUE-SERVIDOR.md` y `servidor/nginx-detodoya.conf`.
 
-**En la raíz del proyecto:** `CHANGELOG.md` – historial general de la app.
+**En la raíz:** `CHANGELOG.md` – historial de la app.
 
 ---
 
-## 4. Resumen rápido de estado (para la IA)
+## 4. Evolución ya realizada (MiGimVirtual)
+
+- **Base de datos:** Nueva BD `migimvirtual`; en `application*.properties` la URL apunta a `migimvirtual`. MySQL crea la BD si no existe; Hibernate crea/actualiza tablas con `ddl-auto=update`.
+- **Renombre completo:** Paquete `com.mattfuncional` → `com.migimvirtual`; clase principal `MigimvirtualApplication`; `pom.xml` (groupId/artifactId/name) MiGimVirtual; credenciales de desarrollo `profesor@migimvirtual.com` y `developer@migimvirtual.com`.
+- **Marca e interfaz:** Navbar con logo `mgvirtual_logo1.png` y fondo `fondo-navbar.png`; página pública (carrusel) con videos `video_mgvirtual_inicio_escritorio.mp4` (escritorio) y `Video_mgvirtual_inicio_movil.mp4` (móvil).
+- **Servidor:** Script de menú `./migimvirtual` en la raíz; scripts `scripts/servidor/reset_db_migimvirtual.sql` y `reset_db_migimvirtual.sh`; variables de entorno `MIGIMVIRTUAL_DB_USER`, `MIGIMVIRTUAL_DB_PASSWORD`.
+
+**Pendiente según plan:** Fase 0 (subplan detallado), Fase 3 (eliminar calendario, pizarra, sala, simplificar alumnos), Fase 4 (responsive, UX). Ver PLAN_DE_DESARROLLO_MIGIMVIRTUAL.md.
+
+---
+
+## 5. Resumen rápido de estado (para la IA)
 
 - **Implementado:** Ejercicios, series, rutinas, grupos musculares, alumnos (sin login), calendario y asistencia, pizarra y sala TV, página pública, manual en `/profesor/manual`, sistema de backup (ZIP, JSON y Excel alumnos). Ver DOCUMENTACION_UNIFICADA.md.
-- **Pendiente:** Depuración de datos antiguos (archivar/eliminar asistencia de más de 12 meses). Ver PLAN_DE_DESARROLLO_UNIFICADO.md.
+- **Pendiente:** Eliminaciones para app 100 % virtual (calendario, pizarra, sala, simplificar alumnos) y responsive. Ver PLAN_DE_DESARROLLO_MIGIMVIRTUAL.md.
 
 ---
 
-## 5. Frase para dar contexto a la IA desde otra PC
+## 6. Frase para dar contexto a la IA desde otra PC
 
 - *"Leé Documentacion/LEEME_PRIMERO.md y Documentacion/DOCUMENTACION_UNIFICADA.md para tener contexto del proyecto."*
-- O: *"Para entender el proyecto: Documentacion/LEEME_PRIMERO.md y después PLAN_DE_DESARROLLO_UNIFICADO.md."*
+- *"Plan de desarrollo: Documentacion/PLAN_DE_DESARROLLO_MIGIMVIRTUAL.md."*
 
 ---
 

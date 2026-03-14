@@ -1,8 +1,16 @@
 # Plan de desarrollo – MiGimVirtual
 
-**Objetivo:** Transformar la base Mattfuncional en **MiGimVirtual**, app 100 % virtual (sin asistencias presenciales, sin pizarra/sala TV, sin gestión de alumnos presenciales). Mantener ejercicios, series, rutinas, hoja por token y hacer todo responsive.
+**Objetivo:** Llevar la app a **100 % virtual** (sin asistencias presenciales, sin pizarra/sala TV, sin gestión de alumnos presenciales). Mantener ejercicios, series, rutinas, hoja por token y hacer todo responsive.
 
-**Referencia:** [BASE_PARA_APP_VIRTUAL.md](BASE_PARA_APP_VIRTUAL.md), [LEEME_PRIMERO.md](LEEME_PRIMERO.md).
+**Referencia:** [LEEME_PRIMERO.md](LEEME_PRIMERO.md), [DOCUMENTACION_UNIFICADA.md](DOCUMENTACION_UNIFICADA.md).
+
+---
+
+## Evolución ya realizada
+
+- **Fase 1 – Base de datos:** BD `migimvirtual` en `application*.properties`; MySQL crea la BD si no existe; Hibernate `ddl-auto=update`. Scripts `reset_db_migimvirtual.sql` y `reset_db_migimvirtual.sh`.
+- **Fase 2 – Renombre:** Paquete `com.migimvirtual`, clase `MigimvirtualApplication`, pom MiGimVirtual, credenciales `@migimvirtual.com`, templates y docs actualizados. Script de servidor `./migimvirtual`.
+- **Marca e interfaz:** Navbar logo `mgvirtual_logo1.png`, fondo `fondo-navbar.png`. Página pública: videos del carrusel `video_mgvirtual_inicio_escritorio.mp4` (escritorio) y `Video_mgvirtual_inicio_movil.mp4` (móvil).
 
 ---
 
@@ -11,8 +19,8 @@
 | Fase | Contenido | Estado |
 |------|-----------|--------|
 | **0** | Subplan: listado detallado de lo que se elimina (módulos, clases, rutas, templates) | Pendiente |
-| **1** | Nueva base de datos `mgvirtual` y configuración | Pendiente |
-| **2** | Renombrar todo Mattfuncional → MiGimVirtual (paquete, pom, títulos, docs) | Pendiente |
+| **1** | Nueva base de datos y configuración | **Completado** (BD `migimvirtual`) |
+| **2** | Renombrar todo Mattfuncional → MiGimVirtual | **Completado** |
 | **3** | Ejecutar eliminaciones según subplan (calendario, pizarra, sala, simplificar alumnos) | Pendiente |
 | **4** | Continuar: responsive, ajustes UX, pruebas, documentación | Pendiente |
 
