@@ -1,6 +1,6 @@
 # Cambios: panel alumno, filtros, módulo asistencias y detalle (Mar 2026)
 
-Documentación de los cambios realizados en la vista de alumnos del panel, en el detalle del alumno y en la eliminación del módulo de asistencias de la UI. **Pendiente para después:** eliminación del calendario (y limpieza completa del sistema de asistencias en backend si se desea).
+Documentación de los cambios realizados en la vista de alumnos del panel, en el detalle del alumno y en la eliminación del módulo de asistencias de la UI. **Realizado después:** eliminación completa de calendario, asistencias (backend y UI) y pizarra online; ver [ELIMINACION_CALENDARIO_Y_PIZARRA_MAR2026.md](ELIMINACION_CALENDARIO_Y_PIZARRA_MAR2026.md).
 
 ---
 
@@ -38,7 +38,7 @@ Documentación de los cambios realizados en la vista de alumnos del panel, en el
 - **Modal “Registrar progreso”:**  
   - Se abre **al hacer clic en la tarjeta “Progreso del alumno”** (no hay botón “Progreso” en el header).  
   - Formulario: fecha, grupos musculares trabajados, observaciones; envía a `POST /profesor/alumnos/{id}/progreso`.  
-  - El controlador vuelve a enviar `historialAsistencia`, `asistenciaHoy` y `gruposMusculares` para la tarjeta y el modal.
+  - El controlador vuelve a enviar `historialAsistencia`, `asistenciaHoy` y `gruposMusculares` para la tarjeta y el modal. *(Desde Mar 2026: modal y progreso eliminados; tarjeta solo informativa. Ver ELIMINACION_CALENDARIO_Y_PIZARRA_MAR2026.md.)*
 
 - **Editar alumno:**  
   - **Icono de editar** en la esquina superior derecha de la tarjeta “Datos personales” (estilo circular como el “+” de crear alumno en el panel).  

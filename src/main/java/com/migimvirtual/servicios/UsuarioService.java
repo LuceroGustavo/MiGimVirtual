@@ -124,8 +124,8 @@ public class UsuarioService {
 
     /**
      * Carga un alumno con todas las relaciones necesarias para la ficha de detalle
-     * (profesor, rutinas y horarios de asistencia). No usa caché para evitar entidades
-     * desconectadas con colecciones lazy sin inicializar.
+     * (profesor, rutinas). No usa caché para evitar entidades desconectadas con
+     * colecciones lazy sin inicializar.
      */
     public Usuario getUsuarioByIdParaFicha(Long id) {
         return usuarioRepository.findByIdWithAllRelations(id).orElse(null);

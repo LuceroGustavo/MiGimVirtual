@@ -19,12 +19,9 @@ Contenido importante reunido de los documentos del proyecto. Para contexto: [LEE
 - **Panel único:** Profesor (roles DEVELOPER, ADMIN, AYUDANTE). Sin panel alumno ni admin separado.
 - **Ejercicios:** Predeterminados 1–60 desde `uploads/ejercicios/`; ABM; grupos musculares como entidad (`GrupoMuscular`); formularios y modal Ver alineados con series/rutinas.
 - **Series y rutinas:** ABM; asignación rutina → alumno; enlace por token `/rutinas/hoja/{token}`; Copiar enlace y WhatsApp desde ficha alumno; orden de series; modificar rutina con tres bloques (Detalles, Series en rutina, Añadir más).
-- **Alumnos:** Solo ficha (sin login). Estado ACTIVO/INACTIVO; filtros por nombre, estado, tipo, día/horario; columna Presente (ciclo Pendiente→Presente→Ausente). Al eliminar alumno se borran asistencias, mediciones, excepciones y rutinas asignadas.
-- **Calendario:** Semanal; presente/ausente/pendiente por clic; excepciones por día; sincronizado con ficha y columna Presente en Mis Alumnos.
-- **Progreso:** Modal en ficha (grupos trabajados, observaciones); sin checkbox presente; historial y resumen mensual con detalle por día.
-- **Pizarra y sala TV:** Editor desde panel; vista TV en `/sala/{token}`; columnas editables; ejercicios con peso/rep.
+- **Alumnos:** Solo ficha (sin login). Estado ACTIVO/INACTIVO; filtros por nombre y estado. Al eliminar alumno se borran mediciones y rutinas asignadas. Tarjeta "Progreso del alumno" solo informativa (sin registro de asistencias).
 - **Página pública:** Landing `/`, Planes `/planes`, consultas; administración en `/profesor/pagina-publica`.
-- **Manual del usuario:** HTML en `/profesor/manual` (botón en panel); cubre acceso, panel, alumnos, ejercicios, series, rutinas, calendario, pizarra, usuarios, administración.
+- **Manual del usuario:** HTML en `/profesor/manual` (botón en panel); cubre acceso, panel, alumnos, ejercicios, series, rutinas, usuarios, administración. (Calendario y pizarra eliminados en Mar 2026.)
 - **Backup (terminado Mar 2026):** Ver sección 2.
 - **Depuración de datos (terminado Feb 2026):** Ver sección 2.1.
 
@@ -37,10 +34,10 @@ Contenido importante reunido de los documentos del proyecto. Para contexto: [LEE
 | Funcionalidad | Descripción |
 |---------------|-------------|
 | **Ejercicios + grupos + rutinas + series** | Exportar/importar ZIP. Opciones por checkbox (Grupos, Ejercicios, Rutinas, Series). Modos Agregar o Suplantar. Imágenes con nombres originales. |
-| **Alumnos – JSON** | Exportar backup (datos, mediciones, asistencias). Importar desde JSON (Agregar o Suplantar). |
-| **Alumnos – Excel** | Exportar a Excel para reportes. Una fila por alumno; columna final "Último trabajo" (fecha + grupos y observaciones del último progreso). No se usa para importar. |
+| **Alumnos – JSON** | Exportar backup (datos, mediciones). Importar desde JSON (Agregar o Suplantar). Sin asistencias desde Mar 2026. |
+| **Alumnos – Excel** | Exportar a Excel para reportes. Una fila por alumno. Columnas: Nombre, Correo, Celular, Edad, Sexo, Estado, Fecha de alta, Fecha baja, Tipo de asistencia, Días y horarios, Objetivos personales, Restricciones médicas, Notas profesor, Cantidad de asignaciones. (Columna "Último trabajo" eliminada en Mar 2026.) |
 
-**Excel alumnos – columnas:** Título "Exportación de alumnos fecha dd/MM/yyyy". Columnas: Nombre, Correo, Celular, Edad, Sexo, Estado, Fecha de alta, Fecha baja, Tipo de asistencia, Días y horarios, Objetivos personales, Restricciones médicas, Notas profesor, Cantidad de asignaciones, **Último trabajo** (fecha en una línea, grupos y observaciones en la siguiente; ej. "11/03/26" y "CARDIO - CORE - trabajo muy bien"). No se exportan: Peso, Detalle asistencia, Contacto emergencia.
+**Excel alumnos – columnas:** Título "Exportación de alumnos fecha dd/MM/yyyy". Sin columna Último trabajo desde Mar 2026.
 
 **Servicios:** `ExerciseZipBackupService`, `AlumnoJsonBackupService`, `AlumnoExportService`. Rutas en `AdminPanelController`: `/profesor/backup`, exportar-zip, importar, exportar-alumnos-json, importar-alumnos, exportar-alumnos-excel.
 
@@ -50,14 +47,15 @@ Contenido importante reunido de los documentos del proyecto. Para contexto: [LEE
 
 **Estado:** Terminado (febrero 2026). Acceso: Administración → Depuración de datos (entre Sistema de backups y Manual de usuario).
 
-Permite eliminar registros antiguos para mantener la base de datos ligera. Dos tarjetas independientes:
+Permite eliminar registros antiguos para mantener la base de datos ligera. Una tarjeta:
 
 | Funcionalidad | Descripción |
 |---------------|-------------|
-| **Registro de asistencias e inasistencias** | Se elige una fecha límite. Se eliminan todos los registros con fecha **anterior** a la elegida (ej.: 12/12/2025 → se borra todo antes de esa fecha). Acción irreversible; se recomienda hacer backup antes. |
 | **Rutinas asignadas a alumnos** | Se elige una fecha límite. Se eliminan todas las rutinas asignadas cuya fecha de creación es **anterior** a la elegida. Las rutinas plantilla (Mis Rutinas) no se tocan. Acción irreversible. |
 
-**Servicios:** `DepuracionService`. Rutas en `AdminPanelController`: `GET /profesor/depuracion`, `POST /profesor/depuracion/asistencias`, `POST /profesor/depuracion/rutinas-asignadas`. Repositorios: `AsistenciaRepository` (countByFechaBefore, deleteByFechaBefore), `RutinaRepository` (findByEsPlantillaFalseAndFechaCreacionBefore).
+*(Depuración de asistencias eliminada en Mar 2026 junto con el módulo de asistencias.)*
+
+**Servicios:** `DepuracionService`. Rutas en `AdminPanelController`: `GET /profesor/depuracion`, `POST /profesor/depuracion/rutinas-asignadas`. Repositorio: `RutinaRepository` (findByEsPlantillaFalseAndFechaCreacionBefore).
 
 ### 2.2 Modales y avisos unificados (confirmaciones y alertas)
 
@@ -74,9 +72,9 @@ Permite eliminar registros antiguos para mantener la base de datos ligera. Dos t
 | Rutinas crear | — | Nombre y al menos una serie |
 | Ejercicios lista (profesor) | Eliminar ejercicio | — |
 | Grupos musculares | Eliminar grupo | — |
-| Pizarra lista | Eliminar pizarra | Código 4 dígitos, errores, enlace copiado |
-| Pizarra editor | Quitar columna, eliminar ejercicio, nuevo enlace TV | Todos los mensajes (nombre, errores, enlace copiado) |
 | Listado ejercicios (ejercicios) | — | “Ejercicio(s) agregado(s) a rutina” |
+
+*(Pizarra lista y editor eliminados en Mar 2026.)*
 
 **Editar alumno:** Tras guardar, redirección al detalle del alumno (`/profesor/alumnos/{id}`) con mensaje flash “Datos del alumno actualizados correctamente.” (ya no redirige al dashboard).
 
@@ -100,17 +98,15 @@ El manual en la app (`/profesor/manual`) incluye:
 
 1. Acceso al sistema (URL, login, credenciales)
 2. Panel del profesor (dashboard, botones, tabs)
-3. Alumnos (lista, crear, editar, ficha, filtros, Presente, progreso, rutinas asignadas)
+3. Alumnos (lista, crear, editar, ficha, filtros, rutinas asignadas)
 4. Ejercicios (lista, crear, editar, grupos musculares)
 5. Series (crear, editar, ver)
 6. Rutinas (crear, modificar, asignar, enlace, WhatsApp)
-7. Calendario semanal (presente/ausente, excepciones)
-8. Presentismo (columna Presente en Mis Alumnos)
-9. Progreso del alumno (modal grupos + observaciones)
-10. Pizarra en sala (editor, vista TV)
-11. Usuarios del sistema (admin/ayudante, perfiles)
-12. Administración (backup, depuración de datos, página pública, etc.)
-13. Resumen rápido (tabla "Quiero… / Dónde")
+7. Usuarios del sistema (admin/ayudante, perfiles)
+8. Administración (backup, depuración de datos, página pública, etc.)
+9. Resumen rápido (tabla "Quiero… / Dónde")
+
+*(Secciones Calendario, Presentismo, Progreso con modal y Pizarra eliminadas en Mar 2026; ver ELIMINACION_CALENDARIO_Y_PIZARRA_MAR2026.md.)*
 
 ---
 

@@ -10,7 +10,6 @@ import com.migimvirtual.entidades.Profesor;
 import com.migimvirtual.entidades.Rutina;
 import com.migimvirtual.entidades.Serie;
 import com.migimvirtual.entidades.SerieEjercicio;
-import com.migimvirtual.repositorios.PizarraItemRepository;
 import com.migimvirtual.repositorios.ProfesorRepository;
 import com.migimvirtual.repositorios.RutinaRepository;
 import com.migimvirtual.repositorios.SerieEjercicioRepository;
@@ -56,7 +55,6 @@ public class ExerciseZipBackupService {
     private final GrupoMuscularService grupoMuscularService;
     private final ImagenServicio imagenServicio;
     private final SerieEjercicioRepository serieEjercicioRepository;
-    private final PizarraItemRepository pizarraItemRepository;
     private final RutinaRepository rutinaRepository;
     private final SerieRepository serieRepository;
     private final ProfesorRepository profesorRepository;
@@ -67,7 +65,6 @@ public class ExerciseZipBackupService {
                                     GrupoMuscularService grupoMuscularService,
                                     ImagenServicio imagenServicio,
                                     SerieEjercicioRepository serieEjercicioRepository,
-                                    PizarraItemRepository pizarraItemRepository,
                                     RutinaRepository rutinaRepository,
                                     SerieRepository serieRepository,
                                     ProfesorRepository profesorRepository,
@@ -76,7 +73,6 @@ public class ExerciseZipBackupService {
         this.grupoMuscularService = grupoMuscularService;
         this.imagenServicio = imagenServicio;
         this.serieEjercicioRepository = serieEjercicioRepository;
-        this.pizarraItemRepository = pizarraItemRepository;
         this.rutinaRepository = rutinaRepository;
         this.serieRepository = serieRepository;
         this.profesorRepository = profesorRepository;
@@ -352,8 +348,7 @@ public class ExerciseZipBackupService {
             Boolean okBorrado = txBorrado.execute(status -> {
                 if (importarSeries || importarEjercicios) {
                     int se = serieEjercicioRepository.deleteAllWithExercise();
-                    int pi = pizarraItemRepository.deleteAllItems();
-                    logger.info("Referencias eliminadas: {} SerieEjercicio, {} PizarraItem", se, pi);
+                    logger.info("Referencias eliminadas: {} SerieEjercicio", se);
                 }
                 if (importarSeries) {
                     serieRepository.deleteAll();

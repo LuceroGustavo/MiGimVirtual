@@ -153,8 +153,6 @@
         .btn-rutinas:hover { background: #ffd54f; color: #e65100; }
         .btn-calendario { background: #f8bbd0; color: #880e4f; border: none; }
         .btn-calendario:hover { background: #f48fb1; color: #880e4f; }
-        .btn-pizarra { background: #ffcc80; color: #e65100; border: none; }
-        .btn-pizarra:hover { background: #ffb74d; color: #e65100; }
         .main-actions .btn-outline-secondary {
             background: #eceff1;
             color: #455a64;
@@ -165,7 +163,7 @@
             color: #37474f;
             border-color: #90a4ae;
         }
-        /* Tarjetas rectangulares de acceso (Ejercicios, Pizarra, Administrar sistema) – ~40% más chicas */
+        /* Tarjetas rectangulares de acceso (Ejercicios, Administrar sistema) – ~40% más chicas */
         .main-action-cards {
             display: flex;
             flex-wrap: wrap;
@@ -209,8 +207,6 @@
         }
         .main-action-card.card-ejercicios { background: linear-gradient(135deg, #fff9c4 60%, #ffe082 100%); }
         .main-action-card.card-ejercicios i { color: #e65100; }
-        .main-action-card.card-pizarra { background: linear-gradient(135deg, #ffcc80 60%, #ffb74d 100%); }
-        .main-action-card.card-pizarra i { color: #e65100; }
         .main-action-card.card-admin { background: linear-gradient(135deg, #e1bee7 60%, #d1c4e9 100%); }
         .main-action-card.card-admin i { color: #5e35b1; }
         .main-action-card.card-calendario { background: linear-gradient(135deg, #bbdefb 60%, #b3e5fc 100%); }
@@ -350,7 +346,7 @@
                     </div>
                 </a>
             </div>
-            <!-- Columna 3: Rutinas | Pizarra -->
+            <!-- Columna 3: Rutinas -->
             <div class="dashboard-col">
                 <div class="card-module card-rutinas card-scroll-tab" data-scroll-tab="rutinas" role="button" tabindex="0" title="Ver lista de rutinas">
                     <a th:href="@{/rutinas/crear}" class="card-module-add" title="Crear rutina"><i class="fa-solid fa-plus"></i></a>
@@ -358,12 +354,6 @@
                     <div class="stat" th:text="${rutinas != null ? rutinas.size() : 0}">0</div>
                     <div class="label">Rutinas</div>
                 </div>
-                <a th:href="@{/profesor/pizarra}" class="main-action-card card-pizarra" target="_blank" rel="noopener noreferrer" title="Pizarra en sala">
-                    <div class="card-inner">
-                        <i class="fa-solid fa-tv"></i>
-                        <span class="card-label">Pizarra</span>
-                    </div>
-                </a>
             </div>
             <!-- Columna 4: Asignaciones | Administrar sistema -->
             <div class="dashboard-col">

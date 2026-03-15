@@ -2,6 +2,43 @@
 
 > Nota: este changelog incluye histórico heredado de MiGym (referencias a admin/chat/websocket).
 
+## [2026-03-14] - refactor(app): eliminar calendario, asistencias y pizarra online ✅
+
+### 🎯 **Resumen**
+Eliminación completa de los módulos **calendario**, **sistema de asistencias/fichadas** y **pizarra online** (incluida sala de transmisión TV). La app queda 100 % virtual: sin control de presente/ausente ni pizarra en sala.
+
+### ✅ **Calendario – eliminado**
+- Archivos: CalendarioController, CalendarioService, CalendarioExcepcionService/Repository, entidad CalendarioExcepcion, CalendarioSemanalDTO, plantillas calendario/semanal*.html.
+- SecurityConfig sin `/calendario/**`; dashboard sin tarjeta Calendario; UsuarioService sin CalendarioExcepcionRepository al eliminar alumno.
+
+### ✅ **Asistencias – eliminado**
+- Archivos: Asistencia, AsistenciaRepository, AsistenciaService, AsistenciaVistaDTO, DiaHorarioAsistencia, TipoAsistencia.
+- UsuarioService sin AsistenciaRepository; ProfesorController sin AsistenciaService, sin estadoAsistenciaHoy, sin endpoints asistencias/progreso; dashboard sin columna Presente y sin botón Progreso; alumno-detalle sin modal Registrar progreso (tarjeta Progreso solo informativa); DepuracionService y depuracion.html solo rutinas; AlumnoJsonBackupService y AlumnoExportService sin asistencias ni columna Último trabajo.
+
+### ✅ **Pizarra y sala – eliminado**
+- Archivos: PizarraController, SalaController, PizarraService; entidades Pizarra, PizarraColumna, PizarraItem, PizarraTrabajo, SalaTransmision; repos y PizarraEstadoDTO; plantillas profesor/pizarra-*.html y sala/*.html.
+- CustomAuthenticationSuccessHandler sin PizarraService/rotarTokenSala; SecurityConfig sin `/sala/**`; dashboard sin tarjeta Pizarra; ExerciseZipBackupService sin PizarraItemRepository.
+
+### 📁 **Documentación**
+- **Nuevo:** Documentacion/ELIMINACION_CALENDARIO_Y_PIZARRA_MAR2026.md.
+- Actualizados: CHANGELOG.md, DOCUMENTACION_UNIFICADA.md, LEEME_PRIMERO.md.
+
+---
+
+## [2026-03-14] - docs(refactor): revisión ACTIVO/INACTIVO y comentario UsuarioService ✅
+
+### 🎯 **Resumen**
+Revisión de la lógica de estado ACTIVO/INACTIVO en creación y modificación de alumno: no referencia entidades ni servicios eliminados (Asistencia, Calendario, Pizarra). Ajuste de comentario en `UsuarioService.getUsuarioByIdParaFicha` (quitar "horarios de asistencia", dejar "profesor, rutinas").
+
+### ✅ **Cambios**
+- **UsuarioService:** Comentario de `getUsuarioByIdParaFicha` actualizado: "(profesor, rutinas y horarios de asistencia)" → "(profesor, rutinas)".
+- **Documentación:** ELIMINACION_CALENDARIO_Y_PIZARRA_MAR2026.md — nueva sección 5 "Revisión posterior: estado ACTIVO/INACTIVO del alumno" con resultado de la revisión y el ajuste aplicado.
+
+### 📁 **Archivos modificados**
+UsuarioService.java, Documentacion/ELIMINACION_CALENDARIO_Y_PIZARRA_MAR2026.md, CHANGELOG.md.
+
+---
+
 ## [2026-03-14] - refactor(panel): alumno 100% virtual, filtros, tarjetas detalle y UI asistencias ✅
 
 ### 🎯 **Resumen**
