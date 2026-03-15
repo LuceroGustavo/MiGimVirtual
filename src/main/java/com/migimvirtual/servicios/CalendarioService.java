@@ -62,7 +62,7 @@ public class CalendarioService {
         if (profesorId != null) {
             usuarios = usuarioRepository.findByProfesor_IdAndRol(profesorId, "ALUMNO");
         } else {
-            usuarios = usuarioRepository.findByTipoAsistencia(com.migimvirtual.enums.TipoAsistencia.PRESENCIAL);
+            usuarios = usuarioRepository.findAllAlumnosIncludingOrphans();
         }
         usuarios = usuarios.stream()
                 .filter(u -> u != null && !"INACTIVO".equals(u.getEstadoAlumno()))
@@ -111,13 +111,7 @@ public class CalendarioService {
     }
 
     private void asignarUsuariosASlots(CalendarioSemanalDTO calendario, List<Usuario> usuarios) {
-        for (Usuario usuario : usuarios) {
-            if (usuario.getDiasHorariosAsistencia() != null) {
-                for (DiaHorarioAsistencia horario : usuario.getDiasHorariosAsistencia()) {
-                    asignarUsuarioASlot(calendario, usuario, horario);
-                }
-            }
-        }
+        // App 100 % virtual: sin horarios de asistencia presencial; no se asignan usuarios a slots
     }
 
     private void asignarUsuarioASlot(CalendarioSemanalDTO calendario, Usuario usuario, DiaHorarioAsistencia horario) {
@@ -200,16 +194,8 @@ public class CalendarioService {
     }
 
     public List<Usuario> obtenerUsuariosEnHorario(DiaSemana dia, LocalTime horaInicio, LocalTime horaFin) {
-        List<Usuario> usuarios = usuarioRepository.findByTipoAsistencia(com.migimvirtual.enums.TipoAsistencia.PRESENCIAL);
-
-        return usuarios.stream()
-                .filter(usuario -> usuario != null && !"INACTIVO".equals(usuario.getEstadoAlumno()))
-                .filter(usuario -> usuario.getDiasHorariosAsistencia() != null)
-                .filter(usuario -> usuario.getDiasHorariosAsistencia().stream()
-                        .anyMatch(horario -> horario.getDia().equals(dia)
-                                && horario.getHoraEntrada().equals(horaInicio)
-                                && horario.getHoraSalida().equals(horaFin)))
-                .collect(Collectors.toList());
+        // App 100 % virtual: sin horarios de asistencia presencial; devolver lista vacía
+        return new ArrayList<>();
     }
 
     public boolean verificarDisponibilidad(DiaSemana dia, LocalTime horaInicio, LocalTime horaFin) {
@@ -225,7 +211,7 @@ public class CalendarioService {
         if (profesorId != null) {
             usuariosPresenciales = usuarioRepository.findByProfesor_IdAndRol(profesorId, "ALUMNO");
         } else {
-            usuariosPresenciales = usuarioRepository.findByTipoAsistencia(com.migimvirtual.enums.TipoAsistencia.PRESENCIAL);
+            usuariosPresenciales = usuarioRepository.findAllAlumnosIncludingOrphans();
         }
         // Solo contar alumnos activos (coherente con el calendario)
         usuariosPresenciales = usuariosPresenciales.stream()

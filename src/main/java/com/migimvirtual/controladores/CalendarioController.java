@@ -148,8 +148,6 @@ public class CalendarioController {
         List<Usuario> alumnosParaExcepcion = usuarioService.getAlumnosByProfesorId(profesorId);
         alumnosParaExcepcion = alumnosParaExcepcion.stream()
                 .filter(a -> a != null && !"INACTIVO".equals(a.getEstadoAlumno()))
-                .filter(a -> a.getTipoAsistencia() == com.migimvirtual.enums.TipoAsistencia.PRESENCIAL
-                        || a.getTipoAsistencia() == com.migimvirtual.enums.TipoAsistencia.SEMIPRESENCIAL)
                 .toList();
         model.addAttribute("alumnosParaExcepcion", alumnosParaExcepcion);
 

@@ -30,10 +30,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import com.migimvirtual.entidades.DiaHorarioAsistencia;
 import java.time.format.DateTimeParseException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.core.type.TypeReference;
 import java.util.Optional;
 import java.util.HashSet;
 import java.util.Set;
@@ -120,9 +117,7 @@ public class ProfesorController {
         com.migimvirtual.enums.DiaSemana diaHoy = com.migimvirtual.enums.DiaSemana.values()[dayOfWeekHoy.getValue() - 1];
         java.util.Map<Long, String> estadoAsistenciaHoy = new java.util.HashMap<>();
         for (Usuario usuario : usuarios) {
-            if (usuario == null || usuario.getTipoAsistencia() != com.migimvirtual.enums.TipoAsistencia.PRESENCIAL) continue;
-            if (usuario.getDiasHorariosAsistencia() == null || usuario.getDiasHorariosAsistencia().stream()
-                    .noneMatch(dh -> dh != null && dh.getDia() == diaHoy)) continue;
+            if (usuario == null) continue;
             java.util.List<Asistencia> asistencias = asistenciaService.obtenerAsistenciaPorUsuarioYFecha(usuario, hoy);
             String estado;
             if (asistencias == null || asistencias.isEmpty()) {
@@ -158,8 +153,6 @@ public class ProfesorController {
     @GetMapping("/alumnos/nuevo")
     public String nuevoAlumnoForm(Model model, @AuthenticationPrincipal Usuario profesorUsuario) {
         Usuario nuevoUsuario = new Usuario();
-        // Inicializa la lista para evitar problemas de Thymeleaf
-        nuevoUsuario.setDiasHorariosAsistencia(new java.util.ArrayList<>());
         model.addAttribute("usuario", nuevoUsuario);
         model.addAttribute("usuarioActual", profesorUsuario);
         return "profesor/nuevoalumno";
@@ -168,7 +161,6 @@ public class ProfesorController {
     // GUARDAR NUEVO ALUMNO
     @PostMapping("/alumnos/nuevo")
     public String crearAlumno(@ModelAttribute Usuario alumno,
-            @RequestParam(value = "horariosJson", required = false) String horariosJson,
             Model model,
             @AuthenticationPrincipal Usuario profesorUsuario) {
         model.addAttribute("usuarioActual", profesorUsuario);
@@ -195,53 +187,6 @@ public class ProfesorController {
             Profesor profesor = getProfesorParaUsuarioActual(profesorUsuario);
             if (profesor == null) return "redirect:/login";
             alumno.setProfesor(profesor);
-
-            // Procesar horarios de asistencia si se proporcionan
-            if (horariosJson != null && !horariosJson.trim().isEmpty()) {
-                try {
-                    ObjectMapper objectMapper = new ObjectMapper();
-                    List<java.util.Map<String, Object>> horariosList = objectMapper.readValue(horariosJson,
-                            new TypeReference<List<java.util.Map<String, Object>>>() {
-                            });
-
-                    List<com.migimvirtual.entidades.DiaHorarioAsistencia> horariosAsistencia = new ArrayList<>();
-
-                    for (java.util.Map<String, Object> horario : horariosList) {
-                        String diaStr = (String) horario.get("dia");
-                        Object horaObj = horario.get("hora");
-
-                        com.migimvirtual.enums.DiaSemana dia = com.migimvirtual.enums.DiaSemana.valueOf(diaStr);
-
-                        // Manejar tanto Integer como Double
-                        int horaInt;
-                        if (horaObj instanceof Integer) {
-                            horaInt = (Integer) horaObj;
-                        } else if (horaObj instanceof Double) {
-                            horaInt = ((Double) horaObj).intValue();
-                        } else {
-                            throw new RuntimeException("Tipo de hora no válido: " + horaObj.getClass());
-                        }
-
-                        // Solo permitir horas completas (sin minutos)
-                        int minutos = 0;
-
-                        java.time.LocalTime horaInicio = java.time.LocalTime.of(horaInt, minutos);
-                        java.time.LocalTime horaFin = horaInicio.plusHours(1); // Duración de 1 hora
-
-                        com.migimvirtual.entidades.DiaHorarioAsistencia diaHorario = new com.migimvirtual.entidades.DiaHorarioAsistencia();
-                        diaHorario.setDia(dia);
-                        diaHorario.setHoraEntrada(horaInicio);
-                        diaHorario.setHoraSalida(horaFin);
-                        horariosAsistencia.add(diaHorario);
-                    }
-
-                    alumno.setDiasHorariosAsistencia(horariosAsistencia);
-
-                } catch (Exception e) {
-                    // Si hay error al procesar horarios, continuar sin ellos
-                    System.err.println("Error procesando horarios: " + e.getMessage());
-                }
-            }
 
             usuarioService.crearAlumno(alumno);
 
@@ -292,24 +237,6 @@ public class ProfesorController {
             model.addAttribute("usuario", alumno);
             model.addAttribute("usuarioActual", profesorUsuario);
             model.addAttribute("editMode", true);
-            // Pasar horarios existentes como JSON para que el calendario los precargue al editar
-            String horariosExistentesJson = "[]";
-            if (alumno.getDiasHorariosAsistencia() != null && !alumno.getDiasHorariosAsistencia().isEmpty()) {
-                try {
-                    List<Map<String, String>> list = new ArrayList<>();
-                    DateTimeFormatter timeFmt = DateTimeFormatter.ofPattern("HH:mm:ss");
-                    for (DiaHorarioAsistencia d : alumno.getDiasHorariosAsistencia()) {
-                        Map<String, String> m = new HashMap<>();
-                        m.put("dia", d.getDia() != null ? d.getDia().name() : null);
-                        m.put("horaEntrada", d.getHoraEntrada() != null ? d.getHoraEntrada().format(timeFmt) : null);
-                        list.add(m);
-                    }
-                    horariosExistentesJson = new ObjectMapper().writeValueAsString(list);
-                } catch (Exception e) {
-                    logger.warn("No se pudo serializar horarios existentes para edición: {}", e.getMessage());
-                }
-            }
-            model.addAttribute("horariosExistentesJson", horariosExistentesJson);
             return "profesor/nuevoalumno";
         }
         return "redirect:/profesor/" + profesor.getId() + "?error=permiso";
@@ -319,7 +246,6 @@ public class ProfesorController {
     @PostMapping("/alumnos/editar/{id}")
     public String procesarEditarAlumno(@PathVariable Long id,
             @ModelAttribute Usuario alumno,
-            @RequestParam(value = "horariosJson", required = false) String horariosJson,
             Model model,
             RedirectAttributes redirectAttributes,
             @AuthenticationPrincipal Usuario profesorUsuario) {
@@ -354,54 +280,6 @@ public class ProfesorController {
                     }
                 }
 
-                // Procesar horarios del selector visual
-                if (horariosJson != null && !horariosJson.isEmpty()) {
-                    try {
-                        // Parsear el JSON de horarios
-                        com.fasterxml.jackson.databind.ObjectMapper mapper = new com.fasterxml.jackson.databind.ObjectMapper();
-                        java.util.List<java.util.Map<String, Object>> horariosList = mapper.readValue(horariosJson,
-                                mapper.getTypeFactory().constructCollectionType(java.util.List.class,
-                                        java.util.Map.class));
-
-                        java.util.List<com.migimvirtual.entidades.DiaHorarioAsistencia> horariosAsistencia = new java.util.ArrayList<>();
-
-                        for (java.util.Map<String, Object> horario : horariosList) {
-                            String diaStr = (String) horario.get("dia");
-                            Object horaObj = horario.get("hora");
-
-                            com.migimvirtual.enums.DiaSemana dia = com.migimvirtual.enums.DiaSemana.valueOf(diaStr);
-
-                            // Manejar tanto Integer como Double
-                            int horaInt;
-                            if (horaObj instanceof Integer) {
-                                horaInt = (Integer) horaObj;
-                            } else if (horaObj instanceof Double) {
-                                horaInt = ((Double) horaObj).intValue();
-                            } else {
-                                throw new RuntimeException("Tipo de hora no válido: " + horaObj.getClass());
-                            }
-
-                            // Solo permitir horas completas (sin minutos)
-                            int minutos = 0;
-
-                            java.time.LocalTime horaInicio = java.time.LocalTime.of(horaInt, minutos);
-                            java.time.LocalTime horaFin = horaInicio.plusHours(1); // Duración de 1 hora
-
-                            com.migimvirtual.entidades.DiaHorarioAsistencia diaHorario = new com.migimvirtual.entidades.DiaHorarioAsistencia();
-                            diaHorario.setDia(dia);
-                            diaHorario.setHoraEntrada(horaInicio);
-                            diaHorario.setHoraSalida(horaFin);
-                            horariosAsistencia.add(diaHorario);
-                        }
-
-                        alumno.setDiasHorariosAsistencia(horariosAsistencia);
-
-                    } catch (Exception e) {
-                        // Si hay error al procesar horarios, continuar sin ellos
-                        System.err.println("Error procesando horarios: " + e.getMessage());
-                    }
-                }
-
                 usuarioService.actualizarUsuario(alumno);
                 redirectAttributes.addFlashAttribute("mensajeSuccess", "Datos del alumno actualizados correctamente.");
                 return "redirect:/profesor/alumnos/" + id;
@@ -432,16 +310,19 @@ public class ProfesorController {
         model.addAttribute("alumno", alumno);
         model.addAttribute("usuariosSistema", usuarioService.getUsuariosSistema());
         model.addAttribute("historialEstadoFormateado", formatearFechasEnHistorialEstado(alumno.getHistorialEstado()));
-        model.addAttribute("medicionesFisicas", medicionFisicaService.obtenerMedicionesPorUsuario(id));
-        // Solo las últimas 5 asistencias/ausencias; para ver más se usa el modal "Consultar asistencias".
+        // Para la tarjeta "Progreso del alumno" y el modal Registrar progreso
         java.util.List<com.migimvirtual.dto.AsistenciaVistaDTO> historialAsistencia = asistenciaService.obtenerAsistenciasVistaParaAlumno(alumno);
         if (historialAsistencia != null && historialAsistencia.size() > 5) {
             historialAsistencia = new java.util.ArrayList<>(historialAsistencia.subList(0, 5));
         }
         model.addAttribute("historialAsistencia", historialAsistencia != null ? historialAsistencia : java.util.Collections.emptyList());
-        // Asistencia de hoy (para pre-rellenar el modal Progreso si ya se dio presente desde el panel)
         java.util.List<Asistencia> asistenciasHoy = asistenciaService.obtenerAsistenciaPorUsuarioYFecha(alumno, java.time.LocalDate.now());
         model.addAttribute("asistenciaHoy", (asistenciasHoy != null && !asistenciasHoy.isEmpty()) ? asistenciasHoy.get(0) : null);
+        if (profesor != null) {
+            model.addAttribute("gruposMusculares", grupoMuscularService.findDisponiblesParaProfesor(profesor.getId()));
+        } else {
+            model.addAttribute("gruposMusculares", java.util.Collections.emptyList());
+        }
         List<com.migimvirtual.entidades.Rutina> rutinasDelAlumno = rutinaService.obtenerRutinasAsignadasPorUsuario(id);
         List<com.migimvirtual.entidades.Rutina> rutinasAsignadas = rutinasDelAlumno.stream()
                 .sorted(java.util.Comparator
@@ -451,11 +332,6 @@ public class ProfesorController {
                 .limit(3)
                 .collect(java.util.stream.Collectors.toList());
         model.addAttribute("rutinasAsignadas", rutinasAsignadas);
-        if (profesor != null) {
-            model.addAttribute("gruposMusculares", grupoMuscularService.findDisponiblesParaProfesor(profesor.getId()));
-        } else {
-            model.addAttribute("gruposMusculares", java.util.Collections.emptyList());
-        }
         return "profesor/alumno-detalle";
     }
 
@@ -528,11 +404,6 @@ public class ProfesorController {
         Profesor profesor = getProfesorParaUsuarioActual(profesorUsuario);
         if (alumno == null || profesor == null) {
             return profesor != null ? "redirect:/profesor/" + profesor.getId() : "redirect:/login";
-        }
-        if (alumno.getTipoAsistencia() != com.migimvirtual.enums.TipoAsistencia.PRESENCIAL) {
-            return "dashboard".equals(origen)
-                    ? "redirect:/profesor/" + profesor.getId()
-                    : "redirect:/profesor/alumnos/" + id;
         }
         var asistencia = asistenciaService.registrarAsistencia(alumno, java.time.LocalDate.now(), presente,
                 observaciones, profesorUsuario);

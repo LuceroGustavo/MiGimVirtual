@@ -4,8 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.migimvirtual.entidades.*;
-import com.migimvirtual.enums.DiaSemana;
-import com.migimvirtual.enums.TipoAsistencia;
 import com.migimvirtual.repositorios.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -97,31 +95,15 @@ public class AlumnoJsonBackupService {
         m.put("fechaAlta", u.getFechaAlta() != null ? u.getFechaAlta().format(FECHA_FORMAT) : null);
         m.put("fechaBaja", u.getFechaBaja() != null ? u.getFechaBaja().format(FECHA_FORMAT) : null);
         m.put("fechaInicio", u.getFechaInicio() != null ? u.getFechaInicio().format(FECHA_FORMAT) : null);
-        m.put("tipoAsistencia", u.getTipoAsistencia() != null ? u.getTipoAsistencia().name() : null);
-        m.put("detalleAsistencia", u.getDetalleAsistencia());
         m.put("notasProfesor", u.getNotasProfesor());
         m.put("objetivosPersonales", u.getObjetivosPersonales());
         m.put("restriccionesMedicas", u.getRestriccionesMedicas());
-        m.put("contactoEmergenciaNombre", u.getContactoEmergenciaNombre());
-        m.put("contactoEmergenciaTelefono", u.getContactoEmergenciaTelefono());
 
-        // Días y horarios
-        List<Map<String, Object>> diasList = new ArrayList<>();
-        if (u.getDiasHorariosAsistencia() != null) {
-            for (DiaHorarioAsistencia d : u.getDiasHorariosAsistencia()) {
-                Map<String, Object> dm = new LinkedHashMap<>();
-                dm.put("dia", d.getDia() != null ? d.getDia().name() : null);
-                dm.put("horaEntrada", d.getHoraEntrada() != null ? d.getHoraEntrada().format(HORA_FORMAT) : null);
-                dm.put("horaSalida", d.getHoraSalida() != null ? d.getHoraSalida().format(HORA_FORMAT) : null);
-                diasList.add(dm);
-            }
-        }
-        m.put("diasHorariosAsistencia", diasList);
-
-        // Mediciones
+        // Mediciones (cargar por repositorio; Usuario ya no tiene colección medicionesFisicas)
         List<Map<String, Object>> medicionesList = new ArrayList<>();
-        if (u.getMedicionesFisicas() != null) {
-            List<MedicionFisica> ordenadas = u.getMedicionesFisicas().stream()
+        List<MedicionFisica> mediciones = medicionFisicaRepository.findByUsuario_IdOrderByFechaDesc(u.getId());
+        if (mediciones != null && !mediciones.isEmpty()) {
+            List<MedicionFisica> ordenadas = mediciones.stream()
                     .sorted(Comparator.comparing(MedicionFisica::getFecha, Comparator.nullsLast(Comparator.reverseOrder())))
                     .collect(Collectors.toList());
             for (MedicionFisica mf : ordenadas) {
@@ -285,35 +267,12 @@ public class AlumnoJsonBackupService {
         u.setFechaAlta(parseFecha(m.get("fechaAlta")));
         u.setFechaBaja(parseFecha(m.get("fechaBaja")));
         u.setFechaInicio(parseFecha(m.get("fechaInicio")));
-        u.setTipoAsistencia(parseTipoAsistencia(m.get("tipoAsistencia")));
-        u.setDetalleAsistencia(toString(m.get("detalleAsistencia")));
         u.setNotasProfesor(toString(m.get("notasProfesor")));
         u.setObjetivosPersonales(toString(m.get("objetivosPersonales")));
         u.setRestriccionesMedicas(toString(m.get("restriccionesMedicas")));
-        u.setContactoEmergenciaNombre(toString(m.get("contactoEmergenciaNombre")));
-        u.setContactoEmergenciaTelefono(toString(m.get("contactoEmergenciaTelefono")));
         u.setAvatar("/img/avatar" + ((int) (Math.random() * 8) + 1) + ".png");
         if (u.getFechaAlta() == null) u.setFechaAlta(LocalDate.now());
-
-        @SuppressWarnings("unchecked")
-        List<Map<String, Object>> dias = (List<Map<String, Object>>) m.get("diasHorariosAsistencia");
-        if (dias != null && !dias.isEmpty()) {
-            List<DiaHorarioAsistencia> lista = new ArrayList<>();
-            for (Map<String, Object> dm : dias) {
-                DiaHorarioAsistencia d = mapToDiaHorario(dm);
-                if (d != null) lista.add(d);
-            }
-            u.setDiasHorariosAsistencia(lista);
-        }
         return u;
-    }
-
-    private DiaHorarioAsistencia mapToDiaHorario(Map<String, Object> m) {
-        DiaSemana dia = parseDiaSemana(m.get("dia"));
-        if (dia == null) return null;
-        LocalTime entrada = parseHora(m.get("horaEntrada"));
-        LocalTime salida = parseHora(m.get("horaSalida"));
-        return new DiaHorarioAsistencia(dia, entrada != null ? entrada : LocalTime.of(9, 0), salida != null ? salida : LocalTime.of(10, 0));
     }
 
     private MedicionFisica mapToMedicionFisica(Map<String, Object> m, Usuario usuario) {
@@ -399,25 +358,4 @@ public class AlumnoJsonBackupService {
         }
     }
 
-    private static DiaSemana parseDiaSemana(Object o) {
-        if (o == null) return null;
-        String s = String.valueOf(o).trim().toUpperCase();
-        if (s.isEmpty()) return null;
-        try {
-            return DiaSemana.valueOf(s);
-        } catch (IllegalArgumentException e) {
-            return null;
-        }
-    }
-
-    private static TipoAsistencia parseTipoAsistencia(Object o) {
-        if (o == null) return null;
-        String s = String.valueOf(o).trim().toUpperCase();
-        if (s.isEmpty()) return null;
-        try {
-            return TipoAsistencia.valueOf(s);
-        } catch (IllegalArgumentException e) {
-            return null;
-        }
-    }
 }

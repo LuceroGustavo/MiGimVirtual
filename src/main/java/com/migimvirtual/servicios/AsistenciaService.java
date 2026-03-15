@@ -102,15 +102,8 @@ public class AsistenciaService {
         List<Asistencia> registros = asistenciaRepository.findByUsuario_IdOrderByFechaDesc(alumno.getId());
         Map<LocalDate, AsistenciaVistaDTO> map = new HashMap<>();
 
-        // Pendientes: días del mes actual según horarios del alumno (hasta hoy)
+        // Pendientes: en app virtual no hay horarios de asistencia; solo se muestran registros existentes
         java.util.Set<DayOfWeek> dias = new java.util.HashSet<>();
-        if (alumno.getDiasHorariosAsistencia() != null) {
-            for (com.migimvirtual.entidades.DiaHorarioAsistencia dh : alumno.getDiasHorariosAsistencia()) {
-                if (dh != null && dh.getDia() != null) {
-                    dias.add(mapearDiaSemana(dh.getDia()));
-                }
-            }
-        }
         LocalDate hoy = LocalDate.now();
         LocalDate inicioMes = hoy.withDayOfMonth(1);
         for (LocalDate d = inicioMes; !d.isAfter(hoy); d = d.plusDays(1)) {

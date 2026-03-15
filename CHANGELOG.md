@@ -2,6 +2,22 @@
 
 > Nota: este changelog incluye histórico heredado de MiGym (referencias a admin/chat/websocket).
 
+## [2026-03-14] - refactor(panel): alumno 100% virtual, filtros, tarjetas detalle y UI asistencias ✅
+
+### 🎯 **Resumen**
+App orientada a 100 % virtual: se eliminan de la entidad Usuario tipoAsistencia, diasHorariosAsistencia, contactoEmergencia, historialAsistencia, detalleAsistencia y relación medicionesFisicas. En el panel, filtros de Mis Alumnos quedan solo por nombre y estado; en el detalle del alumno se reordenan las tarjetas (Datos personales, Restricciones, Progreso, Rutinas), se quita el módulo de asistencias de la vista (tabla y modal Consultar asistencias), el progreso se abre desde la tarjeta y editar pasa al icono en la tarjeta Datos personales. Pendiente: eliminación de calendario.
+
+### ✅ **Cambios**
+- **Usuario:** Campos eliminados (tipoAsistencia, diasHorariosAsistencia, contactoEmergencia*, historialAsistencia, detalleAsistencia, medicionesFisicas). Correo se mantiene (nullable) para login.
+- **Panel Mis Alumnos:** Filtros solo nombre y estado; columna Tipo eliminada; JS y manual actualizados.
+- **Detalle alumno:** Tarjetas 1) Datos personales (nombre, edad, celular, fecha de alta; icono editar arriba a la derecha), 2) Restricciones médicas, 3) Progreso del alumno (clic abre modal Registrar progreso), 4) Rutinas asignadas. Eliminados bloque Últimos 5 asistencias, modal Consultar asistencias y botón Editar del header.
+- **Backend:** UsuarioRepository, UsuarioService, CalendarioService, AsistenciaService, AlumnoExportService, AlumnoJsonBackupService, ProfesorController, CalendarioController actualizados para no usar campos eliminados; verAlumno vuelve a enviar historialAsistencia, asistenciaHoy y gruposMusculares para tarjeta y modal de progreso.
+
+### 📁 **Archivos modificados**
+Usuario.java, UsuarioRepository.java, UsuarioService.java, CalendarioService.java, AsistenciaService.java, AlumnoExportService.java, AlumnoJsonBackupService.java, ProfesorController.java, CalendarioController.java, profesor/dashboard.html, profesor/alumno-detalle.html, profesor/manual-usuario.html. **Nuevo:** Documentacion/CAMBIOS_PANEL_ALUMNO_Y_ASISTENCIAS_MAR2026.md.
+
+---
+
 ## [2026-02-09] - feat(ux): modales unificados y mejoras en flujos ✅
 
 ### 🎯 **Resumen**

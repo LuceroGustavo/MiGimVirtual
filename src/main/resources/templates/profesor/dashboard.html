@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/springsecurity">
 <head>
     <meta charset="UTF-8">
@@ -431,11 +431,11 @@
                     <div class="card mb-3">
                         <div class="card-body">
                             <div class="row g-2 align-items-end">
-                                <div class="col-md-3">
+                                <div class="col-md-4">
                                     <label class="form-label">Buscar por nombre</label>
                                     <input id="filtroNombreAlumno" type="text" class="form-control" placeholder="Nombre del alumno">
                                 </div>
-                                <div class="col-md-2">
+                                <div class="col-md-3">
                                     <label class="form-label">Estado</label>
                                     <select id="filtroEstadoAlumnos" class="form-select">
                                         <option value="">Todos</option>
@@ -444,48 +444,6 @@
                                     </select>
                                 </div>
                                 <div class="col-md-2">
-                                    <label class="form-label">Tipo</label>
-                                    <select id="filtroTipoAsistencia" class="form-select">
-                                        <option value="">Todos</option>
-                                        <option value="PRESENCIAL">Presencial</option>
-                                        <option value="ONLINE">Virtual</option>
-                                        <option value="SEMIPRESENCIAL">Semipresencial</option>
-                                    </select>
-                                </div>
-                                <div class="col-md-2">
-                                    <label class="form-label">Día</label>
-                                    <select id="filtroDia" class="form-select">
-                                        <option value="">Todos</option>
-                                        <option value="LUNES">Lunes</option>
-                                        <option value="MARTES">Martes</option>
-                                        <option value="MIERCOLES">Miércoles</option>
-                                        <option value="JUEVES">Jueves</option>
-                                        <option value="VIERNES">Viernes</option>
-                                        <option value="SABADO">Sábado</option>
-                                        <option value="DOMINGO">Domingo</option>
-                                    </select>
-                                </div>
-                                <div class="col-md-2">
-                                    <label class="form-label">Horario</label>
-                                    <select id="filtroHora" class="form-select">
-                                        <option value="">Todos</option>
-                                        <option value="6">06:00</option>
-                                        <option value="7">07:00</option>
-                                        <option value="8">08:00</option>
-                                        <option value="9">09:00</option>
-                                        <option value="10">10:00</option>
-                                        <option value="11">11:00</option>
-                                        <option value="12">12:00</option>
-                                        <option value="13">13:00</option>
-                                        <option value="14">14:00</option>
-                                        <option value="15">15:00</option>
-                                        <option value="16">16:00</option>
-                                        <option value="17">17:00</option>
-                                        <option value="18">18:00</option>
-                                        <option value="19">19:00</option>
-                                    </select>
-                                </div>
-                                <div class="col-md-1">
                                     <button id="limpiarFiltrosAlumnos" type="button" class="btn btn-warning w-100" style="background:#ffcc80; border-color:#ffb74d; color:#e65100;">
                                         Limpiar filtros
                                     </button>
@@ -510,7 +468,6 @@
                                     <th>Nombre</th>
                                     <th>Edad</th>
                                     <th>Celular</th>
-                                    <th>Tipo</th>
                                     <th>Estado</th>
                                     <th>Rutinas</th>
                                     <th>Acciones</th>
@@ -519,16 +476,10 @@
                             </thead>
                             <tbody>
                                 <tr th:each="usuario : ${usuarios}" class="text-center"
-                                    th:attr="data-estado=${usuario.estadoAlumno},data-nombre=${usuario.nombre},data-tipo=${usuario.tipoAsistencia != null ? #strings.toString(usuario.tipoAsistencia) : ''}">
+                                    th:attr="data-estado=${usuario.estadoAlumno},data-nombre=${usuario.nombre}">
                                     <td th:text="${usuario.nombre}">Nombre</td>
                                     <td th:text="${usuario.edad}">Edad</td>
                                     <td th:text="${usuario.celular != null ? usuario.celular : '-'}">-</td>
-                                    <td>
-                                        <span th:if="${#strings.toString(usuario.tipoAsistencia) == 'PRESENCIAL'}" class="badge bg-primary">Presencial</span>
-                                        <span th:if="${#strings.toString(usuario.tipoAsistencia) == 'ONLINE' or #strings.toString(usuario.tipoAsistencia) == 'VIRTUAL'}" class="badge bg-info">Virtual</span>
-                                        <span th:if="${#strings.toString(usuario.tipoAsistencia) == 'SEMIPRESENCIAL'}" class="badge bg-warning text-dark">Semipresencial</span>
-                                        <span th:if="${usuario.tipoAsistencia == null}" class="badge bg-light text-dark">-</span>
-                                    </td>
                                     <td>
                                         <span th:if="${usuario.estadoAlumno == 'ACTIVO'}" class="badge bg-success">Activo</span>
                                         <span th:if="${usuario.estadoAlumno == 'INACTIVO'}" class="badge bg-secondary">Inactivo</span>
@@ -551,11 +502,6 @@
                                            th:title="${usuario.estadoAlumno == 'INACTIVO'} ? 'Alumno inactivo' : 'Asignar rutina'">
                                             <i class="fa-solid fa-dumbbell"></i>
                                         </a>
-                                        <div class="horarios-data d-none">
-                                            <span th:each="dh : ${usuario.diasHorariosAsistencia}"
-                                                  th:if="${dh != null and dh.dia != null and dh.horaEntrada != null}"
-                                                  th:attr="data-dia=${dh.dia},data-hora=${#temporals.format(dh.horaEntrada, 'H')}"></span>
-                                        </div>
                                     </td>
                                     <td class="text-start">
                                         <button type="button"
@@ -894,18 +840,12 @@
 
         const filtroNombre = document.getElementById('filtroNombreAlumno');
         const filtroEstado = document.getElementById('filtroEstadoAlumnos');
-        const filtroTipo = document.getElementById('filtroTipoAsistencia');
-        const filtroDia = document.getElementById('filtroDia');
-        const filtroHora = document.getElementById('filtroHora');
         const filtrosStorageKey = 'MiGimVirtual_filtros_alumnos';
 
         function guardarFiltros() {
             const payload = {
                 nombre: filtroNombre?.value || '',
-                estado: filtroEstado?.value || '',
-                tipo: filtroTipo?.value || '',
-                dia: filtroDia?.value || '',
-                hora: filtroHora?.value || ''
+                estado: filtroEstado?.value || ''
             };
             localStorage.setItem(filtrosStorageKey, JSON.stringify(payload));
         }
@@ -917,53 +857,30 @@
                 const data = JSON.parse(raw);
                 if (filtroNombre) filtroNombre.value = data.nombre || '';
                 if (filtroEstado) filtroEstado.value = data.estado || '';
-                if (filtroTipo) filtroTipo.value = data.tipo || '';
-                if (filtroDia) filtroDia.value = data.dia || '';
-                if (filtroHora) filtroHora.value = data.hora || '';
             } catch (error) {
                 localStorage.removeItem(filtrosStorageKey);
             }
         }
 
-        function obtenerHorariosFila(row) {
-            const horarios = [];
-            row.querySelectorAll('.horarios-data span').forEach(span => {
-                const dia = span.getAttribute('data-dia');
-                const hora = span.getAttribute('data-hora');
-                if (dia && hora) {
-                    horarios.push({ dia, hora });
-                }
-            });
-            return horarios;
-        }
-
         function aplicarFiltrosAlumnos() {
             const nombre = (filtroNombre?.value || '').trim().toLowerCase();
             const estado = filtroEstado?.value || '';
-            const tipo = filtroTipo?.value || '';
-            const dia = filtroDia?.value || '';
-            const hora = filtroHora?.value || '';
 
             document.querySelectorAll('#alumnos tbody tr').forEach(row => {
                 const rowNombre = (row.getAttribute('data-nombre') || '').toLowerCase();
                 const rowEstado = row.getAttribute('data-estado') || '';
-                const rowTipo = row.getAttribute('data-tipo') || '';
-                const horarios = obtenerHorariosFila(row);
 
                 const matchNombre = !nombre || rowNombre.includes(nombre);
                 const matchEstado = !estado || rowEstado === estado;
-                const matchTipo = !tipo || rowTipo === tipo;
-                const matchDia = !dia || horarios.some(h => h.dia === dia);
-                const matchHora = !hora || horarios.some(h => h.hora === hora);
 
-                const mostrar = matchNombre && matchEstado && matchTipo && matchDia && matchHora;
+                const mostrar = matchNombre && matchEstado;
                 row.style.display = mostrar ? '' : 'none';
             });
         }
 
         const limpiarFiltros = document.getElementById('limpiarFiltrosAlumnos');
 
-        [filtroNombre, filtroEstado, filtroTipo, filtroDia, filtroHora].forEach(el => {
+        [filtroNombre, filtroEstado].forEach(el => {
             if (el) {
                 el.addEventListener('input', aplicarFiltrosAlumnos);
                 el.addEventListener('change', aplicarFiltrosAlumnos);
@@ -976,9 +893,6 @@
             limpiarFiltros.addEventListener('click', () => {
                 if (filtroNombre) filtroNombre.value = '';
                 if (filtroEstado) filtroEstado.value = '';
-                if (filtroTipo) filtroTipo.value = '';
-                if (filtroDia) filtroDia.value = '';
-                if (filtroHora) filtroHora.value = '';
                 localStorage.removeItem(filtrosStorageKey);
                 aplicarFiltrosAlumnos();
             });

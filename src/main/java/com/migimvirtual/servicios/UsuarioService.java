@@ -18,7 +18,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.hibernate.Hibernate;
 
 import java.util.List;
 import java.util.Optional;
@@ -144,11 +143,7 @@ public class UsuarioService {
      * desconectadas con colecciones lazy sin inicializar.
      */
     public Usuario getUsuarioByIdParaFicha(Long id) {
-        Optional<Usuario> opt = usuarioRepository.findByIdWithAllRelations(id);
-        if (opt.isEmpty()) return null;
-        Usuario u = opt.get();
-        Hibernate.initialize(u.getDiasHorariosAsistencia());
-        return u;
+        return usuarioRepository.findByIdWithAllRelations(id).orElse(null);
     }
 
     // --- MÉTODOS CON EVICCIÓN DE CACHÉ ---
@@ -262,14 +257,10 @@ public class UsuarioService {
         usuarioExistente.setSexo(usuario.getSexo());
         usuarioExistente.setPeso(usuario.getPeso());
         usuarioExistente.setCorreo(usuario.getCorreo());
-        usuarioExistente.setTipoAsistencia(usuario.getTipoAsistencia());
-        usuarioExistente.setDiasHorariosAsistencia(usuario.getDiasHorariosAsistencia());
         usuarioExistente.setCelular(usuario.getCelular());
         usuarioExistente.setNotasProfesor(usuario.getNotasProfesor());
         usuarioExistente.setObjetivosPersonales(usuario.getObjetivosPersonales());
         usuarioExistente.setRestriccionesMedicas(usuario.getRestriccionesMedicas());
-        usuarioExistente.setContactoEmergenciaNombre(usuario.getContactoEmergenciaNombre());
-        usuarioExistente.setContactoEmergenciaTelefono(usuario.getContactoEmergenciaTelefono());
         if (usuarioExistente.getFechaAlta() == null) {
             usuarioExistente.setFechaAlta(java.time.LocalDate.now());
         }
@@ -297,9 +288,7 @@ public class UsuarioService {
             usuarioExistente.setProfesor(usuario.getProfesor());
         }
 
-        // IMPORTANTE: No tocar las colecciones que tienen orphanRemoval
-        // Las medicionesFisicas y rutinas se mantienen como están
-        // Solo se actualizan si explícitamente se proporcionan nuevas listas
+        // No se tocan rutinas ni otras relaciones; solo datos del alumno.
 
         return usuarioRepository.save(usuarioExistente);
     }

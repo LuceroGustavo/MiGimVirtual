@@ -9,12 +9,6 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.validation.constraints.Email;
 import jakarta.persistence.Column;
-import jakarta.persistence.ElementCollection;
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.CollectionTable;
-import jakarta.persistence.AttributeOverride;
-import jakarta.persistence.AttributeOverrides;
-
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -23,8 +17,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.time.LocalDate;
-
-import com.migimvirtual.enums.TipoAsistencia;
 
 @Entity
 public class Usuario implements UserDetails {
@@ -42,21 +34,11 @@ public class Usuario implements UserDetails {
     private String avatar;
 
     @Email(message = "Debe ingresar un correo válido")
-    @Column(unique = true)
+    @Column(unique = true, nullable = true)
     private String correo;
 
     @OneToMany(mappedBy = "usuario")
     private List<Rutina> rutinas;
-
-    private TipoAsistencia tipoAsistencia;
-    @ElementCollection
-    @CollectionTable(name = "usuario_dias_horarios_asistencia", joinColumns = @JoinColumn(name = "usuario_id"))
-    @AttributeOverrides({
-        @AttributeOverride(name = "dia", column = @Column(name = "dia")),
-        @AttributeOverride(name = "horaEntrada", column = @Column(name = "hora_entrada")),
-        @AttributeOverride(name = "horaSalida", column = @Column(name = "hora_salida"))
-    })
-    private List<DiaHorarioAsistencia> diasHorariosAsistencia;
 
     private String notasProfesor;
     private String objetivosPersonales;
@@ -66,15 +48,7 @@ public class Usuario implements UserDetails {
     private LocalDate fechaAlta;
     private LocalDate fechaBaja;
     private String historialEstado;
-    private String contactoEmergenciaNombre;
-    private String contactoEmergenciaTelefono;
     private LocalDate fechaInicio;
-    private String historialAsistencia; // (JSON o texto, para futuro)
-    private String detalleAsistencia; // Detalle libre de asistencia (ej: "Martes y jueves de 18 a 19 hs", "Pase libre", etc)
-
-    @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<MedicionFisica> medicionesFisicas;
-    
 
     // Constructor sin argumentos
     public Usuario() {
@@ -216,22 +190,6 @@ public class Usuario implements UserDetails {
         this.avatar = avatar;
     }
 
-    public TipoAsistencia getTipoAsistencia() {
-        return tipoAsistencia;
-    }
-
-    public void setTipoAsistencia(TipoAsistencia tipoAsistencia) {
-        this.tipoAsistencia = tipoAsistencia;
-    }
-
-    public List<DiaHorarioAsistencia> getDiasHorariosAsistencia() {
-        return diasHorariosAsistencia;
-    }
-
-    public void setDiasHorariosAsistencia(List<DiaHorarioAsistencia> diasHorariosAsistencia) {
-        this.diasHorariosAsistencia = diasHorariosAsistencia;
-    }
-
     public String getNotasProfesor() {
         return notasProfesor;
     }
@@ -296,22 +254,6 @@ public class Usuario implements UserDetails {
         this.historialEstado = historialEstado;
     }
 
-    public String getContactoEmergenciaNombre() {
-        return contactoEmergenciaNombre;
-    }
-
-    public void setContactoEmergenciaNombre(String contactoEmergenciaNombre) {
-        this.contactoEmergenciaNombre = contactoEmergenciaNombre;
-    }
-
-    public String getContactoEmergenciaTelefono() {
-        return contactoEmergenciaTelefono;
-    }
-
-    public void setContactoEmergenciaTelefono(String contactoEmergenciaTelefono) {
-        this.contactoEmergenciaTelefono = contactoEmergenciaTelefono;
-    }
-
     public LocalDate getFechaInicio() {
         return fechaInicio;
     }
@@ -319,29 +261,4 @@ public class Usuario implements UserDetails {
     public void setFechaInicio(LocalDate fechaInicio) {
         this.fechaInicio = fechaInicio;
     }
-
-    public String getHistorialAsistencia() {
-        return historialAsistencia;
-    }
-
-    public void setHistorialAsistencia(String historialAsistencia) {
-        this.historialAsistencia = historialAsistencia;
-    }
-
-    public List<MedicionFisica> getMedicionesFisicas() {
-        return medicionesFisicas;
-    }
-
-    public void setMedicionesFisicas(List<MedicionFisica> medicionesFisicas) {
-        this.medicionesFisicas = medicionesFisicas;
-    }
-
-    public String getDetalleAsistencia() {
-        return detalleAsistencia;
-    }
-
-    public void setDetalleAsistencia(String detalleAsistencia) {
-        this.detalleAsistencia = detalleAsistencia;
-    }
-    
 }

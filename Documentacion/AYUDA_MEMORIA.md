@@ -39,6 +39,12 @@ Para ver la lista de mejoras pendientes e implementadas (ítem por ítem), el ch
 
 ---
 
+## Calendario / historial de rutinas enviadas (más adelante)
+
+- **Pendiente:** Crear un calendario (o módulo similar) para **historial de rutinas enviadas** a alumnos (fechas de envío, qué rutina, a quién). No es el calendario actual de asistencia presencial; es nuevo y orientado a uso 100 % virtual.
+
+---
+
 ## Sistema de backup — terminado (Mar 2026)
 
 - **Ejercicios + grupos + rutinas + series:** Exportar/importar ZIP desde Administración → Backup y resguardo. Opciones por checkbox (Grupos, Ejercicios, Rutinas, Series). Agregar o Suplantar.

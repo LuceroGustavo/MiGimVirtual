@@ -55,6 +55,7 @@ Tras iniciar sesión se redirige al **Panel del profesor** (`/profesor/{id}`).
 |---------|-----------------|
 | **LEEME_PRIMERO.md** (este) | Contexto del proyecto, acceso, evolución realizada, dónde está cada cosa. |
 | **PLAN_DE_DESARROLLO_MIGIMVIRTUAL.md** | Plan de desarrollo: fases (BD, renombre, eliminaciones virtual, responsive), subplan de lo que se quita. |
+| **SUBPLAN_DESARROLLO_MODULOS.md** | Avances por módulo (Alumnos → Series → Rutinas → Asignaciones → Calendario → Ejercicios → Pizarra → Administrar); checklist y notas. |
 | **DOCUMENTACION_UNIFICADA.md** | Resúmenes: lo implementado, backup, Excel alumnos, despliegue, manual (índice), referencias técnicas. |
 | **AYUDA_MEMORIA.md** | Lista rápida de pendientes (ejercicios/vistas), eliminar alumno, backup terminado. |
 

@@ -228,10 +228,35 @@
             font-weight: 600;
         }
         /* Patrón de colores igual que panel: alumnos=verde pastel, series=violeta, rutinas=amarillo, asignaciones=celeste */
+        .stat-item.stat-card-datos { background: linear-gradient(135deg, #e3f2fd 60%, #bbdefb 100%); border-color: #90caf9; }
         .stat-item.stat-card-alumno { background: linear-gradient(135deg, #e8f5e9 60%, #b2dfdb 100%); border-color: #a5d6a7; }
-        .stat-item.stat-card-asistencia { background: linear-gradient(135deg, #e3f2fd 60%, #b3e5fc 100%); border-color: #81d4fa; }
         .stat-item.stat-card-trabajo { background: linear-gradient(135deg, #ede7f6 60%, #b39ddb 100%); border-color: #b39ddb; }
         .stat-item.stat-card-rutinas { background: linear-gradient(135deg, #fffde7 60%, #ffe082 100%); border-color: #ffd54f; }
+        .stat-item .stat-card-datos-list { font-size: 0.9rem; color: #5a6c7d; line-height: 1.6; min-height: 2.8rem; }
+        .stat-item .stat-card-datos-list strong { color: #2c3e50; }
+        .stat-item.stat-card-datos { position: relative; }
+        .stat-item.stat-card-datos .stat-card-datos-list { overflow: visible; display: block; -webkit-line-clamp: unset; text-overflow: unset; }
+        .stat-item .stat-card-edit {
+            position: absolute;
+            top: 0.75rem;
+            right: 0.75rem;
+            width: 1.75rem;
+            height: 1.75rem;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255,255,255,0.95);
+            color: #5e35b1;
+            text-decoration: none;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.12);
+            transition: background 0.2s, color 0.2s;
+            font-size: 0.8rem;
+        }
+        .stat-item .stat-card-edit i { font-size: 0.8rem !important; margin: 0; }
+        .stat-item .stat-card-edit:hover { background: #7e57c2; color: #fff; }
+        .stat-item.stat-card-progreso-clic { cursor: pointer; transition: box-shadow 0.2s ease, transform 0.2s ease; }
+        .stat-item.stat-card-progreso-clic:hover { box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); transform: translateY(-2px); }
         
         .nav-tabs .nav-link {
             border: none;
@@ -301,21 +326,12 @@
             <span th:text="${mensajeSuccess}">Mensaje</span>
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
         </div>
-        <!-- Header: volver, Progreso, Editar, Eliminar -->
+        <!-- Header: volver, Eliminar (editar está en la tarjeta Datos personales) -->
         <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
             <a th:href="@{/profesor/{id}(id=${alumno.profesor.id})}" class="btn btn-volver">
                 <i class="fas fa-arrow-left me-2"></i>Volver al Dashboard
             </a>
             <div class="d-flex flex-wrap gap-2">
-                <button th:if="${!alumnoInactivo}" type="button" class="btn btn-success" id="btnProgreso" title="Registrar qué trabajó este alumno (grupos musculares y observaciones)">
-                    <i class="fas fa-chart-line me-2"></i>Progreso
-                </button>
-                <button th:if="${alumnoInactivo}" type="button" class="btn btn-success btn-disabled-inactivo" disabled title="Activa el alumno para registrar progreso">
-                    <i class="fas fa-chart-line me-2"></i>Progreso
-                </button>
-                <a th:href="@{/profesor/alumnos/editar/{id}(id=${alumno.id})}" class="btn btn-warning" title="Editar alumno">
-                    <i class="fas fa-edit me-2"></i>Editar
-                </a>
                 <form id="formEliminarAlumno" method="get" th:action="@{/profesor/alumnos/eliminar/{id}(id=${alumno.id})}" class="d-none"></form>
                 <button type="button" class="btn btn-danger" id="btnEliminarAlumno" title="Eliminar alumno">
                     <i class="fas fa-trash me-2"></i>Eliminar
@@ -356,65 +372,7 @@
             </div>
         </div>
 
-        <!-- Modal Consultar asistencias (resumen mensual) -->
-        <div class="modal fade" id="modalResumenAsistencias" tabindex="-1" aria-labelledby="modalResumenAsistenciasLabel" aria-hidden="true">
-            <div class="modal-dialog modal-lg modal-dialog-centered">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="modalResumenAsistenciasLabel">
-                            <i class="fas fa-calendar-alt me-2"></i>Resumen mensual de asistencias
-                        </h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
-                    </div>
-                    <div class="modal-body">
-                        <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-3">
-                            <label for="resumenMesSelect" class="form-label mb-0">Mes</label>
-                            <select id="resumenMesSelect" class="form-select form-select-sm w-auto">
-                                <option value="">Seleccionar mes</option>
-                            </select>
-                        </div>
-                        <div class="table-responsive">
-                            <table class="table table-sm table-hover align-middle mb-0">
-                                <thead class="table-light">
-                                    <tr>
-                                        <th>Mes</th>
-                                        <th>Asistencias</th>
-                                        <th>Ausencias</th>
-                                        <th>Total</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="resumenAsistenciasBody">
-                                    <tr>
-                                        <td colspan="4" class="text-center text-muted py-3">Sin datos de asistencia.</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                        <hr class="my-3">
-                        <div class="table-responsive">
-                            <table class="table table-sm table-hover align-middle mb-0">
-                                <thead class="table-light">
-                                    <tr>
-                                        <th>Fecha</th>
-                                        <th>Estado</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="detalleAsistenciasBody">
-                                    <tr>
-                                        <td colspan="2" class="text-center text-muted py-3">Selecciona un mes para ver el detalle.</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Modal Progreso -->
+        <!-- Modal Progreso: cargar progreso del alumno (fecha, grupos trabajados, observaciones) -->
         <div class="modal fade" id="modalProgreso" tabindex="-1" aria-labelledby="modalProgresoLabel" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content">
@@ -424,7 +382,7 @@
                     </div>
                     <form th:action="@{/profesor/alumnos/{id}/progreso(id=${alumno.id})}" method="post">
                         <div class="modal-body">
-                            <p class="text-muted small">Indica la fecha, qué grupos musculares trabajó y observaciones. Si ya existe registro para esa fecha, se actualizará. La asistencia (presente/ausente) se gestiona desde el panel o el calendario.</p>
+                            <p class="text-muted small">Indicá la fecha, qué grupos musculares trabajó y observaciones. Si ya existe registro para esa fecha, se actualizará.</p>
                             <div class="mb-3">
                                 <label for="progresoFecha" class="form-label">Fecha</label>
                                 <input type="date" id="progresoFecha" name="fecha" class="form-control" th:value="${#temporals.format(#temporals.createNow(), 'yyyy-MM-dd')}" required>
@@ -442,7 +400,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="form-text">Puedes marcar varios (el alumno pudo trabajar distintos grupos ese día). En el historial se mostrarán separados por coma.</div>
+                                <div class="form-text">Podés marcar varios (el alumno pudo trabajar distintos grupos ese día).</div>
                             </div>
                             <div class="mb-3">
                                 <label for="progresoObservaciones" class="form-label">Observaciones</label>
@@ -464,11 +422,6 @@
         <script>
         (function() {
             function initModalesAlumno() {
-                var btnProgreso = document.getElementById('btnProgreso');
-                var modalProgreso = document.getElementById('modalProgreso');
-                if (btnProgreso && modalProgreso && typeof bootstrap !== 'undefined' && bootstrap.Modal) {
-                    btnProgreso.addEventListener('click', function() { new bootstrap.Modal(modalProgreso).show(); });
-                }
                 // Modal confirmar (eliminar alumno o inactivar todas las rutinas)
                 var modalEliminar = document.getElementById('modalConfirmarEliminarAlumno');
                 var modalEliminarMsg = document.getElementById('modalConfirmarEliminarAlumnoMensaje');
@@ -482,7 +435,7 @@
                     if (btnEliminar) {
                         btnEliminar.addEventListener('click', function() {
                             currentConfirmForm = formEliminar;
-                            if (modalEliminarMsg) modalEliminarMsg.textContent = '¿Estás seguro de que querés eliminar este alumno? Se borrarán sus asistencias, mediciones y rutinas asignadas. Esta acción no se puede deshacer.';
+                            if (modalEliminarMsg) modalEliminarMsg.textContent = '¿Estás seguro de que querés eliminar este alumno? Se borrarán sus mediciones y rutinas asignadas. Esta acción no se puede deshacer.';
                             modalInst.show();
                         });
                     }
@@ -531,32 +484,27 @@
         </div>
         <p class="hero-subtitle mb-3 text-center">Información detallada y seguimiento del progreso</p>
 
-        <!-- Tarjetas de vista rápida (colores: alumno=verde, asistencia=celeste, trabajo=violeta, rutinas=amarillo) -->
+        <!-- Tarjetas de vista rápida (responsive: 1 Datos personales, 2 Restricciones, 3 Progreso, 4 Rutinas) -->
         <div class="stats-grid">
-            <!-- 1) Restricciones médicas (alumnos / salud → verde pastel) -->
+            <!-- 1) Datos personales (nombre, edad, contacto objetivo, fecha de alta); icono editar arriba a la derecha -->
+            <div class="stat-item stat-card-datos">
+                <a th:href="@{/profesor/alumnos/editar/{id}(id=${alumno.id})}" class="stat-card-edit" title="Editar alumno"><i class="fas fa-edit"></i></a>
+                <div class="stat-card-title"><i class="fas fa-user me-1"></i>Datos personales</div>
+                <div class="stat-card-datos-list">
+                    <p class="mb-1"><strong th:text="${alumno.nombre}">Nombre</strong></p>
+                    <p class="mb-1"><strong>Edad:</strong> <span th:text="${alumno.edad}">0</span> años</p>
+                    <p class="mb-1"><strong>Celular:</strong> <span th:text="${alumno.celular != null ? alumno.celular : '-'}">-</span></p>
+                    <p class="mb-0"><strong>Fecha de alta:</strong> <span th:text="${alumno.fechaAlta != null ? #temporals.format(alumno.fechaAlta, 'dd/MM/yyyy') : '-'}">-</span></p>
+                </div>
+            </div>
+            <!-- 2) Restricciones médicas -->
             <div class="stat-item stat-card-alumno">
                 <div class="stat-card-title"><i class="fas fa-heartbeat me-1"></i>Restricciones médicas</div>
                 <div class="stat-card-content" th:text="${alumno.restriccionesMedicas != null && !alumno.restriccionesMedicas.isEmpty() ? alumno.restriccionesMedicas : 'Ninguna'}">Ninguna</div>
             </div>
-            <!-- 2) Asistencia (horarios → celeste) -->
-            <div class="stat-item stat-card-asistencia">
-                <div class="stat-card-title"><i class="fas fa-calendar-alt me-1"></i>Asistencia</div>
-                <div class="stat-card-content">
-                    <span th:if="${#strings.toString(alumno.tipoAsistencia) == 'PRESENCIAL' || #strings.toString(alumno.tipoAsistencia) == 'SEMIPRESENCIAL'}">
-                        <span th:if="${#strings.toString(alumno.tipoAsistencia) == 'PRESENCIAL'}">Presencial</span>
-                        <span th:if="${#strings.toString(alumno.tipoAsistencia) == 'SEMIPRESENCIAL'}">Semipresencial</span>
-                        <span th:if="${alumno.diasHorariosAsistencia != null && !alumno.diasHorariosAsistencia.isEmpty()}">
-                            <br><span th:text="${#strings.listJoin(alumno.diasHorariosAsistencia.![dia], ', ')}">Lunes, Miércoles</span>
-                            <span th:if="${alumno.diasHorariosAsistencia != null && !alumno.diasHorariosAsistencia.isEmpty()}" th:text="${' ' + #temporals.format(alumno.diasHorariosAsistencia[0].horaEntrada, 'HH:mm') + ' hs'}"> 18:00 hs</span>
-                        </span>
-                    </span>
-                    <span th:if="${#strings.toString(alumno.tipoAsistencia) == 'ONLINE' || #strings.toString(alumno.tipoAsistencia) == 'VIRTUAL'}">Virtual</span>
-                    <span th:if="${alumno.tipoAsistencia == null}">-</span>
-                </div>
-            </div>
-            <!-- 3) Último trabajo (series/ejercicios → violeta) -->
-            <div class="stat-item stat-card-trabajo">
-                <div class="stat-card-title"><i class="fas fa-dumbbell me-1"></i>Último trabajo</div>
+            <!-- 3) Progreso del alumno (clic para abrir modal y cargar progreso) -->
+            <div th:if="${!alumnoInactivo}" class="stat-item stat-card-trabajo stat-card-progreso-clic" role="button" tabindex="0" data-bs-toggle="modal" data-bs-target="#modalProgreso" title="Clic para cargar o ver progreso">
+                <div class="stat-card-title"><i class="fas fa-chart-line me-1"></i>Progreso del alumno</div>
                 <div class="stat-card-content">
                     <th:block th:if="${historialAsistencia != null && !historialAsistencia.isEmpty()}" th:with="ultima=${historialAsistencia[0]}, obs=${historialAsistencia[0].observaciones != null && !historialAsistencia[0].observaciones.isEmpty() ? (#strings.length(historialAsistencia[0].observaciones) > 60 ? #strings.substring(historialAsistencia[0].observaciones, 0, 60) + '...' : historialAsistencia[0].observaciones) : '-'}">
                         <span th:text="${#temporals.format(ultima.fecha, 'dd/MM/yyyy')}">-</span>
@@ -564,10 +512,14 @@
                         <br>
                         <span class="text-muted small" th:title="${ultima.observaciones}" th:text="${obs}">-</span>
                     </th:block>
-                    <span th:if="${historialAsistencia == null || historialAsistencia.isEmpty()}" class="text-muted">Sin registros</span>
+                    <span th:if="${historialAsistencia == null || historialAsistencia.isEmpty()}" class="text-muted">Sin registros. Clic para cargar.</span>
                 </div>
             </div>
-            <!-- 4) Rutinas asignadas (rutinas → amarillo, clic → asignar; deshabilitado si inactivo) -->
+            <div th:if="${alumnoInactivo}" class="stat-item stat-card-trabajo">
+                <div class="stat-card-title"><i class="fas fa-chart-line me-1"></i>Progreso del alumno</div>
+                <div class="stat-card-content text-muted">Activa el alumno para cargar progreso.</div>
+            </div>
+            <!-- 4) Rutinas asignadas (clic para asignar; deshabilitado si inactivo) -->
             <a th:if="${!alumnoInactivo}" th:href="@{/profesor/asignar-rutina/{id}(id=${alumno.id})}" class="stat-item stat-item-link stat-card-rutinas text-decoration-none d-block">
                 <div class="stat-number" th:text="${rutinasAsignadas != null ? rutinasAsignadas.size() : 0}">0</div>
                 <div class="stat-label">Rutinas asignadas</div>
@@ -580,90 +532,19 @@
             </div>
         </div>
 
-        <!-- Datos personales del alumno (una sola tarjeta) -->
+        <!-- Bloque ampliado: historial de estado, objetivos (datos personales y restricciones ya están en las tarjetas) -->
         <div class="alumno-info">
             <div class="row align-items-start">
-                <div class="col-lg-3 col-md-4 mb-3 mb-md-0">
-                    <h4 class="mb-3">
-                        <i class="fas fa-user me-2"></i>
-                        <span th:text="${alumno.nombre}">Nombre del Alumno</span>
-                    </h4>
-                    <p class="mb-1"><strong>Edad:</strong> <span th:text="${alumno.edad}">Edad</span> años</p>
-                    <p class="mb-1"><strong>Sexo:</strong> <span th:text="${alumno.sexo}">Sexo</span></p>
-                    <p class="mb-1"><strong>Email:</strong> <span th:text="${alumno.correo != null && !alumno.correo.isEmpty() ? alumno.correo : '-'}">-</span></p>
-                    <p class="mb-0"><strong>Celular:</strong> <span th:text="${alumno.celular != null ? alumno.celular : '-'}">-</span></p>
+                <div class="col-lg-4 col-md-6 mb-3 mb-md-0">
+                    <p class="mb-1"><strong>Fecha de alta:</strong> <span th:text="${alumno.fechaAlta != null ? #temporals.format(alumno.fechaAlta, 'dd/MM/yyyy') : '-'}">-</span></p>
+                    <p class="mb-1"><strong>Sexo:</strong> <span th:text="${alumno.sexo != null ? alumno.sexo : '-'}">-</span></p>
                 </div>
-                <div class="col-lg-3 col-md-4 mb-3 mb-md-0">
-                    <p class="mb-1"><strong>Fecha de Inicio:</strong> <span th:text="${alumno.fechaInicio != null ? #temporals.format(alumno.fechaInicio, 'dd/MM/yyyy') : '-'}">-</span></p>
-                    <p class="mb-0"><strong>Contacto de Emergencia:</strong> <span th:text="${alumno.contactoEmergenciaNombre != null ? alumno.contactoEmergenciaNombre + ' (' + alumno.contactoEmergenciaTelefono + ')' : '-'}">-</span></p>
-                </div>
-                <div class="col-lg-3 col-md-4 mb-3 mb-md-0">
-                    <p class="mb-1"><strong>Restricciones Médicas:</strong> <span th:text="${alumno.restriccionesMedicas != null && !alumno.restriccionesMedicas.isEmpty() ? alumno.restriccionesMedicas : '-'}">-</span></p>
+                <div class="col-lg-4 col-md-6 mb-3 mb-md-0">
                     <p class="mb-1"><strong>Historial de Estado:</strong></p>
                     <p class="mb-1 small" th:text="${historialEstadoFormateado != null && !historialEstadoFormateado.isEmpty() ? historialEstadoFormateado : (alumno.historialEstado != null ? alumno.historialEstado : '-')}">-</p>
+                </div>
+                <div class="col-lg-4 col-md-12 mb-3 mb-md-0">
                     <p class="mb-0"><strong>Objetivos:</strong> <span class="small" th:text="${alumno.objetivosPersonales != null && !alumno.objetivosPersonales.isEmpty() ? alumno.objetivosPersonales : '-'}">-</span></p>
-                </div>
-            </div>
-        </div>
-
-        <!-- Últimos 5 asistencias/ausencias -->
-        <div class="info-card">
-            <div class="card-header d-flex align-items-center justify-content-between flex-wrap gap-2">
-                <div>
-                    <h5 class="mb-0"><i class="fas fa-calendar-check me-2"></i>Últimos 5 asistencias/ausencias</h5>
-                    <p class="mb-0 small opacity-90">Para ver más, usá el botón <strong>Consultar asistencias</strong> (por mes).</p>
-                </div>
-                <button type="button" class="btn btn-light btn-sm" data-bs-toggle="modal" data-bs-target="#modalResumenAsistencias">
-                    Consultar asistencias
-                </button>
-            </div>
-            <div class="card-body">
-                <div class="table-responsive historial-asistencia-scroll">
-                    <table class="table table-hover mb-0">
-                        <thead class="table-light">
-                            <tr>
-                                <th>Fecha</th>
-                                <th>Estado</th>
-                                <th>Trabajado ese día</th>
-                                <th>Profesor</th>
-                                <th>Observaciones</th>
-                            </tr>
-                        </thead>
-                        <tbody id="historialAsistenciaBody">
-                            <tr th:each="asistencia : ${historialAsistencia}"
-                                th:attr="data-fecha=${#temporals.format(asistencia.fecha, 'yyyy-MM-dd')}, data-presente=${asistencia.presente}">
-                                <td th:text="${#temporals.format(asistencia.fecha, 'dd/MM/yyyy')}">Fecha</td>
-                                <td>
-                                    <span th:if="${asistencia.pendiente}" class="badge bg-secondary">Pendiente</span>
-                                    <span th:if="${!asistencia.pendiente and asistencia.presente == true}" class="badge bg-success">Presente</span>
-                                    <span th:if="${!asistencia.pendiente and asistencia.presente == false}" class="badge bg-danger">Ausente</span>
-                                </td>
-                                <td>
-                                    <span th:if="${asistencia.gruposTrabajados != null && !asistencia.gruposTrabajados.isEmpty()}" th:text="${#strings.listJoin(asistencia.gruposTrabajados, ', ')}">-</span>
-                                    <span th:if="${asistencia.gruposTrabajados == null || asistencia.gruposTrabajados.isEmpty()}" class="text-muted">-</span>
-                                </td>
-                                <td>
-                                    <span th:if="${(asistencia.gruposTrabajados != null && !asistencia.gruposTrabajados.isEmpty()) || (asistencia.observaciones != null && !asistencia.observaciones.isEmpty()) and !(#authentication.principal != null and (#authentication.principal.rol == 'ADMIN' or #authentication.principal.rol == 'DEVELOPER'))}"
-                                          class="profesor-display"
-                                          th:text="${asistencia.registradoPorNombre != null ? asistencia.registradoPorNombre : ''}"></span>
-                                    <select th:if="${#authentication.principal != null and (#authentication.principal.rol == 'ADMIN' or #authentication.principal.rol == 'DEVELOPER') and ((asistencia.gruposTrabajados != null && !asistencia.gruposTrabajados.isEmpty()) || (asistencia.observaciones != null && !asistencia.observaciones.isEmpty()))}"
-                                            class="form-select form-select-sm w-auto profesor-select"
-                                            th:attr="data-asistencia-id=${asistencia.id}">
-                                        <option th:each="u : ${usuariosSistema}" th:value="${u.id}"
-                                                th:selected="${asistencia.registradoPorId != null ? u.id == asistencia.registradoPorId : (#authentication.principal != null ? #authentication.principal.id == u.id : false)}"
-                                                th:text="${u.nombre}">Profesor</option>
-                                    </select>
-                                </td>
-                                <td th:text="${asistencia.observaciones != null && !asistencia.observaciones.isEmpty() ? asistencia.observaciones : '-'}">-</td>
-                            </tr>
-                            <tr th:if="${historialAsistencia == null || historialAsistencia.isEmpty()}">
-                                <td colspan="5" class="text-center text-muted py-4">
-                                    <i class="fas fa-calendar-times fa-2x mb-2"></i>
-                                    <p class="mb-0">Sin registros de asistencia. Usa el botón <strong>Progreso</strong> para cargar.</p>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
                 </div>
             </div>
         </div>
@@ -867,217 +748,7 @@
             window.location.replace(url);
         })();
 
-        // Si se llegó con openModal=progreso (p. ej. desde el botón Progreso del dashboard), abrir el modal al cargar
-        (function() {
-            const params = new URLSearchParams(window.location.search);
-            if (params.get('openModal') === 'progreso') {
-                const modalEl = document.getElementById('modalProgreso');
-                if (modalEl && typeof bootstrap !== 'undefined') {
-                    const modal = new bootstrap.Modal(modalEl);
-                    modal.show();
-                }
-            }
-        })();
-
-        // La tabla de asistencias muestra solo las últimas 5 (vienen del servidor). Para ver más se usa el modal "Consultar asistencias".
-
-        // Resumen mensual de asistencias: al abrir el modal se cargan asistencias actualizadas del servidor
-        // (incluye marcas hechas desde el calendario, p. ej. presente por excepción) y se actualiza también el historial.
-        (function() {
-            const modalEl = document.getElementById('modalResumenAsistencias');
-            const tbodyResumen = document.getElementById('resumenAsistenciasBody');
-            const detalleBody = document.getElementById('detalleAsistenciasBody');
-            const mesSelect = document.getElementById('resumenMesSelect');
-            const historialBody = document.getElementById('historialAsistenciaBody');
-            if (!modalEl || !tbodyResumen) return;
-            const meses = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
-            function getAlumnoId() {
-                var m = window.location.pathname.match(/\/profesor\/alumnos\/(\d+)/);
-                return m ? m[1] : null;
-            }
-            function construirDetalle(registros, clave) {
-                if (!detalleBody) return;
-                detalleBody.innerHTML = '';
-                if (!clave) {
-                    detalleBody.innerHTML = '<tr><td colspan="2" class="text-center text-muted py-3">Selecciona un mes para ver el detalle.</td></tr>';
-                    return;
-                }
-                var items = registros.filter(function(r) { return r.claveMes === clave && !r.pendiente; });
-                if (items.length === 0) {
-                    detalleBody.innerHTML = '<tr><td colspan="2" class="text-center text-muted py-3">Sin registros en este mes.</td></tr>';
-                    return;
-                }
-                items.sort(function(a, b) { return b.fecha.localeCompare(a.fecha); });
-                items.forEach(function(item) {
-                    var tr = document.createElement('tr');
-                    tr.innerHTML = '<td>' + item.fechaFormateada + '</td>' +
-                        '<td>' + (item.presente
-                            ? '<span class="badge bg-success">Presente</span>'
-                            : '<span class="badge bg-danger">Ausente</span>') + '</td>';
-                    detalleBody.appendChild(tr);
-                });
-            }
-            function renderProfesorCell(asistenciaId, registradoPorId, registradoPorNombre, gruposTrabajados, observaciones) {
-                var tieneTrabajo = (gruposTrabajados && gruposTrabajados.length) || (observaciones && observaciones.trim());
-                if (!tieneTrabajo) return '';
-                var displayName = registradoPorNombre || '';
-                if (!isAdminUsuario) {
-                    return '<span class="profesor-display">' + displayName + '</span>';
-                }
-                var selectedId = registradoPorId || '';
-                var options = (usuariosSistema || []).map(function(u) {
-                    var selected = (selectedId && u.id === selectedId) ? ' selected' : '';
-                    return '<option value="' + u.id + '"' + selected + '>' + u.nombre + '</option>';
-                }).join('');
-                return '<span class="profesor-display profesor-editable" data-asistencia-id="' + asistenciaId + '" data-registrado-id="' + selectedId + '">' + displayName + '</span>' +
-                    '<select class="form-select form-select-sm w-auto profesor-select d-none" data-asistencia-id="' + asistenciaId + '">' + options + '</select>';
-            }
-            function actualizarHistorialYModal(registros) {
-                            var resumen = new Map();
-                            registros.forEach(function(r) {
-                                if (!r.fecha || r.pendiente) return;
-                    var partes = r.fecha.split('-');
-                    if (partes.length < 2) return;
-                    var clave = partes[0] + '-' + partes[1];
-                    if (!resumen.has(clave)) resumen.set(clave, { presente: 0, ausente: 0 });
-                    var item = resumen.get(clave);
-                    if (r.presente) item.presente += 1; else item.ausente += 1;
-                });
-                // No actualizar el historial al abrir el modal para evitar perder la vista del progreso.
-                if (resumen.size === 0) {
-                    tbodyResumen.innerHTML = '<tr><td colspan="4" class="text-center text-muted py-3">Sin datos de asistencia.</td></tr>';
-                    if (mesSelect) { mesSelect.innerHTML = '<option value="">Seleccionar mes</option>'; }
-                    construirDetalle([], '');
-                    return;
-                }
-                var clavesOrdenadas = Array.from(resumen.keys()).sort();
-                tbodyResumen.innerHTML = '';
-                clavesOrdenadas.forEach(function(clave) {
-                    var item = resumen.get(clave);
-                    var partes = clave.split('-');
-                    var monthIdx = Math.max(0, Math.min(11, parseInt(partes[1], 10) - 1));
-                    var mesLabel = meses[monthIdx] + ' ' + partes[0];
-                    var total = item.presente + item.ausente;
-                    var tr = document.createElement('tr');
-                    tr.innerHTML = '<td>' + mesLabel + '</td><td><span class="badge bg-success">' + item.presente + '</span></td><td><span class="badge bg-secondary">' + item.ausente + '</span></td><td>' + total + '</td>';
-                    tbodyResumen.appendChild(tr);
-                });
-                if (mesSelect) {
-                    mesSelect.innerHTML = '<option value="">Seleccionar mes</option>';
-                    clavesOrdenadas.forEach(function(clave) {
-                        var partes = clave.split('-');
-                        var monthIdx = Math.max(0, Math.min(11, parseInt(partes[1], 10) - 1));
-                        var opt = document.createElement('option');
-                        opt.value = clave;
-                        opt.textContent = meses[monthIdx] + ' ' + partes[0];
-                        mesSelect.appendChild(opt);
-                    });
-                    var ultimoMes = clavesOrdenadas[clavesOrdenadas.length - 1];
-                    mesSelect.value = ultimoMes;
-                    mesSelect.onchange = function() { construirDetalle(registros, mesSelect.value); };
-                    construirDetalle(registros, ultimoMes);
-                } else {
-                    construirDetalle(registros, '');
-                }
-            }
-            function obtenerRegistrosDesdeTabla() {
-                if (!historialBody) return [];
-                var rows = Array.from(historialBody.querySelectorAll('tr[data-fecha]'));
-                if (!rows.length) return [];
-                return rows.map(function(row) {
-                    var fecha = row.getAttribute('data-fecha') || '';
-                    var fechaFormateada = '';
-                    var fechaCell = row.querySelector('td');
-                    if (fechaCell) fechaFormateada = fechaCell.textContent.trim();
-                    var estadoCell = row.querySelectorAll('td')[1];
-                    var estadoTexto = estadoCell ? estadoCell.textContent.trim().toLowerCase() : '';
-                    var esPendiente = estadoTexto.indexOf('pendiente') !== -1 || estadoTexto.indexOf('sin registro') !== -1;
-                    var esPresente = estadoTexto.indexOf('presente') !== -1;
-                    return {
-                        fecha: fecha,
-                        fechaFormateada: fechaFormateada || fecha,
-                        presente: esPendiente ? null : esPresente,
-                        pendiente: esPendiente,
-                        claveMes: (fecha && fecha.indexOf('-') !== -1) ? fecha.split('-').slice(0, 2).join('-') : '',
-                        id: null,
-                        gruposTrabajados: [],
-                        observaciones: '',
-                        registradoPorId: null,
-                        registradoPorNombre: ''
-                    };
-                });
-            }
-
-            function normalizarRegistros(data) {
-                if (!Array.isArray(data)) return null;
-                return data.map(function(a) {
-                    var fecha = a.fecha || '';
-                    var partes = fecha.split('-');
-                    var clave = partes.length >= 2 ? partes[0] + '-' + partes[1] : '';
-                    var presenteVal = (a.presente === true) ? true : (a.presente === false ? false : null);
-                    return {
-                        fecha: fecha,
-                        fechaFormateada: a.fechaFormateada || fecha,
-                        presente: presenteVal,
-                        pendiente: !!a.pendiente,
-                        claveMes: clave,
-                        id: a.id,
-                        gruposTrabajados: a.gruposTrabajados || [],
-                        observaciones: a.observaciones || '',
-                        registradoPorId: a.registradoPorId || null,
-                        registradoPorNombre: a.registradoPorNombre || ''
-                    };
-                });
-            }
-
-            modalEl.addEventListener('show.bs.modal', function() {
-                var alumnoId = getAlumnoId();
-                if (!alumnoId) {
-                    actualizarHistorialYModal([]);
-                    return;
-                }
-                var url = '/profesor/alumnos/' + alumnoId + '/asistencias';
-                fetch(url, { headers: { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' } })
-                    .then(function(res) { return res.ok ? res.json() : null; })
-                    .then(function(data) {
-                        if (data === null) {
-                            var fallbackNull = obtenerRegistrosDesdeTabla();
-                            actualizarHistorialYModal(fallbackNull);
-                            return;
-                        }
-                        var registros = normalizarRegistros(data) || [];
-                        if (!registros.length) {
-                            registros = obtenerRegistrosDesdeTabla();
-                        }
-                        registros.sort(function(a, b) { return (b.fecha || '').localeCompare(a.fecha || ''); });
-                        actualizarHistorialYModal(registros);
-                    })
-                    .catch(function() {
-                        var fallback = obtenerRegistrosDesdeTabla();
-                        actualizarHistorialYModal(fallback);
-                    });
-            });
-        })();
-
-        // Admin: selector visible y guardado automático
-        (function() {
-            if (!isAdminUsuario) return;
-            document.addEventListener('change', function(e) {
-                var select = e.target;
-                if (!select.classList || !select.classList.contains('profesor-select')) return;
-                var asistenciaId = select.getAttribute('data-asistencia-id');
-                var registradoPorId = select.value;
-                var m = window.location.pathname.match(/\/profesor\/alumnos\/(\d+)/);
-                var alumnoId = m ? m[1] : null;
-                if (!asistenciaId || !registradoPorId || !alumnoId) return;
-                fetch('/profesor/alumnos/' + alumnoId + '/asistencias/' + asistenciaId + '/registrado-por', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'X-Requested-With': 'XMLHttpRequest' },
-                    body: 'registradoPorId=' + encodeURIComponent(registradoPorId)
-                }).catch(function() {});
-            });
-        })();
-    </script>
+            </script>
  
 </body>
 </html> 

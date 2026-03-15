@@ -2,7 +2,6 @@ package com.migimvirtual.repositorios;
 
 import com.migimvirtual.entidades.Usuario;
 import com.migimvirtual.entidades.Profesor;
-import com.migimvirtual.enums.TipoAsistencia;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -47,9 +46,7 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
     /** Para detectar duplicados en importación cuando el alumno no tiene correo. */
     Optional<Usuario> findFirstByProfesor_IdAndRolAndNombre(Long profesorId, String rol, String nombre);
 
-    List<Usuario> findByTipoAsistencia(TipoAsistencia tipoAsistencia);
-
-    // --- CONSULTAS OPTIMIZADAS PARA FASE 3 ---
+    // --- CONSULTAS OPTIMIZADADAS ---
 
     // Obtener usuarios con profesor cargado en una sola consulta
     @Query("SELECT u FROM Usuario u LEFT JOIN FETCH u.profesor WHERE u.rol = 'ALUMNO'")
@@ -64,14 +61,8 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
     List<Usuario> findAlumnosByProfesorIdWithRelations(@Param("profesorId") Long profesorId);
 
     // Obtener usuario específico con todas las relaciones para dashboard
-    // NOTA: No se pueden hacer JOIN FETCH de múltiples colecciones @OneToMany en una sola consulta
-    // Por eso cargamos solo rutinas aquí, y medicionesFisicas se cargarán en una consulta separada si es necesario
     @Query("SELECT DISTINCT u FROM Usuario u LEFT JOIN FETCH u.profesor LEFT JOIN FETCH u.rutinas WHERE u.id = :id")
     Optional<Usuario> findByIdWithAllRelations(@Param("id") Long id);
-    
-    // Consulta separada para cargar mediciones físicas si es necesario
-    @Query("SELECT u FROM Usuario u LEFT JOIN FETCH u.medicionesFisicas WHERE u.id = :id")
-    Optional<Usuario> findByIdWithMediciones(@Param("id") Long id);
 
     // Obtener usuarios con conteo de rutinas (optimizado)
     @Query("SELECT u, COUNT(r) as rutinaCount FROM Usuario u LEFT JOIN u.rutinas r WHERE u.rol = 'ALUMNO' GROUP BY u")

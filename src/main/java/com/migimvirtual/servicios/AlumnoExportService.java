@@ -1,11 +1,8 @@
 package com.migimvirtual.servicios;
 
 import com.migimvirtual.entidades.Asistencia;
-import com.migimvirtual.entidades.DiaHorarioAsistencia;
 import com.migimvirtual.entidades.GrupoMuscular;
 import com.migimvirtual.entidades.Usuario;
-import com.migimvirtual.enums.DiaSemana;
-import com.migimvirtual.enums.TipoAsistencia;
 import com.migimvirtual.repositorios.AsistenciaRepository;
 import com.migimvirtual.repositorios.RutinaRepository;
 import com.migimvirtual.repositorios.UsuarioRepository;
@@ -97,8 +94,8 @@ public class AlumnoExportService {
                 row.createCell(col++).setCellValue(toString(u.getEstadoAlumno()));
                 col = setCellFecha(row, col, u.getFechaAlta(), dateStyle);
                 col = setCellFecha(row, col, u.getFechaBaja(), dateStyle);
-                row.createCell(col++).setCellValue(formatearTipoAsistencia(u.getTipoAsistencia()));
-                row.createCell(col++).setCellValue(formatearDiasYHorarios(u));
+                row.createCell(col++).setCellValue("Virtual");
+                row.createCell(col++).setCellValue("");
                 row.createCell(col++).setCellValue(toString(u.getObjetivosPersonales()));
                 row.createCell(col++).setCellValue(toString(u.getRestriccionesMedicas()));
                 row.createCell(col++).setCellValue(toString(u.getNotasProfesor()));
@@ -159,43 +156,6 @@ public class AlumnoExportService {
 
     private static String toString(Object o) {
         return o == null ? "" : String.valueOf(o).trim();
-    }
-
-    private static String formatearTipoAsistencia(TipoAsistencia t) {
-        if (t == null) return "";
-        return switch (t) {
-            case ONLINE -> "Virtual";
-            case PRESENCIAL -> "Presencial";
-            case SEMIPRESENCIAL -> "Semipresencial";
-        };
-    }
-
-    /**
-     * Solo para Presencial o Semipresencial. Formato: "Lunes 10:00-11:00, Martes 13:00-14:00" o similar.
-     */
-    private static String formatearDiasYHorarios(Usuario u) {
-        if (u.getTipoAsistencia() != TipoAsistencia.PRESENCIAL && u.getTipoAsistencia() != TipoAsistencia.SEMIPRESENCIAL) {
-            return "";
-        }
-        List<DiaHorarioAsistencia> dias = u.getDiasHorariosAsistencia();
-        if (dias == null || dias.isEmpty()) return "";
-        return dias.stream()
-                .map(d -> nombreDia(d.getDia()) + " " + (d.getHoraEntrada() != null ? d.getHoraEntrada().format(HORA_FORMAT) : "")
-                        + (d.getHoraSalida() != null ? "-" + d.getHoraSalida().format(HORA_FORMAT) : ""))
-                .collect(Collectors.joining(", "));
-    }
-
-    private static String nombreDia(DiaSemana d) {
-        if (d == null) return "";
-        return switch (d) {
-            case LUNES -> "Lunes";
-            case MARTES -> "Martes";
-            case MIERCOLES -> "Miércoles";
-            case JUEVES -> "Jueves";
-            case VIERNES -> "Viernes";
-            case SABADO -> "Sábado";
-            case DOMINGO -> "Domingo";
-        };
     }
 
     private static int setCellFecha(Row row, int col, LocalDate fecha, CellStyle dateStyle) {
