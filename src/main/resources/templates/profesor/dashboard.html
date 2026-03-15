@@ -326,7 +326,7 @@
 
         <!-- Grid 4x2: 4 tarjetas arriba (menos altas), 4 abajo alineadas por columna -->
         <div class="dashboard-grid">
-            <!-- Columna 1: Alumnos | Calendario -->
+            <!-- Columna 1: Alumnos -->
             <div class="dashboard-col">
                 <div class="card-module card-alumnos card-scroll-tab" data-scroll-tab="alumnos" role="button" tabindex="0" title="Ver lista de alumnos">
                     <a th:href="@{/profesor/alumnos/nuevo}" class="card-module-add" title="Nuevo alumno"><i class="fa-solid fa-user-plus"></i></a>
@@ -334,12 +334,6 @@
                     <div class="stat" th:text="${usuarios != null ? usuarios.size() : 0}">0</div>
                     <div class="label">Alumnos</div>
                 </div>
-                <a th:href="@{/calendario/semanal/profesor/{profesorId}(profesorId=${profesor != null ? profesor.id : 1})}" class="main-action-card card-calendario" target="_blank" rel="noopener noreferrer" title="Calendario Semanal">
-                    <div class="card-inner">
-                        <i class="fa-solid fa-calendar-week"></i>
-                        <span class="card-label">Calendario</span>
-                    </div>
-                </a>
             </div>
             <!-- Columna 2: Series | Ejercicios -->
             <div class="dashboard-col">
@@ -471,7 +465,6 @@
                                     <th>Estado</th>
                                     <th>Rutinas</th>
                                     <th>Acciones</th>
-                                    <th>Presente <span th:if="${fechaHoyFormateada != null}" th:text="'(' + ${fechaHoyFormateada} + ')'" class="fw-normal text-muted small">(fecha)</span></th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -492,9 +485,6 @@
                                         <a th:href="@{/profesor/alumnos/{id}(id=${usuario.id})}" class="btn btn-primary btn-sm" title="Ver alumno">
                                             <i class="fa-solid fa-eye me-1"></i>Ver
                                         </a>
-                                        <a th:href="@{/profesor/alumnos/{id}(id=${usuario.id}, openModal='progreso')}" class="btn btn-success btn-sm" title="Registrar progreso">
-                                            <i class="fa-solid fa-chart-line me-1"></i>Progreso
-                                        </a>
                                         <a th:href="@{/profesor/asignar-rutina/{id}(id=${usuario.id})}"
                                            class="btn btn-info btn-sm"
                                            th:classappend="${usuario.estadoAlumno == 'INACTIVO'} ? 'disabled opacity-50'"
@@ -502,20 +492,6 @@
                                            th:title="${usuario.estadoAlumno == 'INACTIVO'} ? 'Alumno inactivo' : 'Asignar rutina'">
                                             <i class="fa-solid fa-dumbbell"></i>
                                         </a>
-                                    </td>
-                                    <td class="text-start">
-                                        <button type="button"
-                                                th:if="${estadoAsistenciaHoy != null and estadoAsistenciaHoy[usuario.id] != null}"
-                                                class="btn btn-sm btn-toggle-asistencia"
-                                                th:classappend="${estadoAsistenciaHoy[usuario.id] == 'PRESENTE' ? 'btn-success' : (estadoAsistenciaHoy[usuario.id] == 'AUSENTE' ? 'btn-outline-danger' : 'btn-secondary')}"
-                                                th:disabled="${usuario.estadoAlumno == 'INACTIVO'}"
-                                                th:attr="data-usuario-id=${usuario.id}, data-fecha=${#temporals.format(#temporals.createNow().toLocalDate(), 'yyyy-MM-dd')}, data-estado=${estadoAsistenciaHoy[usuario.id]}, aria-disabled=${usuario.estadoAlumno == 'INACTIVO'}, title=${usuario.estadoAlumno == 'INACTIVO' ? 'Alumno inactivo' : 'Clic para cambiar estado (Pendiente / Presente / Ausente)'}"
-                                                aria-label="Cambiar estado de asistencia">
-                                            <i class="fa-solid fa-check me-1" th:if="${estadoAsistenciaHoy[usuario.id] == 'PRESENTE'}"></i>
-                                            <i class="fa-solid fa-times me-1" th:if="${estadoAsistenciaHoy[usuario.id] == 'AUSENTE'}"></i>
-                                            <i class="fa-solid fa-minus me-1" th:if="${estadoAsistenciaHoy[usuario.id] == 'PENDIENTE'}"></i>
-                                            <span th:text="${estadoAsistenciaHoy[usuario.id] == 'PRESENTE' ? 'Presente' : (estadoAsistenciaHoy[usuario.id] == 'AUSENTE' ? 'Ausente' : 'Pendiente')}">Pendiente</span>
-                                        </button>
                                     </td>
                                 </tr>
                             </tbody>
@@ -718,7 +694,6 @@
     
     <script th:inline="javascript">
         const profesorId = [[${profesor != null ? profesor.id : 0}]];
-        const urlMarcarAsistencia = /*[[@{/calendario/api/marcar-asistencia}]]*/ '/calendario/api/marcar-asistencia';
     </script>
     <script>
         // Modales estilo MiGimVirtual: alerta y confirmar eliminación
@@ -899,53 +874,6 @@
         }
         cargarFiltros();
         aplicarFiltrosAlumnos();
-
-        // Ciclo de 3 estados: PENDIENTE -> PRESENTE -> AUSENTE -> PENDIENTE (mismo API que el calendario)
-        (function() {
-            var orden = ['PENDIENTE', 'PRESENTE', 'AUSENTE'];
-            function siguienteEstado(actual) {
-                var a = (actual || 'PENDIENTE').toUpperCase();
-                var i = orden.indexOf(a);
-                if (i < 0) i = 0;
-                return orden[(i + 1) % orden.length];
-            }
-            function estilosPorEstado(estado) {
-                if (estado === 'PRESENTE') return { clase: 'btn-success', icono: 'fa-check', texto: 'Presente' };
-                if (estado === 'AUSENTE') return { clase: 'btn-outline-danger', icono: 'fa-times', texto: 'Ausente' };
-                return { clase: 'btn-secondary', icono: 'fa-minus', texto: 'Pendiente' };
-            }
-            document.addEventListener('click', function(e) {
-                var btn = e.target && e.target.closest && e.target.closest('.btn-toggle-asistencia');
-                if (!btn || btn.disabled) return;
-                e.preventDefault();
-                var usuarioId = btn.getAttribute('data-usuario-id');
-                var fecha = btn.getAttribute('data-fecha');
-                var estadoActual = btn.getAttribute('data-estado') || 'PENDIENTE';
-                if (!usuarioId || !fecha) return;
-                var nuevoEstado = siguienteEstado(estadoActual);
-                var params = 'usuarioId=' + encodeURIComponent(usuarioId) + '&fecha=' + encodeURIComponent(fecha) + '&estado=' + encodeURIComponent(nuevoEstado);
-                fetch(typeof urlMarcarAsistencia !== 'undefined' ? urlMarcarAsistencia : '/calendario/api/marcar-asistencia', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
-                    body: params
-                }).then(function(r) {
-                    if (!r.ok) throw new Error('Error ' + r.status);
-                    return r.json();
-                }).then(function(data) {
-                    if (data && data.ok === true && data.estado) {
-                        var estado = data.estado;
-                        var s = estilosPorEstado(estado);
-                        btn.setAttribute('data-estado', estado);
-                        btn.classList.remove('btn-success', 'btn-outline-success', 'btn-outline-danger', 'btn-danger', 'btn-secondary');
-                        btn.classList.add(s.clase);
-                        var icon = btn.querySelector('i.fa-solid');
-                        var span = btn.querySelector('span');
-                        if (icon) { icon.className = 'fa-solid me-1 ' + s.icono; }
-                        if (span) { span.textContent = s.texto; }
-                    }
-                }).catch(function(err) { console.error('Error al marcar asistencia:', err); });
-            });
-        })();
     </script>
 </body>
 </html>

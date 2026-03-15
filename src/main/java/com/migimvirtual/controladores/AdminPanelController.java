@@ -267,32 +267,6 @@ public class AdminPanelController {
         return "profesor/depuracion";
     }
 
-    @PostMapping("/depuracion/asistencias")
-    public String depurarAsistencias(@AuthenticationPrincipal Usuario usuarioActual,
-                                    @RequestParam("fechaLimite") String fechaLimiteStr,
-                                    RedirectAttributes redirectAttributes) {
-        if (usuarioActual == null || (!"ADMIN".equals(usuarioActual.getRol()) && !"DEVELOPER".equals(usuarioActual.getRol()))) {
-            return "redirect:/profesor/dashboard";
-        }
-        try {
-            LocalDate fechaLimite = LocalDate.parse(fechaLimiteStr);
-            int eliminados = depuracionService.depurarAsistenciasAntesDe(fechaLimite);
-            Map<String, Object> result = new HashMap<>();
-            result.put("success", true);
-            result.put("tipo", "asistencias");
-            result.put("eliminados", eliminados);
-            result.put("fechaLimite", fechaLimiteStr);
-            redirectAttributes.addFlashAttribute("depuracionResult", result);
-        } catch (Exception e) {
-            logger.error("Error al depurar asistencias: {}", e.getMessage(), e);
-            Map<String, Object> result = new HashMap<>();
-            result.put("success", false);
-            result.put("message", "Error: " + e.getMessage());
-            redirectAttributes.addFlashAttribute("depuracionResult", result);
-        }
-        return "redirect:/profesor/administracion?seccion=depuracion";
-    }
-
     @PostMapping("/depuracion/rutinas-asignadas")
     public String depurarRutinasAsignadas(@AuthenticationPrincipal Usuario usuarioActual,
                                          @RequestParam("fechaLimite") String fechaLimiteStr,

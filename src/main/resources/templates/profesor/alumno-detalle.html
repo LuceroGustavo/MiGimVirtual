@@ -302,10 +302,6 @@
 
 <div class="container-fluid" th:with="alumnoInactivo=${alumno.estadoAlumno == 'INACTIVO'}">
     <div class="main-container">
-        <div th:if="${param.progreso != null && param.progreso[0] == 'ok'}" class="alert alert-success alert-dismissible fade show" role="alert">
-            Progreso guardado correctamente.
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
-        </div>
         <div th:if="${param.success != null && param.success[0] == 'rutina_asignada'}" class="alert alert-success alert-dismissible fade show" role="alert">
             Rutina asignada correctamente. Podés copiar el enlace o enviarla por WhatsApp desde la tabla de abajo.
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
@@ -368,52 +364,6 @@
                     <div class="modal-footer modal-confirmar-footer">
                         <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Aceptar</button>
                     </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Modal Progreso: cargar progreso del alumno (fecha, grupos trabajados, observaciones) -->
-        <div class="modal fade" id="modalProgreso" tabindex="-1" aria-labelledby="modalProgresoLabel" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered">
-                <div class="modal-content">
-                    <div class="modal-header" style="background: linear-gradient(135deg, #28a745 0%, #20c997 100%); color: white;">
-                        <h5 class="modal-title" id="modalProgresoLabel"><i class="fas fa-chart-line me-2"></i>Registrar progreso</h5>
-                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
-                    </div>
-                    <form th:action="@{/profesor/alumnos/{id}/progreso(id=${alumno.id})}" method="post">
-                        <div class="modal-body">
-                            <p class="text-muted small">Indicá la fecha, qué grupos musculares trabajó y observaciones. Si ya existe registro para esa fecha, se actualizará.</p>
-                            <div class="mb-3">
-                                <label for="progresoFecha" class="form-label">Fecha</label>
-                                <input type="date" id="progresoFecha" name="fecha" class="form-control" th:value="${#temporals.format(#temporals.createNow(), 'yyyy-MM-dd')}" required>
-                            </div>
-                            <div class="mb-3" th:if="${gruposMusculares != null && !gruposMusculares.isEmpty()}">
-                                <label class="form-label">Grupos musculares trabajados</label>
-                                <div class="border rounded p-2" style="max-height: 180px; overflow-y: auto;">
-                                    <div class="row g-1" th:each="g : ${gruposMusculares}">
-                                        <div class="col-12 col-md-6">
-                                            <div class="form-check">
-                                                <input class="form-check-input" type="checkbox" name="grupoIds" th:value="${g.id}" th:id="${'grupo-' + g.id}"
-                                                       th:checked="${asistenciaHoy != null && asistenciaHoy.gruposTrabajados != null && #lists.contains(asistenciaHoy.gruposTrabajados.![id], g.id)}">
-                                                <label class="form-check-label" th:for="${'grupo-' + g.id}" th:text="${g.nombre}">Grupo</label>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="form-text">Podés marcar varios (el alumno pudo trabajar distintos grupos ese día).</div>
-                            </div>
-                            <div class="mb-3">
-                                <label for="progresoObservaciones" class="form-label">Observaciones</label>
-                                <textarea id="progresoObservaciones" name="observaciones" class="form-control" rows="3" maxlength="2000" placeholder="Ej: Buen ritmo, trabajó bien piernas..."
-                                          th:text="${asistenciaHoy != null && asistenciaHoy.observaciones != null ? asistenciaHoy.observaciones : ''}"></textarea>
-                                <div class="form-text">Máximo 2000 caracteres.</div>
-                            </div>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                            <button type="submit" class="btn btn-success"><i class="fas fa-save me-1"></i>Guardar</button>
-                        </div>
-                    </form>
                 </div>
             </div>
         </div>
@@ -502,22 +452,10 @@
                 <div class="stat-card-title"><i class="fas fa-heartbeat me-1"></i>Restricciones médicas</div>
                 <div class="stat-card-content" th:text="${alumno.restriccionesMedicas != null && !alumno.restriccionesMedicas.isEmpty() ? alumno.restriccionesMedicas : 'Ninguna'}">Ninguna</div>
             </div>
-            <!-- 3) Progreso del alumno (clic para abrir modal y cargar progreso) -->
-            <div th:if="${!alumnoInactivo}" class="stat-item stat-card-trabajo stat-card-progreso-clic" role="button" tabindex="0" data-bs-toggle="modal" data-bs-target="#modalProgreso" title="Clic para cargar o ver progreso">
+            <!-- 3) Progreso del alumno (solo informativo; en esta app no se registra progreso ni asistencias) -->
+            <div class="stat-item stat-card-trabajo">
                 <div class="stat-card-title"><i class="fas fa-chart-line me-1"></i>Progreso del alumno</div>
-                <div class="stat-card-content">
-                    <th:block th:if="${historialAsistencia != null && !historialAsistencia.isEmpty()}" th:with="ultima=${historialAsistencia[0]}, obs=${historialAsistencia[0].observaciones != null && !historialAsistencia[0].observaciones.isEmpty() ? (#strings.length(historialAsistencia[0].observaciones) > 60 ? #strings.substring(historialAsistencia[0].observaciones, 0, 60) + '...' : historialAsistencia[0].observaciones) : '-'}">
-                        <span th:text="${#temporals.format(ultima.fecha, 'dd/MM/yyyy')}">-</span>
-                        <span th:if="${ultima.gruposTrabajados != null && !ultima.gruposTrabajados.isEmpty()}" th:text="${' · ' + #strings.listJoin(ultima.gruposTrabajados, ', ')}">-</span>
-                        <br>
-                        <span class="text-muted small" th:title="${ultima.observaciones}" th:text="${obs}">-</span>
-                    </th:block>
-                    <span th:if="${historialAsistencia == null || historialAsistencia.isEmpty()}" class="text-muted">Sin registros. Clic para cargar.</span>
-                </div>
-            </div>
-            <div th:if="${alumnoInactivo}" class="stat-item stat-card-trabajo">
-                <div class="stat-card-title"><i class="fas fa-chart-line me-1"></i>Progreso del alumno</div>
-                <div class="stat-card-content text-muted">Activa el alumno para cargar progreso.</div>
+                <div class="stat-card-content text-muted">Sin registros de progreso en esta aplicación.</div>
             </div>
             <!-- 4) Rutinas asignadas (clic para asignar; deshabilitado si inactivo) -->
             <a th:if="${!alumnoInactivo}" th:href="@{/profesor/asignar-rutina/{id}(id=${alumno.id})}" class="stat-item stat-item-link stat-card-rutinas text-decoration-none d-block">

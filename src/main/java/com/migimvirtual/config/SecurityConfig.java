@@ -56,7 +56,7 @@ public class SecurityConfig {
                         .requestMatchers("/rutinas/hoja/**").permitAll()
                         .requestMatchers("/sala/**").permitAll()
                         .requestMatchers("/profesor/usuarios-sistema/**", "/profesor/pagina-publica/**").hasAnyRole("ADMIN", "DEVELOPER")
-                        .requestMatchers("/profesor/**", "/series/**", "/rutinas/**", "/exercise/**", "/ejercicios/**", "/calendario/**")
+                        .requestMatchers("/profesor/**", "/series/**", "/rutinas/**", "/exercise/**", "/ejercicios/**")
                         .hasAnyRole("ADMIN", "AYUDANTE", "DEVELOPER")
                         .anyRequest().authenticated())
                 .formLogin(formLogin -> formLogin

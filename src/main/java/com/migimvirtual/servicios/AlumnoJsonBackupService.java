@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
 
 /**
  * Exporta e importa alumnos en formato JSON (backup completo).
- * Incluye: datos del alumno, mediciones físicas, asistencias con observaciones y grupos trabajados.
+ * Incluye: datos del alumno y mediciones físicas.
  * No incluye: rutinas asignadas (se reasignan manualmente tras importar).
  */
 @Service
@@ -35,7 +35,6 @@ public class AlumnoJsonBackupService {
 
     private final UsuarioRepository usuarioRepository;
     private final MedicionFisicaRepository medicionFisicaRepository;
-    private final AsistenciaRepository asistenciaRepository;
     private final GrupoMuscularService grupoMuscularService;
     private final UsuarioService usuarioService;
     private final PlatformTransactionManager transactionManager;
@@ -43,13 +42,11 @@ public class AlumnoJsonBackupService {
 
     public AlumnoJsonBackupService(UsuarioRepository usuarioRepository,
                                    MedicionFisicaRepository medicionFisicaRepository,
-                                   AsistenciaRepository asistenciaRepository,
                                    GrupoMuscularService grupoMuscularService,
                                    UsuarioService usuarioService,
                                    PlatformTransactionManager transactionManager) {
         this.usuarioRepository = usuarioRepository;
         this.medicionFisicaRepository = medicionFisicaRepository;
-        this.asistenciaRepository = asistenciaRepository;
         this.grupoMuscularService = grupoMuscularService;
         this.usuarioService = usuarioService;
         this.transactionManager = transactionManager;
@@ -120,22 +117,6 @@ public class AlumnoJsonBackupService {
             }
         }
         m.put("mediciones", medicionesList);
-
-        // Asistencias (con observaciones = notas del progreso)
-        List<Asistencia> asistencias = asistenciaRepository.findByUsuario_IdOrderByFechaDesc(u.getId());
-        List<Map<String, Object>> asistenciasList = new ArrayList<>();
-        for (Asistencia a : asistencias) {
-            Map<String, Object> am = new LinkedHashMap<>();
-            am.put("fecha", a.getFecha() != null ? a.getFecha().format(FECHA_FORMAT) : null);
-            am.put("presente", a.isPresente());
-            am.put("observaciones", a.getObservaciones());
-            List<String> gruposNombres = a.getGruposTrabajados() != null
-                    ? a.getGruposTrabajados().stream().map(GrupoMuscular::getNombre).filter(Objects::nonNull).collect(Collectors.toList())
-                    : List.of();
-            am.put("gruposTrabajados", gruposNombres);
-            asistenciasList.add(am);
-        }
-        m.put("asistencias", asistenciasList);
 
         return m;
     }
@@ -222,16 +203,6 @@ public class AlumnoJsonBackupService {
                     }
                 }
 
-                @SuppressWarnings("unchecked")
-                List<Map<String, Object>> asistencias = (List<Map<String, Object>>) ad.get("asistencias");
-                if (asistencias != null) {
-                    for (Map<String, Object> am : asistencias) {
-                        Asistencia a = mapToAsistencia(am, nuevo, profesor.getId());
-                        if (a != null) {
-                            asistenciaRepository.save(a);
-                        }
-                    }
-                }
                 importados++;
             } catch (Exception e) {
                 errores.add("Fila " + (i + 1) + ": " + e.getMessage());
@@ -289,23 +260,6 @@ public class AlumnoJsonBackupService {
         mf.setBiceps(toDouble(m.get("biceps"), null));
         mf.setMuslo(toDouble(m.get("muslo"), null));
         return mf;
-    }
-
-    private Asistencia mapToAsistencia(Map<String, Object> m, Usuario usuario, Long profesorId) {
-        LocalDate fecha = parseFecha(m.get("fecha"));
-        if (fecha == null) return null;
-        Asistencia a = new Asistencia();
-        a.setUsuario(usuario);
-        a.setFecha(fecha);
-        a.setPresente(Boolean.TRUE.equals(m.get("presente")));
-        a.setObservaciones(toString(m.get("observaciones")));
-
-        @SuppressWarnings("unchecked")
-        List<String> gruposNombres = (List<String>) m.get("gruposTrabajados");
-        if (gruposNombres != null && !gruposNombres.isEmpty()) {
-            a.setGruposTrabajados(grupoMuscularService.resolveGruposByNames(gruposNombres, profesorId));
-        }
-        return a;
     }
 
     private static String toString(Object o) {

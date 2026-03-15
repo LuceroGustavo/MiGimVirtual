@@ -1,7 +1,6 @@
 package com.migimvirtual.servicios;
 
 import com.migimvirtual.entidades.Rutina;
-import com.migimvirtual.repositorios.AsistenciaRepository;
 import com.migimvirtual.repositorios.RutinaRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,7 +12,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 /**
- * Servicio para depuración de datos antiguos: asistencias y rutinas asignadas.
+ * Servicio para depuración de datos antiguos: rutinas asignadas.
  * Permite eliminar registros anteriores a una fecha para mantener la base de datos ligera.
  */
 @Service
@@ -21,34 +20,10 @@ public class DepuracionService {
 
     private static final Logger logger = LoggerFactory.getLogger(DepuracionService.class);
 
-    private final AsistenciaRepository asistenciaRepository;
     private final RutinaRepository rutinaRepository;
 
-    public DepuracionService(AsistenciaRepository asistenciaRepository, RutinaRepository rutinaRepository) {
-        this.asistenciaRepository = asistenciaRepository;
+    public DepuracionService(RutinaRepository rutinaRepository) {
         this.rutinaRepository = rutinaRepository;
-    }
-
-    /**
-     * Cuenta cuántas asistencias tienen fecha anterior a la indicada.
-     * Útil para mostrar al usuario antes de ejecutar la depuración.
-     */
-    @Transactional(readOnly = true)
-    public long contarAsistenciasAntesDe(LocalDate fecha) {
-        return asistenciaRepository.countByFechaBefore(fecha);
-    }
-
-    /**
-     * Elimina todas las asistencias con fecha anterior a la indicada.
-     * Ejemplo: si fecha = 2025-12-12, se borran todos los registros con fecha &lt; 2025-12-12.
-     *
-     * @return Cantidad de registros eliminados
-     */
-    @Transactional
-    public int depurarAsistenciasAntesDe(LocalDate fecha) {
-        int eliminados = asistenciaRepository.deleteByFechaBefore(fecha);
-        logger.info("Depuración asistencias: eliminados {} registros con fecha anterior a {}", eliminados, fecha);
-        return eliminados;
     }
 
     /**

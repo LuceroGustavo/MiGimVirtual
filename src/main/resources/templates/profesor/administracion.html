@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
@@ -165,9 +165,6 @@
     <div th:if="${depuracionResult}" class="alert alert-MiGimVirtual mb-3 admin-alert-item" th:classappend="${depuracionResult['success']} ? 'alert-success' : 'alert-danger'" role="alert">
         <span th:if="${depuracionResult['success']}"><i class="fas fa-check-circle me-2"></i>
             <strong>Depuración completada.</strong>
-            <span th:if="${depuracionResult['tipo'] == 'asistencias'}">
-                Se eliminaron <strong th:text="${depuracionResult['eliminados']}">0</strong> registros de asistencias con fecha anterior a <strong th:text="${depuracionResult['fechaLimite']}">fecha</strong>.
-            </span>
             <span th:if="${depuracionResult['tipo'] == 'rutinas'}">
                 Se eliminaron <strong th:text="${depuracionResult['eliminados']}">0</strong> rutinas asignadas creadas antes de <strong th:text="${depuracionResult['fechaLimite']}">fecha</strong>.
             </span>

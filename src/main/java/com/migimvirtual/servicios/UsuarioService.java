@@ -1,11 +1,8 @@
 package com.migimvirtual.servicios;
 
-import com.migimvirtual.entidades.Asistencia;
 import com.migimvirtual.entidades.Usuario;
 import com.migimvirtual.entidades.Profesor;
 import com.migimvirtual.entidades.Rutina;
-import com.migimvirtual.repositorios.AsistenciaRepository;
-import com.migimvirtual.repositorios.CalendarioExcepcionRepository;
 import com.migimvirtual.repositorios.MedicionFisicaRepository;
 import com.migimvirtual.repositorios.RutinaRepository;
 import com.migimvirtual.repositorios.UsuarioRepository;
@@ -34,13 +31,7 @@ public class UsuarioService {
     private ProfesorRepository profesorRepository;
 
     @Autowired
-    private AsistenciaRepository asistenciaRepository;
-
-    @Autowired
     private MedicionFisicaRepository medicionFisicaRepository;
-
-    @Autowired
-    private CalendarioExcepcionRepository calendarioExcepcionRepository;
 
     @Autowired
     private RutinaRepository rutinaRepository;
@@ -103,12 +94,6 @@ public class UsuarioService {
             if (objetivo.getId() != null && objetivo.getId().equals(quienElimina.getId())) return false;
         } else {
             return false;
-        }
-        // Soltar FK en asistencia.registrado_por_id para poder borrar el usuario
-        List<Asistencia> asistenciasDondeRegistro = asistenciaRepository.findByRegistradoPor_Id(usuarioId);
-        for (Asistencia a : asistenciasDondeRegistro) {
-            a.setRegistradoPor(null);
-            asistenciaRepository.save(a);
         }
         usuarioRepository.delete(objetivo);
         return true;
@@ -305,26 +290,12 @@ public class UsuarioService {
     }
 
     /**
-     * Elimina un alumno (usuario con rol ALUMNO). Antes elimina o desasigna todas las
-     * referencias para no violar FKs: asistencia, mediciones físicas, excepciones de
-     * calendario, y desasigna rutinas asignadas.
+     * Elimina un alumno (usuario con rol ALUMNO). Antes elimina mediciones físicas y rutinas asignadas.
      */
     @CacheEvict(value = "usuarios", allEntries = true)
     @Transactional
     public void eliminarUsuario(Long id) {
-        // 1) Asistencias donde este usuario es el alumno (FK usuario_id)
-        asistenciaRepository.deleteByUsuario_Id(id);
-        // 2) Asistencias donde este usuario figura como "registrado por" (soltar FK)
-        List<Asistencia> asistenciasDondeRegistro = asistenciaRepository.findByRegistradoPor_Id(id);
-        for (Asistencia a : asistenciasDondeRegistro) {
-            a.setRegistradoPor(null);
-            asistenciaRepository.save(a);
-        }
-        // 3) Mediciones físicas del alumno
         medicionFisicaRepository.deleteByUsuario_Id(id);
-        // 4) Excepciones de calendario (días por excepción)
-        calendarioExcepcionRepository.deleteByUsuario_Id(id);
-        // 5) Eliminar todas las rutinas asignadas al alumno (activas e inactivas); así no quedan rutinas huérfanas en "Rutinas asignadas"
         List<Rutina> rutinasDelAlumno = rutinaRepository.findByUsuarioId(id);
         for (Rutina r : rutinasDelAlumno) {
             rutinaService.eliminarRutina(r.getId());

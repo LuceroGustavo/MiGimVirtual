@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
@@ -32,34 +32,7 @@
     </div>
 
     <div class="row g-3">
-        <!-- Tarjeta 1: Registro de asistencias -->
-        <div class="col-12 col-md-6">
-            <div class="card dep-card">
-                <div class="card-header bg-warning bg-opacity-10 text-dark">
-                    <i class="fas fa-clipboard-check me-2"></i>Registro de asistencias e inasistencias
-                </div>
-                <div class="card-body">
-                    <div class="dep-info-box mb-3">
-                        <strong class="d-block mb-2">¿Qué hace?</strong>
-                        <p class="mb-0 small">Elimina todos los registros de presente/ausente con fecha <strong>anterior</strong> a la que seleccionás. Por ejemplo: si elegís <strong>12/12/2025</strong>, se borran todos los registros del día 11/12/2025 y hacia atrás. Los registros del 12/12/2025 en adelante se conservan.</p>
-                    </div>
-                    <div class="dep-warning-box mb-3">
-                        <i class="fas fa-exclamation-triangle me-2"></i><strong>Acción irreversible.</strong> No se puede deshacer. Hacé un backup de alumnos antes si querés conservar el historial.
-                    </div>
-                    <form th:action="@{/profesor/depuracion/asistencias}" method="post" class="form-depuracion-asistencias">
-                        <div class="mb-3">
-                            <label for="fechaAsistencias" class="form-label fw-semibold">Eliminar registros con fecha anterior a:</label>
-                            <input type="date" id="fechaAsistencias" name="fechaLimite" class="form-control" required>
-                        </div>
-                        <button type="button" class="btn btn-warning btn-confirmar-depuracion" data-msg="¿Estás seguro? Se eliminarán permanentemente todos los registros de asistencias con fecha anterior a la seleccionada." data-input-id="fechaAsistencias">
-                            <i class="fas fa-trash-alt me-1"></i>Eliminar asistencias antiguas
-                        </button>
-                    </form>
-                </div>
-            </div>
-        </div>
-
-        <!-- Tarjeta 2: Rutinas asignadas -->
+        <!-- Rutinas asignadas -->
         <div class="col-12 col-md-6">
             <div class="card dep-card">
                 <div class="card-header bg-danger bg-opacity-10 text-danger">

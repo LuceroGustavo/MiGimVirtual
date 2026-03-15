@@ -7,8 +7,6 @@ import com.migimvirtual.servicios.ProfesorService;
 import com.migimvirtual.servicios.UsuarioService;
 import com.migimvirtual.servicios.RutinaService;
 import com.migimvirtual.servicios.SerieService;
-import com.migimvirtual.servicios.AsistenciaService;
-import com.migimvirtual.entidades.Asistencia;
 import com.migimvirtual.entidades.MedicionFisica;
 import com.migimvirtual.servicios.MedicionFisicaService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,9 +56,6 @@ public class ProfesorController {
 
     @Autowired
     private SerieService serieService;
-
-    @Autowired
-    private AsistenciaService asistenciaService;
 
     @Autowired
     private MedicionFisicaService medicionFisicaService;
@@ -113,20 +108,6 @@ public class ProfesorController {
 
         List<Usuario> usuarios = usuarioService.getAlumnosByProfesorId(profesor.getId());
         java.time.LocalDate hoy = java.time.LocalDate.now();
-        java.time.DayOfWeek dayOfWeekHoy = hoy.getDayOfWeek();
-        com.migimvirtual.enums.DiaSemana diaHoy = com.migimvirtual.enums.DiaSemana.values()[dayOfWeekHoy.getValue() - 1];
-        java.util.Map<Long, String> estadoAsistenciaHoy = new java.util.HashMap<>();
-        for (Usuario usuario : usuarios) {
-            if (usuario == null) continue;
-            java.util.List<Asistencia> asistencias = asistenciaService.obtenerAsistenciaPorUsuarioYFecha(usuario, hoy);
-            String estado;
-            if (asistencias == null || asistencias.isEmpty()) {
-                estado = "PENDIENTE";
-            } else {
-                estado = asistencias.get(0).isPresente() ? "PRESENTE" : "AUSENTE";
-            }
-            estadoAsistenciaHoy.put(usuario.getId(), estado);
-        }
         String fechaHoyFormateada = hoy.format(java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy"));
         List<com.migimvirtual.entidades.Rutina> rutinas = rutinaService.obtenerRutinasPlantillaPorProfesor(profesor.getId());
         List<com.migimvirtual.entidades.Rutina> rutinasAsignadas = rutinaService
@@ -134,13 +115,11 @@ public class ProfesorController {
         List<Serie> series = serieService.obtenerSeriesPlantillaPorProfesor(profesor.getId());
 
         model.addAttribute("usuarios", usuarios);
-        model.addAttribute("estadoAsistenciaHoy", estadoAsistenciaHoy);
         model.addAttribute("fechaHoyFormateada", fechaHoyFormateada);
         model.addAttribute("rutinas", rutinas);
         model.addAttribute("rutinasAsignadas", rutinasAsignadas);
         model.addAttribute("series", series);
         model.addAttribute("profesor", profesor);
-        model.addAttribute("gruposMusculares", grupoMuscularService.findDisponiblesParaProfesor(profesor.getId()));
 
         model.addAttribute("usuario", usuarioService.getUsuarioActual());
 
@@ -310,19 +289,6 @@ public class ProfesorController {
         model.addAttribute("alumno", alumno);
         model.addAttribute("usuariosSistema", usuarioService.getUsuariosSistema());
         model.addAttribute("historialEstadoFormateado", formatearFechasEnHistorialEstado(alumno.getHistorialEstado()));
-        // Para la tarjeta "Progreso del alumno" y el modal Registrar progreso
-        java.util.List<com.migimvirtual.dto.AsistenciaVistaDTO> historialAsistencia = asistenciaService.obtenerAsistenciasVistaParaAlumno(alumno);
-        if (historialAsistencia != null && historialAsistencia.size() > 5) {
-            historialAsistencia = new java.util.ArrayList<>(historialAsistencia.subList(0, 5));
-        }
-        model.addAttribute("historialAsistencia", historialAsistencia != null ? historialAsistencia : java.util.Collections.emptyList());
-        java.util.List<Asistencia> asistenciasHoy = asistenciaService.obtenerAsistenciaPorUsuarioYFecha(alumno, java.time.LocalDate.now());
-        model.addAttribute("asistenciaHoy", (asistenciasHoy != null && !asistenciasHoy.isEmpty()) ? asistenciasHoy.get(0) : null);
-        if (profesor != null) {
-            model.addAttribute("gruposMusculares", grupoMuscularService.findDisponiblesParaProfesor(profesor.getId()));
-        } else {
-            model.addAttribute("gruposMusculares", java.util.Collections.emptyList());
-        }
         List<com.migimvirtual.entidades.Rutina> rutinasDelAlumno = rutinaService.obtenerRutinasAsignadasPorUsuario(id);
         List<com.migimvirtual.entidades.Rutina> rutinasAsignadas = rutinasDelAlumno.stream()
                 .sorted(java.util.Comparator
@@ -345,117 +311,6 @@ public class ProfesorController {
         }
         int inactivadas = rutinaService.inactivarTodasRutinasDelAlumno(id);
         return "redirect:/profesor/alumnos/" + id + "?success=" + (inactivadas > 0 ? "Rutinas+inactivadas" : "Sin+rutinas+activas");
-    }
-
-    /** API: lista de asistencias del alumno (para actualizar modal e historial sin recargar la página). */
-    @GetMapping(value = "/alumnos/{id}/asistencias", produces = "application/json")
-    @ResponseBody
-    public ResponseEntity<List<Map<String, Object>>> getAsistenciasAlumno(@PathVariable Long id,
-            @AuthenticationPrincipal Usuario usuarioActual) {
-        Usuario alumno = usuarioService.getUsuarioById(id);
-        Profesor profesor = getProfesorParaUsuarioActual(usuarioActual);
-        if (alumno == null || profesor == null || alumno.getProfesor() == null || !alumno.getProfesor().getId().equals(profesor.getId())) {
-            return ResponseEntity.notFound().build();
-        }
-        java.util.List<com.migimvirtual.dto.AsistenciaVistaDTO> list = asistenciaService.obtenerAsistenciasVistaParaAlumno(alumno);
-        if (list != null && list.size() > 5) {
-            list = new java.util.ArrayList<>(list.subList(0, 5));
-        }
-        List<Map<String, Object>> out = new ArrayList<>();
-        DateTimeFormatter fmt = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        DateTimeFormatter fmtShow = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-        for (com.migimvirtual.dto.AsistenciaVistaDTO a : list) {
-            Map<String, Object> m = new HashMap<>();
-            m.put("id", a.getId());
-            m.put("fecha", a.getFecha() != null ? a.getFecha().format(fmt) : null);
-            m.put("fechaFormateada", a.getFecha() != null ? a.getFecha().format(fmtShow) : null);
-            m.put("presente", a.getPresente());
-            m.put("pendiente", a.isPendiente());
-            m.put("observaciones", a.getObservaciones() != null ? a.getObservaciones() : "");
-            m.put("registradoPorId", a.getRegistradoPorId());
-            m.put("registradoPorNombre", a.getRegistradoPorNombre());
-            m.put("gruposTrabajados", a.getGruposTrabajados() != null ? a.getGruposTrabajados() : java.util.List.of());
-            out.add(m);
-        }
-        return ResponseEntity.ok(out);
-    }
-
-    @PostMapping("/alumnos/{id}/asistencias/{asistenciaId}/registrado-por")
-    public String actualizarRegistradoPor(@PathVariable Long id,
-                                          @PathVariable Long asistenciaId,
-                                          @RequestParam Long registradoPorId,
-                                          @AuthenticationPrincipal Usuario usuarioActual) {
-        if (usuarioActual == null || (!"ADMIN".equals(usuarioActual.getRol()) && !"DEVELOPER".equals(usuarioActual.getRol()))) {
-            return "redirect:/profesor/alumnos/" + id;
-        }
-        asistenciaService.actualizarRegistradoPor(asistenciaId, registradoPorId);
-        return "redirect:/profesor/alumnos/" + id + "?profesor=ok";
-    }
-
-    // POST: Registrar asistencia
-    @PostMapping("/alumnos/{id}/asistencia")
-    public String registrarAsistencia(@PathVariable Long id,
-            @RequestParam("presente") boolean presente,
-            @RequestParam(value = "observaciones", required = false) String observaciones,
-            @RequestParam(value = "origen", required = false) String origen,
-            @AuthenticationPrincipal Usuario profesorUsuario,
-            Model model) {
-        Usuario alumno = usuarioService.getUsuarioById(id);
-        Profesor profesor = getProfesorParaUsuarioActual(profesorUsuario);
-        if (alumno == null || profesor == null) {
-            return profesor != null ? "redirect:/profesor/" + profesor.getId() : "redirect:/login";
-        }
-        var asistencia = asistenciaService.registrarAsistencia(alumno, java.time.LocalDate.now(), presente,
-                observaciones, profesorUsuario);
-        if (asistencia == null) {
-            // Ya existe asistencia hoy
-            if ("dashboard".equals(origen)) {
-                return "redirect:/profesor/" + profesor.getId() + "?asistencia=ya_registrada";
-            }
-            model.addAttribute("errorAsistencia",
-                    "La asistencia de hoy ya fue registrada. Si fue un error, puedes deshacerla.");
-            return verAlumno(id, model, profesorUsuario); // Recarga la ficha con el mensaje de error
-        }
-        if ("dashboard".equals(origen)) {
-            return "redirect:/profesor/" + profesor.getId() + "?asistencia=ok";
-        }
-        return "redirect:/profesor/alumnos/" + id;
-    }
-
-    @PostMapping("/alumnos/{id}/asistencia/deshacer")
-    public String deshacerAsistenciaDeHoy(@PathVariable Long id) {
-        Usuario alumno = usuarioService.getUsuarioById(id);
-        if (alumno != null) {
-            asistenciaService.eliminarAsistenciaDeHoy(alumno);
-        }
-        return "redirect:/profesor/alumnos/" + id;
-    }
-
-    /** Guardar progreso del alumno (grupos trabajados + observaciones) para una fecha. Crea o actualiza el registro de asistencia. */
-    @PostMapping("/alumnos/{id}/progreso")
-    public String guardarProgreso(@PathVariable Long id,
-                                  @RequestParam("fecha") String fechaStr,
-                                  @RequestParam(value = "presente", required = false) Boolean presenteParam,
-                                  @RequestParam(value = "grupoIds", required = false) List<Long> grupoIds,
-                                  @RequestParam(value = "observaciones", required = false) String observaciones,
-                                  @AuthenticationPrincipal Usuario usuarioActual) {
-        Usuario alumno = usuarioService.getUsuarioById(id);
-        Profesor profesor = getProfesorParaUsuarioActual(usuarioActual);
-        if (alumno == null || profesor == null) {
-            return "redirect:/login?error=true";
-        }
-        if (alumno.getProfesor() == null || !alumno.getProfesor().getId().equals(profesor.getId())) {
-            return "redirect:/profesor/" + profesor.getId();
-        }
-        java.time.LocalDate fecha;
-        try {
-            fecha = java.time.LocalDate.parse(fechaStr);
-        } catch (Exception e) {
-            fecha = java.time.LocalDate.now();
-        }
-        java.util.Set<com.migimvirtual.entidades.GrupoMuscular> grupos = grupoMuscularService.resolveGruposByIds(grupoIds != null ? grupoIds : List.of());
-        asistenciaService.guardarOActualizarProgreso(alumno, fecha, presenteParam, observaciones, grupos, usuarioActual);
-        return "redirect:/profesor/alumnos/" + id + "?progreso=ok";
     }
 
     // Agregar nueva medición física

@@ -1,9 +1,6 @@
 package com.migimvirtual.servicios;
 
-import com.migimvirtual.entidades.Asistencia;
-import com.migimvirtual.entidades.GrupoMuscular;
 import com.migimvirtual.entidades.Usuario;
-import com.migimvirtual.repositorios.AsistenciaRepository;
 import com.migimvirtual.repositorios.RutinaRepository;
 import com.migimvirtual.repositorios.UsuarioRepository;
 import org.apache.poi.ss.usermodel.*;
@@ -16,29 +13,22 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * Exporta alumnos del profesor a Excel.
- * Incluye: datos del alumno, cantidad de asignaciones, y una columna "Último trabajo" (fecha + grupos + observaciones del último progreso).
+ * Incluye: datos del alumno y cantidad de asignaciones.
  */
 @Service
 public class AlumnoExportService {
 
     private static final DateTimeFormatter FECHA_FORMAT = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-    private static final DateTimeFormatter FECHA_FORMAT_CORTO = DateTimeFormatter.ofPattern("dd/MM/yy");
-    private static final DateTimeFormatter HORA_FORMAT = DateTimeFormatter.ofPattern("HH:mm");
 
     private final UsuarioRepository usuarioRepository;
-    private final AsistenciaRepository asistenciaRepository;
     private final RutinaRepository rutinaRepository;
 
     public AlumnoExportService(UsuarioRepository usuarioRepository,
-                               AsistenciaRepository asistenciaRepository,
                                RutinaRepository rutinaRepository) {
         this.usuarioRepository = usuarioRepository;
-        this.asistenciaRepository = asistenciaRepository;
         this.rutinaRepository = rutinaRepository;
     }
 
@@ -55,7 +45,6 @@ public class AlumnoExportService {
             CellStyle headerStyle = crearEstiloCabecera(workbook);
             CellStyle dateStyle = crearEstiloFecha(workbook);
             CellStyle titleStyle = crearEstiloTitulo(workbook);
-            CellStyle wrapStyle = crearEstiloWrap(workbook);
 
             int rowNum = 0;
 
@@ -77,12 +66,9 @@ public class AlumnoExportService {
                 cell.setCellStyle(headerStyle);
             }
 
-            // 3. Una fila por alumno (sin columnas Ev); última columna = Último trabajo (fecha + dato)
+            // 3. Una fila por alumno
             for (Usuario u : alumnos) {
                 int countRutinas = rutinaRepository.findByUsuarioIdAndEsPlantillaFalse(u.getId()).size();
-                List<Asistencia> asistencias = asistenciaRepository.findByUsuario_IdOrderByFechaDesc(u.getId());
-                Asistencia ultima = (asistencias != null && !asistencias.isEmpty()) ? asistencias.get(0) : null;
-                String textoUltimoTrabajo = formatearUltimoTrabajo(ultima);
 
                 Row row = sheet.createRow(rowNum++);
                 int col = 0;
@@ -100,9 +86,6 @@ public class AlumnoExportService {
                 row.createCell(col++).setCellValue(toString(u.getRestriccionesMedicas()));
                 row.createCell(col++).setCellValue(toString(u.getNotasProfesor()));
                 row.createCell(col++).setCellValue(countRutinas);
-                Cell cellUltimo = row.createCell(col);
-                cellUltimo.setCellValue(textoUltimoTrabajo);
-                cellUltimo.setCellStyle(wrapStyle);
             }
 
             for (int i = 0; i < headers.length; i++) {
@@ -120,29 +103,8 @@ public class AlumnoExportService {
                 "Nombre", "Correo", "Celular", "Edad", "Sexo", "Estado",
                 "Fecha de alta", "Fecha baja", "Tipo de asistencia", "Días y horarios",
                 "Objetivos personales", "Restricciones médicas", "Notas profesor",
-                "Cantidad de asignaciones",
-                "Último trabajo"
+                "Cantidad de asignaciones"
         };
-    }
-
-    /**
-     * Formato: primera línea = fecha (dd/MM/yy), segunda línea = grupos - observaciones (ej. "CARDIO - CORE - trabajo muy bien").
-     * Si no hay último trabajo, devuelve cadena vacía.
-     */
-    private static String formatearUltimoTrabajo(Asistencia ultima) {
-        if (ultima == null) return "";
-        String fecha = ultima.getFecha() != null ? ultima.getFecha().format(FECHA_FORMAT_CORTO) : "";
-        Set<GrupoMuscular> grupos = ultima.getGruposTrabajados();
-        String gruposStr = (grupos != null && !grupos.isEmpty())
-                ? grupos.stream().map(GrupoMuscular::getNombre).filter(n -> n != null && !n.isBlank()).collect(Collectors.joining(" - "))
-                : "";
-        String obs = ultima.getObservaciones() != null ? ultima.getObservaciones().trim() : "";
-        String dato = gruposStr;
-        if (!obs.isEmpty()) dato = dato.isEmpty() ? obs : dato + " - " + obs;
-        if (dato.isEmpty() && fecha.isEmpty()) return "";
-        if (dato.isEmpty()) return fecha;
-        if (fecha.isEmpty()) return dato;
-        return fecha + "\n" + dato;
     }
 
     private static CellStyle crearEstiloTitulo(Workbook wb) {
@@ -178,12 +140,6 @@ public class AlumnoExportService {
     private static CellStyle crearEstiloFecha(Workbook wb) {
         CellStyle s = wb.createCellStyle();
         s.setDataFormat(wb.createDataFormat().getFormat("dd/mm/yyyy"));
-        return s;
-    }
-
-    private static CellStyle crearEstiloWrap(Workbook wb) {
-        CellStyle s = wb.createCellStyle();
-        s.setWrapText(true);
         return s;
     }
 }
