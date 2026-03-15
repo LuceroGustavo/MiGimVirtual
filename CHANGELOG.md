@@ -2,6 +2,37 @@
 
 > Nota: este changelog incluye histórico heredado de MiGym (referencias a admin/chat/websocket).
 
+## [2026-03-14] - feat(admin): vista "Mi usuario" para profesor en usuarios del sistema ✅
+
+### 🎯 **Resumen**
+Optimización de la pantalla **Administración de usuarios** cuando el usuario es **profesor (ADMIN)**: se evita la duplicidad de mostrar "Mi perfil" y "Listado de usuarios" con el mismo dato. El profesor ve una sola tarjeta **"Mi usuario"** con formulario (nombre, correo, rol) y acción para modificar (cambiar contraseña). El **Developer** sigue viendo las dos tarjetas (Mi perfil + Listado de usuarios) y todas las acciones (crear, editar, eliminar).
+
+### ✅ **Cambios**
+- **UsuariosSistemaController:** Nuevo atributo de modelo `soloVistaProfesor` (true cuando el usuario no es DEVELOPER).
+- **usuarios-sistema.html:** Si `soloVistaProfesor` → una tarjeta "Mi usuario" con formulario Guardar y botón "Modificar (cambiar contraseña)". Si Developer → se mantiene "Mi perfil" + "Listado de usuarios" con tabla y acciones.
+
+### 📁 **Archivos modificados**
+UsuariosSistemaController.java, profesor/usuarios-sistema.html.
+
+---
+
+## [2026-03-14] - refactor(admin): eliminar módulo Depuración de datos ✅
+
+### 🎯 **Resumen**
+Eliminación completa del módulo **Depuración de datos** en Administración: ya no existe la opción para depurar asistencias ni rutinas asignadas.
+
+### ✅ **Cambios**
+- **Eliminados:** `DepuracionService.java`, plantilla `profesor/depuracion.html`.
+- **AdminPanelController:** Eliminados `DepuracionService`, `GET /profesor/depuracion`, `POST /profesor/depuracion/rutinas-asignadas` e import de `LocalDate`.
+- **RutinaRepository:** Eliminado método `findByEsPlantillaFalseAndFechaCreacionBefore` e import de `LocalDateTime`.
+- **administracion.html:** Eliminados enlace de menú "Depuración de datos", bloque de resultado `depuracionResult` y lógica JS que carga `seccion=depuracion`.
+- **manual-usuario.html:** Eliminada sección 13.4 Depuración de datos y la fila correspondiente en la tabla resumen.
+
+### 📁 **Documentación**
+- CHANGELOG.md, Documentacion/DOCUMENTACION_UNIFICADA.md (sección 2.1 y referencias a depuración eliminadas o actualizadas).
+
+---
+
 ## [2026-03-14] - refactor(app): eliminar calendario, asistencias y pizarra online ✅
 
 ### 🎯 **Resumen**

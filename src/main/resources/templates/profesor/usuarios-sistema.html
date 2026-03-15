@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
@@ -22,7 +22,7 @@
         <h3 class="mb-0"><i class="fas fa-users-cog me-2" style="color:#5e35b1;"></i>Administración de usuarios</h3>
         <div class="d-flex gap-2">
             <a th:if="${(param.embed == null || param.embed.isEmpty()) && (param.fragment == null || param.fragment.isEmpty())}" th:href="@{/profesor/administracion}" class="btn btn-outline-secondary btn-sm"><i class="fas fa-arrow-left me-1"></i>Volver al panel</a>
-            <a th:href="@{/profesor/usuarios-sistema/crear}" class="btn btn-primary"><i class="fas fa-user-plus me-1"></i>Crear usuario</a>
+            <a th:if="${puedeCrearUsuario}" th:href="@{/profesor/usuarios-sistema/crear}" class="btn btn-primary"><i class="fas fa-user-plus me-1"></i>Crear usuario</a>
         </div>
     </div>
 
@@ -61,6 +61,11 @@
     <div th:if="${param.error == 'developer-locked'}" class="alert alert-warning alert-MiGimVirtual"><i class="fas fa-lock me-2"></i>No está permitido modificar el usuario developer.</div>
     <div th:if="${param.error == 'no-permitido'}" class="alert alert-danger alert-MiGimVirtual"><i class="fas fa-ban me-2"></i>No tenés permiso para eliminar ese usuario.</div>
     <div th:if="${param.error == 'self-rol'}" class="alert alert-warning alert-MiGimVirtual"><i class="fas fa-user-shield me-2"></i>No podés cambiar tu propio rol a otro que no sea Admin.</div>
+    <div th:if="${param.error == 'solo-developer-crea'}" class="alert alert-warning alert-MiGimVirtual"><i class="fas fa-lock me-2"></i>Solo un usuario Developer puede crear nuevos usuarios del sistema.</div>
+    <div th:if="${param.error == 'solo-developer-edita'}" class="alert alert-warning alert-MiGimVirtual"><i class="fas fa-lock me-2"></i>Solo un usuario Developer puede modificar otros usuarios. Podés editar solo tu perfil para cambiar tu contraseña.</div>
+    <div th:if="${param.error == 'solo-developer-elimina'}" class="alert alert-warning alert-MiGimVirtual"><i class="fas fa-lock me-2"></i>Solo un usuario Developer puede eliminar usuarios.</div>
+    <div th:if="${param.error == 'solo-developer-rol'}" class="alert alert-warning alert-MiGimVirtual"><i class="fas fa-lock me-2"></i>Solo un usuario Developer puede cambiar roles.</div>
+    <div th:if="${param.error == 'solo-propia-password'}" class="alert alert-warning alert-MiGimVirtual"><i class="fas fa-lock me-2"></i>Solo podés modificar tu propia contraseña.</div>
     <div th:if="${errorMessage != null}" class="alert alert-danger alert-MiGimVirtual"><i class="fas fa-exclamation-circle me-2"></i><span th:text="${errorMessage}">Error</span></div>
 
     <div th:if="${correosDuplicados != null && !correosDuplicados.isEmpty()}" class="alert alert-warning alert-dismissible fade show alert-MiGimVirtual">
@@ -72,11 +77,11 @@
         <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
     </div>
 
-    <!-- Mi perfil -->
-    <div class="card mb-4">
-        <div class="card-header bg-light"><strong>Mi perfil</strong></div>
+    <!-- Vista profesor (ADMIN): una sola tarjeta "Mi usuario" -->
+    <div th:if="${soloVistaProfesor}" class="card">
+        <div class="card-header bg-light"><strong>Mi usuario</strong></div>
         <div class="card-body">
-            <form th:action="@{/profesor/usuarios-sistema/perfil}" method="post" class="row g-2 align-items-end">
+            <form th:action="@{/profesor/usuarios-sistema/perfil}" method="post" class="row g-2 align-items-end mb-3">
                 <div class="col-md-4">
                     <label class="form-label small">Nombre</label>
                     <input type="text" name="nombre" class="form-control form-control-sm" th:value="${usuarioActual != null ? usuarioActual.nombre : ''}" required>
@@ -93,48 +98,80 @@
                     <button type="submit" class="btn btn-outline-primary btn-sm w-100">Guardar</button>
                 </div>
             </form>
+            <div class="pt-2 border-top">
+                <a th:if="${usuarioActual != null && usuarioActual.id != null}"
+                   th:href="@{/profesor/usuarios-sistema/editar/{id}(id=${usuarioActual.id})}"
+                   class="btn btn-primary btn-sm"><i class="fas fa-edit me-1"></i>Modificar (cambiar contraseña)</a>
+            </div>
         </div>
     </div>
 
-    <!-- Listado -->
-    <div class="card">
-        <div class="card-header bg-light"><strong>Listado de usuarios</strong></div>
-        <div class="card-body p-0">
-            <div class="table-responsive">
-                <table class="table table-hover align-middle mb-0">
-                    <thead class="table-light">
-                    <tr>
-                        <th>Usuario</th>
-                        <th>Correo</th>
-                        <th>Rol</th>
-                        <th class="text-end">Acciones</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr th:each="u : ${usuariosSistema}">
-                        <td th:text="${u.nombre}">Nombre</td>
-                        <td th:text="${u.correo}">correo@ejemplo.com</td>
-                        <td>
-                            <span class="badge bg-secondary" th:text="${u.rol}">ROL</span>
-                        </td>
-                        <td class="text-end">
-                            <a th:href="@{/profesor/usuarios-sistema/editar/{id}(id=${u.id})}" class="btn btn-outline-primary btn-sm me-1" title="Modificar">
-                                <i class="fas fa-edit"></i>
-                            </a>
-                            <th:block th:with="puedeEliminar=${usuarioActual != null && (usuarioActual.rol == 'DEVELOPER' || (usuarioActual.rol == 'ADMIN' && u.id != usuarioActual.id))}">
-                                <form th:if="${puedeEliminar}" th:action="@{/profesor/usuarios-sistema/eliminar}" method="post" class="d-inline form-eliminar-usuario">
-                                    <input type="hidden" name="usuarioId" th:value="${u.id}">
-                                    <button type="button" class="btn btn-outline-danger btn-sm btn-confirmar-eliminar" title="Eliminar" data-msg="¿Eliminar a este usuario? No se puede deshacer."><i class="fas fa-trash-alt"></i></button>
-                                </form>
-                                <span th:if="${!puedeEliminar}" class="text-muted">—</span>
-                            </th:block>
-                        </td>
-                    </tr>
-                    <tr th:if="${usuariosSistema == null || usuariosSistema.isEmpty()}">
-                        <td colspan="4" class="text-center text-muted py-4">Sin usuarios del sistema.</td>
-                    </tr>
-                    </tbody>
-                </table>
+    <!-- Vista developer: Mi perfil + Listado de usuarios -->
+    <div th:if="${!soloVistaProfesor}">
+        <div class="card mb-4">
+            <div class="card-header bg-light"><strong>Mi perfil</strong></div>
+            <div class="card-body">
+                <form th:action="@{/profesor/usuarios-sistema/perfil}" method="post" class="row g-2 align-items-end">
+                    <div class="col-md-4">
+                        <label class="form-label small">Nombre</label>
+                        <input type="text" name="nombre" class="form-control form-control-sm" th:value="${usuarioActual != null ? usuarioActual.nombre : ''}" required>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label small">Correo</label>
+                        <input type="email" name="correo" class="form-control form-control-sm" th:value="${usuarioActual != null ? usuarioActual.correo : ''}" required>
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label small">Rol</label>
+                        <input type="text" class="form-control form-control-sm" th:value="${usuarioActual != null ? usuarioActual.rol : ''}" disabled>
+                    </div>
+                    <div class="col-md-2">
+                        <button type="submit" class="btn btn-outline-primary btn-sm w-100">Guardar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header bg-light"><strong>Listado de usuarios</strong></div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="table-light">
+                        <tr>
+                            <th>Usuario</th>
+                            <th>Correo</th>
+                            <th>Rol</th>
+                            <th class="text-end">Acciones</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="u : ${usuariosSistema}">
+                            <td th:text="${u.nombre}">Nombre</td>
+                            <td th:text="${u.correo}">correo@ejemplo.com</td>
+                            <td>
+                                <span class="badge bg-secondary" th:text="${u.rol}">ROL</span>
+                            </td>
+                            <td class="text-end">
+                                <a th:if="${puedeGestionarOtros || (usuarioActual != null && usuarioActual.id != null && u.id == usuarioActual.id)}"
+                                   th:href="@{/profesor/usuarios-sistema/editar/{id}(id=${u.id})}" class="btn btn-outline-primary btn-sm me-1" title="Modificar"
+                                   th:title="${puedeGestionarOtros ? 'Modificar' : 'Cambiar mi contraseña'}">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <th:block th:with="puedeEliminar=${puedeGestionarOtros && usuarioActual != null && u.id != usuarioActual.id}">
+                                    <form th:if="${puedeEliminar}" th:action="@{/profesor/usuarios-sistema/eliminar}" method="post" class="d-inline form-eliminar-usuario">
+                                        <input type="hidden" name="usuarioId" th:value="${u.id}">
+                                        <button type="button" class="btn btn-outline-danger btn-sm btn-confirmar-eliminar" title="Eliminar" data-msg="¿Eliminar a este usuario? No se puede deshacer."><i class="fas fa-trash-alt"></i></button>
+                                    </form>
+                                    <span th:if="${!puedeEliminar}" class="text-muted">—</span>
+                                </th:block>
+                            </td>
+                        </tr>
+                        <tr th:if="${usuariosSistema == null || usuariosSistema.isEmpty()}">
+                            <td colspan="4" class="text-center text-muted py-4">Sin usuarios del sistema.</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>

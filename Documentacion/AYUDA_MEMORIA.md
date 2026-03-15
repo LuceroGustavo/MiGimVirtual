@@ -53,4 +53,12 @@ Para ver la lista de mejoras pendientes e implementadas (ítem por ítem), el ch
 
 ---
 
+## Próximos pasos (orden sugerido)
+
+1. **Mejorar front con responsividad** (prioridad).
+2. **Luego:** Revisar/cambiar el **sistema de backup** — todavía no está definido si va a quedar como está o se modificará.
+3. **Luego:** **Modificar el manual del usuario** (actualizar contenido y estructura según los cambios de la app).
+
+---
+
 *Última actualización: Marzo 2026. AYUDA_MEMORIA y PLAN_DE_DESARROLLO se unificaron en un solo documento.*

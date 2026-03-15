@@ -23,7 +23,7 @@ Contenido importante reunido de los documentos del proyecto. Para contexto: [LEE
 - **Página pública:** Landing `/`, Planes `/planes`, consultas; administración en `/profesor/pagina-publica`.
 - **Manual del usuario:** HTML en `/profesor/manual` (botón en panel); cubre acceso, panel, alumnos, ejercicios, series, rutinas, usuarios, administración. (Calendario y pizarra eliminados en Mar 2026.)
 - **Backup (terminado Mar 2026):** Ver sección 2.
-- **Depuración de datos (terminado Feb 2026):** Ver sección 2.1.
+- **Depuración de datos:** Módulo eliminado en Mar 2026 (ya no existe en Administración).
 
 ---
 
@@ -43,19 +43,9 @@ Contenido importante reunido de los documentos del proyecto. Para contexto: [LEE
 
 ---
 
-## 2.1 Depuración de datos
+## 2.1 Depuración de datos (eliminado Mar 2026)
 
-**Estado:** Terminado (febrero 2026). Acceso: Administración → Depuración de datos (entre Sistema de backups y Manual de usuario).
-
-Permite eliminar registros antiguos para mantener la base de datos ligera. Una tarjeta:
-
-| Funcionalidad | Descripción |
-|---------------|-------------|
-| **Rutinas asignadas a alumnos** | Se elige una fecha límite. Se eliminan todas las rutinas asignadas cuya fecha de creación es **anterior** a la elegida. Las rutinas plantilla (Mis Rutinas) no se tocan. Acción irreversible. |
-
-*(Depuración de asistencias eliminada en Mar 2026 junto con el módulo de asistencias.)*
-
-**Servicios:** `DepuracionService`. Rutas en `AdminPanelController`: `GET /profesor/depuracion`, `POST /profesor/depuracion/rutinas-asignadas`. Repositorio: `RutinaRepository` (findByEsPlantillaFalseAndFechaCreacionBefore).
+El módulo "Depuración de datos" fue eliminado por completo en marzo 2026. No existe en el menú de Administración ni en la aplicación (servicio, controlador, plantilla y referencias eliminados).
 
 ### 2.2 Modales y avisos unificados (confirmaciones y alertas)
 
@@ -103,7 +93,7 @@ El manual en la app (`/profesor/manual`) incluye:
 5. Series (crear, editar, ver)
 6. Rutinas (crear, modificar, asignar, enlace, WhatsApp)
 7. Usuarios del sistema (admin/ayudante, perfiles)
-8. Administración (backup, depuración de datos, página pública, etc.)
+8. Administración (backup, página pública, usuarios del sistema, etc.)
 9. Resumen rápido (tabla "Quiero… / Dónde")
 
 *(Secciones Calendario, Presentismo, Progreso con modal y Pizarra eliminadas en Mar 2026; ver ELIMINACION_CALENDARIO_Y_PIZARRA_MAR2026.md.)*
@@ -125,4 +115,4 @@ El manual en la app (`/profesor/manual`) incluye:
 
 ---
 
-*Última actualización: Febrero 2026. Modales y avisos unificados (§2.2). Para pendientes ver PENDIENTES_FINALES.md.*
+*Última actualización: Marzo 2026. Depuración de datos eliminada (§2.1). Para pendientes ver PENDIENTES_FINALES.md.*

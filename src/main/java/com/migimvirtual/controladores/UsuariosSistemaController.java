@@ -44,6 +44,9 @@ public class UsuariosSistemaController {
         }
         model.addAttribute("usuariosSistema", usuarioService.getUsuariosSistemaPara(usuarioActual));
         model.addAttribute("usuarioActual", usuarioActual);
+        model.addAttribute("puedeCrearUsuario", isDeveloper(usuarioActual));
+        model.addAttribute("puedeGestionarOtros", isDeveloper(usuarioActual));
+        model.addAttribute("soloVistaProfesor", !isDeveloper(usuarioActual));
         List<String> correosDuplicados = duplicadosCheckService.getMensajesCorreosDuplicados();
         boolean hayDuplicadosReales = !correosDuplicados.isEmpty();
         if (hayDuplicadosReales && correosDuplicados.size() == 1 && correosDuplicados.get(0).startsWith("No se pudo verificar")) {
@@ -64,8 +67,8 @@ public class UsuariosSistemaController {
 
     @GetMapping("/crear")
     public String formularioCrearUsuario(@AuthenticationPrincipal Usuario usuarioActual, Model model) {
-        if (usuarioActual == null || !isAdminOrDeveloper(usuarioActual)) {
-            return "redirect:/profesor/dashboard";
+        if (usuarioActual == null || !isDeveloper(usuarioActual)) {
+            return "redirect:/profesor/administracion?error=solo-developer-crea";
         }
         model.addAttribute("usuario", new Usuario());
         model.addAttribute("usuarioActual", usuarioActual);
@@ -85,9 +88,14 @@ public class UsuariosSistemaController {
         if (isDeveloper(usuario) && !isDeveloper(usuarioActual)) {
             return "redirect:/profesor/administracion?error=developer-locked";
         }
+        boolean esAdminEditandoSoloPerfil = !isDeveloper(usuarioActual) && usuarioActual.getId() != null && usuarioActual.getId().equals(id);
+        if (!isDeveloper(usuarioActual) && !esAdminEditandoSoloPerfil) {
+            return "redirect:/profesor/administracion?error=solo-developer-edita";
+        }
         model.addAttribute("usuario", usuario);
         model.addAttribute("usuarioActual", usuarioActual);
         model.addAttribute("editMode", true);
+        model.addAttribute("soloPerfilYPassword", esAdminEditandoSoloPerfil);
         return "profesor/usuario-sistema-form";
     }
 
@@ -98,8 +106,8 @@ public class UsuariosSistemaController {
                                       @RequestParam String password,
                                       @RequestParam String rol,
                                       Model model) {
-        if (usuarioActual == null || !isAdminOrDeveloper(usuarioActual)) {
-            return "redirect:/profesor/dashboard";
+        if (usuarioActual == null || !isDeveloper(usuarioActual)) {
+            return "redirect:/profesor/administracion?error=solo-developer-crea";
         }
         try {
             Profesor profesor = usuarioActual.getProfesor() != null
@@ -123,8 +131,8 @@ public class UsuariosSistemaController {
     @PostMapping("/eliminar")
     public String eliminarUsuario(@AuthenticationPrincipal Usuario usuarioActual,
                                   @RequestParam Long usuarioId) {
-        if (usuarioActual == null || !isAdminOrDeveloper(usuarioActual)) {
-            return "redirect:/profesor/dashboard";
+        if (usuarioActual == null || !isDeveloper(usuarioActual)) {
+            return "redirect:/profesor/administracion?error=solo-developer-elimina";
         }
         boolean eliminado = usuarioService.eliminarUsuarioSistema(usuarioId, usuarioActual);
         if (eliminado) {
@@ -140,8 +148,8 @@ public class UsuariosSistemaController {
     public String actualizarRol(@AuthenticationPrincipal Usuario usuarioActual,
                                 @RequestParam Long usuarioId,
                                 @RequestParam String rol) {
-        if (usuarioActual == null || !isAdminOrDeveloper(usuarioActual)) {
-            return "redirect:/profesor/dashboard";
+        if (usuarioActual == null || !isDeveloper(usuarioActual)) {
+            return "redirect:/profesor/administracion?error=solo-developer-rol";
         }
         Usuario objetivo = usuarioService.getUsuarioById(usuarioId);
         if (objetivo == null) {
@@ -196,6 +204,10 @@ public class UsuariosSistemaController {
         if (usuarioActual == null || !isAdminOrDeveloper(usuarioActual)) {
             return "redirect:/profesor/dashboard";
         }
+        boolean esAdminEditandoSoloPerfil = !isDeveloper(usuarioActual) && usuarioActual.getId() != null && usuarioActual.getId().equals(usuarioId);
+        if (!isDeveloper(usuarioActual) && !esAdminEditandoSoloPerfil) {
+            return "redirect:/profesor/administracion?error=solo-developer-edita";
+        }
         Usuario objetivo = usuarioService.getUsuarioById(usuarioId);
         if (objetivo == null) {
             return "redirect:/profesor/administracion?error=notfound";
@@ -204,7 +216,7 @@ public class UsuariosSistemaController {
             return "redirect:/profesor/administracion?error=developer-locked";
         }
         usuarioService.actualizarDatosUsuarioSistema(usuarioId, nombre, correo);
-        if (rol != null && !rol.isBlank() && !isDeveloper(objetivo)) {
+        if (!esAdminEditandoSoloPerfil && rol != null && !rol.isBlank() && !isDeveloper(objetivo)) {
             if (usuarioActual.getId() != null && usuarioActual.getId().equals(usuarioId) && !"ADMIN".equalsIgnoreCase(rol)) {
                 return "redirect:/profesor/administracion?error=self-rol";
             }

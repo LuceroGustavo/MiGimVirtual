@@ -4,7 +4,6 @@ import com.migimvirtual.entidades.Profesor;
 import com.migimvirtual.entidades.Usuario;
 import com.migimvirtual.servicios.AlumnoExportService;
 import com.migimvirtual.servicios.AlumnoJsonBackupService;
-import com.migimvirtual.servicios.DepuracionService;
 import com.migimvirtual.servicios.ExerciseZipBackupService;
 import com.migimvirtual.servicios.ProfesorService;
 import org.springframework.core.io.ByteArrayResource;
@@ -26,7 +25,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
@@ -43,18 +41,15 @@ public class AdminPanelController {
     private final ProfesorService profesorService;
     private final AlumnoExportService alumnoExportService;
     private final AlumnoJsonBackupService alumnoJsonBackupService;
-    private final DepuracionService depuracionService;
 
     public AdminPanelController(ExerciseZipBackupService exerciseZipBackupService,
                                 ProfesorService profesorService,
                                 AlumnoExportService alumnoExportService,
-                                AlumnoJsonBackupService alumnoJsonBackupService,
-                                DepuracionService depuracionService) {
+                                AlumnoJsonBackupService alumnoJsonBackupService) {
         this.exerciseZipBackupService = exerciseZipBackupService;
         this.profesorService = profesorService;
         this.alumnoExportService = alumnoExportService;
         this.alumnoJsonBackupService = alumnoJsonBackupService;
-        this.depuracionService = depuracionService;
     }
 
     private Profesor getProfesorParaUsuario(Usuario usuario) {
@@ -250,47 +245,6 @@ public class AdminPanelController {
             logger.error("Error al exportar backup ZIP: {}", e.getMessage(), e);
             return ResponseEntity.internalServerError().build();
         }
-    }
-
-    // --- Depuración de datos ---
-
-    @GetMapping("/depuracion")
-    public String paginaDepuracion(@AuthenticationPrincipal Usuario usuarioActual,
-                                  @RequestParam(name = "fragment", required = false) String fragment,
-                                  Model model) {
-        if (usuarioActual == null || (!"ADMIN".equals(usuarioActual.getRol()) && !"DEVELOPER".equals(usuarioActual.getRol()))) {
-            return "redirect:/profesor/dashboard";
-        }
-        if (fragment != null && !fragment.isEmpty()) {
-            return "profesor/depuracion :: contenido";
-        }
-        return "profesor/depuracion";
-    }
-
-    @PostMapping("/depuracion/rutinas-asignadas")
-    public String depurarRutinasAsignadas(@AuthenticationPrincipal Usuario usuarioActual,
-                                         @RequestParam("fechaLimite") String fechaLimiteStr,
-                                         RedirectAttributes redirectAttributes) {
-        if (usuarioActual == null || (!"ADMIN".equals(usuarioActual.getRol()) && !"DEVELOPER".equals(usuarioActual.getRol()))) {
-            return "redirect:/profesor/dashboard";
-        }
-        try {
-            LocalDate fechaLimite = LocalDate.parse(fechaLimiteStr);
-            int eliminados = depuracionService.depurarRutinasAsignadasAntesDe(fechaLimite);
-            Map<String, Object> result = new HashMap<>();
-            result.put("success", true);
-            result.put("tipo", "rutinas");
-            result.put("eliminados", eliminados);
-            result.put("fechaLimite", fechaLimiteStr);
-            redirectAttributes.addFlashAttribute("depuracionResult", result);
-        } catch (Exception e) {
-            logger.error("Error al depurar rutinas asignadas: {}", e.getMessage(), e);
-            Map<String, Object> result = new HashMap<>();
-            result.put("success", false);
-            result.put("message", "Error: " + e.getMessage());
-            redirectAttributes.addFlashAttribute("depuracionResult", result);
-        }
-        return "redirect:/profesor/administracion?seccion=depuracion";
     }
 
 }

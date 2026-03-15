@@ -162,16 +162,12 @@
             <li th:each="e : ${importAlumnosResult['errores']}" th:text="${e}">error</li>
         </ul>
     </div>
-    <div th:if="${depuracionResult}" class="alert alert-MiGimVirtual mb-3 admin-alert-item" th:classappend="${depuracionResult['success']} ? 'alert-success' : 'alert-danger'" role="alert">
-        <span th:if="${depuracionResult['success']}"><i class="fas fa-check-circle me-2"></i>
-            <strong>Depuración completada.</strong>
-            <span th:if="${depuracionResult['tipo'] == 'rutinas'}">
-                Se eliminaron <strong th:text="${depuracionResult['eliminados']}">0</strong> rutinas asignadas creadas antes de <strong th:text="${depuracionResult['fechaLimite']}">fecha</strong>.
-            </span>
-        </span>
-        <span th:if="${!depuracionResult['success']}"><i class="fas fa-exclamation-circle me-2"></i><span th:text="${depuracionResult['message']}">Error</span></span>
-    </div>
     <div th:if="${ok}" class="alert alert-success mb-3 admin-alert-item" role="alert" th:text="${ok}">OK</div>
+    <div th:if="${param.error != null && param.error[0] == 'solo-developer-crea'}" class="alert alert-warning mb-3 admin-alert-item"><i class="fas fa-lock me-2"></i>Solo un usuario Developer puede crear nuevos usuarios del sistema.</div>
+    <div th:if="${param.error != null && param.error[0] == 'solo-developer-edita'}" class="alert alert-warning mb-3 admin-alert-item"><i class="fas fa-lock me-2"></i>Solo un usuario Developer puede modificar otros usuarios. Podés editar solo tu perfil para cambiar tu contraseña.</div>
+    <div th:if="${param.error != null && param.error[0] == 'solo-developer-elimina'}" class="alert alert-warning mb-3 admin-alert-item"><i class="fas fa-lock me-2"></i>Solo un usuario Developer puede eliminar usuarios.</div>
+    <div th:if="${param.error != null && param.error[0] == 'solo-developer-rol'}" class="alert alert-warning mb-3 admin-alert-item"><i class="fas fa-lock me-2"></i>Solo un usuario Developer puede cambiar roles.</div>
+    <div th:if="${param.error != null && param.error[0] == 'solo-propia-password'}" class="alert alert-warning mb-3 admin-alert-item"><i class="fas fa-lock me-2"></i>Solo podés modificar tu propia contraseña.</div>
     </div>
     <div class="admin-layout">
         <aside class="admin-sidebar">
@@ -188,10 +184,6 @@
                 <a href="#" class="admin-nav-link" data-src="/profesor/backup?fragment=1" data-label="backup">
                     <i class="fas fa-database"></i>
                     <span class="nav-link-text">Sistema de backups</span>
-                </a>
-                <a href="#" class="admin-nav-link" data-src="/profesor/depuracion?fragment=1" data-label="depuracion">
-                    <i class="fas fa-broom"></i>
-                    <span class="nav-link-text">Depuración de datos</span>
                 </a>
                 <a href="#" class="admin-nav-link" data-src="/profesor/manual?fragment=1" data-label="manual">
                     <i class="fas fa-book"></i>
@@ -269,15 +261,6 @@
             setActive(backupLink);
             loadSection(backupLink.getAttribute('data-src'));
             try { sessionStorage.setItem(storageKey, backupLink.getAttribute('data-src')); } catch (e) {}
-            defaultUrl = null;
-        }
-    }
-    if (params.get('seccion') === 'depuracion') {
-        var depLink = Array.prototype.find.call(links, function(l) { return (l.getAttribute('data-src') || '').indexOf('depuracion') >= 0; });
-        if (depLink) {
-            setActive(depLink);
-            loadSection(depLink.getAttribute('data-src'));
-            try { sessionStorage.setItem(storageKey, depLink.getAttribute('data-src')); } catch (e) {}
             defaultUrl = null;
         }
     }
