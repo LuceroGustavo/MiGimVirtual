@@ -102,6 +102,45 @@ Responsividad del panel del profesor terminada para móvil (breakpoint 991px / 9
 
 ---
 
+## 5.2 Módulo de Series – mejoras móvil (Mar 2026) – *en progreso*
+
+> **Nota:** El módulo de series está parcialmente completado. Faltan ajustes y revisión de otras vistas (editar serie, etc.).
+
+### Vista detalle de serie (`series/verSerie.html`)
+
+| Área | En móvil (≤ 991px) |
+|------|---------------------|
+| **Grid ejercicios** | 1 columna (apilados); tablet 2 cols; desktop 3 cols. |
+| **Contenedor** | Sin min-width; padding reducido. |
+| **Título y tarjetas** | Fuente y alturas reducidas. |
+| **Flecha volver** | Botón "Volver al panel" visible solo en móvil, enlaza a `/profesor/dashboard`. |
+| **Footer** | Incluido (footer.css) para consistencia con el panel. |
+
+### Panel del profesor – pestaña Series (`profesor/dashboard.html`)
+
+| Comportamiento | Descripción |
+|----------------|-------------|
+| **Modal al tocar serie** | En móvil, al tocar una fila se abre modal con Ver, Editar, Eliminar. |
+| **Botón Ver** | En móvil: cierra el modal y navega en la misma pestaña. En escritorio: abre en pestaña nueva (`target="_blank"`). |
+
+### Formulario crear/modificar serie (`series/crearSerie.html`)
+
+| Área | En móvil (≤ 991px) |
+|------|---------------------|
+| **Título** | Fuente reducida a 1.35rem (antes 2.1rem). |
+| **Filtros ejercicios** | Búsqueda + selector + botón **Limpiar** en la misma fila (5+4+3 columnas). |
+| **Orden de paneles** | 1) Ejercicios disponibles → 2) Ejercicios en esta serie (tabla) → 3) Nombre, descripción, vueltas y Guardar. |
+| **Tabla ejercicios** | Envuelta en `table-responsive` para scroll horizontal. |
+
+**Archivos:** series/verSerie.html, series/crearSerie.html, profesor/dashboard.html.
+
+### Pendiente en módulo de series
+
+- Vista **editar serie** (si difiere de crear): revisar responsive.
+- Otras vistas o flujos del módulo que requieran ajustes móvil.
+
+---
+
 ## 6. Orden sugerido para otras vistas (opcional)
 
 1. Revisar que **todas** las plantillas del panel tengan la meta **viewport** (ya está en varias).
@@ -109,4 +148,4 @@ Responsividad del panel del profesor terminada para móvil (breakpoint 991px / 9
 3. **Formularios:** que los campos no queden con ancho fijo; usar `col-12 col-md-*` en móvil.
 ---
 
-*Documento de referencia para responsividad. Panel del profesor completado Mar 2026.*
+*Documento de referencia para responsividad. Panel del profesor completado Mar 2026. Módulo de series en progreso (Mar 2026).*

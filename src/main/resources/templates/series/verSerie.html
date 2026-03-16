@@ -3,10 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <title>Detalle de Serie</title>
-    <!-- Vista escritorio: no responsive (igual que rutinas no asignadas) -->
+    <!-- Responsive: 1 col móvil, 2 tablet, 3 desktop -->
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="/css/footer.css" rel="stylesheet">
     <style>
         * { box-sizing: border-box; }
         body {
@@ -15,13 +16,11 @@
             background: #0d1117;
             color: #e6edf3;
             min-height: 100vh;
-            min-width: 800px;
             font-family: 'Segoe UI', system-ui, sans-serif;
         }
         .serie-container {
             padding: 1rem;
             max-width: 1200px;
-            min-width: 800px;
             margin: 0 auto;
         }
         /* Serie: mismo estilo que rutinas (captura3) */
@@ -63,11 +62,17 @@
             font-size: 0.95rem;
             margin-top: 0.25rem;
         }
-        /* Grid fijo escritorio: 3 columnas, no responsive */
+        /* Grid responsive: 1 col móvil, 2 tablet, 3 desktop */
         .ejercicios-grid {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
+            grid-template-columns: 1fr;
             gap: 1rem;
+        }
+        @media (min-width: 576px) {
+            .ejercicios-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+        @media (min-width: 992px) {
+            .ejercicios-grid { grid-template-columns: repeat(3, 1fr); }
         }
         .sala-item-wrap {
             display: flex;
@@ -146,11 +151,57 @@
             background: rgba(249, 115, 22, 0.2);
             color: #f97316;
         }
+        /* Responsive móvil (≤991px) */
+        @media (max-width: 991px) {
+            .serie-container { padding: 0.75rem; }
+            .hoja-serie { padding: 0.5rem; margin-bottom: 1rem; }
+            .hoja-serie-titulo {
+                flex-wrap: wrap;
+                font-size: 1.25rem;
+                padding: 0.5rem 0.7rem;
+            }
+            .hoja-serie-vueltas { font-size: 1.2rem; }
+            .hoja-serie-desc { font-size: 0.9rem; }
+            .sala-item-wrap .item-titulo { font-size: 1.05rem; }
+            .sala-item-wrap .sala-item {
+                min-height: 180px;
+                height: 200px;
+            }
+        }
+        @media (max-width: 575px) {
+            .serie-container { padding: 0.5rem; }
+            .hoja-serie-titulo { font-size: 1.1rem; }
+            .hoja-serie-vueltas { font-size: 1rem; }
+            .badge-ejercicios { font-size: 0.8rem; margin-left: 0.35rem; }
+            .sala-item-wrap .sala-item {
+                min-height: 160px;
+                height: 180px;
+            }
+        }
+        /* Flecha volver: solo móvil, vuelve al panel del profesor */
+        .btn-volver-serie { display: none; }
+        @media (max-width: 991px) {
+            .btn-volver-serie {
+                display: inline-flex;
+                align-items: center;
+                gap: 0.4rem;
+                padding: 0.5rem 0.9rem;
+                margin-bottom: 0.75rem;
+                background: #21262d;
+                color: #e6edf3;
+                border: 1px solid #30363d;
+                border-radius: 8px;
+                font-size: 0.95rem;
+                text-decoration: none;
+            }
+            .btn-volver-serie:hover { background: #30363d; color: #e6edf3; }
+        }
     </style>
 </head>
 <body>
 <div th:replace="fragments/navbar :: navbar"></div>
 <div class="serie-container py-4">
+    <a th:href="@{/profesor/dashboard}" class="btn-volver-serie"><i class="fas fa-arrow-left"></i> Volver al panel</a>
     <div class="hoja-serie">
         <div class="hoja-serie-titulo">
             <span class="hoja-serie-titulo-punto"></span>
@@ -178,6 +229,7 @@
         </div>
     </div>
 </div>
+<div th:replace="fragments/footer :: footer"></div>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

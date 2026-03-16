@@ -360,6 +360,9 @@
         .dashboard-mobile-card.card-admin-m i   { color: #455a64; }
         @media (max-width: 991px) {
             .container-fluid.py-4.px-4 { padding-left: 0.75rem !important; padding-right: 0.75rem !important; }
+            .col-acciones-series { display: none !important; }
+            .serie-row-clickable { cursor: pointer; }
+            .serie-row-clickable:hover { background-color: rgba(0,0,0,0.04); }
         }
         @media (max-width: 400px) {
             .dashboard-mobile-cards { gap: 0.75rem; }
@@ -636,24 +639,42 @@
                             <i class="fa-solid fa-plus me-1"></i>Nueva Serie
                         </a>
                     </div>
+
+                    <div class="card mb-3">
+                        <div class="card-body py-2">
+                            <div class="d-flex gap-2 align-items-center flex-wrap">
+                                <input id="filtroSeriesNombre" type="text" class="form-control form-control-sm flex-grow-1" style="max-width: 280px;" placeholder="Buscar por nombre..." aria-label="Buscar por nombre">
+                                <button id="limpiarFiltrosSeries" type="button" class="btn btn-sm flex-shrink-0" style="background:#e1bee7; border-color:#ce93d8; color:#4a148c;">
+                                    Limpiar
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
                     <div class="table-responsive">
-                        <table class="table table-bordered table-hover">
+                        <table class="table table-bordered table-hover" id="tablaSeries">
                             <thead class="table-success text-center">
                                 <tr>
                                     <th>Nombre</th>
                                     <th>N° de Ejercicios</th>
                                     <th>Descripción</th>
-                                    <th>Acciones</th>
+                                    <th class="text-center col-acciones-series">Acciones</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr th:each="serie : ${series}" class="text-center">
+                                <tr th:each="serie : ${series}" class="text-center serie-row-clickable fila-serie"
+                                    th:attr="data-nombre=${serie.nombre},
+                                             data-ejercicios=${serie.serieEjercicios != null ? #lists.size(serie.serieEjercicios) : 0},
+                                             data-descripcion=${serie.descripcion != null ? serie.descripcion : '—'},
+                                             data-ver-url=@{/series/ver/{id}(id=${serie.id})},
+                                             data-editar-url=@{/series/editar/{id}(id=${serie.id})},
+                                             data-eliminar-url=@{/series/eliminar/{id}(id=${serie.id})}">
                                     <td th:text="${serie.nombre}">Nombre</td>
                                     <td>
                                         <span class="badge bg-info" th:text="${serie.serieEjercicios != null ? #lists.size(serie.serieEjercicios) : 0}">0</span>
                                     </td>
                                     <td th:text="${serie.descripcion}">Descripción</td>
-                                    <td>
+                                    <td class="text-center col-acciones-series">
                                         <a th:href="@{/series/ver/{id}(id=${serie.id})}" class="btn btn-info btn-sm" target="_blank" rel="noopener" title="Ver serie">
                                             <i class="fa-solid fa-eye me-1"></i>Ver serie
                                         </a>
@@ -800,6 +821,29 @@
         </div>
     </div>
 
+    <!-- Modal ver serie (solo móvil: al tocar una serie) -->
+    <div class="modal fade" id="modalVerSerieMobile" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header modal-confirmar-header">
+                    <h5 class="modal-title"><i class="fa-solid fa-layer-group me-2"></i>Serie</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body">
+                    <p class="mb-2"><strong>Nombre:</strong> <span id="modalSerieNombre"></span></p>
+                    <p class="mb-2"><strong>N° de Ejercicios:</strong> <span id="modalSerieEjercicios"></span></p>
+                    <p class="mb-2"><strong>Descripción:</strong></p>
+                    <p class="mb-0 text-muted small" id="modalSerieDescripcion" style="white-space: pre-wrap;"></p>
+                </div>
+                <div class="modal-footer modal-confirmar-footer d-flex gap-2 justify-content-center">
+                    <a id="modalSerieBtnVer" href="#" class="btn btn-info" target="_blank" rel="noopener"><i class="fa-solid fa-eye me-1"></i>Ver</a>
+                    <a id="modalSerieBtnEditar" href="#" class="btn btn-warning"><i class="fa-solid fa-edit me-1"></i>Editar</a>
+                    <a id="modalSerieBtnEliminar" href="#" class="btn btn-danger btn-confirmar-eliminar-dashboard" data-msg="¿Estás seguro de que querés eliminar esta serie?"><i class="fa-solid fa-trash me-1"></i>Eliminar</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Modal alerta (enlace copiado, avisos) -->
     <div class="modal fade" id="modalAlertaDashboard" tabindex="-1">
         <div class="modal-dialog modal-dialog-centered">
@@ -859,6 +903,8 @@
                         e.preventDefault();
                         if (formEliminar) formEliminar.action = this.getAttribute('href') || '';
                         if (modalEliminarMsg) modalEliminarMsg.textContent = this.getAttribute('data-msg') || '¿Estás seguro?';
+                        var modalSerie = document.getElementById('modalVerSerieMobile');
+                        if (modalSerie && bootstrap.Modal.getInstance(modalSerie)) bootstrap.Modal.getInstance(modalSerie).hide();
                         modalInst.show();
                     });
                 });
@@ -989,6 +1035,67 @@
                         var nombre = (tr.getAttribute('data-usuario') || '').toLowerCase();
                         tr.style.display = texto === '' || nombre.indexOf(texto) !== -1 ? '' : 'none';
                     });
+                });
+            }
+        })();
+
+        // Filtro por nombre en Series
+        (function() {
+            const filtro = document.getElementById('filtroSeriesNombre');
+            const tabla = document.getElementById('tablaSeries');
+            const limpiar = document.getElementById('limpiarFiltrosSeries');
+            function aplicarFiltroSeries() {
+                if (!tabla) return;
+                const texto = (filtro && filtro.value ? filtro.value.trim() : '').toLowerCase();
+                tabla.querySelectorAll('tbody tr.fila-serie').forEach(function(tr) {
+                    var nombre = (tr.getAttribute('data-nombre') || '').toLowerCase();
+                    tr.style.display = texto === '' || nombre.indexOf(texto) !== -1 ? '' : 'none';
+                });
+            }
+            if (filtro) filtro.addEventListener('input', aplicarFiltroSeries);
+            if (limpiar) limpiar.addEventListener('click', function() {
+                if (filtro) filtro.value = '';
+                aplicarFiltroSeries();
+            });
+        })();
+
+        // Modal serie móvil: al tocar una fila
+        (function() {
+            const modal = document.getElementById('modalVerSerieMobile');
+            if (!modal) return;
+            const modalInst = new bootstrap.Modal(modal);
+            const spanNombre = document.getElementById('modalSerieNombre');
+            const spanEjercicios = document.getElementById('modalSerieEjercicios');
+            const spanDescripcion = document.getElementById('modalSerieDescripcion');
+            const btnVer = document.getElementById('modalSerieBtnVer');
+            const btnEditar = document.getElementById('modalSerieBtnEditar');
+            const btnEliminar = document.getElementById('modalSerieBtnEliminar');
+            document.querySelectorAll('.serie-row-clickable').forEach(function(row) {
+                row.addEventListener('click', function(e) {
+                    if (window.innerWidth > 991) return;
+                    if (e.target.closest('a[href]')) return;
+                    e.preventDefault();
+                    e.stopPropagation();
+                    if (spanNombre) spanNombre.textContent = row.getAttribute('data-nombre') || '—';
+                    if (spanEjercicios) spanEjercicios.textContent = row.getAttribute('data-ejercicios') || '0';
+                    if (spanDescripcion) spanDescripcion.textContent = row.getAttribute('data-descripcion') || '—';
+                    if (btnVer) btnVer.href = row.getAttribute('data-ver-url') || '#';
+                    if (btnEditar) btnEditar.href = row.getAttribute('data-editar-url') || '#';
+                    if (btnEliminar) btnEliminar.href = row.getAttribute('data-eliminar-url') || '#';
+                    modalInst.show();
+                });
+            });
+            // Móvil: al hacer Ver, cerrar modal y navegar en la misma pestaña
+            if (btnVer) {
+                btnVer.addEventListener('click', function(e) {
+                    if (window.innerWidth <= 991) {
+                        e.preventDefault();
+                        var url = btnVer.getAttribute('href');
+                        if (url && url !== '#') {
+                            modalInst.hide();
+                            window.location.href = url;
+                        }
+                    }
                 });
             }
         })();

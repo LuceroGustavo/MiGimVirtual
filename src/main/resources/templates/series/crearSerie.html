@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <title th:text="${editMode ? 'Modificar Serie - MiGimVirtual' : 'Crear Nueva Serie - MiGimVirtual'}">Crear Nueva Serie - MiGimVirtual</title>
@@ -153,6 +153,7 @@
         }
         @media (max-width: 991px) {
             .ejercicios-section, .form-section { padding: 1rem 0.3rem; }
+            .main-title { font-size: 1.35rem; margin-top: 1rem; margin-bottom: 0.8rem; }
         }
     </style>
 </head>
@@ -170,17 +171,20 @@
                 <i class="fa-solid fa-running"></i> Ejercicios Disponibles
                         </div>
             <div class="row mb-3 g-2 align-items-center">
-                <div class="col-md-7 col-12">
+                <div class="col-5 col-md-5">
                     <input type="text" id="filtro-ejercicio" class="form-control" placeholder="Buscar ejercicio...">
                 </div>
-                <div class="col-md-5 col-12 mt-2 mt-md-0 text-md-end">
-                    <select id="filtro-musculo" class="form-select w-auto d-inline-block">
+                <div class="col-4 col-md-4">
+                    <select id="filtro-musculo" class="form-select">
                         <option value="" th:selected="${selectedGrupoId == null}">Todos los grupos musculares</option>
                         <option th:each="grupo : ${gruposMusculares}"
                                 th:value="${grupo.nombre}"
                                 th:text="${grupo.nombre}"
                                 th:selected="${selectedGrupoId != null && selectedGrupoId == grupo.id}"></option>
                     </select>
+                </div>
+                <div class="col-3 col-md-3">
+                    <button type="button" id="btn-limpiar-filtro" class="btn btn-outline-secondary w-100 btn-sm" title="Limpiar filtros"><i class="fas fa-times me-1"></i>Limpiar</button>
                 </div>
             </div>
                             <section id="ejercicios-carousel" class="splide" aria-label="Carrusel de Ejercicios">
@@ -221,7 +225,7 @@
             </div>
             <form id="serieForm">
                 <div class="row g-4">
-                    <div class="col-md-6">
+                    <div class="col-md-6 order-2 order-md-1">
                             <div class="mb-3">
                                 <label for="nombre" class="form-label fw-bold">Nombre de la Serie</label>
                                 <input type="text" id="nombre" class="form-control" required placeholder="Ej: Lunes - Pecho y Tríceps">
@@ -239,9 +243,10 @@
                                 <small class="form-text text-muted">Cantidad de vueltas (veces que se repite la serie completa en la rutina)</small>
                             </div>
                     </div>
-                    <div class="col-md-6">
+                    <div class="col-md-6 order-1 order-md-2">
                         <h6 class="fw-bold">Ejercicios en esta Serie</h6>
                         <p class="small text-muted mb-2">Usá las flechas para cambiar el orden de los ejercicios.</p>
+                            <div class="table-responsive">
                             <table class="table table-striped">
                                 <thead>
                                     <tr>
@@ -256,6 +261,7 @@
                                     <!-- Los ejercicios seleccionados se añadirán aquí con JS -->
                                 </tbody>
                             </table>
+                            </div>
                             <div id="no-ejercicios" class="text-center text-muted mt-3">
                             <p>Aún no has añadido ejercicios. Selecciona un ejercicio del carrusel de arriba.</p>
                         </div>
@@ -381,6 +387,11 @@
         filtrarEjercicios();
         filtroEjercicio.addEventListener('input', filtrarEjercicios);
         filtroMusculo.addEventListener('change', filtrarEjercicios);
+        document.getElementById('btn-limpiar-filtro').addEventListener('click', function() {
+            filtroEjercicio.value = '';
+            filtroMusculo.value = '';
+            filtrarEjercicios();
+        });
 
         function actualizarVistaTabla() {
             noEjerciciosMsg.style.display = tablaEjerciciosSerie.rows.length === 0 ? 'block' : 'none';

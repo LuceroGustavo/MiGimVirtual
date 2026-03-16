@@ -2,6 +2,33 @@
 
 > Nota: este changelog incluye histórico heredado de MiGym (referencias a admin/chat/websocket).
 
+## [2026-03-16] - feat(ui): módulo de series – responsive móvil (parcial) 🚧
+
+### 🎯 **Resumen**
+Mejoras de responsividad para el módulo de series en vista móvil: detalle de serie, panel dashboard (modal y navegación), formulario crear/modificar serie. **El módulo de series sigue en progreso** (falta terminar editar serie y revisión general).
+
+### ✅ **Vista detalle de serie** (`series/verSerie.html`)
+- Grid responsive: 1 col móvil, 2 tablet, 3 desktop. Sin min-width en body/contenedor.
+- Botón "Volver al panel" visible solo en móvil (≤991px), enlaza a `/profesor/dashboard`.
+- Footer incluido para consistencia con el panel.
+
+### ✅ **Dashboard – pestaña Series** (`profesor/dashboard.html`)
+- Al hacer clic en "Ver" desde el modal (móvil): se cierra el modal y se navega en la misma pestaña (sin `target="_blank"`). Escritorio mantiene apertura en pestaña nueva.
+
+### ✅ **Formulario crear/modificar serie** (`series/crearSerie.html`)
+- Título principal reducido en móvil (1.35rem).
+- Botón "Limpiar" en la misma fila que búsqueda y selector de grupos musculares.
+- Reorden de paneles en móvil: 1) Ejercicios disponibles → 2) Ejercicios en esta serie (tabla) → 3) Nombre, descripción, vueltas y Guardar.
+- Tabla de ejercicios envuelta en `table-responsive`.
+
+### 📁 **Archivos modificados**
+series/verSerie.html, series/crearSerie.html, profesor/dashboard.html.
+
+### 📁 **Documentación**
+Documentacion/GUIA_RESPONSIVE.md (§5.2), Documentacion/AYUDA_MEMORIA.md (sección Módulo de Series).
+
+---
+
 ## [2026-03-15] - feat(ui): formulario crear/editar alumno y mejoras en detalle alumno ✅
 
 ### 🎯 **Resumen**
