@@ -205,8 +205,15 @@
             font-weight: 600;
             color: #37474f;
         }
-        .main-action-card.card-ejercicios { background: linear-gradient(135deg, #fff9c4 60%, #ffe082 100%); }
-        .main-action-card.card-ejercicios i { color: #e65100; }
+        .main-action-card .action-card-stat {
+            display: block;
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 0.2rem;
+            color: #37474f;
+        }
+        .main-action-card.card-ejercicios { background: linear-gradient(135deg, #ffccbc 60%, #ffab91 100%); }
+        .main-action-card.card-ejercicios i { color: #bf360c; }
         .main-action-card.card-admin { background: linear-gradient(135deg, #cfd8dc 60%, #b0bec5 100%); }
         .main-action-card.card-admin i { color: #455a64; }
         .main-action-card.card-calendario { background: linear-gradient(135deg, #bbdefb 60%, #b3e5fc 100%); }
@@ -419,7 +426,7 @@
                 <span class="mobile-card-label">Alumnos</span>
             </button>
             <button type="button" class="dashboard-mobile-card card-series-m mobile-card-tab" data-tab="series" aria-label="Ir a Mis Series">
-                <i class="fa-solid fa-dumbbell"></i>
+                <i class="fa-solid fa-layer-group"></i>
                 <span class="mobile-card-stat" th:text="${series != null ? series.size() : 0}">0</span>
                 <span class="mobile-card-label">Series</span>
             </button>
@@ -435,6 +442,7 @@
             </button>
             <a th:href="@{/profesor/mis-ejercicios}" class="dashboard-mobile-card card-ejercicios-m" target="_blank" rel="noopener" aria-label="Abrir Ejercicios">
                 <i class="fa-solid fa-dumbbell"></i>
+                <span class="mobile-card-stat" th:text="${cantidadEjercicios != null ? cantidadEjercicios : 0}">0</span>
                 <span class="mobile-card-label">Ejercicios</span>
             </a>
             <a th:if="${usuario != null && (usuario.rol == 'ADMIN' || usuario.rol == 'DEVELOPER')}" th:href="@{/profesor/administracion}" class="dashboard-mobile-card card-admin-m" target="_blank" rel="noopener" aria-label="Administrar sistema">
@@ -462,12 +470,13 @@
             <div class="dashboard-col">
                 <div class="card-module card-series card-scroll-tab" data-scroll-tab="series" role="button" tabindex="0" title="Ver lista de series">
                     <a href="/series/crear" class="card-module-add" title="Crear serie"><i class="fa-solid fa-plus"></i></a>
-                    <i class="fa-solid fa-dumbbell"></i>
+                    <i class="fa-solid fa-layer-group"></i>
                     <div class="stat" th:text="${series != null ? series.size() : 0}">0</div>
                     <div class="label">Series</div>
                 </div>
                 <a th:href="@{/profesor/mis-ejercicios}" class="main-action-card card-ejercicios" target="_blank" rel="noopener noreferrer" title="Ver ejercicios">
                     <div class="card-inner">
+                        <span class="action-card-stat" th:text="${cantidadEjercicios != null ? cantidadEjercicios : 0}">0</span>
                         <i class="fa-solid fa-dumbbell"></i>
                         <span class="card-label">Ejercicios</span>
                     </div>
@@ -515,7 +524,7 @@
                 </li>
                 <li class="nav-item" role="presentation">
                     <button class="nav-link" id="series-tab" data-bs-toggle="tab" data-bs-target="#series" type="button" role="tab">
-                        <i class="fa-solid fa-dumbbell me-2"></i>Mis Series
+                        <i class="fa-solid fa-layer-group me-2"></i>Mis Series
                     </button>
                 </li>
                 <li class="nav-item" role="presentation">
@@ -622,7 +631,7 @@
                 <!-- Pestaña Series -->
                 <div class="tab-pane fade" id="series" role="tabpanel">
                     <div class="d-flex justify-content-between align-items-center mb-3">
-                        <h3><i class="fa-solid fa-dumbbell me-2"></i>Mis Series</h3>
+                        <h3><i class="fa-solid fa-layer-group me-2"></i>Mis Series</h3>
                         <a href="/series/crear" class="btn btn-series">
                             <i class="fa-solid fa-plus me-1"></i>Nueva Serie
                         </a>

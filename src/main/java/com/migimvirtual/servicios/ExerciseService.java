@@ -409,6 +409,13 @@ public class ExerciseService {
     public long countEjerciciosPropiosDelProfesor(Long profesorId) {
         return exerciseRepository.countEjerciciosPropiosDelProfesor(profesorId);
     }
+
+    /**
+     * Cuenta ejercicios disponibles para un profesor (predeterminados + propios)
+     */
+    public long countEjerciciosDisponiblesParaProfesor(Long profesorId) {
+        return exerciseRepository.countEjerciciosDisponiblesParaProfesor(profesorId);
+    }
     
     /**
      * Verifica si un usuario puede editar un ejercicio

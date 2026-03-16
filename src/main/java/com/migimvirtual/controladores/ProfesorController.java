@@ -113,12 +113,14 @@ public class ProfesorController {
         List<com.migimvirtual.entidades.Rutina> rutinasAsignadas = rutinaService
                 .obtenerRutinasAsignadasPorProfesor(profesor.getId());
         List<Serie> series = serieService.obtenerSeriesPlantillaPorProfesor(profesor.getId());
+        long cantidadEjercicios = exerciseService.countEjerciciosDisponiblesParaProfesor(profesor.getId());
 
         model.addAttribute("usuarios", usuarios);
         model.addAttribute("fechaHoyFormateada", fechaHoyFormateada);
         model.addAttribute("rutinas", rutinas);
         model.addAttribute("rutinasAsignadas", rutinasAsignadas);
         model.addAttribute("series", series);
+        model.addAttribute("cantidadEjercicios", cantidadEjercicios);
         model.addAttribute("profesor", profesor);
 
         model.addAttribute("usuario", usuarioService.getUsuarioActual());

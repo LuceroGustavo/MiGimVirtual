@@ -120,4 +120,12 @@ public interface ExerciseRepository extends JpaRepository<Exercise, Long> {
     @Query("SELECT COUNT(e) FROM Exercise e WHERE e.profesor.id = :profesorId AND " +
            "(e.esPredeterminado = false OR e.esPredeterminado IS NULL)")
     long countEjerciciosPropiosDelProfesor(@Param("profesorId") Long profesorId);
+
+    /**
+     * Cuenta ejercicios disponibles para un profesor (predeterminados + propios)
+     */
+    @Query("SELECT COUNT(e) FROM Exercise e WHERE " +
+           "(e.profesor IS NULL OR e.esPredeterminado = true) OR " +
+           "(e.profesor.id = :profesorId AND (e.esPredeterminado = false OR e.esPredeterminado IS NULL))")
+    long countEjerciciosDisponiblesParaProfesor(@Param("profesorId") Long profesorId);
 }
