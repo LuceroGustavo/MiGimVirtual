@@ -114,7 +114,7 @@ public class UsuariosSistemaController {
                     ? usuarioActual.getProfesor()
                     : profesorService.getProfesorByCorreo(usuarioActual.getCorreo());
             if (profesor == null) {
-                profesor = profesorService.getProfesorByCorreo("profesor@migimvirtual.com");
+                profesor = profesorService.getProfesorByCorreo("profesor@migymvirtual.com");
             }
             usuarioService.crearUsuarioSistema(nombre, correo, password, rol, profesor);
             return "redirect:/profesor/administracion?ok=creado";

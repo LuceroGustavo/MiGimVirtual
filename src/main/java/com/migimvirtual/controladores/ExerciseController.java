@@ -280,7 +280,7 @@ public class ExerciseController {
     private com.migimvirtual.entidades.Profesor getProfesorAcceso(com.migimvirtual.entidades.Usuario usuarioActual) {
         if (usuarioActual == null) return null;
         if ("DEVELOPER".equals(usuarioActual.getRol())) {
-            return profesorService.getProfesorByCorreo("profesor@migimvirtual.com");
+            return profesorService.getProfesorByCorreo("profesor@migymvirtual.com");
         }
         return usuarioActual.getProfesor() != null ? usuarioActual.getProfesor() : profesorService.getProfesorByCorreo(usuarioActual.getCorreo());
     }

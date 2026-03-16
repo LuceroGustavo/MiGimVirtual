@@ -67,13 +67,16 @@ public class ProfesorController {
     private com.migimvirtual.servicios.GrupoMuscularService grupoMuscularService;
 
     @Autowired
+    private com.migimvirtual.servicios.RegistroProgresoService registroProgresoService;
+
+    @Autowired
     private com.migimvirtual.servicios.ExerciseCargaDefaultOptimizado exerciseCargaDefaultOptimizado;
 
     /** Obtiene el Profesor asociado al usuario actual (el único rol del panel es ADMIN). */
     private Profesor getProfesorParaUsuarioActual(Usuario usuarioActual) {
         if (usuarioActual == null) return null;
         if ("DEVELOPER".equals(usuarioActual.getRol())) {
-            return profesorService.getProfesorByCorreo("profesor@migimvirtual.com");
+            return profesorService.getProfesorByCorreo("profesor@migymvirtual.com");
         }
         if (usuarioActual.getProfesor() != null) return usuarioActual.getProfesor();
         return profesorService.getProfesorByCorreo(usuarioActual.getCorreo());
@@ -279,7 +282,7 @@ public class ProfesorController {
 
     // Mostrar ficha de alumno con historial físico (carga profesor, rutinas y horarios de asistencia)
     @GetMapping("/alumnos/{id}")
-    public String verAlumno(@PathVariable Long id, Model model, @AuthenticationPrincipal Usuario usuarioActual) {
+    public String verAlumno(@PathVariable Long id, @RequestParam(required = false) Long editarProgreso, Model model, @AuthenticationPrincipal Usuario usuarioActual) {
         Usuario alumno = usuarioService.getUsuarioByIdParaFicha(id);
         if (alumno == null) {
             return "redirect:/profesor/dashboard";
@@ -291,6 +294,17 @@ public class ProfesorController {
         model.addAttribute("alumno", alumno);
         model.addAttribute("usuariosSistema", usuarioService.getUsuariosSistema());
         model.addAttribute("historialEstadoFormateado", formatearFechasEnHistorialEstado(alumno.getHistorialEstado()));
+        model.addAttribute("gruposMusculares", grupoMuscularService.findDisponiblesParaProfesor(alumno.getProfesor().getId()));
+        java.util.List<com.migimvirtual.entidades.RegistroProgreso> registrosProgreso = registroProgresoService.obtenerRegistrosPorAlumno(id);
+        com.migimvirtual.entidades.RegistroProgreso ultimoProgreso = registrosProgreso.isEmpty() ? null : registrosProgreso.get(0);
+        model.addAttribute("registrosProgreso", registrosProgreso);
+        model.addAttribute("ultimoProgreso", ultimoProgreso);
+        model.addAttribute("ultimoProgresoFormateado", registroProgresoService.formatearUltimoRegistro(ultimoProgreso));
+        com.migimvirtual.entidades.RegistroProgreso progresoAEditar = null;
+        if (editarProgreso != null) {
+            progresoAEditar = registrosProgreso.stream().filter(r -> r.getId().equals(editarProgreso)).findFirst().orElse(null);
+        }
+        model.addAttribute("progresoAEditar", progresoAEditar);
         List<com.migimvirtual.entidades.Rutina> rutinasDelAlumno = rutinaService.obtenerRutinasAsignadasPorUsuario(id);
         List<com.migimvirtual.entidades.Rutina> rutinasAsignadas = rutinasDelAlumno.stream()
                 .sorted(java.util.Comparator
@@ -301,6 +315,97 @@ public class ProfesorController {
                 .collect(java.util.stream.Collectors.toList());
         model.addAttribute("rutinasAsignadas", rutinasAsignadas);
         return "profesor/alumno-detalle";
+    }
+
+    /** Registra progreso del alumno (fecha, grupos musculares, observaciones). */
+    @PostMapping("/alumnos/{id}/progreso")
+    public String registrarProgreso(@PathVariable Long id,
+            @RequestParam(required = false) String fecha,
+            @RequestParam(required = false) java.util.List<Long> gruposMuscularesIds,
+            @RequestParam(required = false) String observaciones,
+            RedirectAttributes redirectAttributes,
+            @AuthenticationPrincipal Usuario usuarioActual) {
+        Profesor profesor = getProfesorParaUsuarioActual(usuarioActual);
+        if (profesor == null) return "redirect:/login";
+
+        Usuario alumno = usuarioService.getUsuarioById(id);
+        if (alumno == null || alumno.getProfesor() == null || !alumno.getProfesor().getId().equals(profesor.getId())) {
+            return "redirect:/profesor/dashboard?error=No+tiene+permiso";
+        }
+        String gruposStr = null;
+        if (gruposMuscularesIds != null && !gruposMuscularesIds.isEmpty()) {
+            gruposStr = gruposMuscularesIds.stream()
+                    .map(gid -> grupoMuscularService.findById(gid).map(g -> g.getNombre()).orElse(null))
+                    .filter(n -> n != null)
+                    .collect(java.util.stream.Collectors.joining(", "));
+        }
+        java.time.LocalDate fechaParsed = registroProgresoService.parseFecha(fecha);
+        registroProgresoService.guardar(id, alumno, fechaParsed, gruposStr, observaciones);
+        redirectAttributes.addFlashAttribute("mensajeSuccess", "Progreso guardado correctamente.");
+        return "redirect:/profesor/alumnos/" + id + "?progreso=ok";
+    }
+
+    /** Actualiza un registro de progreso existente. */
+    @PostMapping("/alumnos/{id}/progreso/editar/{registroId}")
+    public String editarProgreso(@PathVariable Long id, @PathVariable Long registroId,
+            @RequestParam(required = false) String fecha,
+            @RequestParam(required = false) java.util.List<Long> gruposMuscularesIds,
+            @RequestParam(required = false) String observaciones,
+            RedirectAttributes redirectAttributes,
+            @AuthenticationPrincipal Usuario usuarioActual) {
+        Profesor profesor = getProfesorParaUsuarioActual(usuarioActual);
+        if (profesor == null) return "redirect:/login";
+
+        Usuario alumno = usuarioService.getUsuarioById(id);
+        if (alumno == null || alumno.getProfesor() == null || !alumno.getProfesor().getId().equals(profesor.getId())) {
+            return "redirect:/profesor/dashboard?error=No+tiene+permiso";
+        }
+        String gruposStr = null;
+        if (gruposMuscularesIds != null && !gruposMuscularesIds.isEmpty()) {
+            gruposStr = gruposMuscularesIds.stream()
+                    .map(gid -> grupoMuscularService.findById(gid).map(g -> g.getNombre()).orElse(null))
+                    .filter(n -> n != null)
+                    .collect(java.util.stream.Collectors.joining(", "));
+        }
+        java.time.LocalDate fechaParsed = registroProgresoService.parseFecha(fecha);
+        registroProgresoService.actualizar(registroId, id, alumno, fechaParsed, gruposStr, observaciones);
+        redirectAttributes.addFlashAttribute("mensajeSuccess", "Progreso actualizado correctamente.");
+        return "redirect:/profesor/alumnos/" + id;
+    }
+
+    /** Elimina un registro de progreso. */
+    @GetMapping("/alumnos/{id}/progreso/eliminar/{registroId}")
+    public String eliminarProgreso(@PathVariable Long id, @PathVariable Long registroId,
+            RedirectAttributes redirectAttributes,
+            @AuthenticationPrincipal Usuario usuarioActual) {
+        Profesor profesor = getProfesorParaUsuarioActual(usuarioActual);
+        if (profesor == null) return "redirect:/login";
+
+        Usuario alumno = usuarioService.getUsuarioById(id);
+        if (alumno == null || alumno.getProfesor() == null || !alumno.getProfesor().getId().equals(profesor.getId())) {
+            return "redirect:/profesor/dashboard?error=No+tiene+permiso";
+        }
+        registroProgresoService.eliminar(registroId, id);
+        redirectAttributes.addFlashAttribute("mensajeSuccess", "Progreso eliminado.");
+        return "redirect:/profesor/alumnos/" + id;
+    }
+
+    /** Actualiza solo las notas privadas del profesor para un alumno. */
+    @PostMapping("/alumnos/{id}/notas")
+    public String actualizarNotasProfesor(@PathVariable Long id,
+            @RequestParam(required = false) String notasProfesor,
+            RedirectAttributes redirectAttributes,
+            @AuthenticationPrincipal Usuario usuarioActual) {
+        Profesor profesor = getProfesorParaUsuarioActual(usuarioActual);
+        if (profesor == null) return "redirect:/login";
+
+        Usuario alumno = usuarioService.getUsuarioById(id);
+        if (alumno == null || alumno.getProfesor() == null || !alumno.getProfesor().getId().equals(profesor.getId())) {
+            return "redirect:/profesor/dashboard?error=No+tiene+permiso";
+        }
+        usuarioService.actualizarNotasProfesor(id, notasProfesor);
+        redirectAttributes.addFlashAttribute("mensajeSuccess", "Notas actualizadas correctamente.");
+        return "redirect:/profesor/alumnos/" + id;
     }
 
     /** Inactiva todas las rutinas asignadas al alumno. Solo si el alumno pertenece al profesor. */

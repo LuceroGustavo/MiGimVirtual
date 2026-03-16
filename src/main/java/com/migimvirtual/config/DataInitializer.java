@@ -81,9 +81,9 @@ public class DataInitializer implements CommandLineRunner {
         System.out.println("=== DataInitializer completado en " + totalTime + "ms ===");
     }
 
-    private static final String CORREO_PROFESOR = "profesor@migimvirtual.com";
-    private static final String CORREO_DEVELOPER = "developer@migimvirtual.com";
-    private static final String PASSWORD_DEVELOPER = "Qbasic.1977.migimvirtual";
+    private static final String CORREO_PROFESOR = "profesor@migymvirtual.com";
+    private static final String CORREO_DEVELOPER = "lucerogustavosi@gmail.com";
+    private static final String PASSWORD_DEVELOPER = "Qbasic.1977";
 
     /**
      * Verifica si los datos ya fueron inicializados previamente

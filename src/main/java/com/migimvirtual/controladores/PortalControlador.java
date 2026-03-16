@@ -103,7 +103,7 @@ public class PortalControlador {
             if (usuarioActual != null && ("ADMIN".equals(usuarioActual.getRol()) || "AYUDANTE".equals(usuarioActual.getRol()) || "DEVELOPER".equals(usuarioActual.getRol()))) {
                 com.migimvirtual.entidades.Profesor p = usuarioActual.getProfesor() != null ? usuarioActual.getProfesor() : profesorService.getProfesorByCorreo(usuarioActual.getCorreo());
                 if (p == null && "DEVELOPER".equals(usuarioActual.getRol())) {
-                    p = profesorService.getProfesorByCorreo("profesor@migimvirtual.com");
+                    p = profesorService.getProfesorByCorreo("profesor@migymvirtual.com");
                 }
                 if (p != null) return "redirect:/profesor/" + p.getId();
                 return "redirect:/profesor/dashboard";
@@ -127,7 +127,7 @@ public class PortalControlador {
         Map<String, Object> status = new HashMap<>();
         try {
             // Verificar profesor (único gestor del panel)
-            com.migimvirtual.entidades.Profesor profesorPrincipal = profesorService.getProfesorByCorreo("profesor@migimvirtual.com");
+            com.migimvirtual.entidades.Profesor profesorPrincipal = profesorService.getProfesorByCorreo("profesor@migymvirtual.com");
             status.put("profesorPrincipalExiste", profesorPrincipal != null);
             if (profesorPrincipal != null) {
                 status.put("profesorPrincipalId", profesorPrincipal.getId());

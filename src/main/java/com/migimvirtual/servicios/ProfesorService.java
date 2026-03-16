@@ -68,7 +68,7 @@ public class ProfesorService {
             .orElseThrow(() -> new RuntimeException("Profesor no encontrado con id: " + id));
         
         // No permitir eliminar al único profesor gestor del sistema
-        if ("profesor@migimvirtual.com".equals(profesor.getCorreo())) {
+        if ("profesor@migymvirtual.com".equals(profesor.getCorreo())) {
             throw new RuntimeException("No se puede eliminar al profesor del sistema");
         }
         

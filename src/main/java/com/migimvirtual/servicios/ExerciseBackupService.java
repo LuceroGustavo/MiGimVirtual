@@ -381,7 +381,7 @@ public class ExerciseBackupService {
                     profInfo.put("id", p.getId());
                     profInfo.put("nombre", p.getNombre() + " " + p.getApellido());
                     profInfo.put("correo", p.getCorreo());
-                    profInfo.put("esProfesorPrincipal", "profesor@migimvirtual.com".equals(p.getCorreo()));
+                    profInfo.put("esProfesorPrincipal", "profesor@migymvirtual.com".equals(p.getCorreo()));
                     
                     // Contar ejercicios PROPIOS del profesor (excluyendo predeterminados)
                     try {

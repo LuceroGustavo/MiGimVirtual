@@ -205,7 +205,7 @@ public class SerieController {
     private com.migimvirtual.entidades.Profesor getProfesorAcceso(Usuario usuarioActual) {
         if (usuarioActual == null) return null;
         if ("DEVELOPER".equals(usuarioActual.getRol())) {
-            return profesorService.getProfesorByCorreo("profesor@migimvirtual.com");
+            return profesorService.getProfesorByCorreo("profesor@migymvirtual.com");
         }
         return usuarioActual.getProfesor();
     }

@@ -55,7 +55,7 @@ public class AdminPanelController {
     private Profesor getProfesorParaUsuario(Usuario usuario) {
         if (usuario == null) return null;
         if ("DEVELOPER".equals(usuario.getRol())) {
-            return profesorService.getProfesorByCorreo("profesor@migimvirtual.com");
+            return profesorService.getProfesorByCorreo("profesor@migymvirtual.com");
         }
         if (usuario.getProfesor() != null) return usuario.getProfesor();
         return usuario.getCorreo() != null ? profesorService.getProfesorByCorreo(usuario.getCorreo()) : null;

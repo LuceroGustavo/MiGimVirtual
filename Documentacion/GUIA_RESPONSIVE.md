@@ -86,6 +86,22 @@ Responsividad del panel del profesor terminada para móvil (breakpoint 991px / 9
 
 ---
 
+## 5.1 Ficha del alumno – mejoras móvil (Mar 2026)
+
+| Área | En móvil (≤ 991px) |
+|------|---------------------|
+| **Contenedor** | Márgenes y padding reducidos; container-fluid con px-2 en móvil. |
+| **Título y estado** | hero-title 1.5rem; hero-subtitle 0.95rem; btn-estado-ficha más compacto. |
+| **Header (Volver/Eliminar)** | Botones a ancho completo, apilados verticalmente. |
+| **Tarjetas (stats-grid)** | 1 columna; stat-item con padding reducido; stat-number 1.5rem. |
+| **Bloque alumno-info** | Columnas apiladas; padding 1rem. |
+| **Tabla rutinas** | table-responsive (scroll horizontal); botones de acción min 38px para táctil. |
+| **≤ 575px** | Contenedor más compacto; título 1.35rem; botones de sección rutinas a ancho completo. |
+
+**Archivo:** profesor/alumno-detalle.html.
+
+---
+
 ## 6. Orden sugerido para otras vistas (opcional)
 
 1. Revisar que **todas** las plantillas del panel tengan la meta **viewport** (ya está en varias).

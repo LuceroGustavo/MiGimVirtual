@@ -288,11 +288,163 @@
              z-index: 1;
              box-shadow: 0 1px 0 #dee2e6;
         }
+        /* Progreso del alumno: en móvil, scroll VERTICAL cuando hay más de 5 registros, filas clicables abren modal */
+        @media (max-width: 991px) {
+            .info-card-progreso .card-body { overflow: hidden; }
+            .progreso-scroll-mobile {
+                height: 320px !important;
+                max-height: 320px !important;
+                overflow-y: auto !important;
+                overflow-x: hidden !important;
+                -webkit-overflow-scrolling: touch;
+                display: block !important;
+                width: 100%;
+            }
+            .progreso-scroll-mobile thead th { position: sticky; top: 0; background: #f8f9fa; z-index: 1; box-shadow: 0 1px 0 #dee2e6; }
+            .col-acciones-progreso { display: none !important; }
+            .progreso-row-clickable { cursor: pointer; }
+            .progreso-row-clickable:hover { background-color: rgba(0,0,0,0.04); }
+        }
+        /* Rutinas asignadas: contenedor más alto para ver bien las rutinas */
+        .rutinas-asignadas-card .card-body { min-height: 320px; }
+        /* Barra inferior móvil: mismo estilo que panel del profesor (solo móvil) */
+        .bottom-nav-mobile {
+            display: none;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(180deg, #2c3e50 0%, #34495e 100%);
+            color: #ecf0f1;
+            padding: 0.5rem 0 0.6rem;
+            padding-bottom: max(0.6rem, env(safe-area-inset-bottom));
+            box-shadow: 0 -2px 12px rgba(0,0,0,0.15);
+            z-index: 1030;
+        }
+        @media (max-width: 991px) {
+            .bottom-nav-mobile { display: flex !important; justify-content: space-around; align-items: center; }
+            .main-container { padding-bottom: 5rem !important; }
+        }
+        @media (min-width: 992px) {
+            .bottom-nav-mobile { display: none !important; }
+        }
+        .bottom-nav-mobile a {
+            color: #bdc3c7;
+            text-decoration: none;
+            font-size: 0.7rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.2rem;
+        }
+        .bottom-nav-mobile a:hover, .bottom-nav-mobile a:focus { color: #fff; }
+        .bottom-nav-mobile a i { font-size: 1.25rem; }
         /* Acciones deshabilitadas cuando alumno inactivo */
         .btn-disabled-inactivo, .stat-item-link-disabled {
             pointer-events: none;
             opacity: 0.6;
             cursor: not-allowed;
+        }
+        /* Notas del profesor: asegurar que form, textarea y botón sean visibles */
+        .notas-profesor-form {
+            display: block;
+        }
+        .notas-profesor-form textarea,
+        .notas-profesor-form button {
+            display: block;
+            visibility: visible;
+        }
+
+        /* Responsive – ficha del alumno en móvil (breakpoint 991px como dashboard) */
+        @media (max-width: 991px) {
+            .main-container {
+                margin: 12px 8px;
+                padding: 20px 16px;
+                padding-bottom: 60px;
+            }
+            .hero-title {
+                font-size: 1.5rem;
+                margin-bottom: 1rem;
+            }
+            .hero-subtitle {
+                font-size: 0.95rem;
+                margin-bottom: 1.5rem;
+            }
+            .btn-estado-ficha {
+                font-size: 0.95rem;
+                padding: 0.5rem 1rem !important;
+            }
+            .d-flex.justify-content-end.align-items-center.mb-4 .btn-danger {
+                width: 100%;
+            }
+            .stats-grid {
+                grid-template-columns: 1fr;
+                gap: 0.75rem;
+                margin-bottom: 1.5rem;
+            }
+            .stat-item {
+                min-height: auto;
+                padding: 1rem;
+            }
+            .stat-number {
+                font-size: 1.5rem;
+            }
+            .alumno-info {
+                padding: 1rem;
+                margin-bottom: 1.5rem;
+            }
+            .alumno-info .row {
+                flex-direction: column;
+            }
+            .alumno-info .col-lg-4 {
+                margin-bottom: 0.75rem !important;
+            }
+            .info-card .card-header {
+                padding: 0.75rem 1rem;
+            }
+            .info-card .card-header h5 {
+                font-size: 1rem;
+            }
+            .info-card .card-body {
+                padding: 1rem;
+            }
+            .info-card .card-header p.small {
+                font-size: 0.8rem;
+            }
+        }
+        @media (max-width: 575px) {
+            .main-container {
+                margin: 8px 6px;
+                padding: 16px 12px;
+            }
+            .hero-title {
+                font-size: 1.35rem;
+            }
+            .hero-title .me-3 {
+                margin-right: 0.5rem !important;
+            }
+            .stat-item .stat-card-edit {
+                width: 2rem;
+                height: 2rem;
+                top: 0.5rem;
+                right: 0.5rem;
+                font-size: 0.9rem;
+            }
+            .d-flex.justify-content-between.align-items-center.mb-3 .d-flex.gap-2 {
+                flex-direction: column;
+            }
+            .d-flex.justify-content-between.align-items-center.mb-3 .btn {
+                width: 100%;
+            }
+            .table .btn-sm {
+                min-height: 38px;
+                min-width: 38px;
+                padding: 0.5rem;
+            }
+            .table td .d-flex {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
         }
     </style>
 </head>
@@ -301,7 +453,7 @@
 <!-- Navbar fragment estándar -->
 <div th:replace="fragments/navbar :: navbar"></div>
 
-<div class="container-fluid" th:with="alumnoInactivo=${alumno.estadoAlumno == 'INACTIVO'}">
+<div class="container-fluid px-2 px-md-3" th:with="alumnoInactivo=${alumno.estadoAlumno == 'INACTIVO'}">
     <div class="main-container">
         <div th:if="${param.success != null && param.success[0] == 'rutina_asignada'}" class="alert alert-success alert-dismissible fade show" role="alert">
             Rutina asignada correctamente. Podés copiar el enlace o enviarla por WhatsApp desde la tabla de abajo.
@@ -323,19 +475,8 @@
             <span th:text="${mensajeSuccess}">Mensaje</span>
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
         </div>
-        <!-- Header: volver, Eliminar (editar está en la tarjeta Datos personales) -->
-        <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
-            <a th:href="@{/profesor/{id}(id=${alumno.profesor.id})}" class="btn btn-volver">
-                <i class="fas fa-arrow-left me-2"></i>Volver al Dashboard
-            </a>
-            <div class="d-flex flex-wrap gap-2">
-                <form id="formEliminarAlumno" method="get" th:action="@{/profesor/alumnos/eliminar/{id}(id=${alumno.id})}" class="d-none"></form>
-                <button type="button" class="btn btn-danger" id="btnEliminarAlumno" title="Eliminar alumno">
-                    <i class="fas fa-trash me-2"></i>Eliminar
-                </button>
-            </div>
-        </div>
 
+        <form id="formEliminarAlumno" method="get" th:action="@{/profesor/alumnos/eliminar/{id}(id=${alumno.id})}" class="d-none"></form>
         <!-- Modal confirmar (eliminar alumno / inactivar todas las rutinas) -->
         <div class="modal fade" id="modalConfirmarEliminarAlumno" tabindex="-1">
             <div class="modal-dialog modal-dialog-centered">
@@ -347,7 +488,47 @@
                     <div class="modal-body" id="modalConfirmarEliminarAlumnoMensaje"></div>
                     <div class="modal-footer modal-confirmar-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                        <button type="button" class="btn btn-danger" id="modalConfirmarEliminarAlumnoBtn"><i class="fas fa-trash me-1"></i>Confirmar</button>
+                        <button type="button" class="btn btn-danger" id="modalConfirmarEliminarAlumnoBtn"><i class="fas fa-trash me-1"></i>Eliminar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal confirmar eliminar progreso (mismo estilo que eliminar alumno) -->
+        <div class="modal fade" id="modalConfirmarEliminarProgreso" tabindex="-1">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header modal-confirmar-header">
+                        <h5 class="modal-title"><i class="fas fa-exclamation-circle me-2"></i>Confirmar</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                    </div>
+                    <div class="modal-body" id="modalConfirmarEliminarProgresoMensaje">¿Eliminar esta anotación de progreso?</div>
+                    <div class="modal-footer modal-confirmar-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <a id="modalConfirmarEliminarProgresoBtn" href="#" class="btn btn-danger"><i class="fas fa-trash me-1"></i>Eliminar</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal ver progreso (solo móvil: al tocar un registro) -->
+        <div class="modal fade" id="modalVerProgresoMobile" tabindex="-1">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header modal-confirmar-header">
+                        <h5 class="modal-title"><i class="fas fa-chart-line me-2"></i>Registro de progreso</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p class="mb-3"><strong>Fecha:</strong> <span id="modalProgresoFecha" class="fs-5"></span></p>
+                        <p class="mb-2"><strong>Grupos musculares:</strong></p>
+                        <p class="mb-3 text-muted small" id="modalProgresoGrupos" style="white-space: pre-wrap;"></p>
+                        <p class="mb-2"><strong>Observaciones:</strong></p>
+                        <p class="mb-0 text-muted small" id="modalProgresoObservaciones" style="white-space: pre-wrap;"></p>
+                    </div>
+                    <div class="modal-footer modal-confirmar-footer d-flex gap-2 justify-content-center">
+                        <a id="modalProgresoBtnEditar" href="#" class="btn btn-warning"><i class="fas fa-edit me-1"></i>Modificar</a>
+                        <a id="modalProgresoBtnEliminar" href="#" class="btn btn-danger btn-confirmar-eliminar-progreso" data-msg="¿Eliminar esta anotación de progreso?"><i class="fas fa-trash me-1"></i>Eliminar</a>
                     </div>
                 </div>
             </div>
@@ -365,6 +546,71 @@
                     <div class="modal-footer modal-confirmar-footer">
                         <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Aceptar</button>
                     </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal Registrar/Editar progreso -->
+        <div class="modal fade" id="modalRegistrarProgreso" tabindex="-1">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header modal-confirmar-header">
+                        <h5 class="modal-title"><i class="fas fa-chart-line me-2"></i><span th:text="${progresoAEditar != null ? 'Modificar progreso' : 'Registrar progreso'}">Registrar progreso</span></h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                    </div>
+                    <form th:if="${progresoAEditar == null}" th:action="@{/profesor/alumnos/{id}/progreso(id=${alumno.id})}" method="post">
+                        <div class="modal-body">
+                            <div class="mb-3">
+                                <label for="progresoFecha" class="form-label">Fecha</label>
+                                <input type="date" class="form-control" id="progresoFecha" name="fecha" th:value="${#temporals.format(#temporals.createNow(), 'yyyy-MM-dd')}" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Grupos musculares trabajados</label>
+                                <div class="d-flex flex-wrap gap-2" th:if="${gruposMusculares != null}">
+                                    <div th:each="g : ${gruposMusculares}" class="form-check">
+                                        <input class="form-check-input" type="checkbox" th:id="${'gm_' + g.id}" th:value="${g.id}" name="gruposMuscularesIds">
+                                        <label class="form-check-label" th:for="${'gm_' + g.id}" th:text="${g.nombre}">Grupo</label>
+                                    </div>
+                                </div>
+                                <p th:if="${gruposMusculares == null || gruposMusculares.isEmpty()}" class="small text-muted mb-0">No hay grupos musculares cargados.</p>
+                            </div>
+                            <div class="mb-0">
+                                <label for="progresoObservaciones" class="form-label">Observaciones</label>
+                                <textarea class="form-control" id="progresoObservaciones" name="observaciones" rows="3" placeholder="Notas u observaciones sobre el entrenamiento..."></textarea>
+                            </div>
+                        </div>
+                        <div class="modal-footer modal-confirmar-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                            <button type="submit" class="btn btn-primary"><i class="fas fa-save me-1"></i>Guardar</button>
+                        </div>
+                    </form>
+                    <form th:if="${progresoAEditar != null}" th:action="@{/profesor/alumnos/{id}/progreso/editar/{registroId}(id=${alumno.id}, registroId=${progresoAEditar.id})}" method="post">
+                        <div class="modal-body">
+                            <div class="mb-3">
+                                <label for="progresoFechaEdit" class="form-label">Fecha</label>
+                                <input type="date" class="form-control" id="progresoFechaEdit" name="fecha" th:value="${#temporals.format(progresoAEditar.fecha, 'yyyy-MM-dd')}" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Grupos musculares trabajados</label>
+                                <div class="d-flex flex-wrap gap-2" th:if="${gruposMusculares != null}">
+                                    <div th:each="g : ${gruposMusculares}" class="form-check">
+                                        <input class="form-check-input" type="checkbox" th:id="${'gme_' + g.id}" th:value="${g.id}" name="gruposMuscularesIds"
+                                            th:checked="${progresoAEditar.gruposMusculares != null && #strings.contains(progresoAEditar.gruposMusculares, g.nombre)}">
+                                        <label class="form-check-label" th:for="${'gme_' + g.id}" th:text="${g.nombre}">Grupo</label>
+                                    </div>
+                                </div>
+                                <p th:if="${gruposMusculares == null || gruposMusculares.isEmpty()}" class="small text-muted mb-0">No hay grupos musculares cargados.</p>
+                            </div>
+                            <div class="mb-0">
+                                <label for="progresoObservacionesEdit" class="form-label">Observaciones</label>
+                                <textarea class="form-control" id="progresoObservacionesEdit" name="observaciones" rows="3" placeholder="Notas u observaciones sobre el entrenamiento..." th:text="${progresoAEditar.observaciones}"></textarea>
+                            </div>
+                        </div>
+                        <div class="modal-footer modal-confirmar-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                            <button type="submit" class="btn btn-primary"><i class="fas fa-save me-1"></i>Guardar cambios</button>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
@@ -412,6 +658,39 @@
                     if (modalAlertaMsg) modalAlertaMsg.textContent = mensaje || '';
                     if (modalAlerta && typeof bootstrap !== 'undefined') (new bootstrap.Modal(modalAlerta)).show();
                 };
+                // Modal confirmar eliminar progreso (mismo estilo que eliminar alumno)
+                var modalEliminarProgreso = document.getElementById('modalConfirmarEliminarProgreso');
+                var modalEliminarProgresoMsg = document.getElementById('modalConfirmarEliminarProgresoMensaje');
+                var btnConfirmarEliminarProgreso = document.getElementById('modalConfirmarEliminarProgresoBtn');
+                if (modalEliminarProgreso && typeof bootstrap !== 'undefined') {
+                    var modalProgresoInst = new bootstrap.Modal(modalEliminarProgreso);
+                    document.querySelectorAll('.btn-confirmar-eliminar-progreso').forEach(function(link) {
+                        link.addEventListener('click', function(e) {
+                            e.preventDefault();
+                            if (modalEliminarProgresoMsg) modalEliminarProgresoMsg.textContent = this.getAttribute('data-msg') || '¿Eliminar esta anotación de progreso?';
+                            if (btnConfirmarEliminarProgreso) btnConfirmarEliminarProgreso.href = this.getAttribute('href') || '#';
+                            var modalVerProgreso = document.getElementById('modalVerProgresoMobile');
+                            if (modalVerProgreso && bootstrap.Modal.getInstance(modalVerProgreso)) bootstrap.Modal.getInstance(modalVerProgreso).hide();
+                            modalProgresoInst.show();
+                        });
+                    });
+                    if (btnConfirmarEliminarProgreso) {
+                        btnConfirmarEliminarProgreso.addEventListener('click', function(e) {
+                            e.preventDefault();
+                            var url = this.getAttribute('href');
+                            if (url && url !== '#') {
+                                modalProgresoInst.hide();
+                                window.location.href = url;
+                            }
+                        });
+                    }
+                }
+                // Abrir modal de progreso si se llegó con editarProgreso en la URL
+                var params = new URLSearchParams(window.location.search);
+                if (params.get('editarProgreso') && typeof bootstrap !== 'undefined') {
+                    var modalProgreso = document.getElementById('modalRegistrarProgreso');
+                    if (modalProgreso) (new bootstrap.Modal(modalProgreso)).show();
+                }
             }
             if (document.readyState === 'loading') {
                 document.addEventListener('DOMContentLoaded', initModalesAlumno);
@@ -453,10 +732,11 @@
                 <div class="stat-card-title"><i class="fas fa-heartbeat me-1"></i>Restricciones médicas</div>
                 <div class="stat-card-content" th:text="${alumno.restriccionesMedicas != null && !alumno.restriccionesMedicas.isEmpty() ? alumno.restriccionesMedicas : 'Ninguna'}">Ninguna</div>
             </div>
-            <!-- 3) Progreso del alumno (solo informativo; en esta app no se registra progreso ni asistencias) -->
-            <div class="stat-item stat-card-trabajo">
+            <!-- 3) Progreso del alumno (clic abre modal para registrar) -->
+            <div class="stat-item stat-card-trabajo stat-card-progreso-clic" data-bs-toggle="modal" data-bs-target="#modalRegistrarProgreso" role="button" tabindex="0">
                 <div class="stat-card-title"><i class="fas fa-chart-line me-1"></i>Progreso del alumno</div>
-                <div class="stat-card-content text-muted">Sin registros de progreso en esta aplicación.</div>
+                <div class="stat-card-content text-muted" th:if="${ultimoProgresoFormateado != null}" th:text="${ultimoProgresoFormateado}">Último registro</div>
+                <div class="stat-card-content text-muted" th:if="${ultimoProgresoFormateado == null}">Sin registros. Clic para cargar.</div>
             </div>
             <!-- 4) Rutinas asignadas (clic para asignar; deshabilitado si inactivo) -->
             <a th:if="${!alumnoInactivo}" th:href="@{/profesor/asignar-rutina/{id}(id=${alumno.id})}" class="stat-item stat-item-link stat-card-rutinas text-decoration-none d-block">
@@ -489,7 +769,7 @@
         </div>
 
         <!-- Últimas 3 rutinas -->
-        <div class="info-card">
+        <div class="info-card rutinas-asignadas-card">
             <div class="card-header">
                 <h5 class="mb-0"><i class="fas fa-dumbbell me-2"></i>Últimas 3 rutinas</h5>
                 <p class="mb-0 small opacity-90">Para ver todas las asignaciones, usá <strong>Mis asignaciones</strong> en el panel del profesor.</p>
@@ -529,7 +809,7 @@
                         </thead>
                         <tbody>
                             <tr th:each="rutina : ${rutinasAsignadas}">
-                                <td th:text="${rutina.fechaCreacion != null ? #temporals.format(rutina.fechaCreacion, 'dd/MM/yyyy') : 'Sin fecha'}">Fecha</td>
+                                <td class="text-nowrap" th:text="${rutina.fechaCreacion != null ? #temporals.format(rutina.fechaCreacion, 'dd/MM/yy') : 'Sin fecha'}">Fecha</td>
                                 <td><span th:attr="title=${rutina.nombre}" th:text="${#strings.abbreviate(rutina.nombre, 22)}">Nombre</span></td>
                                 <td>
                                     <span class="badge bg-secondary" th:attr="title=${rutina.categoria}" th:text="${rutina.categoria != null ? #strings.abbreviate(rutina.categoria, 12) : '—'}">—</span>
@@ -582,18 +862,96 @@
             </div>
         </div>
 
-        <!-- Notas Privadas del Profesor (mismo campo que "Notas del profesor" en crear/editar alumno) -->
+        <!-- Progreso del alumno (historial de anotaciones por fecha) -->
+        <div class="info-card info-card-progreso">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="fas fa-chart-line me-2"></i>Progreso del alumno</h5>
+                <p class="mb-0 small opacity-90">Historial de anotaciones. Clic en la tarjeta de arriba para agregar una nueva.</p>
+            </div>
+            <div class="card-body">
+                <div th:if="${registrosProgreso == null || registrosProgreso.isEmpty()}" class="text-center text-muted py-4">
+                    <i class="fas fa-clipboard-list fa-3x mb-3"></i>
+                    <h6>Sin registros de progreso</h6>
+                    <p class="text-muted mb-0">Hacé clic en la tarjeta "Progreso del alumno" de arriba para cargar la primera anotación.</p>
+                </div>
+                <div th:if="${registrosProgreso != null && !registrosProgreso.isEmpty()}" th:attr="data-alumno-id=${alumno.id}">
+                    <div class="progreso-scroll-mobile">
+                    <table class="table table-sm table-hover align-middle mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Fecha</th>
+                                <th>Grupos musculares</th>
+                                <th>Observaciones</th>
+                                <th class="text-center col-acciones-progreso">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="reg : ${registrosProgreso}" class="progreso-row-clickable"
+                                th:attr="data-fecha=${reg.fecha != null ? #temporals.format(reg.fecha, 'dd/MM/yy') : '—'},
+                                         data-grupos=${reg.gruposMusculares != null ? reg.gruposMusculares : '—'},
+                                         data-observaciones=${reg.observaciones != null ? reg.observaciones : '—'},
+                                         data-registro-id=${reg.id},
+                                         data-edit-url=@{/profesor/alumnos/{id}(id=${alumno.id}, editarProgreso=${reg.id})},
+                                         data-delete-url=@{/profesor/alumnos/{id}/progreso/eliminar/{registroId}(id=${alumno.id}, registroId=${reg.id})}">
+                                <td class="text-nowrap" th:text="${reg.fecha != null ? #temporals.format(reg.fecha, 'dd/MM/yy') : '—'}">Fecha</td>
+                                <td class="small" style="max-width: 110px;">
+                                    <span class="d-block text-truncate" th:attr="title=${reg.gruposMusculares}">
+                                        <span th:if="${reg.gruposMusculares != null && !reg.gruposMusculares.isEmpty()}" th:text="${reg.gruposMusculares}">Grupos</span>
+                                        <span th:if="${reg.gruposMusculares == null || reg.gruposMusculares.isEmpty()}" class="fst-italic text-muted">—</span>
+                                    </span>
+                                </td>
+                                <td class="small" style="max-width: 250px;">
+                                    <span th:if="${reg.observaciones != null && !reg.observaciones.isEmpty()}" class="d-block text-truncate" th:attr="title=${reg.observaciones}" th:text="${#strings.abbreviate(reg.observaciones, 60)}">Obs</span>
+                                    <span th:if="${reg.observaciones == null || reg.observaciones.isEmpty()}" class="fst-italic text-muted">—</span>
+                                </td>
+                                <td class="text-center col-acciones-progreso">
+                                    <a th:href="@{/profesor/alumnos/{id}(id=${alumno.id}, editarProgreso=${reg.id})}" class="btn btn-warning btn-sm py-1 px-2" title="Modificar progreso">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    <a th:href="@{/profesor/alumnos/{id}/progreso/eliminar/{registroId}(id=${alumno.id}, registroId=${reg.id})}" class="btn btn-danger btn-sm py-1 px-2 btn-confirmar-eliminar-progreso" title="Eliminar progreso" data-msg="¿Eliminar esta anotación de progreso?">
+                                        <i class="fas fa-trash"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Notas Privadas del Profesor (editable en la ficha) -->
         <div class="info-card">
             <div class="card-header">
                 <h5><i class="fas fa-sticky-note me-2"></i>Notas Privadas del Profesor</h5>
             </div>
             <div class="card-body">
-                <textarea class="form-control" rows="3" readonly placeholder="Escribe notas privadas sobre el alumno... Solo visible para el profesor." th:text="${alumno.notasProfesor}"></textarea>
-                <p class="small text-muted mt-2 mb-0"><i class="fas fa-info-circle me-1"></i>Para modificar estas notas, usá <a th:href="@{/profesor/alumnos/editar/{id}(id=${alumno.id})}">Editar alumno</a>.</p>
+                <form th:action="@{/profesor/alumnos/{id}/notas(id=${alumno.id})}" method="post" class="notas-profesor-form">
+                    <textarea class="form-control mb-2" name="notasProfesor" rows="4" placeholder="Escribe notas privadas sobre el alumno... Solo visible para el profesor.">[[${alumno.notasProfesor != null ? alumno.notasProfesor : ''}]]</textarea>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save me-1"></i>Guardar notas
+                    </button>
+                </form>
             </div>
+        </div>
+
+        <!-- Botón Eliminar usuario (debajo de todo) -->
+        <div class="d-flex justify-content-center justify-content-md-end mt-4 mb-3">
+            <button type="button" class="btn btn-danger" id="btnEliminarAlumno" title="Eliminar alumno">
+                <i class="fas fa-trash me-2"></i>Eliminar usuario
+            </button>
         </div>
     </div>
 </div>
+
+<!-- Barra inferior móvil: mismo estilo que panel del profesor (solo móvil) -->
+<nav class="bottom-nav-mobile" aria-label="Accesos rápidos">
+    <a th:href="@{/profesor/dashboard}" class="bottom-nav-item" aria-label="Inicio"><i class="fa-solid fa-house"></i><span>Inicio</span></a>
+    <a th:href="@{/profesor/dashboard(tab='alumnos')}" class="bottom-nav-item" aria-label="Alumnos"><i class="fa-solid fa-users"></i><span>Alumnos</span></a>
+    <a th:href="@{/profesor/dashboard(tab='rutinas')}" class="bottom-nav-item" aria-label="Rutinas"><i class="fa-solid fa-list-check"></i><span>Rutinas</span></a>
+    <a th:href="@{/profesor/administracion}" class="bottom-nav-item" th:if="${#authentication.principal != null && (#authentication.principal.rol == 'ADMIN' || #authentication.principal.rol == 'DEVELOPER')}" aria-label="Más"><i class="fa-solid fa-gear"></i><span>Más</span></a>
+    <a th:href="@{/profesor/dashboard}" class="bottom-nav-item" th:if="${#authentication.principal != null && #authentication.principal.rol != 'ADMIN' && #authentication.principal.rol != 'DEVELOPER'}" aria-label="Más"><i class="fa-solid fa-ellipsis"></i><span>Más</span></a>
+</nav>
 
 <!-- Footer Fragment -->
  <div th:replace="fragments/footer :: footer"></div>
@@ -653,6 +1011,35 @@
                 document.body.removeChild(tempInput);
             }
 
+            function initProgresoMobileModal() {
+                var modal = document.getElementById('modalVerProgresoMobile');
+                if (!modal) return;
+                var modalEl = new bootstrap.Modal(modal);
+                var btnEditar = document.getElementById('modalProgresoBtnEditar');
+                var btnEliminar = document.getElementById('modalProgresoBtnEliminar');
+                var spanFecha = document.getElementById('modalProgresoFecha');
+                var spanGruposEl = document.getElementById('modalProgresoGrupos');
+                var spanObs = document.getElementById('modalProgresoObservaciones');
+                document.querySelectorAll('.progreso-row-clickable').forEach(function(row) {
+                    row.addEventListener('click', function(e) {
+                        if (window.innerWidth > 991) return;
+                        e.preventDefault();
+                        e.stopPropagation();
+                        var fecha = row.getAttribute('data-fecha') || '—';
+                        var grupos = row.getAttribute('data-grupos') || '—';
+                        var obs = row.getAttribute('data-observaciones') || '—';
+                        var editUrl = row.getAttribute('data-edit-url') || '#';
+                        var deleteUrl = row.getAttribute('data-delete-url') || '#';
+                        spanFecha.textContent = fecha;
+                        spanGruposEl.textContent = grupos;
+                        spanObs.textContent = obs;
+                        btnEditar.href = editUrl;
+                        btnEliminar.href = deleteUrl;
+                        modalEl.show();
+                    });
+                });
+            }
+
             function initWhatsApp() {
                 document.querySelectorAll('.compartir-whatsapp').forEach(function(link) {
                     var dataUrl = link.getAttribute('data-url') || '';
@@ -669,10 +1056,12 @@
             if (document.readyState === 'loading') {
                 document.addEventListener('DOMContentLoaded', function() {
                     initCopiarEnlace();
+                    initProgresoMobileModal();
                     initWhatsApp();
                 });
             } else {
                 initCopiarEnlace();
+                initProgresoMobileModal();
                 initWhatsApp();
             }
         })();

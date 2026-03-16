@@ -30,7 +30,12 @@ Para ver la lista de mejoras pendientes e implementadas (ítem por ítem), el ch
 
 ---
 
-## Verificar / reparar – Eliminar usuario y rutinas asignadas
+## Verificar / reparar
+
+### Scroll vertical en vista de progresos (móvil)
+- **Pendiente:** Verificar que el scroll **vertical** se active al superar los 5 registros en la vista de progresos del alumno, solo en móvil. Actualmente no funciona correctamente (se activa scroll horizontal en lugar de vertical).
+
+### Eliminar usuario y rutinas asignadas
 
 - **Problema:** Al eliminar todos los usuarios y luego ir a "Rutinas asignadas", al abrir una rutina aparecía que no se podía ver porque solo se pueden ver rutinas asignadas a usuarios (al no existir el usuario, la rutina quedaba huérfana).
 - **Lógica a seguir:** Al **eliminar un usuario**, deben **eliminarse también todas sus rutinas asignadas** (activas e inactivas). Así, si se eliminan todos los usuarios, no debe haber rutinas asignadas.
@@ -56,7 +61,7 @@ Para ver la lista de mejoras pendientes e implementadas (ítem por ítem), el ch
 ## Próximos pasos (orden sugerido)
 
 1. ~~**Mejorar front con responsividad** (panel del profesor).~~ ✅ **Hecho (Mar 2026):** login, navbar compacto, dashboard 6 tarjetas en móvil, tabla alumnos (acción, celular icono, ver solo ojo, asignar desde detalle), footer una fila. Ver GUIA_RESPONSIVE.md §5 y CHANGELOG [2026-03-15].
-2. **Mañana:** **Vista de ficha del alumno – mejoras para móvil.** Continuar con ajustes responsive y usabilidad en la pantalla de detalle del alumno en dispositivos móviles.
+2. ~~**Vista de ficha del alumno – mejoras para móvil.**~~ ✅ **Hecho (Mar 2026):** contenedor, título y subtítulo adaptados; header (Volver/Eliminar) a ancho completo; tarjetas en 1 columna; bloque alumno-info apilado; botones de tabla con área táctil mínima 38px; breakpoints 991px y 575px. **Vista del alumno terminada:** modal progreso al tocar registro (móvil), modal confirmar eliminar progreso (estilo borrar alumno), botón Guardar notas, Eliminar usuario debajo de todo, barra inferior móvil igual al panel, formato fecha dd/MM/yy. Pendiente: scroll vertical en progresos (móvil, >5 registros).
 3. **Luego:** Revisar/cambiar el **sistema de backup** — todavía no está definido si va a quedar como está o se modificará.
 4. **Luego:** **Modificar el manual del usuario** (actualizar contenido y estructura según los cambios de la app).
 

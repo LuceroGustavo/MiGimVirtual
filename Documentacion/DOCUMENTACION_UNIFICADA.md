@@ -8,7 +8,7 @@ Contenido importante reunido de los documentos del proyecto. Para contexto: [LEE
 
 - **Proyecto:** Nombre MiGimVirtual; paquete `com.migimvirtual`; clase principal `MigimvirtualApplication`.
 - **Base de datos:** `migimvirtual` (URL en `application*.properties`); se crea al arrancar si no existe; tablas con `ddl-auto=update`.
-- **Credenciales de desarrollo:** `profesor@migimvirtual.com` / `profesor`; `developer@migimvirtual.com` / `Qbasic.1977.migimvirtual`.
+- **Credenciales de desarrollo:** `profesor@migymvirtual.com` / `profesor`; `lucerogustavosi@gmail.com` / `Qbasic.1977`.
 - **Marca:** Navbar con logo `mgvirtual_logo1.png` y fondo `fondo-navbar.png`. Página pública: carrusel con videos `video_mgvirtual_inicio_escritorio.mp4` (escritorio) y `Video_mgvirtual_inicio_movil.mp4` (móvil).
 - **Servidor:** Menú `./migimvirtual`; scripts `reset_db_migimvirtual.sql` / `reset_db_migimvirtual.sh`; variables `MIGIMVIRTUAL_DB_USER`, `MIGIMVIRTUAL_DB_PASSWORD`.
 
@@ -19,7 +19,7 @@ Contenido importante reunido de los documentos del proyecto. Para contexto: [LEE
 - **Panel único:** Profesor (roles DEVELOPER, ADMIN, AYUDANTE). Sin panel alumno ni admin separado.
 - **Ejercicios:** Predeterminados 1–60 desde `uploads/ejercicios/`; ABM; grupos musculares como entidad (`GrupoMuscular`); formularios y modal Ver alineados con series/rutinas.
 - **Series y rutinas:** ABM; asignación rutina → alumno; enlace por token `/rutinas/hoja/{token}`; Copiar enlace y WhatsApp desde ficha alumno; orden de series; modificar rutina con tres bloques (Detalles, Series en rutina, Añadir más).
-- **Alumnos:** Solo ficha (sin login). Estado ACTIVO/INACTIVO; filtros por nombre y estado. Al eliminar alumno se borran mediciones y rutinas asignadas. Tarjeta "Progreso del alumno" solo informativa (sin registro de asistencias).
+- **Alumnos:** Solo ficha (sin login). Estado ACTIVO/INACTIVO; filtros por nombre y estado. Al eliminar alumno se borran mediciones y rutinas asignadas. Tarjeta "Progreso del alumno" con historial de registros (crear, editar, eliminar). **Vista del alumno terminada (Mar 2026):** responsive móvil, modal progreso al tocar registro, modal confirmar eliminar progreso, botón Guardar notas, Eliminar usuario debajo de todo, barra inferior móvil, formato fecha dd/MM/yy. Pendiente: scroll vertical en progresos móvil (>5 registros).
 - **Página pública:** Landing `/`, Planes `/planes`, consultas; administración en `/profesor/pagina-publica`.
 - **Manual del usuario:** HTML en `/profesor/manual` (botón en panel); cubre acceso, panel, alumnos, ejercicios, series, rutinas, usuarios, administración. (Calendario y pizarra eliminados en Mar 2026.)
 - **Backup (terminado Mar 2026):** Ver sección 2.

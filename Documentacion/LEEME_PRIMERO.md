@@ -18,8 +18,8 @@
 
 | Usuario | Correo | Contraseña |
 |---------|--------|------------|
-| Profesor/Admin | profesor@migimvirtual.com | profesor |
-| Developer | developer@migimvirtual.com | Qbasic.1977.migimvirtual |
+| Profesor/Admin | profesor@migymvirtual.com | profesor |
+| Developer | lucerogustavosi@gmail.com | Qbasic.1977 |
 
 Tras iniciar sesión se redirige al **Panel del profesor** (`/profesor/{id}`).
 
@@ -68,7 +68,7 @@ Tras iniciar sesión se redirige al **Panel del profesor** (`/profesor/{id}`).
 ## 4. Evolución ya realizada (MiGimVirtual)
 
 - **Base de datos:** Nueva BD `migimvirtual`; en `application*.properties` la URL apunta a `migimvirtual`. MySQL crea la BD si no existe; Hibernate crea/actualiza tablas con `ddl-auto=update`.
-- **Renombre completo:** Paquete `com.mattfuncional` → `com.migimvirtual`; clase principal `MigimvirtualApplication`; `pom.xml` (groupId/artifactId/name) MiGimVirtual; credenciales de desarrollo `profesor@migimvirtual.com` y `developer@migimvirtual.com`.
+- **Renombre completo:** Paquete `com.mattfuncional` → `com.migimvirtual`; clase principal `MigimvirtualApplication`; `pom.xml` (groupId/artifactId/name) MiGimVirtual; credenciales de desarrollo `profesor@migymvirtual.com` y `lucerogustavosi@gmail.com`.
 - **Marca e interfaz:** Navbar con logo `mgvirtual_logo1.png` y fondo `fondo-navbar.png`; página pública (carrusel) con videos `video_mgvirtual_inicio_escritorio.mp4` (escritorio) y `Video_mgvirtual_inicio_movil.mp4` (móvil).
 - **Servidor:** Script de menú `./migimvirtual` en la raíz; scripts `scripts/servidor/reset_db_migimvirtual.sql` y `reset_db_migimvirtual.sh`; variables de entorno `MIGIMVIRTUAL_DB_USER`, `MIGIMVIRTUAL_DB_PASSWORD`.
 

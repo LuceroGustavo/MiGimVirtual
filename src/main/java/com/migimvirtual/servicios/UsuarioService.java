@@ -4,6 +4,7 @@ import com.migimvirtual.entidades.Usuario;
 import com.migimvirtual.entidades.Profesor;
 import com.migimvirtual.entidades.Rutina;
 import com.migimvirtual.repositorios.MedicionFisicaRepository;
+import com.migimvirtual.repositorios.RegistroProgresoRepository;
 import com.migimvirtual.repositorios.RutinaRepository;
 import com.migimvirtual.repositorios.UsuarioRepository;
 import com.migimvirtual.repositorios.ProfesorRepository;
@@ -32,6 +33,9 @@ public class UsuarioService {
 
     @Autowired
     private MedicionFisicaRepository medicionFisicaRepository;
+
+    @Autowired
+    private RegistroProgresoRepository registroProgresoRepository;
 
     @Autowired
     private RutinaRepository rutinaRepository;
@@ -278,6 +282,16 @@ public class UsuarioService {
         return usuarioRepository.save(usuarioExistente);
     }
 
+    /** Actualiza solo las notas del profesor para un alumno. */
+    @CacheEvict(value = "usuarios", allEntries = true)
+    public void actualizarNotasProfesor(Long alumnoId, String notas) {
+        Usuario usuario = usuarioRepository.findById(alumnoId)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado con id: " + alumnoId));
+        String valor = (notas != null && !notas.trim().isEmpty()) ? notas.trim() : null;
+        usuario.setNotasProfesor(valor);
+        usuarioRepository.save(usuario);
+    }
+
     private void appendHistorialEstado(Usuario usuario, String evento) {
         String fecha = java.time.LocalDate.now().toString();
         String linea = fecha + " - " + evento;
@@ -296,6 +310,7 @@ public class UsuarioService {
     @Transactional
     public void eliminarUsuario(Long id) {
         medicionFisicaRepository.deleteByUsuario_Id(id);
+        registroProgresoRepository.deleteByUsuario_Id(id);
         List<Rutina> rutinasDelAlumno = rutinaRepository.findByUsuarioId(id);
         for (Rutina r : rutinasDelAlumno) {
             rutinaService.eliminarRutina(r.getId());
