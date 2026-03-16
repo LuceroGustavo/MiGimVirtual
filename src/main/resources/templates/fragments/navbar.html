@@ -1,4 +1,4 @@
-<!-- fragments/navbar.html - MiGimVirtual. Fondo unificado y texto negro en todas las vistas. -->
+<!-- fragments/navbar.html - MiGimVirtual. Fondo unificado y texto negro. Móvil: compacto (logo, texto, sobre, nombre, logout). -->
 <nav th:fragment="navbar" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/springsecurity"
      class="navbar navbar-expand-lg navbar-matt shadow-sm"
      style="background-image: url('/img/fondo-navbar.png'); background-size: cover; background-position: center; background-color: #e0e0e0;">
@@ -7,34 +7,51 @@
         .navbar-matt .btn-outline-navbar { border-color: #333; color: #000 !important; }
         .navbar-matt .btn-outline-navbar:hover { background: rgba(0,0,0,0.08); color: #000 !important; border-color: #000; }
         .navbar-matt .navbar-brand .logo-circle { width: 48px; height: 48px; border-radius: 50%; object-fit: cover; flex-shrink: 0; }
+        /* Móvil: navbar en una sola fila, más angosto */
+        @media (max-width: 991px) {
+            .navbar-matt .container-fluid { padding-top: 0.5rem !important; padding-bottom: 0.5rem !important; padding-left: 0.5rem !important; padding-right: 0.5rem !important; }
+            .navbar-matt .navbar-volver, .navbar-matt .navbar-panel, .navbar-matt .navbar-email, .navbar-matt .navbar-avatar { display: none !important; }
+            .navbar-matt .navbar-brand .logo-circle { width: 36px; height: 36px; }
+            .navbar-matt .navbar-brand span { font-size: 1rem !important; }
+            .navbar-matt .navbar-brand.me-2 { margin-right: 0.35rem !important; }
+            .navbar-matt .navbar-name-mobile { max-width: 100px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 0.9rem; font-weight: 600; }
+            .navbar-matt .navbar-envelope-mobile { padding: 0.35rem 0.5rem !important; font-size: 1rem; }
+            .navbar-matt .btn-logout-mobile { padding: 0.35rem 0.6rem !important; font-size: 0.85rem; }
+        }
+        @media (min-width: 992px) {
+            .navbar-matt .navbar-name-mobile { display: none !important; }
+        }
     </style>
     <div class="container-fluid">
-        <a class="navbar-brand d-flex align-items-center" th:href="@{/}">
+        <!-- Logo + MiGimVirtual: con sesión profesor lleva al panel; sino a inicio -->
+        <a class="navbar-brand d-flex align-items-center me-2"
+           th:href="${(#authentication.principal != null and #authentication.principal.rol != null and (#authentication.principal.rol == 'ADMIN' or #authentication.principal.rol == 'AYUDANTE' or #authentication.principal.rol == 'DEVELOPER')) ? '/profesor/dashboard' : '/'}">
             <img th:src="@{/img/mgvirtual_logo1.png}" alt="Logo MiGimVirtual" class="logo-circle me-2" src="/img/mgvirtual_logo1.png" onerror="this.src='/img/not_imagen.png'">
             <span class="fw-bold h4 mb-0">MiGimVirtual</span>
         </a>
 
-        <a href="javascript:history.back()" class="btn btn-outline-navbar ms-3"><i class="fas fa-arrow-left"></i> Volver</a>
+        <a href="javascript:history.back()" class="btn btn-outline-navbar ms-3 navbar-volver"><i class="fas fa-arrow-left"></i> Volver</a>
 
-        <div class="ms-auto">
+        <div class="ms-auto d-flex align-items-center">
             <div sec:authorize="isAuthenticated()" class="d-flex align-items-center"
                  th:with="currentUser=${#authentication.principal}">
 
-                <a th:if="${currentUser.rol == 'ADMIN' or currentUser.rol == 'AYUDANTE' or currentUser.rol == 'DEVELOPER'}" th:href="@{/profesor/dashboard}" class="btn btn-outline-navbar me-3">
+                <a th:if="${currentUser.rol == 'ADMIN' or currentUser.rol == 'AYUDANTE' or currentUser.rol == 'DEVELOPER'}" th:href="@{/profesor/dashboard}" class="btn btn-outline-navbar me-3 navbar-panel">
                     <i class="fas fa-tachometer-alt me-1"></i> Ir a mi Panel
                 </a>
-                <a th:if="${currentUser.rol == 'ADMIN' or currentUser.rol == 'DEVELOPER'}" th:href="@{/profesor/pagina-publica}" class="btn btn-outline-navbar me-3 position-relative" title="Consultas recibidas">
+                <a th:if="${currentUser.rol == 'ADMIN' or currentUser.rol == 'DEVELOPER'}" th:href="@{/profesor/pagina-publica}" class="btn btn-outline-navbar me-3 position-relative navbar-envelope-mobile" title="Consultas recibidas">
                     <i class="fas fa-envelope"></i>
                     <span th:if="${cantidadConsultas != null && cantidadConsultas > 0}" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" th:text="${cantidadConsultas}">0</span>
                 </a>
-                <div class="text-end me-3 text-navbar">
+                <span class="navbar-name-mobile text-navbar ms-2" th:text="${currentUser.nombre}" title="Usuario">Nombre</span>
+                <div class="text-end me-3 text-navbar navbar-email">
                     <div class="fw-bold" th:text="${currentUser.nombre}">Nombre</div>
                     <small class="text-muted" th:text="${currentUser.correo}">usuario@correo.com</small>
                 </div>
                 <img th:src="${currentUser.avatar != null and !#strings.isEmpty(currentUser.avatar) and currentUser.avatar != 'null' and currentUser.avatar != '/img/not_imagen.png' ? currentUser.avatar : '/img/avatar1.png'}"
-                     alt="Avatar" style="width: 45px; height: 45px;" class="rounded-circle border border-secondary"
+                     alt="Avatar" style="width: 45px; height: 45px;" class="rounded-circle border border-secondary navbar-avatar"
                      onerror="this.src='/img/avatar1.png'">
-                <a th:href="@{/logout}" class="btn btn-danger ms-3">Salir</a>
+                <a th:href="@{/logout}" class="btn btn-danger ms-3 btn-logout-mobile">Salir</a>
             </div>
 
             <div sec:authorize="!isAuthenticated()">

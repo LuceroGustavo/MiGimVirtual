@@ -301,6 +301,75 @@
             .main-action-cards { flex-direction: column; }
             .main-action-card { max-width: 100%; min-width: 100%; }
         }
+
+        /* === Vista móvil: 6 tarjetas como pantalla principal === */
+        @media (max-width: 991px) {
+            .dashboard-grid { display: none !important; }
+            .dashboard-mobile-cards { display: grid !important; }
+            .tabs-section .nav-tabs { display: none !important; }
+            .tabs-section { max-width: 480px; margin-left: auto; margin-right: auto; }
+        }
+        @media (min-width: 992px) {
+            .dashboard-mobile-cards { display: none !important; }
+        }
+        .dashboard-mobile-cards {
+            display: none;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+            max-width: 480px;
+            margin: 0 auto 2rem;
+            padding: 0 0.5rem;
+        }
+        .dashboard-mobile-card {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 150px;
+            border: none;
+            border-radius: 1.25rem;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+            text-decoration: none;
+            color: inherit;
+            transition: transform 0.2s, box-shadow 0.2s;
+            padding: 1.15rem 0.75rem;
+        }
+        .dashboard-mobile-card:active { transform: scale(0.98); }
+        .dashboard-mobile-card:hover { color: inherit; }
+        .dashboard-mobile-card i { font-size: 2.25rem; margin-bottom: 0.5rem; }
+        .dashboard-mobile-card .mobile-card-label { font-size: 1rem; font-weight: 600; color: #37474f; text-align: center; }
+        .dashboard-mobile-card .mobile-card-stat { font-size: 1.4rem; font-weight: 700; color: #37474f; }
+        .dashboard-mobile-card.card-alumnos-m   { background: linear-gradient(135deg, #c8e6c9 60%, #b2dfdb 100%); }
+        .dashboard-mobile-card.card-alumnos-m i { color: #1b5e20; }
+        .dashboard-mobile-card.card-series-m    { background: linear-gradient(135deg, #e1bee7 60%, #d1c4e9 100%); }
+        .dashboard-mobile-card.card-series-m i  { color: #4a148c; }
+        .dashboard-mobile-card.card-rutinas-m   { background: linear-gradient(135deg, #fff9c4 60%, #ffe082 100%); }
+        .dashboard-mobile-card.card-rutinas-m i { color: #e65100; }
+        .dashboard-mobile-card.card-asignadas-m { background: linear-gradient(135deg, #bbdefb 60%, #b3e5fc 100%); }
+        .dashboard-mobile-card.card-asignadas-m i { color: #0d47a1; }
+        .dashboard-mobile-card.card-ejercicios-m { background: linear-gradient(135deg, #fff9c4 60%, #ffe082 100%); }
+        .dashboard-mobile-card.card-ejercicios-m i { color: #e65100; }
+        .dashboard-mobile-card.card-admin-m     { background: linear-gradient(135deg, #e1bee7 60%, #d1c4e9 100%); }
+        .dashboard-mobile-card.card-admin-m i   { color: #5e35b1; }
+        @media (max-width: 991px) {
+            .container-fluid.py-4.px-4 { padding-left: 0.75rem !important; padding-right: 0.75rem !important; }
+        }
+        @media (max-width: 400px) {
+            .dashboard-mobile-cards { gap: 0.75rem; }
+            .dashboard-mobile-card { min-height: 130px; }
+            .dashboard-mobile-card i { font-size: 1.9rem; }
+            .dashboard-mobile-card .mobile-card-label { font-size: 0.9rem; }
+        }
+        /* Celular: solo en móvil icono + popover; en escritorio número */
+        .celular-desktop { display: none; }
+        .celular-mobile { display: none; }
+        @media (min-width: 992px) {
+            .celular-desktop { display: inline; }
+        }
+        @media (max-width: 991px) {
+            .celular-mobile { display: inline-flex; }
+            .celular-icon-wrap { cursor: pointer; padding: 0.35rem; min-width: 2rem; align-items: center; justify-content: center; }
+        }
     </style>
 </head>
 <body>
@@ -320,7 +389,43 @@
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
         </div>
 
-        <!-- Grid 4x2: 4 tarjetas arriba (menos altas), 4 abajo alineadas por columna -->
+        <!-- Móvil: 6 tarjetas como pantalla principal (solo visible &lt; 992px) -->
+        <div class="dashboard-mobile-cards" id="dashboardMobileCards" aria-label="Accesos rápidos">
+            <button type="button" class="dashboard-mobile-card card-alumnos-m mobile-card-tab" data-tab="alumnos" aria-label="Ir a Mis Alumnos">
+                <i class="fa-solid fa-users"></i>
+                <span class="mobile-card-stat" th:text="${usuarios != null ? usuarios.size() : 0}">0</span>
+                <span class="mobile-card-label">Alumnos</span>
+            </button>
+            <button type="button" class="dashboard-mobile-card card-series-m mobile-card-tab" data-tab="series" aria-label="Ir a Mis Series">
+                <i class="fa-solid fa-dumbbell"></i>
+                <span class="mobile-card-stat" th:text="${series != null ? series.size() : 0}">0</span>
+                <span class="mobile-card-label">Series</span>
+            </button>
+            <button type="button" class="dashboard-mobile-card card-rutinas-m mobile-card-tab" data-tab="rutinas" aria-label="Ir a Mis Rutinas">
+                <i class="fa-solid fa-list-check"></i>
+                <span class="mobile-card-stat" th:text="${rutinas != null ? rutinas.size() : 0}">0</span>
+                <span class="mobile-card-label">Rutinas</span>
+            </button>
+            <button type="button" class="dashboard-mobile-card card-asignadas-m mobile-card-tab" data-tab="asignaciones" aria-label="Ir a Asignaciones">
+                <i class="fa-solid fa-clipboard-list"></i>
+                <span class="mobile-card-stat" th:text="${rutinasAsignadas != null ? rutinasAsignadas.size() : 0}">0</span>
+                <span class="mobile-card-label">Asignaciones</span>
+            </button>
+            <a th:href="@{/profesor/mis-ejercicios}" class="dashboard-mobile-card card-ejercicios-m" target="_blank" rel="noopener" aria-label="Abrir Ejercicios">
+                <i class="fa-solid fa-dumbbell"></i>
+                <span class="mobile-card-label">Ejercicios</span>
+            </a>
+            <a th:if="${usuario != null && (usuario.rol == 'ADMIN' || usuario.rol == 'DEVELOPER')}" th:href="@{/profesor/administracion}" class="dashboard-mobile-card card-admin-m" target="_blank" rel="noopener" aria-label="Administrar sistema">
+                <i class="fa-solid fa-cogs"></i>
+                <span class="mobile-card-label">Administrar</span>
+            </a>
+            <span th:if="${usuario != null && usuario.rol != 'ADMIN' && usuario.rol != 'DEVELOPER'}" class="dashboard-mobile-card card-admin-m" role="button" tabindex="0" id="btnAdminNoPermitidoMobile" aria-label="Administrar sistema (solo administradores)">
+                <i class="fa-solid fa-cogs"></i>
+                <span class="mobile-card-label">Administrar</span>
+            </span>
+        </div>
+
+        <!-- Grid 4x2: 4 tarjetas arriba (menos altas), 4 abajo alineadas por columna (solo escritorio) -->
         <div class="dashboard-grid">
             <!-- Columna 1: Alumnos -->
             <div class="dashboard-col">
@@ -454,7 +559,7 @@
                                     <th>Celular</th>
                                     <th>Estado</th>
                                     <th>Rutinas</th>
-                                    <th>Acciones</th>
+                                    <th>Acción</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -462,7 +567,11 @@
                                     th:attr="data-estado=${usuario.estadoAlumno},data-nombre=${usuario.nombre}">
                                     <td th:text="${usuario.nombre}">Nombre</td>
                                     <td th:text="${usuario.edad}">Edad</td>
-                                    <td th:text="${usuario.celular != null ? usuario.celular : '-'}">-</td>
+                                    <td>
+                                        <span class="celular-desktop" th:text="${usuario.celular != null ? usuario.celular : '—'}">—</span>
+                                        <span th:if="${usuario.celular != null}" role="button" tabindex="0" class="celular-mobile celular-icon-wrap" data-bs-toggle="popover" data-bs-trigger="click" th:attr="data-bs-content=${usuario.celular}" title="Celular"><i class="fas fa-mobile-alt text-primary"></i></span>
+                                        <span th:if="${usuario.celular == null}" class="celular-mobile text-muted">—</span>
+                                    </td>
                                     <td>
                                         <span th:if="${usuario.estadoAlumno == 'ACTIVO'}" class="badge bg-success">Activo</span>
                                         <span th:if="${usuario.estadoAlumno == 'INACTIVO'}" class="badge bg-secondary">Inactivo</span>
@@ -472,11 +581,9 @@
                                         <span class="badge bg-success" th:text="${usuario.rutinas != null ? usuario.rutinas.size() : 0}">0</span>
                                     </td>
                                     <td class="text-start">
-                                        <a th:href="@{/profesor/alumnos/{id}(id=${usuario.id})}" class="btn btn-primary btn-sm" title="Ver alumno">
-                                            <i class="fa-solid fa-eye me-1"></i>Ver
-                                        </a>
+                                        <a th:href="@{/profesor/alumnos/{id}(id=${usuario.id})}" class="btn btn-primary btn-sm" title="Ver alumno"><i class="fa-solid fa-eye"></i></a>
                                         <a th:href="@{/profesor/asignar-rutina/{id}(id=${usuario.id})}"
-                                           class="btn btn-info btn-sm"
+                                           class="btn btn-info btn-sm d-none d-lg-inline-block"
                                            th:classappend="${usuario.estadoAlumno == 'INACTIVO'} ? 'disabled opacity-50'"
                                            th:attr="aria-disabled=${usuario.estadoAlumno == 'INACTIVO'},tabindex=${usuario.estadoAlumno == 'INACTIVO'} ? -1 : 0"
                                            th:title="${usuario.estadoAlumno == 'INACTIVO'} ? 'Alumno inactivo' : 'Asignar rutina'">
@@ -681,7 +788,11 @@
     <div th:replace="fragments/footer :: footer"></div>
     
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    
+    <script>
+        document.querySelectorAll('.celular-icon-wrap[data-bs-toggle="popover"]').forEach(function(el) {
+            new bootstrap.Popover(el, { trigger: 'click', container: 'body' });
+        });
+    </script>
     <script th:inline="javascript">
         const profesorId = [[${profesor != null ? profesor.id : 0}]];
     </script>
@@ -696,6 +807,8 @@
             };
             var btnAdmin = document.getElementById('btnAdminNoPermitido');
             if (btnAdmin) btnAdmin.addEventListener('click', function() { window.mostrarAlertaDashboard('Debe ser usuario administrador para poder ingresar.'); });
+            var btnAdminMobile = document.getElementById('btnAdminNoPermitidoMobile');
+            if (btnAdminMobile) btnAdminMobile.addEventListener('click', function() { window.mostrarAlertaDashboard('Debe ser usuario administrador para poder ingresar.'); });
 
             var formEliminar = document.getElementById('formConfirmarEliminarDashboard');
             var modalEliminar = document.getElementById('modalConfirmarEliminarDashboard');
@@ -732,6 +845,21 @@
             }
         })();
 
+        // Móvil: clic en tarjeta de inicio → activar tab y scroll a contenido
+        document.querySelectorAll('.dashboard-mobile-card.mobile-card-tab').forEach(function(btn) {
+            btn.addEventListener('click', function() {
+                var tabId = this.getAttribute('data-tab');
+                if (!tabId) return;
+                var tabButtonId = tabId + '-tab';
+                var tabEl = document.getElementById(tabButtonId);
+                var section = document.getElementById('tabsSection');
+                if (tabEl && section) {
+                    var bsTab = bootstrap.Tab.getOrCreateInstance(tabEl);
+                    bsTab.show();
+                    section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+        });
         // Clic en tarjetas (Alumnos, Series, Rutinas): activar tab y hacer scroll a la sección de listas
         document.querySelectorAll('.card-module.card-scroll-tab').forEach(function(card) {
             card.addEventListener('click', function(e) {

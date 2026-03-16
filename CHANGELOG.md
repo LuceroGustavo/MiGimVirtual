@@ -2,6 +2,31 @@
 
 > Nota: este changelog incluye histórico heredado de MiGym (referencias a admin/chat/websocket).
 
+## [2026-03-15] - feat(ui): responsividad del panel del profesor (móvil) ✅
+
+### 🎯 **Resumen**
+Mejoras de vista móvil para el panel del profesor: login, navbar compacto, dashboard con 6 tarjetas como pantalla principal, tabla de alumnos optimizada, footer en una fila. Escritorio se mantiene igual.
+
+### ✅ **Login**
+- Viewport meta; padding y tamaños adaptados para pantallas ≤ 576px; botón con min-height táctil.
+
+### ✅ **Navbar (móvil ≤ 991px)**
+- Una fila: logo + MiGimVirtual (clic lleva al panel si es profesor), sobre (consultas), nombre abreviado, Salir. Logo enlace a `/profesor/dashboard` cuando sesión profesor. Ocultos: Volver, Ir a mi Panel, correo completo, avatar.
+
+### ✅ **Dashboard (móvil ≤ 991px)**
+- Pantalla principal: 6 tarjetas (Alumnos, Series, Rutinas, Asignaciones, Ejercicios, Administrar). Al tocar una de las cuatro primeras se activa la pestaña y se hace scroll al contenido. Eliminado "Volver al inicio" (el logo del navbar cumple esa función). Sección de pestañas con mismo ancho que las tarjetas (max-width 480px). Tarjetas más altas (min-height 150px), iconos y texto un poco más grandes.
+
+### ✅ **Vista Mis Alumnos (tabla)**
+- Columna "Acción" (singular). Celular: solo en móvil icono + popover al tocar; en escritorio se muestra el número. Botón Ver: solo icono de ojo. Botón Asignar rutina oculto en móvil (d-none d-lg-inline-block): las asignaciones se hacen desde el detalle del alumno.
+
+### ✅ **Footer**
+- Una fila compacta: MiGimVirtual + lucerogustavosi. Sin año. Menos padding para ganar espacio vertical (footer.css, fragments/footer.html).
+
+### 📁 **Archivos modificados**
+login.html, fragments/navbar.html, fragments/footer.html, footer.css, profesor/dashboard.html.
+
+---
+
 ## [2026-03-14] - feat(admin): vista "Mi usuario" para profesor en usuarios del sistema ✅
 
 ### 🎯 **Resumen**
