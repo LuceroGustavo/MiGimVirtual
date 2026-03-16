@@ -2,6 +2,26 @@
 
 > Nota: este changelog incluye histórico heredado de MiGym (referencias a admin/chat/websocket).
 
+## [2026-03-15] - feat(ui): formulario crear/editar alumno y mejoras en detalle alumno ✅
+
+### 🎯 **Resumen**
+Formulario de creación/edición de alumno: responsive en móvil (ancho completo), meta viewport, reorden de campos y layout en escritorio. En la ficha del alumno: notas privadas unificadas con el campo "Notas del profesor" y tarjeta Restricciones médicas con texto más visible.
+
+### ✅ **Formulario crear/editar alumno (nuevoalumno.html)**
+- **Viewport:** Añadida `<meta name="viewport" content="width=device-width, initial-scale=1.0">` para que el responsive y el navbar se apliquen correctamente en móvil.
+- **Orden de campos:** Tras Sexo quedan: Objetivos personales → Restricciones médicas → Notas del profesor.
+- **Layout escritorio:** Fila 1 = Nombre completo + Estado del alumno; Fila 2 = Edad, Sexo, Celular; Fila 3 = Objetivos personales, Restricciones médicas; Fila 4 = Notas del profesor + botón Crear alumno / Guardar cambios. Historial de Estado (solo edición) en fila propia.
+- **Responsive móvil (≤767px):** Tarjeta a ancho completo (sin márgenes laterales), contenedor sin padding horizontal; en ≤575px el botón de envío a ancho completo.
+
+### ✅ **Ficha del alumno (alumno-detalle.html)**
+- **Notas privadas:** El bloque "Notas Privadas del Profesor" muestra el mismo campo que "Notas del profesor" en crear/editar (`alumno.notasProfesor`). Textarea readonly con el valor; texto e enlace "Editar alumno" para modificar.
+- **Restricciones médicas:** Contenido de la tarjeta (dato "Ninguna" o texto) con fuente más grande (1.1rem), negrita (700) y color más oscuro para mayor relevancia.
+
+### 📁 **Archivos modificados**
+profesor/nuevoalumno.html, profesor/alumno-detalle.html.
+
+---
+
 ## [2026-03-15] - feat(ui): responsividad del panel del profesor (móvil) ✅
 
 ### 🎯 **Resumen**

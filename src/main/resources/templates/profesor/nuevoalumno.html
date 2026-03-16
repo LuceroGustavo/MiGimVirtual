@@ -2,6 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/springsecurity">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Nuevo Alumno</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
@@ -15,19 +16,19 @@
             background: #fff;
             border-radius: 18px;
             box-shadow: 0 6px 32px rgba(33, 150, 243, 0.10), 0 1.5px 6px rgba(33, 150, 243, 0.08);
-            padding: 2.5rem 2.5rem 2rem 2.5rem;
-            max-width: 1100px;
-            margin: 2.5rem auto;
+            padding: 2rem 2rem 1.5rem;
+            max-width: 900px;
+            margin: 1.5rem auto;
         }
         .form-title {
-            color: #1976d2;
             font-weight: 700;
-            margin-bottom: 2rem;
+            margin-bottom: 0;
             text-align: center;
             background: #1976d2;
             color: #fff;
             border-radius: 12px 12px 0 0;
-            padding: 1.2rem 0 1rem 0;
+            padding: 1rem 1rem;
+            margin: -2rem -2rem 1.5rem -2rem;
             box-shadow: 0 2px 8px rgba(33, 150, 243, 0.08);
         }
         .form-label {
@@ -83,9 +84,52 @@
         .btn-primary:hover {
             background: linear-gradient(90deg, #1565c0 60%, #1976d2 100%);
         }
+        /* Tablet: algo más de aire */
         @media (max-width: 991px) {
             .form-card {
-                padding: 1.2rem 0.5rem;
+                padding: 1.25rem 1rem;
+                margin: 1rem 0.75rem;
+                border-radius: 14px;
+            }
+            .form-title {
+                margin: -1.25rem -1rem 1.25rem -1rem;
+                padding: 0.9rem 0.75rem;
+                font-size: 1.1rem;
+            }
+        }
+        /* Móvil: tarjeta a ancho completo, ocupa toda la pantalla */
+        @media (max-width: 767px) {
+            .nuevoalumno-page.container-fluid {
+                padding-left: 0 !important;
+                padding-right: 0 !important;
+                max-width: 100% !important;
+                width: 100% !important;
+            }
+            .form-card {
+                margin: 0 !important;
+                border-radius: 0 !important;
+                max-width: 100% !important;
+                width: 100% !important;
+                padding: 1rem 1rem 1.25rem !important;
+                box-shadow: none !important;
+            }
+            .form-title {
+                margin: -1rem -1rem 1rem -1rem !important;
+                padding: 0.9rem 1rem !important;
+                font-size: 1.05rem !important;
+                border-radius: 0 !important;
+            }
+        }
+        @media (max-width: 575px) {
+            .form-card {
+                padding: 0.9rem 0.85rem 1.1rem;
+            }
+            .form-title {
+                padding: 0.85rem 0.85rem;
+                font-size: 1rem;
+            }
+            .btn-primary.btn-lg {
+                width: 100%;
             }
         }
     </style>
@@ -93,7 +137,7 @@
 <body>
 <!-- Navbar fragment -->
 <div th:replace="fragments/navbar :: navbar"></div>
-<div class="container-fluid">
+<div class="container-fluid nuevoalumno-page">
     <div class="form-card">
         <div class="form-title">
             <i class="fas" th:classappend="${editMode} ? 'fa-user-edit' : 'fa-user-plus'"></i>
@@ -107,9 +151,13 @@
             </div>
             <form th:action="${editMode} ? @{'/profesor/alumnos/editar/' + ${usuario.id}} : @{/profesor/alumnos/nuevo}" th:object="${usuario}" method="post">
                 <input type="hidden" th:if="${editMode}" th:field="*{id}" />
+                <!-- Escritorio: fila 1 = Nombre + Estado -->
                 <div class="row">
-                    <div class="col-md-8"></div>
-                    <div class="col-md-4 mb-3">
+                    <div class="col-12 col-md-6 mb-3">
+                        <label for="nombre" class="form-label">Nombre Completo</label>
+                        <input type="text" class="form-control" id="nombre" th:field="*{nombre}" required>
+                    </div>
+                    <div class="col-12 col-md-4 col-lg-3 mb-3 ms-md-auto">
                         <label for="estadoAlumno" class="form-label">Estado del Alumno</label>
                         <select class="form-select estado-select" id="estadoAlumno" th:field="*{estadoAlumno}">
                             <option value="ACTIVO">Activo</option>
@@ -117,23 +165,13 @@
                         </select>
                     </div>
                 </div>
+                <!-- Escritorio: fila 2 = Edad, Sexo, Celular -->
                 <div class="row">
-                    <div class="col-md-4 mb-3">
-                        <label for="nombre" class="form-label">Nombre Completo</label>
-                        <input type="text" class="form-control" id="nombre" th:field="*{nombre}" required>
-                    </div>
-                    <div class="col-md-4 mb-3">
-                        <label for="celular" class="form-label">Celular</label>
-                        <input type="text" class="form-control" id="celular" th:field="*{celular}" placeholder="Ej: 11 1234 5678">
-                    </div>
-                    <div class="col-md-4 mb-3"></div>
-                </div>
-                <div class="row">
-                    <div class="col-md-4 mb-3">
+                    <div class="col-12 col-sm-6 col-md-4 mb-3">
                         <label for="edad" class="form-label">Edad</label>
                         <input type="number" class="form-control" id="edad" th:field="*{edad}">
                     </div>
-                    <div class="col-md-4 mb-3">
+                    <div class="col-12 col-sm-6 col-md-4 mb-3">
                         <label for="sexo" class="form-label">Sexo</label>
                         <select class="form-select" id="sexo" th:field="*{sexo}">
                             <option value="">Seleccionar...</option>
@@ -142,33 +180,43 @@
                             <option value="Otro">Otro</option>
                         </select>
                     </div>
-                    <div class="col-md-4 mb-3" th:if="${editMode}">
+                    <div class="col-12 col-md-4 mb-3">
+                        <label for="celular" class="form-label">Celular</label>
+                        <input type="text" class="form-control" id="celular" th:field="*{celular}" placeholder="Ej: 11 1234 5678">
+                    </div>
+                </div>
+                <!-- Historial solo en edición -->
+                <div class="row" th:if="${editMode}">
+                    <div class="col-12 col-md-6 mb-3">
                         <label for="historialEstado" class="form-label">Historial de Estado</label>
                         <textarea class="form-control" id="historialEstado" th:field="*{historialEstado}" rows="2" readonly></textarea>
                     </div>
                 </div>
+                <!-- Escritorio: fila 3 = Objetivos personales, Restricciones médicas -->
                 <div class="row">
-                    <div class="col-md-6 mb-3">
-                        <label for="notasProfesor" class="form-label">Notas del profesor</label>
-                        <textarea class="form-control" id="notasProfesor" th:field="*{notasProfesor}" rows="2"></textarea>
-                    </div>
-                    <div class="col-md-6 mb-3">
+                    <div class="col-12 col-md-6 mb-3">
                         <label for="objetivosPersonales" class="form-label">Objetivos personales</label>
                         <textarea class="form-control" id="objetivosPersonales" th:field="*{objetivosPersonales}" rows="2" placeholder="Ej: Bajar de peso, ganar masa, etc"></textarea>
                     </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-6 mb-3">
+                    <div class="col-12 col-md-6 mb-3">
                         <label for="restriccionesMedicas" class="form-label">Restricciones médicas</label>
                         <textarea class="form-control" id="restriccionesMedicas" th:field="*{restriccionesMedicas}" rows="2" placeholder="Ej: Lesiones, alergias, etc"></textarea>
                     </div>
-                    <div class="col-md-6 mb-3"></div>
                 </div>
-                <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
-                    <button type="submit" class="btn btn-primary btn-lg">
-                        <i class="fas fa-save me-2"></i>
-                        <span th:text="${editMode} ? 'Guardar Cambios' : 'Crear Alumno'"></span>
-                    </button>
+                <!-- Escritorio: fila 4 = Notas del profesor + Botón -->
+                <div class="row align-items-end">
+                    <div class="col-12 col-md-8 col-lg-9 mb-3">
+                        <label for="notasProfesor" class="form-label">Notas del profesor</label>
+                        <textarea class="form-control" id="notasProfesor" th:field="*{notasProfesor}" rows="2"></textarea>
+                    </div>
+                    <div class="col-12 col-md-4 col-lg-3 mb-3">
+                        <div class="d-flex justify-content-md-end">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="fas fa-save me-2"></i>
+                                <span th:text="${editMode} ? 'Guardar Cambios' : 'Crear Alumno'"></span>
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </form>
         </div>

@@ -56,8 +56,9 @@ Para ver la lista de mejoras pendientes e implementadas (ítem por ítem), el ch
 ## Próximos pasos (orden sugerido)
 
 1. ~~**Mejorar front con responsividad** (panel del profesor).~~ ✅ **Hecho (Mar 2026):** login, navbar compacto, dashboard 6 tarjetas en móvil, tabla alumnos (acción, celular icono, ver solo ojo, asignar desde detalle), footer una fila. Ver GUIA_RESPONSIVE.md §5 y CHANGELOG [2026-03-15].
-2. **Luego:** Revisar/cambiar el **sistema de backup** — todavía no está definido si va a quedar como está o se modificará.
-3. **Luego:** **Modificar el manual del usuario** (actualizar contenido y estructura según los cambios de la app).
+2. **Mañana:** **Vista de ficha del alumno – mejoras para móvil.** Continuar con ajustes responsive y usabilidad en la pantalla de detalle del alumno en dispositivos móviles.
+3. **Luego:** Revisar/cambiar el **sistema de backup** — todavía no está definido si va a quedar como está o se modificará.
+4. **Luego:** **Modificar el manual del usuario** (actualizar contenido y estructura según los cambios de la app).
 
 ---
 

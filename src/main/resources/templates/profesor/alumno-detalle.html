@@ -230,6 +230,7 @@
         /* Patrón de colores igual que panel: alumnos=verde pastel, series=violeta, rutinas=amarillo, asignaciones=celeste */
         .stat-item.stat-card-datos { background: linear-gradient(135deg, #e3f2fd 60%, #bbdefb 100%); border-color: #90caf9; }
         .stat-item.stat-card-alumno { background: linear-gradient(135deg, #e8f5e9 60%, #b2dfdb 100%); border-color: #a5d6a7; }
+        .stat-item.stat-card-alumno .stat-card-content { font-size: 1.1rem; font-weight: 700; color: #2c3e50; }
         .stat-item.stat-card-trabajo { background: linear-gradient(135deg, #ede7f6 60%, #b39ddb 100%); border-color: #b39ddb; }
         .stat-item.stat-card-rutinas { background: linear-gradient(135deg, #fffde7 60%, #ffe082 100%); border-color: #ffd54f; }
         .stat-item .stat-card-datos-list { font-size: 0.9rem; color: #5a6c7d; line-height: 1.6; min-height: 2.8rem; }
@@ -581,13 +582,14 @@
             </div>
         </div>
 
-        <!-- Notas Privadas del Profesor -->
+        <!-- Notas Privadas del Profesor (mismo campo que "Notas del profesor" en crear/editar alumno) -->
         <div class="info-card">
             <div class="card-header">
                 <h5><i class="fas fa-sticky-note me-2"></i>Notas Privadas del Profesor</h5>
             </div>
             <div class="card-body">
-                <textarea class="form-control" rows="3" placeholder="Escribe notas privadas sobre el alumno... Solo visible para el profesor."></textarea>
+                <textarea class="form-control" rows="3" readonly placeholder="Escribe notas privadas sobre el alumno... Solo visible para el profesor." th:text="${alumno.notasProfesor}"></textarea>
+                <p class="small text-muted mt-2 mb-0"><i class="fas fa-info-circle me-1"></i>Para modificar estas notas, usá <a th:href="@{/profesor/alumnos/editar/{id}(id=${alumno.id})}">Editar alumno</a>.</p>
             </div>
         </div>
     </div>
