@@ -6,12 +6,14 @@
         .navbar-matt .navbar-brand span, .navbar-matt .text-navbar { color: #000 !important; }
         .navbar-matt .btn-outline-navbar { border-color: #333; color: #000 !important; }
         .navbar-matt .btn-outline-navbar:hover { background: rgba(0,0,0,0.08); color: #000 !important; border-color: #000; }
-        .navbar-matt .navbar-brand .logo-circle { width: 48px; height: 48px; border-radius: 50%; object-fit: cover; flex-shrink: 0; }
-        /* Móvil: navbar en una sola fila, más angosto */
+        .navbar-matt .navbar-brand { padding-top: 0.05rem; padding-bottom: 0.05rem; }
+        .navbar-matt .navbar-brand .logo-circle { width: 56px; height: 56px; border-radius: 50%; object-fit: cover; flex-shrink: 0; margin: 0; }
+        /* Móvil: menos margen alrededor del logo para que se vea más grande sin crecer la barra */
         @media (max-width: 991px) {
             .navbar-matt .container-fluid { padding-top: 0.5rem !important; padding-bottom: 0.5rem !important; padding-left: 0.5rem !important; padding-right: 0.5rem !important; }
             .navbar-matt .navbar-volver, .navbar-matt .navbar-panel, .navbar-matt .navbar-email, .navbar-matt .navbar-avatar { display: none !important; }
-            .navbar-matt .navbar-brand .logo-circle { width: 36px; height: 36px; }
+            .navbar-matt .navbar-brand { padding-top: 0.05rem; padding-bottom: 0.05rem; }
+            .navbar-matt .navbar-brand .logo-circle { width: 46px; height: 46px; margin: 0; }
             .navbar-matt .navbar-brand span { font-size: 1rem !important; }
             .navbar-matt .navbar-brand.me-2 { margin-right: 0.35rem !important; }
             .navbar-matt .navbar-name-mobile { max-width: 100px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 0.9rem; font-weight: 600; }
