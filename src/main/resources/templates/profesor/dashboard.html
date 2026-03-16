@@ -207,8 +207,8 @@
         }
         .main-action-card.card-ejercicios { background: linear-gradient(135deg, #fff9c4 60%, #ffe082 100%); }
         .main-action-card.card-ejercicios i { color: #e65100; }
-        .main-action-card.card-admin { background: linear-gradient(135deg, #e1bee7 60%, #d1c4e9 100%); }
-        .main-action-card.card-admin i { color: #5e35b1; }
+        .main-action-card.card-admin { background: linear-gradient(135deg, #cfd8dc 60%, #b0bec5 100%); }
+        .main-action-card.card-admin i { color: #455a64; }
         .main-action-card.card-calendario { background: linear-gradient(135deg, #bbdefb 60%, #b3e5fc 100%); }
         .main-action-card.card-calendario i { color: #1565c0; }
         .tabs-section {
@@ -347,10 +347,10 @@
         .dashboard-mobile-card.card-rutinas-m i { color: #e65100; }
         .dashboard-mobile-card.card-asignadas-m { background: linear-gradient(135deg, #bbdefb 60%, #b3e5fc 100%); }
         .dashboard-mobile-card.card-asignadas-m i { color: #0d47a1; }
-        .dashboard-mobile-card.card-ejercicios-m { background: linear-gradient(135deg, #fff9c4 60%, #ffe082 100%); }
-        .dashboard-mobile-card.card-ejercicios-m i { color: #e65100; }
-        .dashboard-mobile-card.card-admin-m     { background: linear-gradient(135deg, #e1bee7 60%, #d1c4e9 100%); }
-        .dashboard-mobile-card.card-admin-m i   { color: #5e35b1; }
+        .dashboard-mobile-card.card-ejercicios-m { background: linear-gradient(135deg, #ffccbc 60%, #ffab91 100%); }
+        .dashboard-mobile-card.card-ejercicios-m i { color: #bf360c; }
+        .dashboard-mobile-card.card-admin-m     { background: linear-gradient(135deg, #cfd8dc 60%, #b0bec5 100%); }
+        .dashboard-mobile-card.card-admin-m i   { color: #455a64; }
         @media (max-width: 991px) {
             .container-fluid.py-4.px-4 { padding-left: 0.75rem !important; padding-right: 0.75rem !important; }
         }
@@ -360,16 +360,38 @@
             .dashboard-mobile-card i { font-size: 1.9rem; }
             .dashboard-mobile-card .mobile-card-label { font-size: 0.9rem; }
         }
-        /* Celular: solo en móvil icono + popover; en escritorio número */
-        .celular-desktop { display: none; }
-        .celular-mobile { display: none; }
-        @media (min-width: 992px) {
-            .celular-desktop { display: inline; }
+        /* Barra inferior móvil: acceso rápido (solo &lt; 992px) */
+        .bottom-nav-mobile {
+            display: none;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(180deg, #2c3e50 0%, #34495e 100%);
+            color: #ecf0f1;
+            padding: 0.5rem 0 0.6rem;
+            padding-bottom: max(0.6rem, env(safe-area-inset-bottom));
+            box-shadow: 0 -2px 12px rgba(0,0,0,0.15);
+            z-index: 1030;
         }
         @media (max-width: 991px) {
-            .celular-mobile { display: inline-flex; }
-            .celular-icon-wrap { cursor: pointer; padding: 0.35rem; min-width: 2rem; align-items: center; justify-content: center; }
+            .bottom-nav-mobile { display: flex !important; justify-content: space-around; align-items: center; }
+            .container-fluid.py-4.px-4 { padding-bottom: 5rem !important; }
         }
+        @media (min-width: 992px) {
+            .bottom-nav-mobile { display: none !important; }
+        }
+        .bottom-nav-mobile a {
+            color: #bdc3c7;
+            text-decoration: none;
+            font-size: 0.7rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.2rem;
+        }
+        .bottom-nav-mobile a:hover, .bottom-nav-mobile a:focus { color: #fff; }
+        .bottom-nav-mobile a i { font-size: 1.25rem; }
     </style>
 </head>
 <body>
@@ -451,21 +473,13 @@
                     </div>
                 </a>
             </div>
-            <!-- Columna 3: Rutinas -->
+            <!-- Columna 3: Rutinas | Administrar sistema -->
             <div class="dashboard-col">
                 <div class="card-module card-rutinas card-scroll-tab" data-scroll-tab="rutinas" role="button" tabindex="0" title="Ver lista de rutinas">
                     <a th:href="@{/rutinas/crear}" class="card-module-add" title="Crear rutina"><i class="fa-solid fa-plus"></i></a>
                     <i class="fa-solid fa-list-check"></i>
                     <div class="stat" th:text="${rutinas != null ? rutinas.size() : 0}">0</div>
                     <div class="label">Rutinas</div>
-                </div>
-            </div>
-            <!-- Columna 4: Asignaciones | Administrar sistema -->
-            <div class="dashboard-col">
-                <div class="card-module card-asignadas card-scroll-tab" data-scroll-tab="asignaciones" role="button" tabindex="0" title="Ver rutinas asignadas">
-                    <i class="fa-solid fa-clipboard-list"></i>
-                    <div class="stat" th:text="${rutinasAsignadas != null ? rutinasAsignadas.size() : 0}">0</div>
-                    <div class="label">Asignaciones</div>
                 </div>
                 <!-- Solo ADMIN y DEVELOPER pueden acceder; AYUDANTE ve la tarjeta pero al hacer clic muestra mensaje -->
                 <a th:if="${usuario != null && (usuario.rol == 'ADMIN' || usuario.rol == 'DEVELOPER')}" th:href="@{/profesor/administracion}" class="main-action-card card-admin" target="_blank" rel="noopener noreferrer" title="Administrar sistema">
@@ -480,6 +494,14 @@
                         <span class="card-label">Administrar sistema</span>
                     </div>
                 </span>
+            </div>
+            <!-- Columna 4: Asignaciones -->
+            <div class="dashboard-col">
+                <div class="card-module card-asignadas card-scroll-tab" data-scroll-tab="asignaciones" role="button" tabindex="0" title="Ver rutinas asignadas">
+                    <i class="fa-solid fa-clipboard-list"></i>
+                    <div class="stat" th:text="${rutinasAsignadas != null ? rutinasAsignadas.size() : 0}">0</div>
+                    <div class="label">Asignaciones</div>
+                </div>
             </div>
         </div>
 
@@ -518,28 +540,21 @@
                     </div>
 
                     <div class="card mb-3">
-                        <div class="card-body">
-                            <div class="row g-2 align-items-end">
-                                <div class="col-md-4">
-                                    <label class="form-label">Buscar por nombre</label>
-                                    <input id="filtroNombreAlumno" type="text" class="form-control" placeholder="Nombre del alumno">
-                                </div>
-                                <div class="col-md-3">
-                                    <label class="form-label">Estado</label>
-                                    <select id="filtroEstadoAlumnos" class="form-select">
-                                        <option value="">Todos</option>
-                                        <option value="ACTIVO">Activos</option>
-                                        <option value="INACTIVO">Inactivos</option>
-                                    </select>
-                                </div>
-                                <div class="col-md-2">
-                                    <button id="limpiarFiltrosAlumnos" type="button" class="btn btn-warning w-100" style="background:#ffcc80; border-color:#ffb74d; color:#e65100;">
-                                        Limpiar filtros
-                                    </button>
-                                </div>
+                        <div class="card-body py-2">
+                            <div class="d-flex gap-2 align-items-center flex-wrap">
+                                <input id="filtroNombreAlumno" type="text" class="form-control form-control-sm flex-grow-1" style="max-width: 280px;" placeholder="Buscar por nombre..." aria-label="Buscar por nombre">
+                                <button id="limpiarFiltrosAlumnos" type="button" class="btn btn-sm btn-warning flex-shrink-0" style="background:#ffcc80; border-color:#ffb74d; color:#e65100;">
+                                    Limpiar
+                                </button>
                             </div>
                         </div>
                     </div>
+                    <!-- Filtro por estado (oculto; se controla desde la columna Estado de la tabla) -->
+                    <select id="filtroEstadoAlumnos" class="d-none form-select" aria-hidden="true">
+                        <option value="">Todos</option>
+                        <option value="ACTIVO">Activos</option>
+                        <option value="INACTIVO">Inactivos</option>
+                    </select>
                     
                     <!-- Mensaje de éxito -->
                     <div th:if="${param.success == 'rutina_asignada'}" class="alert alert-success alert-dismissible fade show" role="alert">
@@ -554,36 +569,45 @@
                         <table class="table table-bordered table-hover">
                             <thead class="table-primary text-center">
                                 <tr>
-                                    <th>Nombre</th>
+                                    <th class="text-start">Nombre</th>
                                     <th>Edad</th>
-                                    <th>Celular</th>
-                                    <th>Estado</th>
-                                    <th>Rutinas</th>
-                                    <th>Acción</th>
+                                    <th class="d-none d-lg-table-cell">Celular</th>
+                                    <th class="th-estado-filter">
+                                        <div class="dropdown d-inline-block">
+                                            <button class="btn btn-sm btn-link text-dark text-decoration-none p-0 border-0 dropdown-toggle" type="button" id="dropdownEstadoAlumnos" data-bs-toggle="dropdown" aria-expanded="false" title="Filtrar por estado">Estado</button>
+                                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownEstadoAlumnos">
+                                                <li><a class="dropdown-item dropdown-item-estado" href="#" data-estado="">Todos</a></li>
+                                                <li><a class="dropdown-item dropdown-item-estado" href="#" data-estado="ACTIVO">Activos</a></li>
+                                                <li><a class="dropdown-item dropdown-item-estado" href="#" data-estado="INACTIVO">Inactivos</a></li>
+                                            </ul>
+                                        </div>
+                                    </th>
+                                    <th class="d-none d-lg-table-cell">Rutinas</th>
+                                    <th class="d-none d-lg-table-cell text-start">Acción</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr th:each="usuario : ${usuarios}" class="text-center"
                                     th:attr="data-estado=${usuario.estadoAlumno},data-nombre=${usuario.nombre}">
-                                    <td th:text="${usuario.nombre}">Nombre</td>
-                                    <td th:text="${usuario.edad}">Edad</td>
-                                    <td>
-                                        <span class="celular-desktop" th:text="${usuario.celular != null ? usuario.celular : '—'}">—</span>
-                                        <span th:if="${usuario.celular != null}" role="button" tabindex="0" class="celular-mobile celular-icon-wrap" data-bs-toggle="popover" data-bs-trigger="click" th:attr="data-bs-content=${usuario.celular}" title="Celular"><i class="fas fa-mobile-alt text-primary"></i></span>
-                                        <span th:if="${usuario.celular == null}" class="celular-mobile text-muted">—</span>
+                                    <td class="text-start">
+                                        <a th:href="@{/profesor/alumnos/{id}(id=${usuario.id})}" class="text-decoration-none text-dark d-inline-flex align-items-center gap-2" title="Ver detalle">
+                                            <i class="fa-solid fa-eye text-primary d-lg-none"></i><span th:text="${usuario.nombre}">Nombre</span>
+                                        </a>
                                     </td>
+                                    <td th:text="${usuario.edad}">Edad</td>
+                                    <td class="d-none d-lg-table-cell" th:text="${usuario.celular != null ? usuario.celular : '—'}">—</td>
                                     <td>
                                         <span th:if="${usuario.estadoAlumno == 'ACTIVO'}" class="badge bg-success">Activo</span>
                                         <span th:if="${usuario.estadoAlumno == 'INACTIVO'}" class="badge bg-secondary">Inactivo</span>
                                         <span th:if="${usuario.estadoAlumno == null}" class="badge bg-light text-dark">-</span>
                                     </td>
-                                    <td>
+                                    <td class="d-none d-lg-table-cell">
                                         <span class="badge bg-success" th:text="${usuario.rutinas != null ? usuario.rutinas.size() : 0}">0</span>
                                     </td>
-                                    <td class="text-start">
+                                    <td class="d-none d-lg-table-cell text-start">
                                         <a th:href="@{/profesor/alumnos/{id}(id=${usuario.id})}" class="btn btn-primary btn-sm" title="Ver alumno"><i class="fa-solid fa-eye"></i></a>
                                         <a th:href="@{/profesor/asignar-rutina/{id}(id=${usuario.id})}"
-                                           class="btn btn-info btn-sm d-none d-lg-inline-block"
+                                           class="btn btn-info btn-sm"
                                            th:classappend="${usuario.estadoAlumno == 'INACTIVO'} ? 'disabled opacity-50'"
                                            th:attr="aria-disabled=${usuario.estadoAlumno == 'INACTIVO'},tabindex=${usuario.estadoAlumno == 'INACTIVO'} ? -1 : 0"
                                            th:title="${usuario.estadoAlumno == 'INACTIVO'} ? 'Alumno inactivo' : 'Asignar rutina'">
@@ -783,15 +807,20 @@
         </div>
     </div>
 
-    <!-- Bootstrap JS -->
+    <!-- Barra inferior móvil: acceso rápido (podés asignar después cada enlace) -->
+    <nav class="bottom-nav-mobile" id="bottomNavMobile" aria-label="Accesos rápidos">
+        <a href="#" class="bottom-nav-item" data-action="inicio" aria-label="Inicio"><i class="fa-solid fa-house"></i><span>Inicio</span></a>
+        <a href="#" class="bottom-nav-item" data-action="tab" data-tab="alumnos" aria-label="Alumnos"><i class="fa-solid fa-users"></i><span>Alumnos</span></a>
+        <a href="#" class="bottom-nav-item" data-action="tab" data-tab="rutinas" aria-label="Rutinas"><i class="fa-solid fa-list-check"></i><span>Rutinas</span></a>
+        <a th:href="@{/profesor/administracion}" class="bottom-nav-item" th:if="${usuario != null && (usuario.rol == 'ADMIN' || usuario.rol == 'DEVELOPER')}" aria-label="Más"><i class="fa-solid fa-gear"></i><span>Más</span></a>
+        <a href="#" class="bottom-nav-item" data-action="mas" th:if="${usuario != null && usuario.rol != 'ADMIN' && usuario.rol != 'DEVELOPER'}" aria-label="Más"><i class="fa-solid fa-ellipsis"></i><span>Más</span></a>
+    </nav>
+
     <!-- Footer Fragment -->
     <div th:replace="fragments/footer :: footer"></div>
     
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        document.querySelectorAll('.celular-icon-wrap[data-bs-toggle="popover"]').forEach(function(el) {
-            new bootstrap.Popover(el, { trigger: 'click', container: 'body' });
-        });
     </script>
     <script th:inline="javascript">
         const profesorId = [[${profesor != null ? profesor.id : 0}]];
@@ -859,6 +888,30 @@
                     section.scrollIntoView({ behavior: 'smooth', block: 'start' });
                 }
             });
+        });
+        document.querySelectorAll('.bottom-nav-item[data-action="inicio"]').forEach(function(link) {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                var cards = document.getElementById('dashboardMobileCards');
+                if (cards) cards.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            });
+        });
+        document.querySelectorAll('.bottom-nav-item[data-action="tab"]').forEach(function(link) {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                var tabId = link.getAttribute('data-tab');
+                if (!tabId) return;
+                var tabEl = document.getElementById(tabId + '-tab');
+                var section = document.getElementById('tabsSection');
+                if (tabEl && section) {
+                    var bsTab = bootstrap.Tab.getOrCreateInstance(tabEl);
+                    bsTab.show();
+                    section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+        });
+        document.querySelectorAll('.bottom-nav-item[data-action="mas"]').forEach(function(link) {
+            link.addEventListener('click', function(e) { e.preventDefault(); });
         });
         // Clic en tarjetas (Alumnos, Series, Rutinas): activar tab y hacer scroll a la sección de listas
         document.querySelectorAll('.card-module.card-scroll-tab').forEach(function(card) {
@@ -990,6 +1043,15 @@
                 aplicarFiltrosAlumnos();
             });
         }
+        document.querySelectorAll('.dropdown-item-estado').forEach(function(link) {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                var estado = this.getAttribute('data-estado') || '';
+                if (filtroEstado) filtroEstado.value = estado;
+                guardarFiltros();
+                aplicarFiltrosAlumnos();
+            });
+        });
         cargarFiltros();
         aplicarFiltrosAlumnos();
     </script>
