@@ -109,6 +109,12 @@ public class UsuarioService {
         // Solo invalida caché; el efecto está en la anotación
     }
 
+    /** Invalida solo la lista de alumnos del profesor (para que el panel muestre siempre datos actuales). */
+    @CacheEvict(value = "usuarios", key = "'profesor-' + #profesorId")
+    public void evictAlumnosByProfesorId(Long profesorId) {
+        // Solo invalida esa entrada; el efecto está en la anotación
+    }
+
     @Cacheable(value = "usuarios", key = "'profesor-' + #profesorId")
     public List<Usuario> getAlumnosByProfesorId(Long profesorId) {
         return usuarioRepository.findAlumnosByProfesorIdWithRelations(profesorId);

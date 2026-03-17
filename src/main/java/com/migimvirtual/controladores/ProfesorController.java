@@ -82,6 +82,39 @@ public class ProfesorController {
         return profesorService.getProfesorByCorreo(usuarioActual.getCorreo());
     }
 
+    /** Carga en el modelo todos los datos del dashboard (alumnos, series, rutinas, etc.). Siempre pone listas no null para que la vista no falle. */
+    private void cargarModeloDashboard(Profesor profesor, Model model) {
+        usuarioService.evictAlumnosByProfesorId(profesor.getId());
+        List<Usuario> usuarios = usuarioService.getAlumnosByProfesorId(profesor.getId());
+        List<Serie> series = serieService.obtenerSeriesPlantillaPorProfesor(profesor.getId());
+        List<com.migimvirtual.entidades.Rutina> rutinas = rutinaService.obtenerRutinasPlantillaPorProfesor(profesor.getId());
+        List<com.migimvirtual.entidades.Rutina> rutinasAsignadas = rutinaService
+                .obtenerRutinasAsignadasPorProfesor(profesor.getId());
+
+        if (usuarios == null) usuarios = java.util.Collections.emptyList();
+        if (series == null) series = java.util.Collections.emptyList();
+        if (rutinas == null) rutinas = java.util.Collections.emptyList();
+        if (rutinasAsignadas == null) rutinasAsignadas = java.util.Collections.emptyList();
+
+        java.time.LocalDate hoy = java.time.LocalDate.now();
+        String fechaHoyFormateada = hoy.format(java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+        long cantidadEjercicios = exerciseService.countEjerciciosDisponiblesParaProfesor(profesor.getId());
+
+        model.addAttribute("usuarios", usuarios);
+        model.addAttribute("series", series);
+        model.addAttribute("rutinas", rutinas);
+        model.addAttribute("rutinasAsignadas", rutinasAsignadas);
+        model.addAttribute("fechaHoyFormateada", fechaHoyFormateada);
+        model.addAttribute("cantidadEjercicios", cantidadEjercicios);
+        model.addAttribute("profesor", profesor);
+        model.addAttribute("usuario", usuarioService.getUsuarioActual());
+    }
+
+    /**
+     * Panel del profesor por URL /profesor/dashboard.
+     * Renderiza el dashboard directamente con los datos del profesor en sesión (mismo modelo que /profesor/{id})
+     * para que escritorio y móvil muestren siempre los mismos datos y se eviten problemas de caché o redirección.
+     */
     @GetMapping("/dashboard")
     public String dashboardProfesor(Model model, jakarta.servlet.http.HttpServletRequest request) {
         Usuario usuarioActual = usuarioService.getUsuarioActual();
@@ -89,8 +122,8 @@ public class ProfesorController {
         if (usuarioActual == null || profesor == null) {
             return "redirect:/login?error=true";
         }
-        String query = request.getQueryString();
-        return "redirect:/profesor/" + profesor.getId() + (query != null && !query.isEmpty() ? "?" + query : "");
+        cargarModeloDashboard(profesor, model);
+        return "profesor/dashboard";
     }
 
     @GetMapping("/manual")
@@ -101,6 +134,7 @@ public class ProfesorController {
         return "redirect:/profesor/administracion";
     }
 
+    /** Panel del profesor por URL /profesor/{id}. Misma vista y datos que /profesor/dashboard. */
     @GetMapping("/{id}")
     public String dashboardProfesorPorId(@PathVariable Long id, Model model) {
         Profesor profesor = profesorService.getProfesorById(id);
@@ -108,26 +142,7 @@ public class ProfesorController {
             model.addAttribute("errorMessage", "Profesor no encontrado.");
             return "redirect:/profesor/dashboard";
         }
-
-        List<Usuario> usuarios = usuarioService.getAlumnosByProfesorId(profesor.getId());
-        java.time.LocalDate hoy = java.time.LocalDate.now();
-        String fechaHoyFormateada = hoy.format(java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy"));
-        List<com.migimvirtual.entidades.Rutina> rutinas = rutinaService.obtenerRutinasPlantillaPorProfesor(profesor.getId());
-        List<com.migimvirtual.entidades.Rutina> rutinasAsignadas = rutinaService
-                .obtenerRutinasAsignadasPorProfesor(profesor.getId());
-        List<Serie> series = serieService.obtenerSeriesPlantillaPorProfesor(profesor.getId());
-        long cantidadEjercicios = exerciseService.countEjerciciosDisponiblesParaProfesor(profesor.getId());
-
-        model.addAttribute("usuarios", usuarios);
-        model.addAttribute("fechaHoyFormateada", fechaHoyFormateada);
-        model.addAttribute("rutinas", rutinas);
-        model.addAttribute("rutinasAsignadas", rutinasAsignadas);
-        model.addAttribute("series", series);
-        model.addAttribute("cantidadEjercicios", cantidadEjercicios);
-        model.addAttribute("profesor", profesor);
-
-        model.addAttribute("usuario", usuarioService.getUsuarioActual());
-
+        cargarModeloDashboard(profesor, model);
         return "profesor/dashboard";
     }
 
