@@ -201,7 +201,8 @@
 <body>
 <div th:replace="fragments/navbar :: navbar"></div>
 <div class="serie-container py-4">
-    <a th:href="@{/profesor/dashboard}" class="btn-volver-serie"><i class="fas fa-arrow-left"></i> Volver al panel</a>
+    <a th:if="${volver != null && !#strings.isEmpty(volver)}" th:href="${volver}" class="btn-volver-serie"><i class="fas fa-arrow-left"></i> Volver</a>
+    <a th:unless="${volver != null && !#strings.isEmpty(volver)}" th:href="@{/profesor/dashboard}" class="btn-volver-serie"><i class="fas fa-arrow-left"></i> Volver al panel</a>
     <div class="hoja-serie">
         <div class="hoja-serie-titulo">
             <span class="hoja-serie-titulo-punto"></span>

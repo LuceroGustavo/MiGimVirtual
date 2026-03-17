@@ -105,6 +105,7 @@ public class SerieController {
     // GET: Mostrar el formulario para editar una serie plantilla
     @GetMapping("/editar/{id}")
     public String mostrarFormularioEditarSerie(@PathVariable Long id, Model model,
+            @RequestParam(required = false) String volver,
             @AuthenticationPrincipal Usuario profesorUsuario) {
         // 1. Obtener la serie CON sus ejercicios cargados (evita LazyInitialization y muestra la tabla)
         Serie serie = serieService.obtenerSeriePorIdConEjercicios(id);
@@ -134,6 +135,9 @@ public class SerieController {
         model.addAttribute("serieDTO", serieDTO);
         model.addAttribute("editMode", true);
         model.addAttribute("usuario", profesorUsuario);
+        if (volver != null && !volver.isBlank()) {
+            model.addAttribute("volverUrl", volver);
+        }
 
         // Pasar el DTO como JSON para que el JS reciba correctamente ejercicios (nombre, valor, unidad, peso)
         try {
@@ -147,6 +151,7 @@ public class SerieController {
 
     @GetMapping("/ver/{id}")
     public String verSerie(@PathVariable Long id, Model model,
+            @RequestParam(required = false) String volver,
             @AuthenticationPrincipal Usuario profesorUsuario) {
         Serie serie = serieService.obtenerSeriePorIdConEjercicios(id);
         boolean esPropietario = isDeveloper(profesorUsuario)
@@ -158,6 +163,9 @@ public class SerieController {
             return "redirect:/profesor/dashboard?tab=series&error=permiso_serie";
         }
         model.addAttribute("serie", serie);
+        if (volver != null && !volver.isBlank()) {
+            model.addAttribute("volver", volver);
+        }
         return "series/verSerie";
     }
 

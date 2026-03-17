@@ -327,6 +327,7 @@
                 <i class="fa-solid fa-edit me-2"></i><span th:if="${editMode}" th:text="'Modificar Serie'">Modificar Serie</span><span th:unless="${editMode}" th:text="'Crear Nueva Serie'">Crear Nueva Serie</span>
             </div>
             <form id="serieForm">
+                <input type="hidden" id="volverUrl" th:if="${volverUrl != null}" th:value="${volverUrl}">
                 <div class="row g-4">
                     <div class="col-md-6 order-2 order-md-1">
                             <div class="mb-3">
@@ -721,7 +722,9 @@
 
                 if (response.ok) {
                     const successMessage = editMode ? '¡Serie actualizada exitosamente!' : '¡Serie creada exitosamente!';
-                    mostrarAlerta(successMessage, { redirectUrl: '/profesor/dashboard?tab=series' });
+                    const volverInput = document.getElementById('volverUrl');
+                    const redirectUrl = (volverInput && volverInput.value) ? volverInput.value : '/profesor/dashboard?tab=series';
+                    mostrarAlerta(successMessage, { redirectUrl: redirectUrl });
                 } else {
                     const errorData = await response.json();
                     mostrarAlerta('Error al procesar la serie: ' + (errorData.message || 'Error desconocido'));
