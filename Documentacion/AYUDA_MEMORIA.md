@@ -66,15 +66,15 @@ Para ver la lista de mejoras pendientes e implementadas (ítem por ítem), el ch
 
 ---
 
-## Módulo de Series – mejoras móvil (Mar 2026) – *en progreso*
+## Módulo de Series – vista responsive (Mar 2026) – ✅ Completado
 
-> **Falta terminar** el módulo de series. Lo realizado hasta ahora:
+Vista responsive del módulo de series terminada:
 
-- **Vista detalle de serie** (`verSerie.html`): responsive (grid 1/2/3 cols), flecha "Volver al panel" solo móvil, footer.
+- **Vista detalle de serie** (`verSerie.html`): responsive (grid 1/2/3 cols), flecha "Volver al panel" solo móvil, footer; badge "vueltas" en verde (#7ee787), badge "ejercicios" en naranja.
 - **Dashboard pestaña Series**: modal al tocar fila (móvil); botón Ver cierra modal y navega en misma pestaña.
-- **Formulario crear/modificar serie** (`crearSerie.html`): título más pequeño, botón Limpiar filtro en fila de búsqueda, reorden de paneles (ejercicios → tabla serie → nombre/guardar), table-responsive.
+- **Formulario crear/modificar serie** (`crearSerie.html`): título más pequeño, filtros en 2 filas en móvil, panel serie con estilo violeta, botón Limpiar, reorden de paneles (ejercicios → tabla serie → nombre/guardar), table-responsive, flechas subir/bajar en tabla, footer móvil.
 
-**Pendiente:** Vista editar serie (si requiere ajustes distintos), revisión general del módulo.
+Opcional más adelante: revisar vista editar serie si requiere ajustes específicos.
 
 Ver GUIA_RESPONSIVE.md §5.2.
 
@@ -84,7 +84,7 @@ Ver GUIA_RESPONSIVE.md §5.2.
 
 1. ~~**Mejorar front con responsividad** (panel del profesor).~~ ✅ **Hecho (Mar 2026):** login, navbar compacto, dashboard 6 tarjetas en móvil, tabla alumnos (acción, celular icono, ver solo ojo, asignar desde detalle), footer una fila. Ver GUIA_RESPONSIVE.md §5 y CHANGELOG [2026-03-15].
 2. ~~**Vista de ficha del alumno – mejoras para móvil.**~~ ✅ **Hecho (Mar 2026):** contenedor, título y subtítulo adaptados; header (Volver/Eliminar) a ancho completo; tarjetas en 1 columna; bloque alumno-info apilado; botones de tabla con área táctil mínima 38px; breakpoints 991px y 575px. **Vista del alumno terminada:** modal progreso al tocar registro (móvil), modal confirmar eliminar progreso (estilo borrar alumno), botón Guardar notas, Eliminar usuario debajo de todo, barra inferior móvil igual al panel, formato fecha dd/MM/yy. Pendiente: scroll vertical en progresos (móvil, >5 registros).
-3. **Módulo de series:** Terminar responsive (ver sección anterior). Luego revisar editar serie y flujos restantes.
+3. ~~**Módulo de series (vista responsive).**~~ ✅ **Hecho (Mar 2026):** ver sección "Módulo de Series" más arriba. Opcional: revisar editar serie y flujos restantes.
 4. **Luego:** Revisar/cambiar el **sistema de backup** — todavía no está definido si va a quedar como está o se modificará.
 5. **Luego:** **Modificar el manual del usuario** (actualizar contenido y estructura según los cambios de la app).
 

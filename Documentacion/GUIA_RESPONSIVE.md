@@ -102,9 +102,9 @@ Responsividad del panel del profesor terminada para móvil (breakpoint 991px / 9
 
 ---
 
-## 5.2 Módulo de Series – mejoras móvil (Mar 2026) – *en progreso*
+## 5.2 Módulo de Series – vista responsive (Mar 2026) – ✅ Completado
 
-> **Nota:** El módulo de series está parcialmente completado. Faltan ajustes y revisión de otras vistas (editar serie, etc.).
+> **Nota:** La vista responsive del módulo de series está completada. Opcional: revisar vista editar serie si difiere de crear.
 
 ### Vista detalle de serie (`series/verSerie.html`)
 
@@ -115,6 +115,7 @@ Responsividad del panel del profesor terminada para móvil (breakpoint 991px / 9
 | **Título y tarjetas** | Fuente y alturas reducidas. |
 | **Flecha volver** | Botón "Volver al panel" visible solo en móvil, enlaza a `/profesor/dashboard`. |
 | **Footer** | Incluido (footer.css) para consistencia con el panel. |
+| **Badge vueltas / ejercicios** | "Vueltas" en verde (#7ee787); "ejercicios" en naranja. |
 
 ### Panel del profesor – pestaña Series (`profesor/dashboard.html`)
 
@@ -134,10 +135,10 @@ Responsividad del panel del profesor terminada para móvil (breakpoint 991px / 9
 
 **Archivos:** series/verSerie.html, series/crearSerie.html, profesor/dashboard.html.
 
-### Pendiente en módulo de series
+### Completado
 
-- Vista **editar serie** (si difiere de crear): revisar responsive.
-- Otras vistas o flujos del módulo que requieran ajustes móvil.
+- Vista responsive de detalle de serie, dashboard (pestaña Series) y formulario crear/modificar serie. Badge de vueltas en verde en la cabecera de la serie.
+- Opcional: vista **editar serie** (si difiere de crear) y otros flujos.
 
 ---
 
@@ -148,4 +149,4 @@ Responsividad del panel del profesor terminada para móvil (breakpoint 991px / 9
 3. **Formularios:** que los campos no queden con ancho fijo; usar `col-12 col-md-*` en móvil.
 ---
 
-*Documento de referencia para responsividad. Panel del profesor completado Mar 2026. Módulo de series en progreso (Mar 2026).*
+*Documento de referencia para responsividad. Panel del profesor completado Mar 2026. Vista responsive del módulo de series completada Mar 2026.*

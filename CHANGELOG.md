@@ -2,15 +2,16 @@
 
 > Nota: este changelog incluye histórico heredado de MiGym (referencias a admin/chat/websocket).
 
-## [2026-03-16] - feat(ui): módulo de series – responsive móvil (parcial) 🚧
+## [2026-03-16] - feat(ui): módulo de series – vista responsive completada ✅
 
 ### 🎯 **Resumen**
-Mejoras de responsividad para el módulo de series en vista móvil: detalle de serie, panel dashboard (modal y navegación), formulario crear/modificar serie. **El módulo de series sigue en progreso** (falta terminar editar serie y revisión general).
+Vista responsive del módulo de series finalizada: detalle de serie, panel dashboard, formulario crear/modificar serie y ajuste visual del badge de vueltas.
 
 ### ✅ **Vista detalle de serie** (`series/verSerie.html`)
 - Grid responsive: 1 col móvil, 2 tablet, 3 desktop. Sin min-width en body/contenedor.
 - Botón "Volver al panel" visible solo en móvil (≤991px), enlaza a `/profesor/dashboard`.
 - Footer incluido para consistencia con el panel.
+- **Badge "vueltas"** en cabecera de la serie en color verde (#7ee787), alineado con peso y repeticiones en las tarjetas; badge "ejercicios" se mantiene en naranja.
 
 ### ✅ **Dashboard – pestaña Series** (`profesor/dashboard.html`)
 - Al hacer clic en "Ver" desde el modal (móvil): se cierra el modal y se navega en la misma pestaña (sin `target="_blank"`). Escritorio mantiene apertura en pestaña nueva.
