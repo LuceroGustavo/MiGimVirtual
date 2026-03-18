@@ -223,7 +223,7 @@
                                          <small class="text-muted" style="font-size: 0.75rem;">Series</small>
                                      </div>
                                      <div class="col-4">
-                                         <div class="h6 text-info mb-0" th:text="${rutina.categoria != null ? rutina.categoria : 'N/A'}">N/A</div>
+                                         <div class="h6 text-info mb-0" th:text="${(rutina.categoriasList != null && !rutina.categoriasList.isEmpty()) ? #strings.listJoin(rutina.categoriasList, ', ') : (rutina.categoria != null ? rutina.categoria : 'N/A')}">N/A</div>
                                          <small class="text-muted" style="font-size: 0.75rem;">Categoría</small>
                                      </div>
                                      <div class="col-4">

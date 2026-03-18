@@ -727,7 +727,10 @@
                                     <td th:text="${rutina.id}">1</td>
                                     <td th:text="${rutina.nombre}">Nombre</td>
                                     <td>
-                                        <span class="badge bg-secondary" th:text="${rutina.categoria}">Categoría</span>
+                                        <th:block th:if="${rutina.categoriasList != null && !rutina.categoriasList.isEmpty()}">
+                                            <span th:each="cat : ${rutina.categoriasList}" class="badge bg-secondary me-1" th:text="${cat}">Categoría</span>
+                                        </th:block>
+                                        <span th:if="${rutina.categoriasList == null || rutina.categoriasList.isEmpty()}" class="text-muted">—</span>
                                     </td>
                                     <td>
                                         <span class="badge bg-info" th:text="${rutina.series != null ? rutina.series.size() : 0}">0</span>

@@ -812,7 +812,10 @@
                                 <td class="text-nowrap" th:text="${rutina.fechaCreacion != null ? #temporals.format(rutina.fechaCreacion, 'dd/MM/yy') : 'Sin fecha'}">Fecha</td>
                                 <td><span th:attr="title=${rutina.nombre}" th:text="${#strings.abbreviate(rutina.nombre, 22)}">Nombre</span></td>
                                 <td>
-                                    <span class="badge bg-secondary" th:attr="title=${rutina.categoria}" th:text="${rutina.categoria != null ? #strings.abbreviate(rutina.categoria, 12) : '—'}">—</span>
+                                    <th:block th:if="${rutina.categoriasList != null && !rutina.categoriasList.isEmpty()}">
+                                        <span th:each="cat : ${rutina.categoriasList}" class="badge bg-secondary me-1" th:text="${cat}">—</span>
+                                    </th:block>
+                                    <span th:if="${rutina.categoriasList == null || rutina.categoriasList.isEmpty()}" class="text-muted">—</span>
                                 </td>
                                 <td>
                                     <span class="badge bg-info" th:text="${rutina.series != null ? rutina.series.size() : 0}">0</span>

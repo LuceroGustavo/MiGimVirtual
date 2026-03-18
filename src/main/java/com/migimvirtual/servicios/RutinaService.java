@@ -233,7 +233,7 @@ public class RutinaService {
 
     // Buscar rutinas plantilla por categoría
     public List<Rutina> buscarRutinasPlantillaPorCategoria(Long profesorId, String categoria) {
-        return rutinaRepository.findByProfesorIdAndEsPlantillaTrueAndCategoria(profesorId, categoria);
+        return rutinaRepository.findByProfesorIdAndEsPlantillaTrueAndCategoriaContaining(profesorId, categoria);
     }
 
     // Buscar rutinas plantilla por nombre

@@ -78,18 +78,40 @@ Documentación de las mejoras realizadas en la pantalla **Crear Nueva Rutina** y
 
 ---
 
+## 7. Múltiples categorías por rutina
+
+- **Antes:** Solo se podía elegir una categoría por rutina (Fuerza, Cardio, Flexibilidad, etc.) en un desplegable.
+- **Ahora:** Se pueden seleccionar **varias categorías** (ej. Fuerza y Cardio) mediante checkboxes en crear y editar rutina.
+- **Persistencia:** No se cambió el esquema de la base de datos. El campo `categoria` sigue siendo un único `String`; las múltiples categorías se guardan separadas por comas (ej. `"FUERZA,CARDIO"`). Las rutinas que ya tenían una sola categoría siguen siendo válidas.
+- **Entidad Rutina:** Se añadió `getCategoriasList()` que parte `categoria` por comas y devuelve `List<String>` para usar en vistas y listados.
+- **Crear rutina:** Checkboxes con nombre `categorias`; validación (controlador + JS) para exigir al menos una. El controlador recibe `List<String> categorias`, las une con comas y pasa un solo `String` al servicio.
+- **Editar rutina:** Mismos checkboxes; los valores actuales se marcan con `rutina.categoriasList.contains('FUERZA')` etc.
+- **Listados:** Donde antes se mostraba un solo badge de categoría, ahora se itera sobre `rutina.categoriasList` y se muestra un badge por categoría (dashboard, alumno-detalle) o texto unido por comas (asignar-rutina con `#strings.listJoin`).
+- **Filtro por categoría:** Se usa `findByProfesorIdAndEsPlantillaTrueAndCategoriaContaining` para que al filtrar por una categoría se incluyan también las rutinas que tengan esa categoría entre varias.
+
+---
+
 ## Archivos modificados
 
 | Archivo | Cambios principales |
 |---------|----------------------|
-| `templates/rutinas/crearRutina.html` | Responsive, tabla de series, modal detalle, lista con eliminar, estilos nombre largo, leyenda móvil, enlaces con `?volver=/rutinas/crear`, `syncSelectedRows()` con IDs en string |
+| `templates/rutinas/crearRutina.html` | Responsive, tabla de series, modal detalle, lista con eliminar, estilos nombre largo, leyenda móvil, enlaces con `?volver=/rutinas/crear`, `syncSelectedRows()` con IDs en string; **checkboxes de categorías y validación** |
+| `templates/rutinas/editarRutina.html` | **Checkboxes de categorías con valores actuales desde `rutina.categoriasList`** |
+| `templates/profesor/dashboard.html` | **Varios badges de categoría por rutina (`rutina.categoriasList`)** |
+| `templates/profesor/alumno-detalle.html` | **Varios badges de categoría por rutina** |
+| `templates/profesor/asignar-rutina.html` | **Categorías mostradas como lista unida por comas** |
 | `templates/series/crearSerie.html` | Input oculto `volverUrl`, redirección tras guardar según `volverUrl` |
 | `templates/series/verSerie.html` | Enlace “Volver” / “Volver al panel” condicional según parámetro `volver` |
+| `entidades/Rutina.java` | **`getCategoriasList()` para listar categorías desde el string con comas** |
+| `controladores/RutinaControlador.java` | Parámetro `List<String> categorias` en crear y actualizar; unión con comas; **validación “al menos una categoría” en crear** |
+| `repositorios/RutinaRepository.java` | **`findByProfesorIdAndEsPlantillaTrueAndCategoriaContaining` para filtro** |
+| `servicios/RutinaService.java` | **`buscarRutinasPlantillaPorCategoria` usa el método Containing** |
 | `controladores/SerieController.java` | Parámetro `volver` en `GET /editar/{id}` y `GET /ver/{id}`, atributos `volverUrl` y `volver` en el modelo |
 
 ---
 
 ## Notas técnicas
 
-- El **POST** a `/rutinas/crear-plantilla` no cambió: se siguen enviando `selectedSeries` y `repeticiones_{id}`.
+- El **POST** a `/rutinas/crear-plantilla` recibe `categorias` (varios) en lugar de `categoria` (uno); se siguen enviando `selectedSeries` y `repeticiones_{id}`.
 - La tabla de series en crear rutina usa `data-serie-id`, `data-serie-nombre`, `data-serie-descripcion`, `data-serie-reps` y `data-ejercicios-nombres` (nombres separados por `|`) para el modal y para la sincronización de filas seleccionadas.
+- **Base de datos:** No es necesario borrar ni migrar datos; el campo `categoria` sigue siendo un único `VARCHAR`; las rutinas existentes con una sola categoría se muestran correctamente gracias a `getCategoriasList()`.

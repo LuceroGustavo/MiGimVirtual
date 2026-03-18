@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
@@ -128,14 +128,30 @@
                                 <input type="text" class="form-control" id="nombre" name="nombre" th:value="${rutina.nombre}" required placeholder="Nombre de la rutina">
                             </div>
                             <div class="col-md-6">
-                                <label for="categoria" class="form-label fw-bold">Categoría</label>
-                                <select class="form-select" id="categoria" name="categoria" th:field="${rutina.categoria}" required>
-                                    <option value="FUERZA">Fuerza</option>
-                                    <option value="CARDIO">Cardio</option>
-                                    <option value="FLEXIBILIDAD">Flexibilidad</option>
-                                    <option value="FUNCIONAL">Funcional</option>
-                                    <option value="HIIT">HIIT</option>
-                                </select>
+                                <label class="form-label fw-bold">Categoría(s)</label>
+                                <p class="small text-muted mb-2">Podés elegir más de una.</p>
+                                <div class="d-flex flex-wrap gap-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="categorias" value="FUERZA" id="cat_fuerza" th:checked="${rutina.categoriasList != null && rutina.categoriasList.contains('FUERZA')}">
+                                        <label class="form-check-label" for="cat_fuerza">Fuerza</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="categorias" value="CARDIO" id="cat_cardio" th:checked="${rutina.categoriasList != null && rutina.categoriasList.contains('CARDIO')}">
+                                        <label class="form-check-label" for="cat_cardio">Cardio</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="categorias" value="FLEXIBILIDAD" id="cat_flex" th:checked="${rutina.categoriasList != null && rutina.categoriasList.contains('FLEXIBILIDAD')}">
+                                        <label class="form-check-label" for="cat_flex">Flexibilidad</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="categorias" value="FUNCIONAL" id="cat_func" th:checked="${rutina.categoriasList != null && rutina.categoriasList.contains('FUNCIONAL')}">
+                                        <label class="form-check-label" for="cat_func">Funcional</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="categorias" value="HIIT" id="cat_hiit" th:checked="${rutina.categoriasList != null && rutina.categoriasList.contains('HIIT')}">
+                                        <label class="form-check-label" for="cat_hiit">HIIT</label>
+                                    </div>
+                                </div>
                             </div>
                             <div class="col-12">
                                 <label for="descripcion" class="form-label fw-bold">Descripción</label>

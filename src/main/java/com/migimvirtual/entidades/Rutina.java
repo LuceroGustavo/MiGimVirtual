@@ -3,7 +3,10 @@ package com.migimvirtual.entidades;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Entity
 public class Rutina {
@@ -132,6 +135,15 @@ public class Rutina {
 
     public void setCategoria(String categoria) {
         this.categoria = categoria;
+    }
+
+    /** Lista de categorías (ej. FUERZA, CARDIO) cuando categoria se guarda separada por comas. */
+    public List<String> getCategoriasList() {
+        if (categoria == null || categoria.isBlank()) return Collections.emptyList();
+        return Arrays.stream(categoria.split(","))
+                .map(String::trim)
+                .filter(s -> !s.isEmpty())
+                .collect(Collectors.toList());
     }
 
     public String getTokenPublico() {

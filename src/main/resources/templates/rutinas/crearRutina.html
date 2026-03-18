@@ -130,16 +130,30 @@
                             </div>
                             
                             <div class="mb-3">
-                                <label for="categoria" class="form-label fw-bold">Categoría:</label>
-                                <select class="form-select" id="categoria" name="categoria" required>
-                                    <option value="">Seleccionar categoría</option>
-                                    <!-- Opciones de categoría -->
-                                    <option value="FUERZA">Fuerza</option>
-                                    <option value="CARDIO">Cardio</option>
-                                    <option value="FLEXIBILIDAD">Flexibilidad</option>
-                                    <option value="FUNCIONAL">Funcional</option>
-                                    <option value="HIIT">HIIT</option>
-                                </select>
+                                <label class="form-label fw-bold">Categoría(s):</label>
+                                <p class="small text-muted mb-2">Podés elegir más de una (ej. Fuerza y Cardio).</p>
+                                <div class="d-flex flex-wrap gap-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="categorias" value="FUERZA" id="cat_fuerza">
+                                        <label class="form-check-label" for="cat_fuerza">Fuerza</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="categorias" value="CARDIO" id="cat_cardio">
+                                        <label class="form-check-label" for="cat_cardio">Cardio</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="categorias" value="FLEXIBILIDAD" id="cat_flex">
+                                        <label class="form-check-label" for="cat_flex">Flexibilidad</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="categorias" value="FUNCIONAL" id="cat_func">
+                                        <label class="form-check-label" for="cat_func">Funcional</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="categorias" value="HIIT" id="cat_hiit">
+                                        <label class="form-check-label" for="cat_hiit">HIIT</label>
+                                    </div>
+                                </div>
                             </div>
                             
                             <div class="mb-3">
@@ -420,6 +434,11 @@ document.addEventListener('DOMContentLoaded', function() {
         const nombreRutina = document.getElementById('nombre').value;
         if (!nombreRutina.trim()) {
             mostrarAlerta('Por favor, ingresa un nombre para la rutina.');
+            return;
+        }
+        const categoriasChecked = rutinaForm.querySelectorAll('input[name="categorias"]:checked');
+        if (!categoriasChecked.length) {
+            mostrarAlerta('Seleccioná al menos una categoría.');
             return;
         }
         const n = orderedList.querySelectorAll('input[name="selectedSeries"]').length;
