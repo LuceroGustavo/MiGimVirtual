@@ -166,6 +166,7 @@ public class SerieService {
         List<SerieEjercicio> ordenados = new ArrayList<>(serie.getSerieEjercicios());
         ordenados.sort(Comparator.comparingInt(se -> se.getOrden() != null ? se.getOrden() : 0));
         List<SerieDTO.EjercicioSerieDTO> ejerciciosDTO = ordenados.stream()
+                .filter(se -> se.getExercise() != null)
                 .map(se -> {
                     SerieDTO.EjercicioSerieDTO ejDTO = new SerieDTO.EjercicioSerieDTO();
                     ejDTO.setEjercicioId(se.getExercise().getId());

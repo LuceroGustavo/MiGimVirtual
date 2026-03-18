@@ -44,10 +44,26 @@ Para ver la lista de mejoras pendientes e implementadas (ítem por ítem), el ch
 
 ---
 
+## Scripts de datos de prueba (scripts/BD/)
+
+Scripts SQL para cargar datos de prueba y testear la app:
+
+| Script | Contenido |
+|--------|-----------|
+| 00_limpiar_datos_prueba.sql | (Opcional) Elimina todos los datos de prueba |
+| 01_usuarios_prueba.sql | 10 alumnos con todos los campos completos |
+| 02_progresos_prueba.sql | Progresos variables (0, 1, 2 o 4 por alumno) |
+| 03_series_prueba.sql | 10 series (3–4 ejercicios c/u, reps/peso/tiempo variados) |
+| 04_rutinas_prueba.sql | 5 rutinas plantilla basadas en las series |
+
+**Orden:** 01 → 02 → 03 → 04. Requiere BD creada, profesor y ejercicios predeterminados. Ver `scripts/BD/README.md`.
+
+---
+
 ## Paginación / límite de registros en panel del profesor
 
 - **Pendiente:** Definir una **cantidad máxima de registros** en las vistas del panel del profesor (Mis Alumnos, Mis Series, Mis Rutinas, Asignaciones, etc.). Si hay muchos registros (ej. 50 o más), la lista no termina y es poco óptimo, especialmente en celular.
-- **Para probar:** Crear un **script con datos de prueba** (alumnos, series, rutinas, asignaciones) que genere suficiente volumen para validar la paginación y el rendimiento. Verlo después.
+- **Para probar:** Usar los scripts en `scripts/BD/` que generan 10 alumnos, progresos, 10 series y 5 rutinas.
 - **Opciones a evaluar:** paginación, scroll infinito, o límite por defecto (ej. últimas 20) con "Ver más" o búsqueda.
 
 ---

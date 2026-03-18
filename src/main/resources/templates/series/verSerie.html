@@ -212,7 +212,7 @@
         </div>
         <div class="hoja-serie-desc" th:if="${serie.descripcion != null && !serie.descripcion.isEmpty()}" th:text="${serie.descripcion}">Descripción</div>
         <div class="ejercicios-grid">
-            <div th:each="serieEjercicio : ${serie.serieEjercicios}" class="sala-item-wrap"
+            <div th:each="serieEjercicio : ${serie.serieEjercicios}" th:if="${serieEjercicio.exercise != null}" class="sala-item-wrap"
                  th:with="repsDisplay=${serieEjercicio.valor != null ? (serieEjercicio.valor + ' ' + (serieEjercicio.unidad == null or #strings.toLowerCase(serieEjercicio.unidad) == 'reps' ? 'rep.' : #strings.toLowerCase(serieEjercicio.unidad) == 'min' ? 'min' : #strings.toLowerCase(serieEjercicio.unidad) == 'seg' or #strings.toLowerCase(serieEjercicio.unidad) == 's' ? 'seg' : (serieEjercicio.unidad != null ? serieEjercicio.unidad : 'rep.'))) : '—'}">
                 <div class="item-titulo" th:text="${serieEjercicio.exercise.name}">Ejercicio</div>
                 <div class="sala-item">
