@@ -32,6 +32,8 @@ import java.time.format.DateTimeParseException;
 import java.util.Optional;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.Objects;
 import com.migimvirtual.entidades.GrupoMuscular;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.multipart.MultipartFile;
@@ -895,7 +897,11 @@ public class ProfesorController {
         return "profesor/ejercicios-lista";
     }
 
-    // ASIGNAR RUTINA A ALUMNO
+    /**
+     * Asignar rutina a alumno. Vista refactorizada Mar 2026: tabla con búsqueda, modal detalle, responsive.
+     * Modelo: alumno, profesor, rutinasPlantilla, rutinasAsignadas, nombresRutinasAsignadasAlAlumno.
+     * Ver CHANGELOG [2026-03-18], GUIA_RESPONSIVE §5.4.
+     */
     @GetMapping("/asignar-rutina/{id}")
     public String asignarRutinaAAlumno(@PathVariable Long id, Model model, @AuthenticationPrincipal Usuario usuarioActual) {
         Profesor profesor = getProfesorParaUsuarioActual(usuarioActual);
@@ -920,34 +926,23 @@ public class ProfesorController {
             // Obtener las rutinas plantilla del profesor
             List<com.migimvirtual.entidades.Rutina> rutinasPlantilla = rutinaService.obtenerRutinasPlantillaPorProfesor(profesor.getId());
             
-            // DEBUG: Imprimir información de las rutinas plantilla
-            System.out.println("=== DEBUG ASIGNAR RUTINA ===");
-            System.out.println("Profesor ID: " + profesor.getId());
-            System.out.println("Rutinas plantilla encontradas: " + rutinasPlantilla.size());
-            for (int i = 0; i < rutinasPlantilla.size(); i++) {
-                com.migimvirtual.entidades.Rutina r = rutinasPlantilla.get(i);
-                System.out.println("Rutina " + i + ": ID=" + r.getId() + 
-                                 ", Nombre=" + r.getNombre() + 
-                                 ", EsPlantilla=" + r.isEsPlantilla() + 
-                                 ", Profesor=" + (r.getProfesor() != null ? r.getProfesor().getId() : "NULL"));
-            }
-            
             // Obtener las rutinas ya asignadas al alumno
             List<com.migimvirtual.entidades.Rutina> rutinasAsignadas = rutinaService.obtenerRutinasAsignadasPorUsuario(id);
-            System.out.println("Rutinas asignadas al alumno: " + rutinasAsignadas.size());
+            // Nombres de rutinas ya asignadas (las copias tienen el mismo nombre que la plantilla)
+            Set<String> nombresRutinasAsignadasAlAlumno = rutinasAsignadas.stream()
+                    .map(com.migimvirtual.entidades.Rutina::getNombre)
+                    .filter(Objects::nonNull)
+                    .collect(Collectors.toSet());
 
             model.addAttribute("alumno", alumno);
             model.addAttribute("profesor", profesor);
             model.addAttribute("rutinasPlantilla", rutinasPlantilla);
             model.addAttribute("rutinasAsignadas", rutinasAsignadas);
-            
-            System.out.println("=== FIN DEBUG ===");
+            model.addAttribute("nombresRutinasAsignadasAlAlumno", nombresRutinasAsignadasAlAlumno);
             
             return "profesor/asignar-rutina";
             
         } catch (Exception e) {
-            System.out.println("=== ERROR EN ASIGNAR RUTINA ===");
-            e.printStackTrace();
             model.addAttribute("errorMessage", "Error al cargar la página de asignación: " + e.getMessage());
             return "redirect:/profesor/" + profesor.getId();
         }

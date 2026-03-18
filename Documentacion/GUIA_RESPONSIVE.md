@@ -169,7 +169,36 @@ Responsividad del panel del profesor terminada para móvil (breakpoint 991px / 9
 
 **Archivos:** profesor/dashboard.html, rutinas/editarRutina.html, rutinas/verRutina.html, ProfesorController.java.
 
-**Pendiente:** Responsive de **asignación de rutinas** (asignación desde usuario, vista en panel del profesor). Luego: ejercicios (vista, creación, modificación).
+---
+
+## 5.4 Asignar rutina – vista responsive (Mar 2026) – ✅ Completado
+
+> **Nota:** Refactor completo: tabla con búsqueda, modal de detalle, diferenciación por entorno (escritorio vs móvil).
+
+### Vista asignar rutina (`profesor/asignar-rutina.html`)
+
+| Área | Descripción |
+|------|-------------|
+| **Tabla general** | Reemplaza grid de tarjetas; columnas: Seleccionar, Nombre, Series, Categoría, Acción. Búsqueda por nombre. |
+| **Modal detalle** | Ver, Modificar, Seleccionar. Enlace "Ver" apunta a `/profesor/rutinas/ver/{id}` (vista privada, no hoja pública). |
+| **Deselección** | Cruz (×) junto al badge "X seleccionada(s)" para quitar la selección. |
+| **Navegación** | Botón "Volver al detalle del alumno" (no al dashboard). |
+| **Notas** | Módulo siempre visible entre alumno y selección de rutinas. |
+
+### Entorno 2 (móvil ≤991px)
+
+| Área | Comportamiento |
+|------|----------------|
+| **Columnas tabla** | Solo Nombre, Categoría, Series (Seleccionar y Acción ocultas). |
+| **Abrir modal** | Click en la fila completa para abrir el modal (como en series). |
+| **Cerrar y scroll** | Al seleccionar rutina y cerrar el modal, scroll automático al botón asignar. |
+
+### Archivos
+profesor/asignar-rutina.html, ProfesorController.java.
+
+### Entornos
+- **Entorno 1 (escritorio):** Tabla completa con botones + y ojo; botón deseleccionar visible.
+- **Entorno 2 (móvil):** Tabla simplificada; fila clickeable; barra inferior móvil.
 
 ---
 
@@ -180,4 +209,4 @@ Responsividad del panel del profesor terminada para móvil (breakpoint 991px / 9
 3. **Formularios:** que los campos no queden con ancho fijo; usar `col-12 col-md-*` en móvil.
 ---
 
-*Documento de referencia para responsividad. Panel del profesor completado Mar 2026. Módulo de series completado Mar 2026. Módulo de rutinas (panel, editar, hoja) completado Mar 2026. Pendiente: asignación de rutinas y ejercicios.*
+*Documento de referencia para responsividad. Panel del profesor completado Mar 2026. Módulo de series completado Mar 2026. Módulo de rutinas (panel, editar, hoja, asignar) completado Mar 2026. Pendiente: ejercicios (vista, creación, modificación).*

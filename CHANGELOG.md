@@ -2,6 +2,34 @@
 
 > Nota: este changelog incluye histórico heredado de MiGym (referencias a admin/chat/websocket).
 
+## [2026-03-18] - feat(ui): asignar rutina – refactor, responsive y UX mejorada ✅
+
+### 🎯 **Resumen**
+Refactor completo de la vista **Asignar Rutina** (`/profesor/asignar-rutina/{id}`): reemplazo de tarjetas por tabla con búsqueda, modal de detalle, mejoras de UX (deselección, enlace correcto) y diferenciación por entorno (escritorio vs móvil).
+
+### ✅ **Cambios generales (ambos entornos)**
+- **Tabla en lugar de tarjetas:** Grid de tarjetas reemplazado por tabla con columnas (Seleccionar, Nombre, Series, Categoría, Acción) para escalar mejor con muchas rutinas.
+- **Búsqueda por nombre:** Input de filtro para buscar rutinas en tiempo real.
+- **Modal de detalle:** Al hacer clic en Ver o en la fila (móvil) se abre modal con nombre, descripción, series, categoría y botones Ver, Modificar, Seleccionar.
+- **Enlace "Ver" corregido:** El modal apunta a `/profesor/rutinas/ver/{id}` (vista privada del profesor) en lugar de `/rutinas/ver/{id}` que redirigía a la hoja pública (solo válida para rutinas ya asignadas).
+- **Botón deseleccionar:** Cruz (×) junto al badge "X seleccionada(s)" para quitar la selección cuando hay rutina elegida.
+- **Botón "Volver":** Cambiado de "Volver al Dashboard" a "Volver al detalle del alumno" (`/profesor/alumnos/{id}`).
+- **Subtítulo eliminado:** Texto "Asigna rutinas de entrenamiento a tus alumnos" removido por redundancia.
+- **Módulo de notas:** Siempre visible entre alumno y selección de rutinas; sin efecto de activación por selección.
+
+### ✅ **Entorno 2 (móvil ≤991px)**
+- **Tabla simplificada:** Columnas Seleccionar y Acción ocultas; solo Nombre, Categoría y Series.
+- **Click en fila abre modal:** Al tocar cualquier fila (excepto rutinas ya asignadas) se abre el modal de detalle.
+- **Al seleccionar:** El modal se cierra y la vista hace scroll al botón "Asignar Rutina Seleccionada".
+
+### 📁 **Archivos modificados**
+profesor/asignar-rutina.html, ProfesorController.java (nombresRutinasAsignadasAlAlumno, eliminación de debug).
+
+### 📁 **Documentación**
+Documentacion/GUIA_RESPONSIVE.md (§5.4), Documentacion/AYUDA_MEMORIA.md.
+
+---
+
 ## [2026-03-17] - feat(ui): módulo de rutinas – panel, editar, hoja y navegación ✅
 
 ### 🎯 **Resumen**

@@ -1,7 +1,15 @@
 <!DOCTYPE html>
+<!--
+  Asignar Rutina - /profesor/asignar-rutina/{id}
+  Refactor Mar 2026: tabla con búsqueda, modal detalle, responsive.
+  - Ambos entornos: tabla, búsqueda, modal (Ver/Modificar/Seleccionar), cruz deseleccionar, enlace Ver → /profesor/rutinas/ver/{id}
+  - Entorno 2 (≤991px): columnas Nombre/Categoría/Series; click fila abre modal; scroll al asignar
+  Ver CHANGELOG [2026-03-18], GUIA_RESPONSIVE §5.4
+-->
 <html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/springsecurity">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Asignar Rutina - Panel del Profesor</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
@@ -21,19 +29,19 @@
             padding: 30px;
         }
         
+        @media (max-width: 767px) {
+            .asignar-rutina-container { padding-left: 0.3rem; padding-right: 0.3rem; }
+            .main-container { margin: 4px 0; padding: 1rem 0.3rem; border-radius: 12px; }
+            .hero-title { font-size: 1.5rem; }
+            .card-body[style*="max-height"] { max-height: none !important; }
+        }
+        
         .hero-title {
             color: #2c3e50;
             font-weight: 700;
             text-align: center;
             margin-bottom: 30px;
             font-size: 2.2rem;
-        }
-        
-        .hero-subtitle {
-            color: #7f8c8d;
-            text-align: center;
-            margin-bottom: 30px;
-            font-size: 1.1rem;
         }
         
         .btn-volver {
@@ -60,44 +68,39 @@
             border-left: 4px solid #667eea;
         }
         
-                 .serie-card {
-             border: 2px solid #e9ecef;
-             border-radius: 12px;
-             transition: all 0.3s ease;
-             cursor: pointer;
-             background: white;
-             margin-bottom: 12px;
-             position: relative;
-             padding: 1rem;
-             min-height: 140px;
-         }
-        
-        .serie-card:hover {
-            border-color: #fdcb6e;
-            transform: translateY(-3px);
-            box-shadow: 0 8px 20px rgba(253, 203, 110, 0.2);
-        }
-        
-        .serie-card.asignada {
-            border-color: #28a745;
-            background-color: #f8fff9;
-            cursor: not-allowed;
-        }
-        
-        .serie-card.selected {
-            border-color: #fdcb6e;
+        .card-header-custom {
             background: linear-gradient(135deg, #fdcb6e 0%, #e17055 100%);
             color: white;
-            transform: translateY(-3px);
-            box-shadow: 0 8px 20px rgba(253, 203, 110, 0.3);
+            border-radius: 15px 15px 0 0;
+            padding: 1rem 1.5rem;
         }
         
-        .serie-card.selected h6,
-        .serie-card.selected p,
-        .serie-card.selected .text-muted,
-        .serie-card.selected .h5,
-        .serie-card.selected small {
-            color: white !important;
+        #tablaRutinasAsignar { font-size: 0.9rem; }
+        .fila-rutina-asignar.fila-rutina-seleccionada { background-color: rgba(253, 203, 110, 0.2) !important; }
+        .fila-rutina-asignar.fila-rutina-asignada { background-color: #f8fff9; cursor: not-allowed; }
+        
+        @media (max-width: 575px) {
+            #tablaRutinasAsignar { font-size: 0.8rem; }
+            #tablaRutinasAsignar th:nth-child(3), #tablaRutinasAsignar td:nth-child(3) { max-width: 100px; overflow: hidden; text-overflow: ellipsis; }
+        }
+        
+        .col-descripcion-movil { display: none; }
+        @media (min-width: 576px) {
+            .col-descripcion-movil { display: table-cell; }
+        }
+        /* Entorno 2 (móvil): ocultar Seleccionar y Acción, mostrar Categoría */
+        @media (max-width: 991px) {
+            #tablaRutinasAsignar th.col-seleccionar-movil,
+            #tablaRutinasAsignar td.col-seleccionar-movil,
+            #tablaRutinasAsignar th.col-accion-movil,
+            #tablaRutinasAsignar td.col-accion-movil { display: none !important; }
+            #tablaRutinasAsignar th.col-categoria-movil,
+            #tablaRutinasAsignar td.col-categoria-movil { display: table-cell !important; }
+            #tablaRutinasAsignar tbody tr.fila-rutina-asignar { cursor: pointer; }
+        }
+        @media (min-width: 992px) {
+            #tablaRutinasAsignar th.col-categoria-movil,
+            #tablaRutinasAsignar td.col-categoria-movil { display: none !important; }
         }
         
         .btn-asignar {
@@ -116,12 +119,51 @@
             color: white;
         }
         
-                 .card-header-custom {
-             background: linear-gradient(135deg, #fdcb6e 0%, #e17055 100%);
-             color: white;
-             border-radius: 15px 15px 0 0;
-             padding: 1rem 1.5rem;
-         }
+        .modal-card-rutina {
+            background: linear-gradient(135deg, #ede7f6 0%, #f3e5f5 100%);
+            border-color: #b39ddb !important;
+            box-shadow: 0 2px 12px rgba(126, 87, 194, 0.15);
+        }
+        .modal-card-rutina .card-title { color: #4a148c; }
+        .modal-card-rutina .badge.bg-secondary { background: #7e57c2 !important; }
+        .modal-botones-accion { flex-wrap: nowrap; }
+        @media (max-width: 400px) {
+            .modal-botones-accion { font-size: 0.8rem; }
+            .modal-botones-accion .btn { padding-left: 0.4rem; padding-right: 0.4rem; }
+        }
+        
+        /* Barra inferior móvil */
+        .bottom-nav-mobile {
+            display: none;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(180deg, #2c3e50 0%, #34495e 100%);
+            color: #ecf0f1;
+            padding: 0.5rem 0 0.6rem;
+            padding-bottom: max(0.6rem, env(safe-area-inset-bottom));
+            box-shadow: 0 -2px 12px rgba(0,0,0,0.15);
+            z-index: 1030;
+        }
+        @media (max-width: 991px) {
+            .bottom-nav-mobile { display: flex !important; justify-content: space-around; align-items: center; }
+            .asignar-rutina-container { padding-bottom: 5rem !important; }
+        }
+        @media (min-width: 992px) {
+            .bottom-nav-mobile { display: none !important; }
+        }
+        .bottom-nav-mobile a {
+            color: #bdc3c7;
+            text-decoration: none;
+            font-size: 0.7rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.2rem;
+        }
+        .bottom-nav-mobile a:hover, .bottom-nav-mobile a:focus { color: #fff; }
+        .bottom-nav-mobile a i { font-size: 1.25rem; }
     </style>
 </head>
 <body>
@@ -129,18 +171,17 @@
 <!-- Navbar fragment -->
 <div th:replace="fragments/navbar :: navbar"></div>
 
-<div class="container-fluid">
+<div class="container-fluid px-md-3 asignar-rutina-container" th:attr="data-alumno-id=${alumno.id}">
     <div class="main-container">
         <div class="d-flex justify-content-between align-items-center mb-4">
-            <a th:href="@{/profesor/{id}(id=${profesor.id})}" class="btn btn-volver">
-                <i class="fas fa-arrow-left me-2"></i>Volver al Dashboard
+            <a th:href="@{/profesor/alumnos/{id}(id=${alumno.id})}" class="btn btn-volver">
+                <i class="fas fa-arrow-left me-2"></i>Volver al detalle del alumno
             </a>
         </div>
         
         <h1 class="hero-title">
             <i class="fas fa-dumbbell me-3"></i>Asignar Rutina
         </h1>
-        <p class="hero-subtitle">Asigna rutinas de entrenamiento a tus alumnos</p>
 
         <!-- Información del Alumno -->
         <div class="alumno-info">
@@ -169,6 +210,21 @@
             </div>
         </div>
 
+        <!-- Módulo de notas del profesor (siempre visible) -->
+        <div class="notas-module p-3 border rounded bg-light mb-4">
+            <form th:action="@{/profesor/asignar-rutina/{id}(id=${alumno.id})}" method="post" id="formAsignarRutina">
+                <input type="hidden" id="rutinaSeleccionada" name="rutinaPlantillaId" value="">
+                <div class="mb-3">
+                    <label for="notaParaAlumno" class="form-label fw-bold">
+                        <i class="fas fa-comment-dots me-1"></i>Nota o reseña para el alumno <span class="text-muted fw-normal">(opcional)</span>
+                    </label>
+                    <textarea id="notaParaAlumno" name="notaParaAlumno" class="form-control" rows="3" maxlength="2000"
+                              placeholder="Ej: Enfocate en la técnica esta semana. Cualquier duda escribime."></textarea>
+                    <small class="text-muted">El alumno verá este mensaje al abrir el enlace de la rutina. Podés cambiarla después desde la ficha del alumno.</small>
+                </div>
+            </form>
+        </div>
+
         <!-- Mensaje de error -->
         <div th:if="${errorMessage}" class="alert alert-danger" role="alert">
             <i class="fas fa-exclamation-triangle me-2"></i>
@@ -177,186 +233,281 @@
 
         <!-- Formulario de Asignación -->
         <div class="card">
-                         <div class="card-header-custom">
-                 <div class="d-flex justify-content-between align-items-center">
-                     <h5 class="mb-0">
-                         <i class="fas fa-dumbbell me-2"></i>Seleccionar Rutina para Asignar
-                         <span class="badge bg-light text-dark ms-2" id="selectedCount">0 seleccionadas</span>
-                     </h5>
-                     <div class="text-white">
-                         <small>
-                             <i class="fas fa-layer-group me-1"></i>
-                             <span th:text="${rutinasPlantilla != null ? rutinasPlantilla.size() : 0}">0</span> rutinas disponibles
-                         </small>
-                     </div>
-                 </div>
-             </div>
-            
-            
+            <div class="card-header-custom">
+                <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+                    <h5 class="mb-0 d-flex align-items-center gap-2">
+                        <i class="fas fa-dumbbell me-2"></i>Seleccionar Rutina para Asignar
+                        <span class="badge bg-light text-dark ms-2 d-inline-flex align-items-center gap-1" id="selectedCount">0 seleccionadas</span>
+                        <button type="button" id="btnDeseleccionar" class="btn btn-sm btn-light border-0 p-1 rounded" title="Quitar selección" style="display: none;" aria-label="Deseleccionar">
+                            <i class="fas fa-times text-danger"></i>
+                        </button>
+                    </h5>
+                    <div class="text-white">
+                        <small>
+                            <i class="fas fa-layer-group me-1"></i>
+                            <span th:text="${rutinasPlantilla != null ? rutinasPlantilla.size() : 0}">0</span> rutinas disponibles
+                        </small>
+                    </div>
+                </div>
+            </div>
             
             <div class="card-body" style="max-height: 500px; overflow-y: auto;">
-                
-                
-                                 <div th:if="${rutinasPlantilla != null and !rutinasPlantilla.isEmpty()}">
-                     <div class="row">
-                         <div th:each="rutina : ${rutinasPlantilla}" class="col-lg-4 col-md-6 col-sm-6 mb-3">
-                             <div class="serie-card" th:classappend="${rutinasAsignadas != null and rutinasAsignadas.contains(rutina)} ? 'asignada'" 
-                                  th:data-serie-id="${rutina.id}">
-                                 <div class="d-flex justify-content-between align-items-start mb-2">
-                                     <h6 class="mb-1 text-truncate" style="max-width: 200px;" th:text="${rutina.nombre}">Nombre de la Rutina</h6>
-                                     <div class="d-flex gap-1 align-items-center">
-                                         <a th:href="@{/rutinas/ver/{id}(id=${rutina.id})}" class="btn btn-outline-info btn-sm" target="_blank" rel="noopener">
-                                             <i class="fas fa-eye"></i>
-                                         </a>
-                                         <span th:if="${rutinasAsignadas != null and rutinasAsignadas.contains(rutina)}" 
-                                               class="badge bg-success">
-                                             <i class="fas fa-check me-1"></i>Asignada
-                                         </span>
-                                     </div>
-                                 </div>
-                                 
-                                 <p class="text-muted mb-2 small" style="font-size: 0.85rem; line-height: 1.2;" th:text="${rutina.descripcion}">Descripción de la rutina</p>
-                                 
-                                 <div class="row text-center mb-2">
-                                     <div class="col-4">
-                                         <div class="h6 text-primary mb-0" th:text="${rutina.series != null ? rutina.series.size() : 0}">0</div>
-                                         <small class="text-muted" style="font-size: 0.75rem;">Series</small>
-                                     </div>
-                                     <div class="col-4">
-                                         <div class="h6 text-info mb-0" th:text="${(rutina.categoriasList != null && !rutina.categoriasList.isEmpty()) ? #strings.listJoin(rutina.categoriasList, ', ') : (rutina.categoria != null ? rutina.categoria : 'N/A')}">N/A</div>
-                                         <small class="text-muted" style="font-size: 0.75rem;">Categoría</small>
-                                     </div>
-                                     <div class="col-4">
-                                         <div class="h6 text-muted mb-0">Asignada</div>
-                                         <small class="text-muted" style="font-size: 0.75rem;">Rutina</small>
-                                     </div>
-                                 </div>
-                                 
-                                 <!-- Checkbox oculto para la selección -->
-                                 <input type="checkbox" name="selectedSeries" th:value="${rutina.id}" class="d-none serie-checkbox">
-                             </div>
-                         </div>
-                     </div>
+                <div th:if="${rutinasPlantilla != null and !rutinasPlantilla.isEmpty()}">
+                    <label for="filtroRutinasAsignar" class="form-label small text-muted">Buscar por nombre</label>
+                    <input type="text" id="filtroRutinasAsignar" class="form-control form-control-sm mb-2" placeholder="Escribí el nombre de la rutina...">
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-hover table-sm" id="tablaRutinasAsignar">
+                            <thead class="table-success text-center">
+                                <tr>
+                                    <th class="text-center col-seleccionar-movil" style="width: 50px;">Seleccionar</th>
+                                    <th>Nombre</th>
+                                    <th class="text-center col-categoria-movil">Categoría</th>
+                                    <th class="text-center">Series</th>
+                                    <th class="text-center col-descripcion-movil">Categoría</th>
+                                    <th class="text-center col-accion-movil" style="width: 90px;">Acción</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="rutina : ${rutinasPlantilla}" class="fila-rutina-asignar align-middle"
+                                    th:classappend="${nombresRutinasAsignadasAlAlumno != null and nombresRutinasAsignadasAlAlumno.contains(rutina.nombre)} ? 'fila-rutina-asignada'"
+                                    th:attr="data-rutina-id=${rutina.id},
+                                            data-rutina-nombre=${rutina.nombre},
+                                            data-rutina-descripcion=${rutina.descripcion != null ? rutina.descripcion : ''},
+                                            data-rutina-categoria=${(rutina.categoriasList != null and !rutina.categoriasList.isEmpty()) ? #strings.listJoin(rutina.categoriasList, ', ') : (rutina.categoria != null ? rutina.categoria : '')},
+                                            data-series-nombres=${rutina.series != null and !rutina.series.isEmpty() ? #strings.listJoin(rutina.series.![nombre], '|') : ''}">
+                                    <td class="text-center col-seleccionar-movil">
+                                        <button type="button" class="btn btn-sm btn-outline-success btn-seleccionar-rutina" 
+                                                th:disabled="${nombresRutinasAsignadasAlAlumno != null and nombresRutinasAsignadasAlAlumno.contains(rutina.nombre)}"
+                                                title="Seleccionar para asignar">
+                                            <i class="fas fa-plus"></i>
+                                        </button>
+                                    </td>
+                                    <td th:text="${rutina.nombre}">Nombre</td>
+                                    <td class="small col-categoria-movil" th:text="${(rutina.categoriasList != null and !rutina.categoriasList.isEmpty()) ? #strings.listJoin(rutina.categoriasList, ', ') : (rutina.categoria != null ? rutina.categoria : '—')}">—</td>
+                                    <td class="text-center">
+                                        <span class="badge bg-info" th:text="${rutina.series != null ? rutina.series.size() : 0}">0</span>
+                                    </td>
+                                    <td class="small col-descripcion-movil" th:text="${(rutina.categoriasList != null and !rutina.categoriasList.isEmpty()) ? #strings.listJoin(rutina.categoriasList, ', ') : (rutina.categoria != null ? rutina.categoria : '—')}">—</td>
+                                    <td class="text-center col-accion-movil">
+                                        <span th:if="${nombresRutinasAsignadasAlAlumno != null and nombresRutinasAsignadasAlAlumno.contains(rutina.nombre)}" 
+                                              class="badge bg-success">
+                                            <i class="fas fa-check me-1"></i>Asignada
+                                        </span>
+                                        <button th:unless="${nombresRutinasAsignadasAlAlumno != null and nombresRutinasAsignadasAlAlumno.contains(rutina.nombre)}"
+                                                type="button" class="btn btn-sm btn-outline-secondary btn-ver-detalle-rutina" title="Ver detalle">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
                     
-                    <!-- Nota para el alumno y botón de asignación (visible cuando hay rutina seleccionada) -->
-                    <div id="botonAsignacion" class="mt-4 p-3 border rounded bg-light" style="display: none;">
-                        <form th:action="@{/profesor/asignar-rutina/{id}(id=${alumno.id})}" method="post">
-                            <input type="hidden" id="serieSeleccionada" name="rutinaPlantillaId" value="">
-                            <div class="mb-3">
-                                <label for="notaParaAlumno" class="form-label fw-bold">
-                                    <i class="fas fa-comment-dots me-1"></i>Nota o reseña para el alumno <span class="text-muted fw-normal">(opcional)</span>
-                                </label>
-                                <textarea id="notaParaAlumno" name="notaParaAlumno" class="form-control" rows="3" maxlength="2000"
-                                          placeholder="Ej: Enfocate en la técnica esta semana. Cualquier duda escribime."></textarea>
-                                <small class="text-muted">El alumno verá este mensaje al abrir el enlace de la rutina. Podés cambiarla después desde la ficha del alumno.</small>
-                            </div>
-                            <div class="text-center">
-                                <button type="submit" class="btn btn-asignar btn-lg">
-                                    <i class="fas fa-dumbbell me-2"></i>Asignar Rutina Seleccionada
-                                </button>
-                            </div>
-                        </form>
+                    <!-- Botón de asignación (visible siempre, habilitado solo con rutina seleccionada) -->
+                    <div class="mt-4 text-center">
+                        <button type="submit" form="formAsignarRutina" id="btnAsignarRutina" class="btn btn-asignar btn-lg" disabled>
+                            <i class="fas fa-dumbbell me-2"></i>Asignar Rutina Seleccionada
+                        </button>
                     </div>
                 </div>
                 
-                                 <div th:if="${rutinasPlantilla == null or rutinasPlantilla.isEmpty()}" class="text-center py-4">
-                     <i class="fas fa-dumbbell fa-2x text-muted mb-3"></i>
-                     <h6 class="text-muted">No hay rutinas plantilla disponibles</h6>
-                     <p class="text-muted small mb-3">Primero debes crear rutinas plantilla para poder asignarlas a tus alumnos.</p>
-                     <a th:href="@{/rutinas/crear}" class="btn btn-asignar btn-sm">
-                         <i class="fas fa-plus me-2"></i>Crear Nueva Rutina
-                     </a>
-                 </div>
+                <div th:if="${rutinasPlantilla == null or rutinasPlantilla.isEmpty()}" class="text-center py-4">
+                    <i class="fas fa-dumbbell fa-2x text-muted mb-3"></i>
+                    <h6 class="text-muted">No hay rutinas plantilla disponibles</h6>
+                    <p class="text-muted small mb-3">Primero debes crear rutinas plantilla para poder asignarlas a tus alumnos.</p>
+                    <a th:href="@{/rutinas/crear}" class="btn btn-asignar btn-sm">
+                        <i class="fas fa-plus me-2"></i>Crear Nueva Rutina
+                    </a>
+                </div>
             </div>
         </div>
     </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<!-- Modal Ver detalle de rutina (Ver, Modificar, Seleccionar) -->
+<div class="modal fade" id="modalDetalleRutina" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow">
+            <div class="modal-header border-0 pb-0">
+                <h5 class="modal-title"><i class="fas fa-dumbbell me-2" style="color:#7e57c2;"></i>Detalle de la rutina</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <div class="modal-body pt-0" id="modalDetalleRutinaBody">
+                <div class="card modal-card-rutina border-2 rounded-3 overflow-hidden">
+                    <div class="card-body">
+                        <h6 class="card-title mb-2 fw-bold" id="modalRutinaNombre">—</h6>
+                        <p class="small mb-2 fw-semibold">Descripción:</p>
+                        <p class="card-text small text-muted mb-2" id="modalRutinaDescripcion">—</p>
+                        <p class="small mb-2 fw-semibold">Series:</p>
+                        <div id="modalRutinaSeries" class="d-flex flex-wrap gap-1 mb-2"></div>
+                        <p class="small mb-2 fw-semibold">Categoría:</p>
+                        <p class="card-text small text-muted mb-3" id="modalRutinaCategoria">—</p>
+                        <div class="d-flex flex-nowrap gap-2 modal-botones-accion">
+                            <a id="modalRutinaVer" href="#" class="btn btn-outline-dark btn-sm flex-shrink-0" target="_blank" rel="noopener"><i class="fas fa-eye me-1"></i>Ver</a>
+                            <a id="modalRutinaModificar" href="#" class="btn btn-outline-primary btn-sm flex-shrink-0"><i class="fas fa-edit me-1"></i>Modificar</a>
+                            <button type="button" class="btn btn-primary btn-sm flex-shrink-0" id="modalBtnSeleccionarRutina"><i class="fas fa-check me-1"></i>Seleccionar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
- <script>
- // Variables globales
- let selectedCount = 0;
- let selectedCards = new Set();
-
-// Función para alternar selección de tarjeta
-function toggleCardSelection(card) {
-    if (card.classList.contains('asignada')) {
-        return; // No permitir seleccionar rutinas ya asignadas
-    }
-    
-    const rutinaId = card.getAttribute('data-serie-id');
-    const checkbox = card.querySelector('.serie-checkbox');
-    
-    if (card.classList.contains('selected')) {
-        // Deseleccionar
-        card.classList.remove('selected');
-        selectedCards.delete(rutinaId);
-        selectedCount--;
-        if (checkbox) checkbox.checked = false;
-    } else {
-        // Seleccionar
-        card.classList.add('selected');
-        selectedCards.add(rutinaId);
-        selectedCount++;
-        if (checkbox) checkbox.checked = true;
-    }
-    
-    updateCounter();
-    showAssignmentButton();
-    updateHiddenInput();
-}
-
-// Función para actualizar contador
-function updateCounter() {
-    const countBadge = document.getElementById('selectedCount');
-    if (countBadge) {
-        countBadge.textContent = `${selectedCount} seleccionada(s)`;
-    }
-}
-
-// Función para mostrar/ocultar botón de asignación
-function showAssignmentButton() {
-    const botonAsignacion = document.getElementById('botonAsignacion');
-    if (botonAsignacion) {
-        if (selectedCount > 0) {
-            botonAsignacion.style.display = 'block';
-        } else {
-            botonAsignacion.style.display = 'none';
-        }
-    }
-}
-
-// Función para actualizar input hidden
-function updateHiddenInput() {
-    const inputHidden = document.getElementById('serieSeleccionada');
-    if (inputHidden && selectedCards.size > 0) {
-        // Tomar la primera rutina seleccionada
-        const firstSelected = Array.from(selectedCards)[0];
-        inputHidden.value = firstSelected;
-    }
-}
-
- // Inicialización cuando el DOM esté listo
- document.addEventListener('DOMContentLoaded', function() {
-     // Configurar event listeners para las tarjetas
-     const cards = document.querySelectorAll('.serie-card');
-     
-     cards.forEach((card) => {
-         card.addEventListener('click', function(e) {
-             // Evitar que el click en elementos internos active/desactive la selección
-             if (e.target.closest('.btn') || e.target.closest('input') || e.target.closest('label')) {
-                 return;
-             }
-             
-             toggleCardSelection(this);
-         });
-     });
- });
-</script>
+<!-- Barra inferior móvil -->
+<nav class="bottom-nav-mobile" aria-label="Accesos rápidos">
+    <a th:href="@{/profesor/dashboard}" class="bottom-nav-item" aria-label="Inicio"><i class="fa-solid fa-house"></i><span>Inicio</span></a>
+    <a th:href="@{/profesor/dashboard(tab='alumnos')}" class="bottom-nav-item" aria-label="Alumnos"><i class="fa-solid fa-users"></i><span>Alumnos</span></a>
+    <a th:href="@{/profesor/dashboard(tab='rutinas')}" class="bottom-nav-item" aria-label="Rutinas"><i class="fa-solid fa-list-check"></i><span>Rutinas</span></a>
+    <a th:href="@{/profesor/administracion}" class="bottom-nav-item" th:if="${#authentication.principal != null && (#authentication.principal.rol == 'ADMIN' || #authentication.principal.rol == 'DEVELOPER')}" aria-label="Más"><i class="fa-solid fa-gear"></i><span>Más</span></a>
+    <a th:href="@{/profesor/dashboard}" class="bottom-nav-item" th:if="${#authentication.principal != null && #authentication.principal.rol != 'ADMIN' && #authentication.principal.rol != 'DEVELOPER'}" aria-label="Más"><i class="fa-solid fa-ellipsis"></i><span>Más</span></a>
+</nav>
 
 <!-- Footer Fragment -->
 <div th:replace="fragments/footer :: footer"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const countBadge = document.getElementById('selectedCount');
+    const tabla = document.getElementById('tablaRutinasAsignar');
+    const filtro = document.getElementById('filtroRutinasAsignar');
+    const modalDetalle = document.getElementById('modalDetalleRutina');
+    const modalBtnSeleccionar = document.getElementById('modalBtnSeleccionarRutina');
+    const btnAsignarRutina = document.getElementById('btnAsignarRutina');
+    const rutinaSeleccionadaInput = document.getElementById('rutinaSeleccionada');
+    
+    let selectedRutinaId = null;
+    let currentDetalleRow = null;
+    
+    function updateCount() {
+        const n = selectedRutinaId ? 1 : 0;
+        if (countBadge) countBadge.textContent = n + ' seleccionada(s)';
+        return n;
+    }
+    
+    function selectRutina(rutinaId) {
+        if (!rutinaId || !tabla) return;
+        const row = tabla.querySelector('tr[data-rutina-id="' + rutinaId + '"]');
+        if (row && row.classList.contains('fila-rutina-asignada')) return;
+        
+        if (tabla) tabla.querySelectorAll('tr.fila-rutina-seleccionada').forEach(function(r) { r.classList.remove('fila-rutina-seleccionada'); });
+        selectedRutinaId = rutinaId;
+        if (row) row.classList.add('fila-rutina-seleccionada');
+        if (rutinaSeleccionadaInput) rutinaSeleccionadaInput.value = rutinaId;
+        updateCount();
+        if (btnAsignarRutina) btnAsignarRutina.disabled = !selectedRutinaId;
+        var btnDes = document.getElementById('btnDeseleccionar');
+        if (btnDes) btnDes.style.display = selectedRutinaId ? 'inline-block' : 'none';
+    }
+    
+    function clearSelection() {
+        selectedRutinaId = null;
+        if (tabla) tabla.querySelectorAll('tr.fila-rutina-seleccionada').forEach(function(r) { r.classList.remove('fila-rutina-seleccionada'); });
+        if (rutinaSeleccionadaInput) rutinaSeleccionadaInput.value = '';
+        updateCount();
+        if (btnAsignarRutina) btnAsignarRutina.disabled = true;
+        var btnDes = document.getElementById('btnDeseleccionar');
+        if (btnDes) btnDes.style.display = 'none';
+    }
+    
+    var btnDes = document.getElementById('btnDeseleccionar');
+    if (btnDes) btnDes.addEventListener('click', function(e) {
+        e.preventDefault();
+        clearSelection();
+    });
+    
+    // Filtro por nombre
+    if (filtro && tabla) {
+        filtro.addEventListener('input', function() {
+            var texto = (this.value || '').toLowerCase().trim();
+            tabla.querySelectorAll('tbody tr.fila-rutina-asignar').forEach(function(tr) {
+                var nombre = (tr.getAttribute('data-rutina-nombre') || '').toLowerCase();
+                tr.style.display = (texto === '' || nombre.indexOf(texto) !== -1) ? '' : 'none';
+            });
+        });
+    }
+    
+    // Botón Seleccionar en fila
+    if (tabla) {
+        tabla.querySelectorAll('.btn-seleccionar-rutina').forEach(function(btn) {
+            btn.addEventListener('click', function(e) {
+                e.preventDefault();
+                var row = this.closest('tr.fila-rutina-asignar');
+                if (!row || row.classList.contains('fila-rutina-asignada')) return;
+                var id = row.getAttribute('data-rutina-id');
+                selectRutina(id);
+            });
+        });
+    }
+    
+    function abrirModalDesdeFila(row) {
+        if (!row || row.classList.contains('fila-rutina-asignada')) return;
+        currentDetalleRow = row;
+        var id = row.getAttribute('data-rutina-id');
+        var nombre = row.getAttribute('data-rutina-nombre') || '—';
+        var desc = row.getAttribute('data-rutina-descripcion') || '—';
+        var cat = row.getAttribute('data-rutina-categoria') || '—';
+        var seriesStr = row.getAttribute('data-series-nombres') || '';
+        var series = seriesStr ? seriesStr.split('|') : [];
+        document.getElementById('modalRutinaNombre').textContent = nombre;
+        document.getElementById('modalRutinaDescripcion').textContent = desc || '—';
+        document.getElementById('modalRutinaCategoria').textContent = cat || '—';
+        var alumnoId = document.querySelector('.asignar-rutina-container') ? document.querySelector('.asignar-rutina-container').getAttribute('data-alumno-id') : '';
+        document.getElementById('modalRutinaVer').setAttribute('href', '/profesor/rutinas/ver/' + id);
+        document.getElementById('modalRutinaModificar').setAttribute('href', '/rutinas/editar/' + id + (alumnoId ? '?alumnoId=' + alumnoId : ''));
+        var cont = document.getElementById('modalRutinaSeries');
+        cont.innerHTML = '';
+        series.forEach(function(n) {
+            var b = document.createElement('span');
+            b.className = 'badge bg-secondary';
+            b.textContent = n;
+            cont.appendChild(b);
+        });
+        if (modalBtnSeleccionar) {
+            modalBtnSeleccionar.style.display = row.classList.contains('fila-rutina-asignada') ? 'none' : 'inline-block';
+        }
+        if (typeof bootstrap !== 'undefined') (new bootstrap.Modal(modalDetalle)).show();
+    }
+    
+    // Ver detalle: botón ojo (desktop) y click en fila (mobile) (entorno 2)
+    if (tabla) {
+        tabla.querySelectorAll('.btn-ver-detalle-rutina').forEach(function(btn) {
+            btn.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                abrirModalDesdeFila(this.closest('tr.fila-rutina-asignar'));
+            });
+        });
+        tabla.querySelectorAll('tbody tr.fila-rutina-asignar').forEach(function(tr) {
+            tr.addEventListener('click', function(e) {
+                if (window.innerWidth > 991) return;
+                if (e.target.closest('.btn-seleccionar-rutina') || e.target.closest('.btn-ver-detalle-rutina')) return;
+                abrirModalDesdeFila(this);
+            });
+        });
+    }
+    
+    // Botón Seleccionar en modal
+    if (modalBtnSeleccionar && modalDetalle) {
+        modalBtnSeleccionar.addEventListener('click', function() {
+            if (!currentDetalleRow) return;
+            var id = currentDetalleRow.getAttribute('data-rutina-id');
+            var esMobile = window.innerWidth <= 991;
+            if (!currentDetalleRow.classList.contains('fila-rutina-asignada')) {
+                selectRutina(id);
+            }
+            var modal = bootstrap.Modal.getInstance(modalDetalle);
+            if (modal) modal.hide();
+            currentDetalleRow = null;
+            if (esMobile && btnAsignarRutina) {
+                btnAsignarRutina.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        });
+    }
+    
+});
+</script>
 
 </body>
 </html>

@@ -99,7 +99,7 @@ Ver GUIA_RESPONSIVE.md §5.2.
 ## Siguiente sesión – pendiente
 
 - ~~**Continuar con creación de rutinas** (crear, modificar, panel, hoja).~~ ✅ **Hecho (Mar 2026):** Ver CHANGELOG [2026-03-17] y GUIA_RESPONSIVE §5.3. Panel Rutinas con columna Acciones en escritorio; editar rutina mismo layout que crear; hoja responsive y header en dos filas; volver a tab Rutinas desde editar.
-- **Mañana: mejorar responsive de asignación de rutinas:** Incluye asignación desde usuario (alumno), vista de asignaciones en el panel del profesor (tabla/cards, filtros, acciones en móvil).
+- ~~**Mañana: mejorar responsive de asignación de rutinas:**~~ ✅ **Hecho (Mar 2026):** Tabla con búsqueda, modal de detalle, botón deseleccionar, enlace Ver corregido; móvil: columnas simplificadas (Nombre, Categoría, Series), click en fila abre modal, scroll al asignar. Ver CHANGELOG [2026-03-18] y GUIA_RESPONSIVE §5.4.
 - **Barra inferior de navegación (accesos directos):** Pendiente cambiar los accesos directos de la barra inferior (Inicio, Alumnos, Rutinas, Más) cuando se definan las URLs o flujos finales; actualmente en panel profesor y en crear rutina usan enlaces al dashboard y a administración.
 - **Después de asignación:** Seguir con **ejercicios** — vista, creación y modificación (responsive y consistencia con el resto del panel).
 
@@ -110,7 +110,7 @@ Ver GUIA_RESPONSIVE.md §5.2.
 1. ~~**Mejorar front con responsividad** (panel del profesor).~~ ✅ **Hecho (Mar 2026):** login, navbar compacto, dashboard 6 tarjetas en móvil, tabla alumnos (acción, celular icono, ver solo ojo, asignar desde detalle), footer una fila. Ver GUIA_RESPONSIVE.md §5 y CHANGELOG [2026-03-15].
 2. ~~**Vista de ficha del alumno – mejoras para móvil.**~~ ✅ **Hecho (Mar 2026):** contenedor, título y subtítulo adaptados; header (Volver/Eliminar) a ancho completo; tarjetas en 1 columna; bloque alumno-info apilado; botones de tabla con área táctil mínima 38px; breakpoints 991px y 575px. **Vista del alumno terminada:** modal progreso al tocar registro (móvil), modal confirmar eliminar progreso (estilo borrar alumno), botón Guardar notas, Eliminar usuario debajo de todo, barra inferior móvil igual al panel, formato fecha dd/MM/yy. Pendiente: scroll vertical en progresos (móvil, >5 registros).
 3. ~~**Módulo de series (vista responsive).**~~ ✅ **Hecho (Mar 2026):** ver sección "Módulo de Series" más arriba. Opcional: revisar editar serie y flujos restantes.
-4. ~~**Módulo de rutinas (creación, modificar, panel, hoja).**~~ ✅ **Hecho (Mar 2026):** CHANGELOG [2026-03-17]. Pendiente: **responsive asignación de rutinas** (asignación desde usuario, vista en panel). Luego: **ejercicios** (vista, creación, modificación).
+4. ~~**Módulo de rutinas (creación, modificar, panel, hoja, asignar).**~~ ✅ **Hecho (Mar 2026):** CHANGELOG [2026-03-17], [2026-03-18]. Luego: **ejercicios** (vista, creación, modificación).
 5. **Luego:** Revisar/cambiar el **sistema de backup** — todavía no está definido si va a quedar como está o se modificará.
 6. **Luego:** **Modificar el manual del usuario** (actualizar contenido y estructura según los cambios de la app).
 
