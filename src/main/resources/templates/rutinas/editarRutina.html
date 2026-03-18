@@ -2,133 +2,131 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Modificar Rutina - MiGimVirtual</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="/style.css" rel="stylesheet">
+    <link href="/css/footer.css" rel="stylesheet">
     <style>
-        body { background: linear-gradient(135deg, #f5f7fa 0%, #e4e8ec 100%); font-family: 'Segoe UI', sans-serif; min-height: 100vh; }
-        .form-title { color: #2c3e50; font-weight: 700; }
-        .card { border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.07); border: none; }
-        .card-header { border-radius: 15px 15px 0 0; font-weight: 600; }
-        .serie-card { border: 2px solid #e9ecef; border-radius: 12px; transition: all 0.25s ease; cursor: pointer; background: white; margin-bottom: 12px; }
-        .serie-card:hover { border-color: #ffc107; transform: translateY(-2px); box-shadow: 0 6px 16px rgba(255, 193, 7, 0.25); }
-        .serie-card.selected { border-color: #ffc107; background: linear-gradient(135deg, #ffc107 0%, #fd7e14 100%); color: white; }
-        .serie-card .repeticiones-input-wrapper { display: none; }
-        .serie-card.selected .repeticiones-input-wrapper { display: flex; align-items: center; gap: 10px; }
-        .serie-card.selected .repeticiones-input-wrapper label { color: white; font-weight: bold; }
-        .serie-card .serie-card-hint { display: block; }
-        .serie-card.selected .serie-card-hint { display: none; }
-        .serie-card.selected .text-muted { color: rgba(255,255,255,0.9) !important; }
-        .btn-primary { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border: none; font-weight: 600; }
-        .btn-primary:hover { opacity: 0.95; }
-        .btn-danger { background-color: #e74c3c; border-color: #e74c3c; }
-        .list-group-item { border-radius: 10px !important; }
-        .detalles-rutina-card .form-label { color: #495057; }
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .main-container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            margin: 20px auto;
+            padding: 30px;
+        }
+        @media (max-width: 767px) {
+            .editar-rutina-container { padding-left: 0.3rem; padding-right: 0.3rem; }
+            .main-container { margin: 4px 0; padding: 1rem 0.3rem; border-radius: 12px; }
+            .form-title { font-size: 1.5rem; }
+            .card-body[style*="max-height"] { max-height: none !important; }
+        }
+        .form-title { color: #2c3e50; font-weight: 700; text-align: center; margin-bottom: 30px; font-size: 2.2rem; }
+        .btn-primary { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border: none; font-weight: 600; padding: 12px 30px; }
+        .btn-primary:hover { background: linear-gradient(135deg, #764ba2 0%, #667eea 100%); transform: translateY(-2px); }
+        #tablaSeriesEditar { font-size: 0.9rem; }
+        .fila-serie-editar.fila-serie-seleccionada { background-color: rgba(0,0,0,0.06) !important; }
+        @media (max-width: 575px) {
+            #tablaSeriesEditar { font-size: 0.8rem; }
+            #tablaSeriesEditar th:nth-child(4), #tablaSeriesEditar td:nth-child(4) { max-width: 120px; overflow: hidden; text-overflow: ellipsis; }
+        }
+        .col-descripcion-movil { display: none; }
+        @media (min-width: 576px) { .col-descripcion-movil { display: table-cell; } }
+        .selected-series { background: #f8f9fa; border-radius: 15px; padding: 20px; margin-top: 20px; }
+        .serie-actual-item, .serie-agregar-item {
+            background: white;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-left: 4px solid #fdcb6e;
+        }
+        #series-actuales-list .list-group-item,
+        #series-agregar-ordered .list-group-item { flex-wrap: nowrap; }
+        .serie-nombre-en-listado { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .modal-card-serie {
+            background: linear-gradient(135deg, #ede7f6 0%, #f3e5f5 100%);
+            border-color: #b39ddb !important;
+            box-shadow: 0 2px 12px rgba(126, 87, 194, 0.15);
+        }
+        .modal-card-serie .card-title { color: #4a148c; }
+        .modal-botones-accion { flex-wrap: nowrap; }
+        @media (max-width: 400px) {
+            .modal-botones-accion { font-size: 0.8rem; }
+            .modal-botones-accion .btn { padding-left: 0.4rem; padding-right: 0.4rem; }
+        }
+        .bottom-nav-mobile {
+            display: none;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(180deg, #2c3e50 0%, #34495e 100%);
+            color: #ecf0f1;
+            padding: 0.5rem 0 0.6rem;
+            padding-bottom: max(0.6rem, env(safe-area-inset-bottom));
+            box-shadow: 0 -2px 12px rgba(0,0,0,0.15);
+            z-index: 1030;
+        }
+        @media (max-width: 991px) {
+            .bottom-nav-mobile { display: flex !important; justify-content: space-around; align-items: center; }
+            .editar-rutina-container { padding-bottom: 5rem !important; }
+        }
+        @media (min-width: 992px) { .bottom-nav-mobile { display: none !important; } }
+        .bottom-nav-mobile a {
+            color: #bdc3c7;
+            text-decoration: none;
+            font-size: 0.7rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.2rem;
+        }
+        .bottom-nav-mobile a:hover, .bottom-nav-mobile a:focus { color: #fff; }
+        .bottom-nav-mobile a i { font-size: 1.25rem; }
     </style>
 </head>
 <body>
+
 <div th:replace="fragments/navbar :: navbar"></div>
-<div class="container my-4">
-    <h1 class="form-title mb-4"><i class="fas fa-edit me-3"></i>Modificar Rutina</h1>
 
-    <form method="post" th:action="@{/rutinas/actualizar/{id}(id=${rutina.id})}" id="rutinaForm">
-        <input th:if="${returnAlumnoId != null}" type="hidden" name="returnAlumnoId" th:value="${returnAlumnoId}">
-        <input type="hidden" name="returnTab" th:value="${returnTab != null and !#strings.isEmpty(returnTab) ? returnTab : 'rutinas'}">
-
-        <!-- Fila 1: Series a seleccionar (izq) + Series seleccionadas (der) -->
-        <div class="row g-4">
-            <!-- Columna Izquierda: Series a seleccionar (2 tarjetas por fila) -->
-            <div class="col-lg-6">
-                <div class="card h-100">
-                    <div class="card-header bg-warning text-dark">
-                        <h5 class="mb-0"><i class="fas fa-plus-circle me-2"></i>Series a seleccionar</h5>
-                        <small class="opacity-90">Clic en una tarjeta para agregarla a la rutina.</small>
-                    </div>
-                    <div class="card-body overflow-auto" style="max-height: 420px;">
-                        <div th:if="${#lists.isEmpty(seriesDisponibles)}" class="text-center text-muted py-4">
-                            <p class="mb-0">No hay más series para agregar. Todas tus series ya están en esta rutina.</p>
-                            <a th:href="@{/series/crear}" class="btn btn-outline-primary btn-sm mt-2"><i class="fas fa-plus me-1"></i>Crear nueva serie</a>
-                        </div>
-                        <div class="row g-2" id="anadir-series-cards" th:if="${!#lists.isEmpty(seriesDisponibles)}">
-                            <div th:each="plantilla : ${seriesDisponibles}" class="col-md-6">
-                                <div class="serie-card p-3" th:data-plantilla-id="${plantilla.id}" th:data-nombre="${plantilla.nombre}">
-                                    <div class="d-flex justify-content-between align-items-start">
-                                        <h6 class="mb-0 flex-grow-1" th:text="${plantilla.nombre}"></h6>
-                                        <a th:href="@{/series/ver/{id}(id=${plantilla.id})}" class="btn btn-sm btn-outline-secondary" target="_blank" rel="noopener" title="Ver serie"><i class="fas fa-eye"></i></a>
-                                    </div>
-                                    <p class="small text-muted mt-1 mb-2" th:text="${plantilla.descripcion != null ? plantilla.descripcion : 'Sin descripción'}">Sin descripción</p>
-                                    <input type="hidden" name="nuevasSeriesIds" th:value="${plantilla.id}" class="serie-id-input" disabled>
-                                    <div class="repeticiones-input-wrapper mt-2">
-                                        <div class="input-group input-group-sm">
-                                            <label class="input-group-text">Vueltas:</label>
-                                            <input type="number" class="form-control repeticiones-input" name="repeticionesNuevas" th:value="${plantilla.repeticionesSerie > 0 ? plantilla.repeticionesSerie : 1}" min="1" disabled>
-                                        </div>
-                                    </div>
-                                    <small class="text-muted d-block mt-1 serie-card-hint"><i class="fas fa-mouse-pointer me-1"></i>Clic para agregar</small>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Columna Derecha: Series en esta Rutina (seleccionadas) -->
-            <div class="col-lg-6">
-                <div class="card h-100">
-                    <div class="card-header bg-info text-white">
-                        <h5 class="mb-0"><i class="fas fa-list-check me-2"></i>Series en esta Rutina</h5>
-                        <small class="opacity-90">Usá Subir/Bajar para cambiar el orden.</small>
-                    </div>
-                    <div class="card-body overflow-auto" style="max-height: 420px;">
-                        <ul class="list-group list-group-flush" id="series-actuales-list">
-                            <li th:each="serie : ${rutina.series}" class="list-group-item d-flex justify-content-between align-items-center mb-2 serie-actual-item">
-                                <div class="d-flex align-items-center gap-2 flex-grow-1">
-                                    <div class="btn-group btn-group-sm flex-shrink-0">
-                                        <button type="button" class="btn btn-outline-secondary btn-subir-serie" title="Subir"><i class="fas fa-arrow-up"></i></button>
-                                        <button type="button" class="btn btn-outline-secondary btn-bajar-serie" title="Bajar"><i class="fas fa-arrow-down"></i></button>
-                                    </div>
-                                    <div>
-                                        <strong th:text="${serie.nombre}">Nombre de Serie</strong>
-                                        <div class="input-group input-group-sm mt-2" style="width: 200px;">
-                                            <label class="input-group-text">Vueltas:</label>
-                                            <input type="number" class="form-control" name="repeticionesExistentes" th:data-serie-id="${serie.id}" th:value="${serie.repeticionesSerie}" min="1">
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="d-flex align-items-center gap-1">
-                                    <a th:href="@{/series/ver/{id}(id=${serie.id})}" class="btn btn-sm btn-outline-info" target="_blank" rel="noopener" title="Ver serie">
-                                        <i class="fas fa-eye"></i>
-                                    </a>
-                                    <button type="button" class="btn btn-sm btn-outline-danger" onclick="eliminarSerie(this)" title="Quitar"><i class="fas fa-trash"></i></button>
-                                </div>
-                                <input type="hidden" name="seriesIds" th:value="${serie.id}">
-                            </li>
-                            <li id="no-series-msg" th:if="${#lists.isEmpty(rutina.series)}" class="list-group-item text-muted text-center py-4">No hay series en esta rutina.</li>
-                        </ul>
-                        <div id="series-preview-block" class="mt-3" style="display: none;">
-                            <small class="text-success fw-bold"><i class="fas fa-plus-circle me-1"></i>Se agregarán al guardar:</small>
-                            <ul class="list-group list-group-flush mt-2" id="series-preview-list"></ul>
-                        </div>
-                    </div>
-                </div>
-            </div>
+<div class="container-fluid px-md-3 editar-rutina-container">
+    <div class="main-container">
+        <div class="mb-3">
+            <a th:href="@{/profesor/dashboard(tab='rutinas')}" class="btn btn-outline-secondary btn-sm">
+                <i class="fas fa-arrow-left me-1"></i>Volver al panel (Rutinas)
+            </a>
         </div>
+        <h1 class="form-title">
+            <i class="fas fa-edit me-3"></i>Modificar Rutina
+        </h1>
 
-        <!-- Fila 2: Detalles de la Rutina (debajo) -->
-        <div class="row mt-4">
-            <div class="col-12">
-                <div class="card detalles-rutina-card">
-                    <div class="card-header bg-dark text-white">
-                        <h5 class="mb-0"><i class="fas fa-info-circle me-2"></i>Detalles de la Rutina</h5>
-                    </div>
-                    <div class="card-body">
-                        <div class="row g-3">
-                            <div class="col-md-6">
-                                <label for="nombre" class="form-label fw-bold">Nombre</label>
-                                <input type="text" class="form-control" id="nombre" name="nombre" th:value="${rutina.nombre}" required placeholder="Nombre de la rutina">
+        <div th:if="${successMessage}" class="alert alert-success text-center" th:text="${successMessage}"></div>
+        <div th:if="${errorMessage}" class="alert alert-danger text-center" th:text="${errorMessage}"></div>
+
+        <form method="post" th:action="@{/rutinas/actualizar/{id}(id=${rutina.id})}" id="rutinaForm">
+            <input th:if="${returnAlumnoId != null}" type="hidden" name="returnAlumnoId" th:value="${returnAlumnoId}">
+            <input type="hidden" name="returnTab" th:value="${returnTab != null && !#strings.isEmpty(returnTab) ? returnTab : 'rutinas'}">
+
+            <div class="row g-3">
+                <!-- Columna izquierda: Información de la rutina -->
+                <div class="col-12 col-md-4 order-2 order-md-1">
+                    <div class="card">
+                        <div class="card-header bg-primary text-white">
+                            <h5 class="mb-0"><i class="fas fa-info-circle me-2"></i>Información de la Rutina</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="mb-3">
+                                <label for="nombre" class="form-label fw-bold">Nombre de la Rutina:</label>
+                                <input type="text" class="form-control" id="nombre" name="nombre" th:value="${rutina.nombre}" required>
                             </div>
-                            <div class="col-md-6">
-                                <label class="form-label fw-bold">Categoría(s)</label>
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Categoría(s):</label>
                                 <p class="small text-muted mb-2">Podés elegir más de una.</p>
                                 <div class="d-flex flex-wrap gap-3">
                                     <div class="form-check">
@@ -153,139 +151,326 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-12">
-                                <label for="descripcion" class="form-label fw-bold">Descripción</label>
-                                <textarea class="form-control" id="descripcion" name="descripcion" rows="2" placeholder="Descripción breve de la rutina" th:text="${rutina.descripcion}"></textarea>
+                            <div class="mb-3">
+                                <label for="descripcion" class="form-label fw-bold">Descripción:</label>
+                                <textarea class="form-control" id="descripcion" name="descripcion" rows="4" th:text="${rutina.descripcion}"></textarea>
                             </div>
-                            <div th:if="${!rutina.esPlantilla}" class="col-12">
+                            <div th:if="${!rutina.esPlantilla}" class="mb-3">
                                 <label for="notaParaAlumno" class="form-label fw-bold">Nota para el alumno (reseña)</label>
-                                <textarea class="form-control" id="notaParaAlumno" name="notaParaAlumno" rows="2" maxlength="2000" placeholder="Mensaje que verá el alumno al abrir el enlace (opcional)"
-                                    th:text="${rutina.notaParaAlumno}"></textarea>
-                                <div class="form-text">Solo aplica a rutinas asignadas. Máx. 2000 caracteres.</div>
+                                <textarea class="form-control" id="notaParaAlumno" name="notaParaAlumno" rows="2" maxlength="2000" th:text="${rutina.notaParaAlumno}"></textarea>
+                                <div class="form-text">Máx. 2000 caracteres.</div>
+                            </div>
+                            <button type="submit" class="btn btn-primary w-100 mt-3">
+                                <i class="fas fa-save me-2"></i>Guardar cambios
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Columna derecha: Series en la rutina + tabla para agregar más -->
+                <div class="col-12 col-md-8 order-1 order-md-2">
+                    <div class="card">
+                        <div class="card-header bg-warning text-dark d-flex justify-content-between align-items-center flex-wrap gap-2">
+                            <h5 class="mb-0">
+                                <i class="fas fa-dumbbell me-2"></i>Series en esta rutina
+                                <span class="badge bg-light text-dark ms-2" id="seriesCountLabel">0</span>
+                            </h5>
+                            <a th:href="@{/series/crear}" class="btn btn-sm btn-dark"><i class="fas fa-plus me-1"></i>Crear serie</a>
+                        </div>
+                        <div class="card-body">
+                            <div class="mb-3 p-2 rounded" style="background: #fff8e1;">
+                                <h6 class="mb-2"><i class="fas fa-sort me-1"></i>Orden de series (subir/bajar, vueltas, quitar)</h6>
+                                <p class="small text-muted mb-2 d-none d-md-block">Las series ya en la rutina aparecen abajo. Podés agregar más desde la tabla.</p>
+                                <p class="small text-muted mb-2 d-md-none mb-0">Series en la rutina</p>
+                                <ul id="series-actuales-list" class="list-group list-group-flush">
+                                    <li th:each="serie : ${rutina.series}" class="list-group-item d-flex align-items-center gap-2 py-2 serie-actual-item"
+                                        th:attr="data-serie-id=${serie.id}">
+                                        <div class="btn-group btn-group-sm flex-shrink-0">
+                                            <button type="button" class="btn btn-outline-secondary btn-subir-actual" title="Subir"><i class="fas fa-arrow-up"></i></button>
+                                            <button type="button" class="btn btn-outline-secondary btn-bajar-actual" title="Bajar"><i class="fas fa-arrow-down"></i></button>
+                                        </div>
+                                        <span class="flex-grow-1 fw-bold text-truncate serie-nombre-en-listado" style="min-width:0" th:text="${serie.nombre}">Nombre</span>
+                                        <label class="mb-0 small flex-shrink-0">Vueltas:</label>
+                                        <input type="number" class="form-control form-control-sm flex-shrink-0" name="repeticionesExistentes" th:value="${serie.repeticionesSerie != null ? serie.repeticionesSerie : 1}" min="1" max="10" style="width:70px">
+                                        <input type="hidden" name="seriesIds" th:value="${serie.id}">
+                                        <a th:href="@{/series/ver/{id}(id=${serie.id})}" class="btn btn-sm btn-outline-info flex-shrink-0" target="_blank" rel="noopener" title="Ver serie"><i class="fas fa-eye"></i></a>
+                                        <button type="button" class="btn btn-outline-danger btn-sm flex-shrink-0 btn-eliminar-actual" title="Quitar de la rutina"><i class="fas fa-trash-alt"></i></button>
+                                    </li>
+                                </ul>
+                                <div id="series-agregar-block" class="mt-3" style="display: none;">
+                                    <small class="text-success fw-bold"><i class="fas fa-plus-circle me-1"></i>Se agregarán al guardar:</small>
+                                    <ul id="series-agregar-ordered" class="list-group list-group-flush mt-2"></ul>
+                                </div>
+                            </div>
+
+                            <div th:if="${seriesDisponibles != null && seriesDisponibles.isEmpty()}" class="alert alert-info">
+                                No hay más series para agregar. Todas tus series ya están en esta rutina.
+                            </div>
+                            <div th:unless="${seriesDisponibles == null || seriesDisponibles.isEmpty()}">
+                                <label for="filtroSeriesEditar" class="form-label small text-muted">Buscar por nombre</label>
+                                <input type="text" id="filtroSeriesEditar" class="form-control form-control-sm mb-2" placeholder="Escribí el nombre de la serie...">
+                                <div class="table-responsive">
+                                    <table class="table table-bordered table-hover table-sm" id="tablaSeriesEditar">
+                                        <thead class="table-success text-center">
+                                            <tr>
+                                                <th class="text-center" style="width: 50px;">Agregar</th>
+                                                <th>Nombre</th>
+                                                <th class="text-center">N° Ej.</th>
+                                                <th class="text-center col-descripcion-movil">Descripción</th>
+                                                <th class="text-center" style="width: 90px;">Acción</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr th:each="plantilla : ${seriesDisponibles}" class="fila-serie-editar align-middle"
+                                                th:attr="data-serie-id=${plantilla.id},
+                                                        data-serie-nombre=${plantilla.nombre},
+                                                        data-serie-descripcion=${plantilla.descripcion != null ? plantilla.descripcion : ''},
+                                                        data-serie-reps=${plantilla.repeticionesSerie != null ? plantilla.repeticionesSerie : 1},
+                                                        data-ejercicios-nombres=${plantilla.serieEjercicios != null ? #strings.listJoin(plantilla.serieEjercicios.![exercise.name], '|') : ''}">
+                                                <td class="text-center">
+                                                    <button type="button" class="btn btn-sm btn-outline-success btn-agregar-serie-editar" title="Agregar a la rutina"><i class="fas fa-plus"></i></button>
+                                                </td>
+                                                <td th:text="${plantilla.nombre}">Nombre</td>
+                                                <td class="text-center">
+                                                    <span class="badge bg-info" th:text="${plantilla.serieEjercicios != null ? plantilla.serieEjercicios.size() : 0}">0</span>
+                                                </td>
+                                                <td class="small col-descripcion-movil" th:text="${plantilla.descripcion != null ? plantilla.descripcion : '—'}">—</td>
+                                                <td class="text-center">
+                                                    <button type="button" class="btn btn-sm btn-outline-secondary btn-ver-detalle-serie-editar" title="Ver detalle"><i class="fas fa-eye"></i></button>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-
-        <div class="d-grid mt-4">
-            <button type="submit" class="btn btn-primary btn-lg">
-                <i class="fas fa-save me-2"></i>Guardar Todos los Cambios
-            </button>
-        </div>
-    </form>
+        </form>
+    </div>
 </div>
+
+<!-- Modal Ver detalle de serie -->
+<div class="modal fade" id="modalDetalleSerieEditar" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow">
+            <div class="modal-header border-0 pb-0">
+                <h5 class="modal-title"><i class="fas fa-dumbbell me-2" style="color:#7e57c2;"></i>Detalle de la serie</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <div class="modal-body pt-0" id="modalDetalleSerieEditarBody">
+                <div class="card modal-card-serie border-2 rounded-3 overflow-hidden">
+                    <div class="card-body">
+                        <h6 class="card-title mb-2 fw-bold" id="modalSerieEditarNombre">—</h6>
+                        <p class="small mb-2 fw-semibold">Descripción:</p>
+                        <p class="card-text small text-muted mb-2" id="modalSerieEditarDescripcion">—</p>
+                        <p class="small mb-2 fw-semibold">Ejercicios:</p>
+                        <div id="modalSerieEditarEjercicios" class="d-flex flex-wrap gap-1 mb-3"></div>
+                        <div class="d-flex flex-nowrap gap-2 modal-botones-accion">
+                            <a id="modalSerieEditarVer" href="#" class="btn btn-outline-dark btn-sm flex-shrink-0" target="_blank" rel="noopener"><i class="fas fa-eye me-1"></i>Ver serie</a>
+                            <a id="modalSerieEditarModificar" href="#" class="btn btn-outline-primary btn-sm flex-shrink-0"><i class="fas fa-edit me-1"></i>Modificar</a>
+                            <button type="button" class="btn btn-primary btn-sm flex-shrink-0" id="modalBtnAgregarSerieEditar"><i class="fas fa-plus me-1"></i>Agregar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Barra inferior móvil -->
+<nav class="bottom-nav-mobile" id="bottomNavMobile" aria-label="Accesos rápidos">
+    <a th:href="@{/profesor/dashboard}" class="bottom-nav-item" aria-label="Inicio"><i class="fa-solid fa-house"></i><span>Inicio</span></a>
+    <a th:href="@{/profesor/dashboard(tab='alumnos')}" class="bottom-nav-item" aria-label="Alumnos"><i class="fa-solid fa-users"></i><span>Alumnos</span></a>
+    <a th:href="@{/profesor/dashboard(tab='rutinas')}" class="bottom-nav-item" aria-label="Rutinas"><i class="fa-solid fa-list-check"></i><span>Rutinas</span></a>
+    <a th:href="@{/profesor/administracion}" class="bottom-nav-item" th:if="${usuario != null && (usuario.rol == 'ADMIN' || usuario.rol == 'DEVELOPER')}" aria-label="Más"><i class="fa-solid fa-gear"></i><span>Más</span></a>
+    <a th:href="@{/profesor/dashboard}" class="bottom-nav-item" th:if="${usuario != null && usuario.rol != 'ADMIN' && usuario.rol != 'DEVELOPER'}" aria-label="Más"><i class="fa-solid fa-ellipsis"></i><span>Más</span></a>
+</nav>
+<div th:replace="fragments/footer :: footer"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    const container = document.getElementById('anadir-series-cards');
-    const previewBlock = document.getElementById('series-preview-block');
-    const previewList = document.getElementById('series-preview-list');
-    if (!container || !previewList) return;
+    const seriesActualesList = document.getElementById('series-actuales-list');
+    const seriesAgregarBlock = document.getElementById('series-agregar-block');
+    const seriesAgregarOrdered = document.getElementById('series-agregar-ordered');
+    const countLabel = document.getElementById('seriesCountLabel');
+    const tabla = document.getElementById('tablaSeriesEditar');
+    const modalDetalle = document.getElementById('modalDetalleSerieEditar');
+    const modalBtnAgregar = document.getElementById('modalBtnAgregarSerieEditar');
 
-    function quitarPreviewRow(plantillaId) {
-        const card = container.querySelector('.serie-card[data-plantilla-id="' + plantillaId + '"]');
-        if (card) {
-            card.classList.remove('selected');
-            const idInput = card.querySelector('.serie-id-input');
-            const repsInput = card.querySelector('.repeticiones-input');
-            if (idInput) idInput.disabled = true;
-            if (repsInput) repsInput.disabled = true;
-        }
-        const row = previewList.querySelector('li[data-preview-plantilla-id="' + plantillaId + '"]');
-        if (row) row.remove();
-        if (previewList.children.length === 0) previewBlock.style.display = 'none';
+    function updateCountLabel() {
+        const actuales = seriesActualesList.querySelectorAll('li.serie-actual-item').length;
+        const agregar = seriesAgregarOrdered.querySelectorAll('li[data-serie-id]').length;
+        countLabel.textContent = actuales + (agregar > 0 ? ' + ' + agregar + ' nueva(s)' : '');
     }
 
-    function updatePreview() {
-        const selected = container.querySelectorAll('.serie-card.selected');
-        previewList.innerHTML = '';
-        if (selected.length === 0) {
-            previewBlock.style.display = 'none';
-            return;
-        }
-        previewBlock.style.display = 'block';
-        selected.forEach(card => {
-            const id = card.dataset.plantillaId;
-            const nombre = (card.dataset.nombre || 'Serie').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-            const repsInput = card.querySelector('.repeticiones-input');
-            const repsVal = repsInput ? repsInput.value : '1';
-            const li = document.createElement('li');
-            li.className = 'list-group-item d-flex justify-content-between align-items-center mb-2';
-            li.dataset.previewPlantillaId = id;
-            li.innerHTML = '<div><strong>' + nombre + '</strong>' +
-                '<div class="input-group input-group-sm mt-2" style="width: 200px;">' +
-                '<label class="input-group-text">Vueltas:</label>' +
-                '<input type="number" class="form-control preview-reps-input" name="repeticionesNuevas" value="' + repsVal + '" min="1">' +
-                '</div></div>' +
-                '<div class="d-flex align-items-center gap-1">' +
-                '<a href="/series/ver/' + id + '" class="btn btn-sm btn-outline-info" target="_blank" rel="noopener" title="Ver serie"><i class="fas fa-eye"></i></a>' +
-                '<button type="button" class="btn btn-sm btn-outline-danger btn-quitar-preview" title="Quitar"><i class="fas fa-trash"></i></button>' +
-                '</div>' +
-                '<input type="hidden" name="nuevasSeriesIds" value="' + id + '">';
-            previewList.appendChild(li);
-            li.querySelector('.btn-quitar-preview').addEventListener('click', function() { quitarPreviewRow(id); });
-        });
-        // Los inputs de las tarjetas no se envían: quedan disabled; los que se envían son los de la vista previa
-        container.querySelectorAll('.serie-card.selected').forEach(card => {
-            const idInput = card.querySelector('.serie-id-input');
-            const repsInput = card.querySelector('.repeticiones-input');
-            if (idInput) idInput.disabled = true;
-            if (repsInput) repsInput.disabled = true;
-        });
-    }
-
-    function setCardSelected(card, isSelected) {
-        card.classList.toggle('selected', isSelected);
-        const idInput = card.querySelector('.serie-id-input');
-        const repsInput = card.querySelector('.repeticiones-input');
-        if (idInput) idInput.disabled = !isSelected;
-        if (repsInput) repsInput.disabled = !isSelected;
-        updatePreview();
-    }
-
-    container.querySelectorAll('.serie-card').forEach(card => {
-        card.addEventListener('click', function(event) {
-            if (event.target.closest('a[href]')) return;
-            if (event.target.closest('.repeticiones-input-wrapper')) return;
-            const isSelected = card.classList.toggle('selected');
-            setCardSelected(card, isSelected);
-        });
-        const repsInput = card.querySelector('.repeticiones-input');
-        if (repsInput) repsInput.addEventListener('change', updatePreview);
-    });
-});
-
-function eliminarSerie(btn) {
-    const listItem = btn.closest('.list-group-item');
-    if (listItem && !listItem.id) listItem.remove();
-    if (document.querySelectorAll('#series-actuales-list li.serie-actual-item').length === 0) {
-        const msg = document.getElementById('no-series-msg');
-        if (msg) msg.style.display = 'block';
-    }
-}
-
-(function() {
-    const list = document.getElementById('series-actuales-list');
-    if (!list) return;
-    function moveSerie(li, delta) {
-        const items = Array.from(list.querySelectorAll('li.serie-actual-item'));
+    function moveSerieActual(li, delta) {
+        const items = Array.from(seriesActualesList.querySelectorAll('li.serie-actual-item'));
         const idx = items.indexOf(li);
         if (idx === -1) return;
         const next = idx + delta;
         if (next < 0 || next >= items.length) return;
-        if (delta < 0) list.insertBefore(li, items[next]);
-        else list.insertBefore(li, items[next].nextSibling);
+        if (delta < 0) seriesActualesList.insertBefore(li, items[next]);
+        else seriesActualesList.insertBefore(li, items[next].nextSibling);
     }
-    list.addEventListener('click', function(e) {
-        const up = e.target.closest('.btn-subir-serie');
-        const down = e.target.closest('.btn-bajar-serie');
-        const li = (up || down) ? (up || down).closest('li.serie-actual-item') : null;
-        if (li && up) { e.preventDefault(); moveSerie(li, -1); }
-        if (li && down) { e.preventDefault(); moveSerie(li, 1); }
+
+    function moveSerieAgregar(li, delta) {
+        const items = Array.from(seriesAgregarOrdered.querySelectorAll('li[data-serie-id]'));
+        const idx = items.indexOf(li);
+        if (idx === -1) return;
+        const next = idx + delta;
+        if (next < 0 || next >= items.length) return;
+        if (delta < 0) seriesAgregarOrdered.insertBefore(li, items[next]);
+        else seriesAgregarOrdered.insertBefore(li, items[next].nextSibling);
+    }
+
+    function syncTableSelected() {
+        if (!tabla) return;
+        const idsEnRutina = [];
+        seriesActualesList.querySelectorAll('li.serie-actual-item').forEach(function(li) {
+            const id = li.getAttribute('data-serie-id');
+            if (id) idsEnRutina.push(String(id));
+        });
+        seriesAgregarOrdered.querySelectorAll('li[data-serie-id]').forEach(function(li) {
+            const id = li.getAttribute('data-serie-id');
+            if (id) idsEnRutina.push(String(id));
+        });
+        tabla.querySelectorAll('tbody tr.fila-serie-editar').forEach(function(tr) {
+            const id = String(tr.getAttribute('data-serie-id') || '');
+            if (idsEnRutina.indexOf(id) !== -1) tr.classList.add('fila-serie-seleccionada');
+            else tr.classList.remove('fila-serie-seleccionada');
+        });
+    }
+
+    seriesActualesList.addEventListener('click', function(e) {
+        const up = e.target.closest('.btn-subir-actual');
+        const down = e.target.closest('.btn-bajar-actual');
+        const del = e.target.closest('.btn-eliminar-actual');
+        const li = (up || down || del) ? (up || down || del).closest('li.serie-actual-item') : null;
+        if (li && up) { e.preventDefault(); moveSerieActual(li, -1); }
+        if (li && down) { e.preventDefault(); moveSerieActual(li, 1); }
+        if (li && del) { e.preventDefault(); li.remove(); updateCountLabel(); syncTableSelected(); }
     });
-})();
+
+    seriesAgregarOrdered.addEventListener('click', function(e) {
+        const up = e.target.closest('.btn-subir-agregar');
+        const down = e.target.closest('.btn-bajar-agregar');
+        const del = e.target.closest('.btn-eliminar-agregar');
+        const li = (up || down || del) ? (up || down || del).closest('li[data-serie-id]') : null;
+        if (li && up) { e.preventDefault(); moveSerieAgregar(li, -1); }
+        if (li && down) { e.preventDefault(); moveSerieAgregar(li, 1); }
+        if (li && del) { e.preventDefault(); li.remove(); if (seriesAgregarOrdered.children.length === 0) seriesAgregarBlock.style.display = 'none'; updateCountLabel(); syncTableSelected(); }
+    });
+
+    if (tabla) {
+        tabla.querySelectorAll('.btn-agregar-serie-editar').forEach(function(btn) {
+            btn.addEventListener('click', function(e) {
+                e.preventDefault();
+                const row = this.closest('tr.fila-serie-editar');
+                if (!row) return;
+                const id = row.getAttribute('data-serie-id');
+                if (seriesActualesList.querySelector('li[data-serie-id="' + id + '"]') || seriesAgregarOrdered.querySelector('li[data-serie-id="' + id + '"]')) return;
+                const nombre = (row.getAttribute('data-serie-nombre') || 'Serie').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+                const reps = row.getAttribute('data-serie-reps') || '1';
+                seriesAgregarBlock.style.display = 'block';
+                const li = document.createElement('li');
+                li.className = 'list-group-item d-flex align-items-center gap-2 py-2';
+                li.dataset.serieId = id;
+                li.innerHTML = '<span class="flex-grow-1 fw-bold text-truncate serie-nombre-en-listado" style="min-width:0">' + nombre + '</span>' +
+                    '<label class="mb-0 small flex-shrink-0">Vueltas:</label>' +
+                    '<input type="number" class="form-control form-control-sm flex-shrink-0" name="repeticionesNuevas" value="' + reps + '" min="1" max="10" style="width:70px">' +
+                    '<input type="hidden" name="nuevasSeriesIds" value="' + id + '">' +
+                    '<div class="btn-group btn-group-sm flex-shrink-0">' +
+                    '<button type="button" class="btn btn-outline-secondary btn-subir-agregar" title="Subir"><i class="fas fa-arrow-up"></i></button>' +
+                    '<button type="button" class="btn btn-outline-secondary btn-bajar-agregar" title="Bajar"><i class="fas fa-arrow-down"></i></button>' +
+                    '<button type="button" class="btn btn-outline-danger btn-eliminar-agregar" title="Quitar"><i class="fas fa-trash-alt"></i></button>' +
+                    '</div>';
+                seriesAgregarOrdered.appendChild(li);
+                updateCountLabel();
+                syncTableSelected();
+            });
+        });
+    }
+
+    var currentDetalleRow = null;
+    if (tabla) {
+        tabla.querySelectorAll('.btn-ver-detalle-serie-editar').forEach(function(btn) {
+            btn.addEventListener('click', function(e) {
+                e.preventDefault();
+                const row = this.closest('tr.fila-serie-editar');
+                if (!row) return;
+                currentDetalleRow = row;
+                const id = row.getAttribute('data-serie-id');
+                const nombre = row.getAttribute('data-serie-nombre') || '—';
+                const desc = row.getAttribute('data-serie-descripcion') || '—';
+                const ejerciciosStr = row.getAttribute('data-ejercicios-nombres') || '';
+                const ejercicios = ejerciciosStr ? ejerciciosStr.split('|') : [];
+                document.getElementById('modalSerieEditarNombre').textContent = nombre;
+                document.getElementById('modalSerieEditarDescripcion').textContent = desc || '—';
+                document.getElementById('modalSerieEditarVer').setAttribute('href', '/series/ver/' + id);
+                document.getElementById('modalSerieEditarModificar').setAttribute('href', '/series/editar/' + id);
+                var cont = document.getElementById('modalSerieEditarEjercicios');
+                cont.innerHTML = '';
+                ejercicios.forEach(function(n) {
+                    var b = document.createElement('span');
+                    b.className = 'badge bg-secondary';
+                    b.textContent = n;
+                    cont.appendChild(b);
+                });
+                if (typeof bootstrap !== 'undefined') (new bootstrap.Modal(modalDetalle)).show();
+            });
+        });
+    }
+    if (modalBtnAgregar && modalDetalle) {
+        modalBtnAgregar.addEventListener('click', function() {
+            if (!currentDetalleRow) return;
+            const id = currentDetalleRow.getAttribute('data-serie-id');
+            if (seriesActualesList.querySelector('li[data-serie-id="' + id + '"]') || seriesAgregarOrdered.querySelector('li[data-serie-id="' + id + '"]')) {
+                var modal = bootstrap.Modal.getInstance(modalDetalle);
+                if (modal) modal.hide();
+                return;
+            }
+            const nombre = (currentDetalleRow.getAttribute('data-serie-nombre') || 'Serie').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+            const reps = currentDetalleRow.getAttribute('data-serie-reps') || '1';
+            seriesAgregarBlock.style.display = 'block';
+            const li = document.createElement('li');
+            li.className = 'list-group-item d-flex align-items-center gap-2 py-2';
+            li.dataset.serieId = id;
+            li.innerHTML = '<span class="flex-grow-1 fw-bold text-truncate serie-nombre-en-listado" style="min-width:0">' + nombre + '</span>' +
+                '<label class="mb-0 small flex-shrink-0">Vueltas:</label>' +
+                '<input type="number" class="form-control form-control-sm flex-shrink-0" name="repeticionesNuevas" value="' + reps + '" min="1" max="10" style="width:70px">' +
+                '<input type="hidden" name="nuevasSeriesIds" value="' + id + '">' +
+                '<div class="btn-group btn-group-sm flex-shrink-0">' +
+                '<button type="button" class="btn btn-outline-secondary btn-subir-agregar" title="Subir"><i class="fas fa-arrow-up"></i></button>' +
+                '<button type="button" class="btn btn-outline-secondary btn-bajar-agregar" title="Bajar"><i class="fas fa-arrow-down"></i></button>' +
+                '<button type="button" class="btn btn-outline-danger btn-eliminar-agregar" title="Quitar"><i class="fas fa-trash-alt"></i></button>' +
+                '</div>';
+            seriesAgregarOrdered.appendChild(li);
+            updateCountLabel();
+            syncTableSelected();
+            var modal = bootstrap.Modal.getInstance(modalDetalle);
+            if (modal) modal.hide();
+            currentDetalleRow = null;
+        });
+    }
+
+    var filtro = document.getElementById('filtroSeriesEditar');
+    if (filtro && tabla) {
+        filtro.addEventListener('input', function() {
+            var texto = (this.value || '').toLowerCase().trim();
+            tabla.querySelectorAll('tbody tr.fila-serie-editar').forEach(function(tr) {
+                var nombre = (tr.getAttribute('data-serie-nombre') || '').toLowerCase();
+                tr.style.display = (texto === '' || nombre.indexOf(texto) !== -1) ? '' : 'none';
+            });
+        });
+    }
+
+    updateCountLabel();
+    syncTableSelected();
+});
 </script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
 </body>
-</html> 
+</html>

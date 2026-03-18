@@ -142,6 +142,37 @@ Responsividad del panel del profesor terminada para móvil (breakpoint 991px / 9
 
 ---
 
+## 5.3 Módulo de Rutinas – vista responsive (Mar 2026) – ✅ Completado
+
+> **Nota:** Panel Rutinas (escritorio con Acciones, móvil con modal), formulario modificar rutina alineado con crear rutina, y hoja de rutina responsive con header en dos filas.
+
+### Panel del profesor – pestaña Rutinas (`profesor/dashboard.html`)
+
+| Contexto | Comportamiento |
+|----------|----------------|
+| **Escritorio (≥992px)** | Columna **Acciones** con Ver, Editar, Eliminar; no se abre modal al hacer clic en la fila. |
+| **Móvil (<992px)** | Sin columna Acciones; al tocar la fila se abre modal con Ver, Editar, Eliminar. |
+| **URL al cambiar pestaña** | Se actualiza con `?tab=rutinas` (u otra) para que el botón Atrás vuelva a la pestaña correcta. |
+
+### Formulario modificar rutina (`rutinas/editarRutina.html`)
+
+- Mismo layout que **Crear rutina**: columna info rutina (izq), series en la rutina + tabla disponibles (der), barra inferior móvil, responsive.
+- Enlace **“Volver al panel (Rutinas)”** a `/profesor/dashboard?tab=rutinas`.
+
+### Hoja de rutina (`rutinas/verRutina.html`)
+
+| Área | En móvil |
+|------|----------|
+| **Vista profesor y enlace compartido** | Misma plantilla; `esVistaEscritorio = false` para vista profesor, grid 1 columna. |
+| **Grid de ejercicios** | 1 columna (≤767px); nombres hasta 2 líneas; sin overflow horizontal. |
+| **Header** | Fila 1: logo + MiGimVirtual \| fecha. Fila 2: nombre de la rutina a ancho completo, centrado, con word-wrap para nombres largos. |
+
+**Archivos:** profesor/dashboard.html, rutinas/editarRutina.html, rutinas/verRutina.html, ProfesorController.java.
+
+**Pendiente:** Responsive de **asignación de rutinas** (asignación desde usuario, vista en panel del profesor). Luego: ejercicios (vista, creación, modificación).
+
+---
+
 ## 6. Orden sugerido para otras vistas (opcional)
 
 1. Revisar que **todas** las plantillas del panel tengan la meta **viewport** (ya está en varias).
@@ -149,4 +180,4 @@ Responsividad del panel del profesor terminada para móvil (breakpoint 991px / 9
 3. **Formularios:** que los campos no queden con ancho fijo; usar `col-12 col-md-*` en móvil.
 ---
 
-*Documento de referencia para responsividad. Panel del profesor completado Mar 2026. Vista responsive del módulo de series completada Mar 2026.*
+*Documento de referencia para responsividad. Panel del profesor completado Mar 2026. Módulo de series completado Mar 2026. Módulo de rutinas (panel, editar, hoja) completado Mar 2026. Pendiente: asignación de rutinas y ejercicios.*

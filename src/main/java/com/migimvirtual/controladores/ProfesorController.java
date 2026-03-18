@@ -87,7 +87,7 @@ public class ProfesorController {
         usuarioService.evictAlumnosByProfesorId(profesor.getId());
         List<Usuario> usuarios = usuarioService.getAlumnosByProfesorId(profesor.getId());
         List<Serie> series = serieService.obtenerSeriesPlantillaPorProfesor(profesor.getId());
-        List<com.migimvirtual.entidades.Rutina> rutinas = rutinaService.obtenerRutinasPlantillaPorProfesor(profesor.getId());
+        List<com.migimvirtual.entidades.Rutina> rutinas = rutinaService.obtenerRutinasPlantillaPorProfesorWithSeries(profesor.getId());
         List<com.migimvirtual.entidades.Rutina> rutinasAsignadas = rutinaService
                 .obtenerRutinasAsignadasPorProfesor(profesor.getId());
 
@@ -1026,7 +1026,7 @@ public class ProfesorController {
                     + (port != 80 && port != 443 ? ":" + port : "");
             model.addAttribute("ogImageUrl", baseUrl + "/img/logo.png");
             model.addAttribute("ogPageUrl", baseUrl + "/profesor/rutinas/ver/" + id);
-            model.addAttribute("esVistaEscritorio", true); // No responsive: rutina no asignada
+            model.addAttribute("esVistaEscritorio", false); // Responsive: misma vista que enlace compartido (1 col móvil)
             return "rutinas/verRutina";
         } catch (com.migimvirtual.excepciones.ResourceNotFoundException e) {
             return "redirect:/profesor/dashboard?tab=rutinas&error=Rutina+no+encontrada";

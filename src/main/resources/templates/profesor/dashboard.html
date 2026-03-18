@@ -319,6 +319,25 @@
         @media (min-width: 992px) {
             .dashboard-mobile-cards { display: none !important; }
         }
+        /* Tabla rutinas: ocultar descripción solo en móvil */
+        @media (max-width: 991px) {
+            #tablaRutinas .col-descripcion-rutina-dashboard { display: none !important; }
+        }
+        /* Modal detalle rutina: tarjeta estilo rutinas (amarillo/naranja) */
+        .modal-card-rutina {
+            background: linear-gradient(135deg, #fff9c4 60%, #ffe082 100%);
+            border: 2px solid #ffb74d;
+            border-radius: 12px;
+            box-shadow: 0 2px 12px rgba(230, 81, 0, 0.15);
+        }
+        .modal-card-rutina .card-title { color: #e65100; }
+        /* Filas clicables: rutinas solo en móvil (en escritorio se usan los botones de Acciones) */
+        @media (max-width: 991px) {
+            .fila-rutina { cursor: pointer; }
+        }
+        @media (max-width: 991px) {
+            .alumno-row-clickable { cursor: pointer; }
+        }
         .dashboard-mobile-cards {
             display: none;
             grid-template-columns: repeat(2, 1fr);
@@ -599,13 +618,15 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr th:each="usuario : ${usuarios}" class="text-center"
-                                    th:attr="data-estado=${usuario.estadoAlumno},data-nombre=${usuario.nombre}">
-                                    <td class="text-start">
-                                        <a th:href="@{/profesor/alumnos/{id}(id=${usuario.id})}" class="text-decoration-none text-dark d-inline-flex align-items-center gap-2" title="Ver detalle">
-                                            <i class="fa-solid fa-eye text-primary d-lg-none"></i><span th:text="${usuario.nombre}">Nombre</span>
-                                        </a>
-                                    </td>
+                                <tr th:each="usuario : ${usuarios}" class="text-center alumno-row-clickable"
+                                    th:attr="data-estado=${usuario.estadoAlumno},
+                                             data-nombre=${usuario.nombre},
+                                             data-edad=${usuario.edad != null ? usuario.edad : ''},
+                                             data-celular=${usuario.celular != null ? usuario.celular : ''},
+                                             data-rutinas-count=${usuario.rutinas != null ? usuario.rutinas.size() : 0},
+                                             data-url-ver=@{/profesor/alumnos/{id}(id=${usuario.id})},
+                                             data-url-asignar=@{/profesor/asignar-rutina/{id}(id=${usuario.id})}">
+                                    <td class="text-start"><span th:text="${usuario.nombre}">Nombre</span></td>
                                     <td th:text="${usuario.edad}">Edad</td>
                                     <td class="d-none d-lg-table-cell" th:text="${usuario.celular != null ? usuario.celular : '—'}">—</td>
                                     <td>
@@ -714,17 +735,24 @@
                         <table class="table table-bordered table-hover" id="tablaRutinas">
                             <thead class="table-warning text-center">
                                 <tr>
-                                    <th>ID</th>
                                     <th>Nombre</th>
                                     <th>Categoría</th>
                                     <th>Series</th>
-                                    <th>Descripción</th>
-                                    <th>Acciones</th>
+                                    <th class="col-descripcion-rutina-dashboard">Descripción</th>
+                                    <th class="d-none d-lg-table-cell text-center">Acciones</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr th:each="rutina : ${rutinas}" class="text-center fila-rutina" th:attr="data-nombre=${rutina.nombre}">
-                                    <td th:text="${rutina.id}">1</td>
+                                <tr th:each="rutina : ${rutinas}" class="text-center fila-rutina align-middle"
+                                    th:attr="data-nombre=${rutina.nombre},
+                                             data-rutina-id=${rutina.id},
+                                             data-rutina-descripcion=${rutina.descripcion != null ? rutina.descripcion : ''},
+                                             data-rutina-categorias=${(rutina.categoriasList != null && !rutina.categoriasList.isEmpty()) ? #strings.listJoin(rutina.categoriasList, ', ') : (rutina.categoria != null ? rutina.categoria : '')},
+                                             data-rutina-series-nombres=${rutina.series != null && !rutina.series.isEmpty() ? #strings.listJoin(rutina.series.![nombre], '|') : ''},
+                                             data-rutina-cantidad-series=${rutina.series != null ? rutina.series.size() : 0},
+                                             data-url-ver=@{/profesor/rutinas/ver/{id}(id=${rutina.id})},
+                                             data-url-editar=@{/rutinas/editar/{id}(id=${rutina.id})},
+                                             data-url-eliminar=@{/rutinas/eliminar/{id}(id=${rutina.id})}">
                                     <td th:text="${rutina.nombre}">Nombre</td>
                                     <td>
                                         <th:block th:if="${rutina.categoriasList != null && !rutina.categoriasList.isEmpty()}">
@@ -735,17 +763,13 @@
                                     <td>
                                         <span class="badge bg-info" th:text="${rutina.series != null ? rutina.series.size() : 0}">0</span>
                                     </td>
-                                    <td th:text="${rutina.descripcion}">Descripción</td>
-                                    <td>
-                                        <a th:href="@{/profesor/rutinas/ver/{id}(id=${rutina.id})}" class="btn btn-info btn-sm" target="_blank" rel="noopener" title="Ver (solo con sesión)">
-                                            <i class="fa-solid fa-eye me-1"></i>Ver
-                                        </a>
-                                        <a th:href="@{/rutinas/editar/{id}(id=${rutina.id})}" class="btn btn-warning btn-sm">
-                                            <i class="fa-solid fa-edit me-1"></i>Editar
-                                        </a>
-                                        <a th:href="@{/rutinas/eliminar/{id}(id=${rutina.id})}" class="btn btn-danger btn-sm btn-confirmar-eliminar-dashboard" data-msg="¿Estás seguro de que querés eliminar esta rutina?">
-                                            <i class="fa-solid fa-trash me-1"></i>Eliminar
-                                        </a>
+                                    <td class="col-descripcion-rutina-dashboard small text-start" th:text="${rutina.descripcion}">Descripción</td>
+                                    <td class="d-none d-lg-table-cell text-center">
+                                        <div class="d-flex flex-wrap gap-1 justify-content-center">
+                                            <a th:href="@{/profesor/rutinas/ver/{id}(id=${rutina.id})}" class="btn btn-info btn-sm py-1 px-2" target="_blank" rel="noopener" title="Ver rutina"><i class="fa-solid fa-eye"></i></a>
+                                            <a th:href="@{/rutinas/editar/{id}(id=${rutina.id})}" class="btn btn-warning btn-sm py-1 px-2" title="Editar"><i class="fa-solid fa-edit"></i></a>
+                                            <a th:href="@{/rutinas/eliminar/{id}(id=${rutina.id})}" class="btn btn-danger btn-sm py-1 px-2 btn-confirmar-eliminar-dashboard" title="Eliminar" data-msg="¿Estás seguro de que querés eliminar esta rutina?"><i class="fa-solid fa-trash"></i></a>
+                                        </div>
                                     </td>
                                 </tr>
                             </tbody>
@@ -859,6 +883,36 @@
         </div>
     </div>
 
+    <!-- Modal detalle rutina (móvil: al tocar fila) -->
+    <div class="modal fade" id="modalVerRutinaMobile" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header border-0 pb-0">
+                    <h5 class="modal-title"><i class="fa-solid fa-list-check me-2" style="color:#e65100;"></i>Rutina</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body pt-0">
+                    <div class="card modal-card-rutina border-0">
+                        <div class="card-body">
+                            <h6 class="card-title fw-bold mb-2" id="modalRutinaNombre">—</h6>
+                            <p class="mb-2 small"><strong>Categoría(s):</strong> <span id="modalRutinaCategorias" class="text-muted">—</span></p>
+                            <p class="mb-2 small"><strong>Cantidad de series:</strong> <span id="modalRutinaCantidadSeries">0</span></p>
+                            <p class="mb-2 small"><strong>Series:</strong></p>
+                            <p class="mb-2 small text-muted" id="modalRutinaSeriesNombres" style="white-space: pre-wrap;">—</p>
+                            <p class="mb-2 small"><strong>Descripción:</strong></p>
+                            <p class="mb-0 small text-muted" id="modalRutinaDescripcion" style="white-space: pre-wrap;">—</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer border-0 d-flex flex-wrap gap-2 justify-content-center">
+                    <a id="modalRutinaBtnVer" href="#" class="btn btn-info btn-sm" target="_blank" rel="noopener"><i class="fa-solid fa-eye me-1"></i>Ver</a>
+                    <a id="modalRutinaBtnEditar" href="#" class="btn btn-warning btn-sm"><i class="fa-solid fa-edit me-1"></i>Editar</a>
+                    <a id="modalRutinaBtnEliminar" href="#" class="btn btn-danger btn-sm btn-confirmar-eliminar-dashboard"><i class="fa-solid fa-trash me-1"></i>Eliminar</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Modal alerta (enlace copiado, avisos) -->
     <div class="modal fade" id="modalAlertaDashboard" tabindex="-1">
         <div class="modal-dialog modal-dialog-centered">
@@ -920,6 +974,8 @@
                         if (modalEliminarMsg) modalEliminarMsg.textContent = this.getAttribute('data-msg') || '¿Estás seguro?';
                         var modalSerie = document.getElementById('modalVerSerieMobile');
                         if (modalSerie && bootstrap.Modal.getInstance(modalSerie)) bootstrap.Modal.getInstance(modalSerie).hide();
+                        var modalRutina = document.getElementById('modalVerRutinaMobile');
+                        if (modalRutina && bootstrap.Modal.getInstance(modalRutina)) bootstrap.Modal.getInstance(modalRutina).hide();
                         modalInst.show();
                     });
                 });
@@ -942,6 +998,23 @@
                 const bsTab = bootstrap.Tab.getOrCreateInstance(tabEl);
                 bsTab.show();
             }
+        })();
+
+        // Al cambiar de pestaña, actualizar la URL para que "Atrás" vuelva a la pestaña correcta
+        (function actualizarUrlAlCambiarTab() {
+            const tabIds = { 'alumnos-tab': 'alumnos', 'series-tab': 'series', 'rutinas-tab': 'rutinas', 'asignaciones-tab': 'asignaciones' };
+            document.querySelectorAll('.nav-link[data-bs-toggle="tab"]').forEach(function(tabBtn) {
+                tabBtn.addEventListener('shown.bs.tab', function() {
+                    const id = this.getAttribute('id');
+                    const tab = tabIds[id];
+                    if (!tab) return;
+                    const base = window.location.pathname;
+                    const url = tab === 'alumnos' ? base : base + '?tab=' + tab;
+                    if (window.location.search !== (tab === 'alumnos' ? '' : '?tab=' + tab)) {
+                        window.history.replaceState(null, '', url);
+                    }
+                });
+            });
         })();
 
         // Móvil: clic en tarjeta de inicio → activar tab y scroll a contenido
@@ -1091,6 +1164,59 @@
             if (limpiar) limpiar.addEventListener('click', function() {
                 if (filtro) filtro.value = '';
                 aplicarFiltroRutinas();
+            });
+        })();
+
+        // Alumno móvil: al tocar fila ir al detalle del alumno
+        (function() {
+            document.querySelectorAll('.alumno-row-clickable').forEach(function(row) {
+                row.addEventListener('click', function(e) {
+                    if (window.innerWidth > 991) return;
+                    if (e.target.closest('a[href]')) return;
+                    e.preventDefault();
+                    e.stopPropagation();
+                    var url = row.getAttribute('data-url-ver');
+                    if (url) window.location.href = url;
+                });
+            });
+        })();
+
+        // Modal rutina: al tocar fila (móvil) o fila en general
+        (function() {
+            const modal = document.getElementById('modalVerRutinaMobile');
+            if (!modal) return;
+            const modalInst = new bootstrap.Modal(modal);
+            const elNombre = document.getElementById('modalRutinaNombre');
+            const elCategorias = document.getElementById('modalRutinaCategorias');
+            const elCantidad = document.getElementById('modalRutinaCantidadSeries');
+            const elSeriesNombres = document.getElementById('modalRutinaSeriesNombres');
+            const elDescripcion = document.getElementById('modalRutinaDescripcion');
+            const btnVer = document.getElementById('modalRutinaBtnVer');
+            const btnEditar = document.getElementById('modalRutinaBtnEditar');
+            const btnEliminar = document.getElementById('modalRutinaBtnEliminar');
+            function openRutinaModal(row) {
+                if (elNombre) elNombre.textContent = row.getAttribute('data-nombre') || '—';
+                if (elCategorias) elCategorias.textContent = row.getAttribute('data-rutina-categorias') || '—';
+                if (elCantidad) elCantidad.textContent = row.getAttribute('data-rutina-cantidad-series') || '0';
+                var seriesStr = row.getAttribute('data-rutina-series-nombres') || '';
+                if (elSeriesNombres) elSeriesNombres.textContent = seriesStr ? seriesStr.replace(/\|/g, ', ') : '—';
+                if (elDescripcion) elDescripcion.textContent = row.getAttribute('data-rutina-descripcion') || '—';
+                if (btnVer) btnVer.href = row.getAttribute('data-url-ver') || '#';
+                if (btnEditar) btnEditar.href = row.getAttribute('data-url-editar') || '#';
+                if (btnEliminar) {
+                    btnEliminar.href = row.getAttribute('data-url-eliminar') || '#';
+                    btnEliminar.setAttribute('data-msg', '¿Estás seguro de que querés eliminar esta rutina?');
+                }
+                modalInst.show();
+            }
+            document.querySelectorAll('tr.fila-rutina').forEach(function(row) {
+                row.addEventListener('click', function(e) {
+                    if (e.target.closest('a[href]')) return;
+                    if (window.innerWidth > 991) return;
+                    e.preventDefault();
+                    e.stopPropagation();
+                    openRutinaModal(row);
+                });
             });
         })();
 

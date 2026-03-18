@@ -29,6 +29,10 @@ public interface RutinaRepository extends JpaRepository<Rutina, Long> {
     // Buscar rutinas plantilla por profesor
     List<Rutina> findByProfesorIdAndEsPlantillaTrue(Long profesorId);
 
+    /** Rutinas plantilla del profesor con series cargadas (para dashboard y modal detalle). */
+    @Query("SELECT DISTINCT r FROM Rutina r LEFT JOIN FETCH r.series WHERE r.profesor.id = :profesorId AND r.esPlantilla = true")
+    List<Rutina> findByProfesorIdAndEsPlantillaTrueWithSeries(@Param("profesorId") Long profesorId);
+
     // Buscar rutinas plantilla por profesor y categoría (coincidencia exacta)
     List<Rutina> findByProfesorIdAndEsPlantillaTrueAndCategoria(Long profesorId, String categoria);
 

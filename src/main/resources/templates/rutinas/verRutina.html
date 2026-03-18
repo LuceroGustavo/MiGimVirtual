@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
@@ -28,12 +28,13 @@
             font-family: 'Segoe UI', system-ui, sans-serif;
             -webkit-text-size-adjust: 100%;
         }
-        /* Timbre (sin navbar, sin botones Volver/Iniciar sesión) */
+        /* Timbre: fila 1 = logo + marca | fecha; fila 2 = nombre rutina (siempre en su propia línea) */
         .hoja-header {
             display: flex;
+            flex-wrap: wrap;
             align-items: center;
             justify-content: space-between;
-            gap: 0.75rem;
+            gap: 0.5rem 0.75rem;
             padding: 0.5rem 1rem;
             flex-shrink: 0;
             background: #161b22;
@@ -44,6 +45,7 @@
             align-items: center;
             gap: 0.5rem;
             flex-shrink: 0;
+            order: 1;
         }
         .hoja-header-logo {
             width: 40px;
@@ -58,18 +60,25 @@
             margin: 0;
         }
         .hoja-header-titulo {
-            flex: 1;
+            width: 100%;
+            flex: 0 0 100%;
+            order: 3;
             font-size: clamp(1.7rem, 3.2vw, 2.4rem);
             font-weight: 700;
             color: #7ee787;
             text-align: center;
             margin: 0;
+            padding: 0.15rem 0 0;
+            line-height: 1.2;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
         }
         .hoja-header-right {
             display: flex;
             align-items: center;
             gap: 0.75rem;
             flex-shrink: 0;
+            order: 2;
         }
         .hoja-header-fecha {
             color: #fff;
@@ -152,6 +161,22 @@
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
             gap: 1rem;
+        }
+        /* Móvil: 1 columna para evitar apretar tarjetas y truncar nombres */
+        @media (max-width: 767px) {
+            .ejercicios-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+            .sala-item-wrap .item-titulo {
+                white-space: normal;
+                overflow: visible;
+                text-overflow: unset;
+                display: -webkit-box;
+                -webkit-line-clamp: 2;
+                -webkit-box-orient: vertical;
+                line-clamp: 2;
+            }
         }
         /* Vista escritorio (rutina no asignada): fijo 3 columnas, no responsive, peso/reps más chicos */
         body.vista-escritorio .ejercicios-grid {
@@ -246,10 +271,13 @@
             .hoja-container { padding: 0.75rem; }
             .hoja-header { flex-wrap: wrap; }
             .hoja-header-titulo { order: 3; width: 100%; text-align: center; }
-            .ejercicios-grid { grid-template-columns: 1fr; }
+            .hoja-serie { padding: 0.4rem; margin-bottom: 1.25rem; }
+            .hoja-serie-titulo { font-size: 1.35rem; padding: 0.5rem 0.75rem; }
+            .hoja-serie-vueltas { font-size: 1.25rem; }
             /* Vista escritorio: mantener 3 columnas incluso en móvil (no responsive) */
             body.vista-escritorio .ejercicios-grid { grid-template-columns: repeat(3, 1fr); }
         }
+        .hoja-container { overflow-x: hidden; }
     </style>
     <script>
         document.addEventListener('DOMContentLoaded', function () {

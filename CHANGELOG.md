@@ -2,6 +2,36 @@
 
 > Nota: este changelog incluye histórico heredado de MiGym (referencias a admin/chat/websocket).
 
+## [2026-03-17] - feat(ui): módulo de rutinas – panel, editar, hoja y navegación ✅
+
+### 🎯 **Resumen**
+Mejoras en el módulo de rutinas: panel del profesor (columna Acciones en escritorio, modal solo móvil), formulario modificar rutina alineado con crear rutina (responsive), vista hoja de rutina responsive en móvil (profesor y enlace compartido), volver a pestaña Rutinas desde editar, y header de hoja en dos filas (nombre de rutina siempre debajo de logo y fecha).
+
+### ✅ **Panel del profesor – pestaña Rutinas** (`profesor/dashboard.html`)
+- **Escritorio (≥992px):** Columna **Acciones** visible con iconos Ver, Editar y Eliminar; al hacer clic en la fila no se abre modal (solo se usan los botones).
+- **Móvil (<992px):** Sin columna Acciones; al tocar la fila se abre el modal con Ver, Editar, Eliminar (comportamiento anterior).
+- Al cambiar de pestaña (Alumnos, Series, Rutinas, Asignaciones) se actualiza la URL con `?tab=rutinas` (u otra) vía `history.replaceState`, para que el botón **Atrás** del navegador vuelva a la pestaña correcta.
+
+### ✅ **Modificar rutina** (`rutinas/editarRutina.html`)
+- Rediseño completo: mismo layout y estilo que **Crear rutina** (crearRutina.html).
+- Columna izquierda: información de la rutina (nombre, categorías, descripción, nota alumno si aplica) y botón Guardar cambios.
+- Columna derecha: lista ordenada “Series en esta rutina” (subir/bajar, vueltas, quitar), bloque “Se agregarán al guardar”, tabla de series disponibles con buscador, botón + y Ver detalle, modal de detalle de serie.
+- Responsive (móvil/escritorio), barra inferior móvil (Inicio, Alumnos, Rutinas, Más) y fragmento footer.
+- Enlace **“Volver al panel (Rutinas)”** que lleva a `/profesor/dashboard?tab=rutinas`.
+
+### ✅ **Vista hoja de rutina** (`rutinas/verRutina.html`) – responsive
+- **Vista profesor** (`/profesor/rutinas/ver/{id}`): `esVistaEscritorio` pasado a `false` en `ProfesorController`, misma experiencia responsive que el enlace compartido.
+- **Móvil (≤767px):** Grid de ejercicios en **1 columna** (un ejercicio bajo el otro); nombres de ejercicio hasta 2 líneas; `overflow-x: hidden` en el contenedor.
+- **Header en dos filas:** Fila 1 = logo + MiGimVirtual (izq) y fecha (der); Fila 2 = nombre de la rutina a ancho completo, centrado, con `word-wrap` para nombres largos (evita que se vea “justificado” o en una sola línea apretada).
+
+### 📁 **Archivos modificados**
+profesor/dashboard.html, rutinas/editarRutina.html, rutinas/verRutina.html, ProfesorController.java.
+
+### 📁 **Documentación**
+Documentacion/AYUDA_MEMORIA.md, Documentacion/GUIA_RESPONSIVE.md (§5.3).
+
+---
+
 ## [2026-03-16] - feat(ui): módulo de series – vista responsive completada ✅
 
 ### 🎯 **Resumen**

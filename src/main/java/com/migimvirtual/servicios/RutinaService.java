@@ -226,6 +226,11 @@ public class RutinaService {
         return rutinaRepository.findByProfesorIdAndEsPlantillaTrue(profesorId);
     }
 
+    /** Rutinas plantilla del profesor con series cargadas (para dashboard y modal detalle móvil). */
+    public List<Rutina> obtenerRutinasPlantillaPorProfesorWithSeries(Long profesorId) {
+        return rutinaRepository.findByProfesorIdAndEsPlantillaTrueWithSeries(profesorId);
+    }
+
     // Obtener todas las rutinas plantilla
     public List<Rutina> obtenerTodasLasRutinasPlantilla() {
         return rutinaRepository.findByEsPlantillaTrue();
