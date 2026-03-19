@@ -95,10 +95,10 @@ Responsividad del panel del profesor terminada para móvil (breakpoint 991px / 9
 | **Header (Volver/Eliminar)** | Botones a ancho completo, apilados verticalmente. |
 | **Tarjetas (stats-grid)** | 1 columna; stat-item con padding reducido; stat-number 1.5rem. |
 | **Bloque alumno-info** | Columnas apiladas; padding 1rem. |
-| **Tabla rutinas** | table-responsive (scroll horizontal); botones de acción min 38px para táctil. |
+| **Tabla rutinas** | **Entorno 2:** Columnas Fecha, Nombre, Categorías (truncadas), Estado. Fila clickeable abre modal con tarjeta de datos y acciones (Modificar, Ver, Copiar, Pausar/Activar, WhatsApp). Escritorio: tabla completa con botones. |
 | **≤ 575px** | Contenedor más compacto; título 1.35rem; botones de sección rutinas a ancho completo. |
 
-**Archivo:** profesor/alumno-detalle.html.
+**Archivo:** profesor/alumno-detalle.html. Ver CHANGELOG [2026-03-19].
 
 ---
 
@@ -192,6 +192,7 @@ Responsividad del panel del profesor terminada para móvil (breakpoint 991px / 9
 | **Columnas tabla** | Solo Nombre, Categoría, Series (Seleccionar y Acción ocultas). |
 | **Abrir modal** | Click en la fila completa para abrir el modal (como en series). |
 | **Cerrar y scroll** | Al seleccionar rutina y cerrar el modal, scroll automático al botón asignar. |
+| **Lista colapsa** | Al seleccionar una rutina, la tabla y búsqueda se ocultan; resumen breve visible. Cruz (×) para deseleccionar y volver a la lista. |
 
 ### Archivos
 profesor/asignar-rutina.html, ProfesorController.java.

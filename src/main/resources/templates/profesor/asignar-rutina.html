@@ -3,8 +3,9 @@
   Asignar Rutina - /profesor/asignar-rutina/{id}
   Refactor Mar 2026: tabla con búsqueda, modal detalle, responsive.
   - Ambos entornos: tabla, búsqueda, modal (Ver/Modificar/Seleccionar), cruz deseleccionar, enlace Ver → /profesor/rutinas/ver/{id}
+  - Lista colapsa al seleccionar rutina; resumen breve visible; cruz para volver a la lista
   - Entorno 2 (≤991px): columnas Nombre/Categoría/Series; click fila abre modal; scroll al asignar
-  Ver CHANGELOG [2026-03-18], GUIA_RESPONSIVE §5.4
+  Ver CHANGELOG [2026-03-18], [2026-03-19], GUIA_RESPONSIVE §5.4
 -->
 <html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/springsecurity">
 <head>
@@ -253,6 +254,8 @@
             
             <div class="card-body" style="max-height: 500px; overflow-y: auto;">
                 <div th:if="${rutinasPlantilla != null and !rutinasPlantilla.isEmpty()}">
+                    <!-- Lista de rutinas: se colapsa cuando hay una seleccionada -->
+                    <div id="listaRutinasSeleccionar">
                     <label for="filtroRutinasAsignar" class="form-label small text-muted">Buscar por nombre</label>
                     <input type="text" id="filtroRutinasAsignar" class="form-control form-control-sm mb-2" placeholder="Escribí el nombre de la rutina...">
                     <div class="table-responsive">
@@ -302,7 +305,11 @@
                             </tbody>
                         </table>
                     </div>
-                    
+                    </div>
+                    <!-- Resumen cuando hay rutina seleccionada (reemplaza la lista colapsada) -->
+                    <div id="resumenRutinaSeleccionada" class="py-2 mb-2" style="display: none;">
+                        <p class="mb-0 small text-muted"><i class="fas fa-check-circle text-success me-1"></i>Rutina seleccionada. Usá la cruz <i class="fas fa-times text-danger ms-1"></i> para elegir otra.</p>
+                    </div>
                     <!-- Botón de asignación (visible siempre, habilitado solo con rutina seleccionada) -->
                     <div class="mt-4 text-center">
                         <button type="submit" form="formAsignarRutina" id="btnAsignarRutina" class="btn btn-asignar btn-lg" disabled>
@@ -399,6 +406,10 @@ document.addEventListener('DOMContentLoaded', function() {
         if (btnAsignarRutina) btnAsignarRutina.disabled = !selectedRutinaId;
         var btnDes = document.getElementById('btnDeseleccionar');
         if (btnDes) btnDes.style.display = selectedRutinaId ? 'inline-block' : 'none';
+        var lista = document.getElementById('listaRutinasSeleccionar');
+        var resumen = document.getElementById('resumenRutinaSeleccionada');
+        if (lista) lista.style.display = selectedRutinaId ? 'none' : '';
+        if (resumen) resumen.style.display = selectedRutinaId ? 'block' : 'none';
     }
     
     function clearSelection() {
@@ -409,6 +420,10 @@ document.addEventListener('DOMContentLoaded', function() {
         if (btnAsignarRutina) btnAsignarRutina.disabled = true;
         var btnDes = document.getElementById('btnDeseleccionar');
         if (btnDes) btnDes.style.display = 'none';
+        var lista = document.getElementById('listaRutinasSeleccionar');
+        var resumen = document.getElementById('resumenRutinaSeleccionada');
+        if (lista) lista.style.display = '';
+        if (resumen) resumen.style.display = 'none';
     }
     
     var btnDes = document.getElementById('btnDeseleccionar');

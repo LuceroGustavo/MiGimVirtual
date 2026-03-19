@@ -1,4 +1,8 @@
 <!DOCTYPE html>
+<!--
+  Ficha del alumno - /profesor/alumnos/{id}
+  Entorno 2 (≤991px) rutinas: tabla Fecha|Nombre|Categorías|Estado; fila clickeable abre modal con tarjeta y acciones (Modificar, Ver, Copiar, Pausar/Activar, WhatsApp). Ver CHANGELOG [2026-03-19], GUIA_RESPONSIVE §5.1.
+-->
 <html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/springsecurity">
 <head>
     <meta charset="UTF-8">
@@ -307,6 +311,16 @@
         }
         /* Rutinas asignadas: contenedor más alto para ver bien las rutinas */
         .rutinas-asignadas-card .card-body { min-height: 320px; }
+        /* Entorno 2: tabla rutinas móvil - Fecha, Nombre, Categorías, Estado; fila clickeable abre modal */
+        @media (max-width: 991px) {
+            .col-rutina-series, .col-rutina-resena, .col-rutina-acciones { display: none !important; }
+            .rutina-row-clickable { cursor: pointer; }
+            .rutina-row-clickable:hover { background-color: rgba(0,0,0,0.04); }
+            .rutina-nombre-movil, .rutina-categoria-movil { max-width: 120px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        }
+        @media (min-width: 992px) {
+            .rutina-row-clickable { cursor: default; }
+        }
         /* Barra inferior móvil: mismo estilo que panel del profesor (solo móvil) */
         .bottom-nav-mobile {
             display: none;
@@ -506,6 +520,38 @@
                     <div class="modal-footer modal-confirmar-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
                         <a id="modalConfirmarEliminarProgresoBtn" href="#" class="btn btn-danger"><i class="fas fa-trash me-1"></i>Eliminar</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal ver rutina (Entorno 2 - móvil: al tocar una fila) -->
+        <div class="modal fade" id="modalVerRutinaMobile" tabindex="-1">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header modal-confirmar-header">
+                        <h5 class="modal-title"><i class="fas fa-dumbbell me-2"></i>Detalle de rutina</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="card border-0 shadow-sm mb-3" style="background: linear-gradient(135deg, #fffde7 60%, #ffe082 100%);">
+                            <div class="card-body">
+                                <p class="mb-2"><strong>Fecha:</strong> <span id="modalRutinaFecha"></span></p>
+                                <p class="mb-2"><strong>Rutina:</strong> <span id="modalRutinaNombre" class="d-block"></span></p>
+                                <p class="mb-2"><strong>Categorías:</strong> <span id="modalRutinaCategoria" class="d-block"></span></p>
+                                <p class="mb-2"><strong>Series:</strong> <span id="modalRutinaSeries"></span></p>
+                                <p class="mb-2"><strong>Estado:</strong> <span id="modalRutinaEstado"></span></p>
+                                <p class="mb-0"><strong>Reseña:</strong> <span id="modalRutinaResena" class="d-block small text-muted" style="white-space: pre-wrap;"></span></p>
+                            </div>
+                        </div>
+                        <div class="d-flex flex-wrap gap-2 justify-content-center">
+                            <a id="modalRutinaBtnEditar" href="#" class="btn btn-warning btn-sm" title="Modificar"><i class="fas fa-edit me-1"></i>Modificar</a>
+                            <a id="modalRutinaBtnVer" href="#" class="btn btn-info btn-sm" target="_blank" rel="noopener" title="Ver"><i class="fas fa-eye me-1"></i>Ver</a>
+                            <button type="button" id="modalRutinaBtnCopiar" class="btn btn-outline-dark btn-sm" title="Copiar enlace"><i class="fas fa-link me-1"></i>Copiar enlace</button>
+                            <a id="modalRutinaBtnPausar" href="#" class="btn btn-outline-secondary btn-sm d-none" title="Pausar rutina"><i class="fas fa-pause me-1"></i>Pausar</a>
+                            <a id="modalRutinaBtnActivar" href="#" class="btn btn-outline-success btn-sm d-none" title="Activar rutina"><i class="fas fa-play me-1"></i>Activar</a>
+                            <a id="modalRutinaBtnWhatsapp" href="#" class="btn btn-success btn-sm" target="_blank" rel="noopener" title="Enviar por WhatsApp"><i class="fab fa-whatsapp me-1"></i>WhatsApp</a>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -795,46 +841,66 @@
                     <p class="text-muted">Todavía no hay rutinas asignadas a este alumno.</p>
                 </div>
                 <div th:if="${rutinasAsignadas != null && !rutinasAsignadas.isEmpty()}" class="table-responsive">
-                    <table class="table table-sm table-hover align-middle">
+                    <table class="table table-sm table-hover align-middle" id="tablaRutinasAlumno">
                         <thead class="table-light">
                             <tr>
                                 <th>Fecha</th>
                                 <th>Rutina</th>
                                 <th>Categoría</th>
-                                <th>Series</th>
-                                <th>Estado</th>
-                                <th>Reseña</th>
-                                <th class="text-center">Acciones</th>
+                                <th class="col-rutina-series">Series</th>
+                                <th class="col-rutina-estado">Estado</th>
+                                <th class="col-rutina-resena">Reseña</th>
+                                <th class="text-center col-rutina-acciones">Acciones</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr th:each="rutina : ${rutinasAsignadas}">
+                            <tr th:each="rutina : ${rutinasAsignadas}" class="rutina-row-clickable align-middle"
+                                th:attr="data-rutina-id=${rutina.id},
+                                        data-fecha=${rutina.fechaCreacion != null ? #temporals.format(rutina.fechaCreacion, 'dd/MM/yy') : 'Sin fecha'},
+                                        data-nombre=${rutina.nombre},
+                                        data-categoria=${(rutina.categoriasList != null and !rutina.categoriasList.isEmpty()) ? #strings.listJoin(rutina.categoriasList, ', ') : ''},
+                                        data-series=${rutina.series != null ? rutina.series.size() : 0},
+                                        data-estado=${rutina.estado != null ? rutina.estado : 'ACTIVA'},
+                                        data-resena=${rutina.notaParaAlumno != null ? rutina.notaParaAlumno : ''},
+                                        data-token=${rutina.tokenPublico},
+                                        data-url-editar=@{/rutinas/editar/{id}(id=${rutina.id}, alumnoId=${alumno.id})},
+                                        data-url-ver=@{/profesor/rutinas/ver/{id}(id=${rutina.id})},
+                                        data-url-hoja=@{/rutinas/hoja/{token}(token=${rutina.tokenPublico})},
+                                        data-url-pausar=@{/rutinas/cambiar-estado-asignacion/{id}(id=${rutina.id}, estado='INACTIVA', tab='alumno', alumnoId=${alumno.id})},
+                                        data-url-activar=@{/rutinas/cambiar-estado-asignacion/{id}(id=${rutina.id}, estado='ACTIVA', tab='alumno', alumnoId=${alumno.id})},
+                                        data-phone=${alumno.celular != null ? alumno.celular : ''},
+                                        data-alumno-inactivo=${alumnoInactivo}">
                                 <td class="text-nowrap" th:text="${rutina.fechaCreacion != null ? #temporals.format(rutina.fechaCreacion, 'dd/MM/yy') : 'Sin fecha'}">Fecha</td>
-                                <td><span th:attr="title=${rutina.nombre}" th:text="${#strings.abbreviate(rutina.nombre, 22)}">Nombre</span></td>
+                                <td><span class="rutina-nombre-movil d-inline-block" th:attr="title=${rutina.nombre}" th:text="${#strings.abbreviate(rutina.nombre, 18)}">Nombre</span></td>
                                 <td>
-                                    <th:block th:if="${rutina.categoriasList != null && !rutina.categoriasList.isEmpty()}">
-                                        <span th:each="cat : ${rutina.categoriasList}" class="badge bg-secondary me-1" th:text="${cat}">—</span>
-                                    </th:block>
-                                    <span th:if="${rutina.categoriasList == null || rutina.categoriasList.isEmpty()}" class="text-muted">—</span>
+                                    <span class="d-none d-md-inline">
+                                        <th:block th:if="${rutina.categoriasList != null && !rutina.categoriasList.isEmpty()}">
+                                            <span th:each="cat : ${rutina.categoriasList}" class="badge bg-secondary me-1" th:text="${cat}">—</span>
+                                        </th:block>
+                                        <span th:if="${rutina.categoriasList == null || rutina.categoriasList.isEmpty()}" class="text-muted">—</span>
+                                    </span>
+                                    <span class="d-inline d-md-none rutina-categoria-movil text-muted small" 
+                                          th:attr="title=${(rutina.categoriasList != null and !rutina.categoriasList.isEmpty()) ? #strings.listJoin(rutina.categoriasList, ', ') : ''}"
+                                          th:text="${(rutina.categoriasList != null and !rutina.categoriasList.isEmpty()) ? #strings.abbreviate(#strings.listJoin(rutina.categoriasList, ', '), 14) : '—'}">—</span>
                                 </td>
-                                <td>
+                                <td class="col-rutina-series">
                                     <span class="badge bg-info" th:text="${rutina.series != null ? rutina.series.size() : 0}">0</span>
                                 </td>
-                                <td>
+                                <td class="col-rutina-estado">
                                     <i th:if="${rutina.estado == 'ACTIVA' || rutina.estado == null}" class="fas fa-circle-check text-success" title="Activa"></i>
                                     <i th:if="${rutina.estado == 'INACTIVA'}" class="fas fa-pause-circle text-secondary" title="Inactiva"></i>
                                     <i th:if="${rutina.estado != null && rutina.estado != 'ACTIVA' && rutina.estado != 'INACTIVA'}" class="fas fa-circle text-muted" th:attr="title=${rutina.estado}"></i>
                                 </td>
-                                <td class="small text-muted" style="max-width: 180px;">
+                                <td class="small text-muted col-rutina-resena" style="max-width: 180px;">
                                     <span th:if="${rutina.notaParaAlumno != null && !#strings.isEmpty(rutina.notaParaAlumno)}" class="d-block text-truncate" th:attr="title=${rutina.notaParaAlumno}" th:text="${#strings.abbreviate(rutina.notaParaAlumno, 50)}">Reseña</span>
                                     <span th:if="${rutina.notaParaAlumno == null || #strings.isEmpty(rutina.notaParaAlumno)}" class="fst-italic">—</span>
                                 </td>
-                                <td class="text-center">
+                                <td class="text-center col-rutina-acciones">
                                     <div class="d-flex flex-wrap gap-1 justify-content-center">
                                     <a th:if="${!alumnoInactivo}" th:href="@{/rutinas/editar/{id}(id=${rutina.id}, alumnoId=${alumno.id})}" class="btn btn-warning btn-sm py-1 px-2" title="Editar rutina (incluye nota para el alumno)">
                                         <i class="fas fa-edit"></i>
                                     </a>
-                                    <a th:if="${!alumnoInactivo}" th:href="@{/rutinas/ver/{id}(id=${rutina.id})}" class="btn btn-info btn-sm py-1 px-2" target="_blank" rel="noopener" title="Ver rutina">
+                                    <a th:if="${!alumnoInactivo}" th:href="@{/profesor/rutinas/ver/{id}(id=${rutina.id})}" class="btn btn-info btn-sm py-1 px-2" target="_blank" rel="noopener" title="Ver rutina">
                                         <i class="fas fa-eye"></i>
                                     </a>
                                     <span th:if="${alumnoInactivo}" class="btn btn-info btn-sm btn-disabled-inactivo disabled py-1 px-2"><i class="fas fa-eye" title="Ver rutina"></i></span>
@@ -1043,6 +1109,101 @@
                 });
             }
 
+            function initRutinaMobileModal() {
+                var modal = document.getElementById('modalVerRutinaMobile');
+                if (!modal) return;
+                var modalEl = new bootstrap.Modal(modal);
+                var spanFecha = document.getElementById('modalRutinaFecha');
+                var spanNombre = document.getElementById('modalRutinaNombre');
+                var spanCategoria = document.getElementById('modalRutinaCategoria');
+                var spanSeries = document.getElementById('modalRutinaSeries');
+                var spanEstado = document.getElementById('modalRutinaEstado');
+                var spanResena = document.getElementById('modalRutinaResena');
+                var btnEditar = document.getElementById('modalRutinaBtnEditar');
+                var btnVer = document.getElementById('modalRutinaBtnVer');
+                var btnCopiar = document.getElementById('modalRutinaBtnCopiar');
+                var btnPausar = document.getElementById('modalRutinaBtnPausar');
+                var btnActivar = document.getElementById('modalRutinaBtnActivar');
+                var btnWhatsapp = document.getElementById('modalRutinaBtnWhatsapp');
+                document.querySelectorAll('.rutina-row-clickable').forEach(function(row) {
+                    row.addEventListener('click', function(e) {
+                        if (window.innerWidth > 991) return;
+                        if (e.target.closest('a') || e.target.closest('button')) return;
+                        e.preventDefault();
+                        e.stopPropagation();
+                        var inactivo = row.getAttribute('data-alumno-inactivo') === 'true';
+                        var fecha = row.getAttribute('data-fecha') || '—';
+                        var nombre = row.getAttribute('data-nombre') || '—';
+                        var categoria = row.getAttribute('data-categoria') || '—';
+                        var series = row.getAttribute('data-series') || '0';
+                        var estado = row.getAttribute('data-estado') || 'ACTIVA';
+                        var resena = row.getAttribute('data-resena') || '—';
+                        var token = row.getAttribute('data-token') || '';
+                        var urlEditar = row.getAttribute('data-url-editar') || '#';
+                        var urlVer = row.getAttribute('data-url-ver') || '#';
+                        var urlHoja = row.getAttribute('data-url-hoja') || '';
+                        var urlPausar = row.getAttribute('data-url-pausar') || '#';
+                        var urlActivar = row.getAttribute('data-url-activar') || '#';
+                        var phone = row.getAttribute('data-phone') || '';
+                        spanFecha.textContent = fecha;
+                        spanNombre.textContent = nombre;
+                        spanCategoria.textContent = categoria || '—';
+                        spanSeries.textContent = series;
+                        spanEstado.innerHTML = estado === 'INACTIVA' ? '<i class="fas fa-pause-circle text-secondary"></i> Inactiva' : '<i class="fas fa-circle-check text-success"></i> Activa';
+                        spanResena.textContent = resena || '—';
+                        btnEditar.href = urlEditar;
+                        btnVer.href = urlVer;
+                        btnPausar.href = urlPausar;
+                        btnActivar.href = urlActivar;
+                        if (inactivo) {
+                            btnEditar.classList.add('btn-disabled-inactivo');
+                            btnEditar.href = '#';
+                            btnVer.classList.add('btn-disabled-inactivo');
+                            btnVer.href = '#';
+                            btnCopiar.disabled = true;
+                            btnPausar.classList.add('btn-disabled-inactivo');
+                            btnPausar.href = '#';
+                            btnActivar.classList.add('btn-disabled-inactivo');
+                            btnActivar.href = '#';
+                            btnWhatsapp.classList.add('btn-disabled-inactivo');
+                            btnWhatsapp.href = '#';
+                        } else {
+                            btnEditar.classList.remove('btn-disabled-inactivo');
+                            btnVer.classList.remove('btn-disabled-inactivo');
+                            btnCopiar.disabled = false;
+                            btnPausar.classList.remove('btn-disabled-inactivo');
+                            btnActivar.classList.remove('btn-disabled-inactivo');
+                            btnWhatsapp.classList.remove('btn-disabled-inactivo');
+                        }
+                        btnPausar.classList.toggle('d-none', estado === 'INACTIVA' || inactivo);
+                        btnActivar.classList.toggle('d-none', estado !== 'INACTIVA' || inactivo);
+                        var origin = window.location.origin;
+                        var fullUrl = (urlHoja && urlHoja.indexOf('/') === 0) ? origin + urlHoja : (token ? origin + '/rutinas/hoja/' + token : '');
+                        var mensaje = encodeURIComponent('Rutina: ' + (fullUrl || ''));
+                        var phoneNum = (phone + '').replace(/[^\d]/g, '');
+                        btnWhatsapp.href = phoneNum ? ('https://wa.me/' + phoneNum + '?text=' + mensaje) : ('https://wa.me/?text=' + mensaje);
+                        btnCopiar.onclick = function(ev) {
+                            ev.preventDefault();
+                            if (navigator.clipboard && navigator.clipboard.writeText) {
+                                navigator.clipboard.writeText(fullUrl).then(function() {
+                                    if (typeof window.mostrarAlertaAlumnoDetalle === 'function') window.mostrarAlertaAlumnoDetalle('Enlace copiado.');
+                                });
+                            } else {
+                                var temp = document.createElement('input');
+                                temp.value = fullUrl;
+                                temp.style.position = 'absolute';
+                                temp.style.left = '-9999px';
+                                document.body.appendChild(temp);
+                                temp.select();
+                                try { document.execCommand('copy'); if (typeof window.mostrarAlertaAlumnoDetalle === 'function') window.mostrarAlertaAlumnoDetalle('Enlace copiado.'); } catch (err) {}
+                                document.body.removeChild(temp);
+                            }
+                        };
+                        modalEl.show();
+                    });
+                });
+            }
+
             function initWhatsApp() {
                 document.querySelectorAll('.compartir-whatsapp').forEach(function(link) {
                     var dataUrl = link.getAttribute('data-url') || '';
@@ -1060,11 +1221,13 @@
                 document.addEventListener('DOMContentLoaded', function() {
                     initCopiarEnlace();
                     initProgresoMobileModal();
+                    initRutinaMobileModal();
                     initWhatsApp();
                 });
             } else {
                 initCopiarEnlace();
                 initProgresoMobileModal();
+                initRutinaMobileModal();
                 initWhatsApp();
             }
         })();

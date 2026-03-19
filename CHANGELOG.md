@@ -2,6 +2,28 @@
 
 > Nota: este changelog incluye histórico heredado de MiGym (referencias a admin/chat/websocket).
 
+## [2026-03-19] - feat(ui): asignar rutina colapso + ficha alumno rutinas móvil ✅
+
+### 🎯 **Resumen**
+Mejoras en **Asignar Rutina** (lista colapsa al seleccionar) y en **Ficha del alumno** (tabla rutinas Entorno 2 con modal al tocar fila).
+
+### ✅ **Asignar Rutina** (`profesor/asignar-rutina.html`)
+- **Lista colapsa al seleccionar:** Cuando se elige una rutina, la tabla y búsqueda se ocultan y se muestra un resumen breve. La cruz (×) vuelve a expandir para cambiar de rutina.
+
+### ✅ **Ficha del alumno – Rutinas asignadas** (`profesor/alumno-detalle.html`) – Entorno 2
+- **Tabla simplificada:** Columnas Fecha, Nombre, Categorías (truncadas), Estado. Ocultas: Series, Reseña, Acciones.
+- **Fila clickeable:** Al tocar una fila se abre modal con tarjeta de datos completos.
+- **Modal:** Tarjeta con Fecha, Rutina, Categorías, Series, Estado, Reseña. Acciones con iconos: Modificar, Ver, Copiar enlace, Pausar/Activar, WhatsApp.
+- **Truncado:** Nombre (18 chars), Categorías (14 chars) para mantener filas compactas.
+
+### 📁 **Archivos modificados**
+profesor/asignar-rutina.html, profesor/alumno-detalle.html.
+
+### 📁 **Documentación**
+Documentacion/GUIA_RESPONSIVE.md (§5.1, §5.4).
+
+---
+
 ## [2026-03-18] - feat(ui): asignar rutina – refactor, responsive y UX mejorada ✅
 
 ### 🎯 **Resumen**
