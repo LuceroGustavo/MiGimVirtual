@@ -380,8 +380,11 @@
         @media (max-width: 991px) {
             .container-fluid.py-4.px-4 { padding-left: 0.75rem !important; padding-right: 0.75rem !important; }
             .col-acciones-series { display: none !important; }
+            .col-asignaciones-acciones { display: none !important; }
             .serie-row-clickable { cursor: pointer; }
             .serie-row-clickable:hover { background-color: rgba(0,0,0,0.04); }
+            .asignacion-row-clickable { cursor: pointer; }
+            .asignacion-row-clickable:hover { background-color: rgba(0,0,0,0.04); }
         }
         @media (max-width: 400px) {
             .dashboard-mobile-cards { gap: 0.75rem; }
@@ -574,7 +577,7 @@
                         <div class="card-body py-2">
                             <div class="d-flex gap-2 align-items-center flex-wrap">
                                 <input id="filtroNombreAlumno" type="text" class="form-control form-control-sm flex-grow-1" style="max-width: 280px;" placeholder="Buscar por nombre..." aria-label="Buscar por nombre">
-                                <button id="limpiarFiltrosAlumnos" type="button" class="btn btn-sm btn-warning flex-shrink-0" style="background:#ffcc80; border-color:#ffb74d; color:#e65100;">
+                                <button id="limpiarFiltrosAlumnos" type="button" class="btn btn-sm flex-shrink-0" style="background:#c8e6c9; border-color:#a5d6a7; color:#1b5e20;">
                                     Limpiar
                                 </button>
                             </div>
@@ -778,13 +781,20 @@
                 </div>
                 <!-- Pestaña Asignaciones -->
                 <div class="tab-pane fade" id="asignaciones" role="tabpanel">
-                    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
                         <h3 class="mb-0"><i class="fa-solid fa-clipboard-list me-2"></i>Rutinas Asignadas</h3>
-                        <div class="d-flex align-items-center gap-2">
-                            <label class="form-label mb-0 small text-muted">Filtrar por alumno:</label>
-                            <input type="text" id="filtroAsignacionesAlumno" class="form-control form-control-sm" placeholder="Nombre del alumno..." style="max-width: 220px;">
+                    </div>
+
+                    <div class="card mb-3">
+                        <div class="card-body py-2">
+                            <div class="d-flex gap-2 align-items-center flex-wrap">
+                                <input id="filtroAsignacionesAlumno" type="text" class="form-control form-control-sm flex-grow-1" style="max-width: 280px;" placeholder="Filtrar por alumno..." aria-label="Filtrar por alumno">
+                                <button id="limpiarFiltrosAsignaciones" type="button" class="btn btn-sm flex-shrink-0" style="background:#bbdefb; border-color:#90caf9; color:#0d47a1;"
+                                        title="Limpiar filtro">Limpiar</button>
+                            </div>
                         </div>
                     </div>
+
                     <div class="table-responsive">
                         <table class="table table-bordered table-hover" id="tablaAsignaciones">
                             <thead class="table-primary text-center">
@@ -793,12 +803,25 @@
                                     <th>Rutina</th>
                                     <th>Estado</th>
                                     <th>Fecha</th>
-                                    <th class="text-center">Acciones</th>
+                                    <th class="text-center col-asignaciones-acciones">Acciones</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr th:each="rutinaAsignada : ${rutinasAsignadas}" class="text-center fila-asignacion"
-                                    th:attr="data-usuario=${rutinaAsignada.usuario != null ? rutinaAsignada.usuario.nombre : ''}">
+                                <tr th:each="rutinaAsignada : ${rutinasAsignadas}" class="text-center fila-asignacion asignacion-row-clickable"
+                                    th:attr="data-usuario=${rutinaAsignada.usuario != null ? rutinaAsignada.usuario.nombre : ''},
+                                             data-fecha=${rutinaAsignada.fechaCreacion != null ? #temporals.format(rutinaAsignada.fechaCreacion, 'dd/MM/yy') : 'Sin fecha'},
+                                             data-nombre=${rutinaAsignada.nombre},
+                                             data-categoria=${(rutinaAsignada.categoriasList != null and !rutinaAsignada.categoriasList.isEmpty()) ? #strings.listJoin(rutinaAsignada.categoriasList, ', ') : ''},
+                                             data-series=${rutinaAsignada.series != null ? rutinaAsignada.series.size() : 0},
+                                             data-estado=${rutinaAsignada.estado != null ? rutinaAsignada.estado : 'ACTIVA'},
+                                             data-resena=${rutinaAsignada.notaParaAlumno != null ? rutinaAsignada.notaParaAlumno : ''},
+                                             data-token=${rutinaAsignada.tokenPublico},
+                                             data-url-editar=@{/rutinas/editar/{id}(id=${rutinaAsignada.id}, returnTab='asignaciones')},
+                                             data-url-ver=@{/rutinas/ver/{id}(id=${rutinaAsignada.id})},
+                                             data-url-hoja=@{/rutinas/hoja/{token}(token=${rutinaAsignada.tokenPublico})},
+                                             data-url-pausar=@{/rutinas/cambiar-estado-asignacion/{id}(id=${rutinaAsignada.id}, estado='INACTIVA', tab='asignaciones')},
+                                             data-url-activar=@{/rutinas/cambiar-estado-asignacion/{id}(id=${rutinaAsignada.id}, estado='ACTIVA', tab='asignaciones')},
+                                             data-url-eliminar=@{/rutinas/eliminar/{id}(id=${rutinaAsignada.id}, tab='asignaciones')}">
                                     <td><span th:attr="title=${rutinaAsignada.usuario != null ? rutinaAsignada.usuario.nombre : ''}" th:text="${rutinaAsignada.usuario != null ? #strings.abbreviate(rutinaAsignada.usuario.nombre, 22) : '—'}">—</span></td>
                                     <td><span th:attr="title=${rutinaAsignada.nombre}" th:text="${#strings.abbreviate(rutinaAsignada.nombre, 22)}">Rutina</span></td>
                                     <td>
@@ -806,7 +829,7 @@
                                         <i th:if="${rutinaAsignada.estado == 'INACTIVA'}" class="fa-solid fa-pause-circle text-secondary" title="Inactiva"></i>
                                     </td>
                                     <td th:text="${#temporals.format(rutinaAsignada.fechaCreacion, 'dd/MM/yyyy')}">Fecha</td>
-                                    <td class="text-center">
+                                    <td class="text-center col-asignaciones-acciones">
                                         <div class="d-flex flex-wrap gap-1 justify-content-center">
                                             <a th:href="@{/rutinas/ver/{id}(id=${rutinaAsignada.id})}" class="btn btn-info btn-sm py-1 px-2" target="_blank" rel="noopener" title="Ver rutina">
                                                 <i class="fa-solid fa-eye"></i>
@@ -878,6 +901,39 @@
                     <a id="modalSerieBtnVer" href="#" class="btn btn-info" target="_blank" rel="noopener"><i class="fa-solid fa-eye me-1"></i>Ver</a>
                     <a id="modalSerieBtnEditar" href="#" class="btn btn-warning"><i class="fa-solid fa-edit me-1"></i>Editar</a>
                     <a id="modalSerieBtnEliminar" href="#" class="btn btn-danger btn-confirmar-eliminar-dashboard" data-msg="¿Estás seguro de que querés eliminar esta serie?"><i class="fa-solid fa-trash me-1"></i>Eliminar</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal detalle asignación (móvil: al tocar fila en Asignaciones) -->
+    <div class="modal fade" id="modalVerAsignacionMobile" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header modal-confirmar-header">
+                    <h5 class="modal-title"><i class="fas fa-dumbbell me-2"></i>Detalle de rutina asignada</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="card border-0 shadow-sm mb-3" style="background: linear-gradient(135deg, #fffde7 60%, #ffe082 100%);">
+                        <div class="card-body">
+                            <p class="mb-2"><strong>Alumno:</strong> <span id="modalAsignacionUsuario" class="d-block"></span></p>
+                            <p class="mb-2"><strong>Fecha:</strong> <span id="modalAsignacionFecha"></span></p>
+                            <p class="mb-2"><strong>Rutina:</strong> <span id="modalAsignacionNombre" class="d-block"></span></p>
+                            <p class="mb-2"><strong>Categorías:</strong> <span id="modalAsignacionCategoria" class="d-block"></span></p>
+                            <p class="mb-2"><strong>Series:</strong> <span id="modalAsignacionSeries"></span></p>
+                            <p class="mb-2"><strong>Estado:</strong> <span id="modalAsignacionEstado"></span></p>
+                            <p class="mb-0"><strong>Reseña:</strong> <span id="modalAsignacionResena" class="d-block small text-muted" style="white-space: pre-wrap;"></span></p>
+                        </div>
+                    </div>
+                    <div class="d-flex flex-wrap gap-2 justify-content-center">
+                        <a id="modalAsignacionBtnEditar" href="#" class="btn btn-warning btn-sm" title="Modificar"><i class="fas fa-edit me-1"></i>Modificar</a>
+                        <a id="modalAsignacionBtnVer" href="#" class="btn btn-info btn-sm" target="_blank" rel="noopener" title="Ver"><i class="fas fa-eye me-1"></i>Ver</a>
+                        <button type="button" id="modalAsignacionBtnCopiar" class="btn btn-outline-dark btn-sm" title="Copiar enlace"><i class="fas fa-link me-1"></i>Copiar enlace</button>
+                        <a id="modalAsignacionBtnPausar" href="#" class="btn btn-outline-secondary btn-sm d-none" title="Pausar rutina"><i class="fas fa-pause me-1"></i>Pausar</a>
+                        <a id="modalAsignacionBtnActivar" href="#" class="btn btn-outline-success btn-sm d-none" title="Activar rutina"><i class="fas fa-play me-1"></i>Activar</a>
+                        <a id="modalAsignacionBtnEliminar" href="#" class="btn btn-danger btn-sm btn-confirmar-eliminar-dashboard" data-msg="¿Eliminar esta rutina asignada? Se borrará la asignación y no podrá recuperarse." title="Eliminar"><i class="fas fa-trash me-1"></i>Eliminar</a>
+                    </div>
                 </div>
             </div>
         </div>
@@ -976,6 +1032,8 @@
                         if (modalSerie && bootstrap.Modal.getInstance(modalSerie)) bootstrap.Modal.getInstance(modalSerie).hide();
                         var modalRutina = document.getElementById('modalVerRutinaMobile');
                         if (modalRutina && bootstrap.Modal.getInstance(modalRutina)) bootstrap.Modal.getInstance(modalRutina).hide();
+                        var modalAsignacion = document.getElementById('modalVerAsignacionMobile');
+                        if (modalAsignacion && bootstrap.Modal.getInstance(modalAsignacion)) bootstrap.Modal.getInstance(modalAsignacion).hide();
                         modalInst.show();
                     });
                 });
@@ -1116,15 +1174,98 @@
         (function() {
             const filtroAsig = document.getElementById('filtroAsignacionesAlumno');
             const tablaAsig = document.getElementById('tablaAsignaciones');
-            if (filtroAsig && tablaAsig) {
-                filtroAsig.addEventListener('input', function() {
-                    const texto = (this.value || '').trim().toLowerCase();
-                    tablaAsig.querySelectorAll('tbody tr.fila-asignacion').forEach(function(tr) {
-                        var nombre = (tr.getAttribute('data-usuario') || '').toLowerCase();
-                        tr.style.display = texto === '' || nombre.indexOf(texto) !== -1 ? '' : 'none';
-                    });
+            const limpiarAsig = document.getElementById('limpiarFiltrosAsignaciones');
+            function aplicarFiltroAsignaciones() {
+                if (!tablaAsig) return;
+                const texto = (filtroAsig && filtroAsig.value ? filtroAsig.value.trim() : '').toLowerCase();
+                tablaAsig.querySelectorAll('tbody tr.fila-asignacion').forEach(function(tr) {
+                    var nombre = (tr.getAttribute('data-usuario') || '').toLowerCase();
+                    tr.style.display = texto === '' || nombre.indexOf(texto) !== -1 ? '' : 'none';
                 });
             }
+            if (filtroAsig) filtroAsig.addEventListener('input', aplicarFiltroAsignaciones);
+            if (limpiarAsig) limpiarAsig.addEventListener('click', function() {
+                if (filtroAsig) filtroAsig.value = '';
+                aplicarFiltroAsignaciones();
+            });
+        })();
+
+        // Modal asignación móvil (Entorno 2: al tocar fila en Asignaciones)
+        (function initAsignacionMobileModal() {
+            var modal = document.getElementById('modalVerAsignacionMobile');
+            if (!modal) return;
+            var modalEl = new bootstrap.Modal(modal);
+            var spanUsuario = document.getElementById('modalAsignacionUsuario');
+            var spanFecha = document.getElementById('modalAsignacionFecha');
+            var spanNombre = document.getElementById('modalAsignacionNombre');
+            var spanCategoria = document.getElementById('modalAsignacionCategoria');
+            var spanSeries = document.getElementById('modalAsignacionSeries');
+            var spanEstado = document.getElementById('modalAsignacionEstado');
+            var spanResena = document.getElementById('modalAsignacionResena');
+            var btnEditar = document.getElementById('modalAsignacionBtnEditar');
+            var btnVer = document.getElementById('modalAsignacionBtnVer');
+            var btnCopiar = document.getElementById('modalAsignacionBtnCopiar');
+            var btnPausar = document.getElementById('modalAsignacionBtnPausar');
+            var btnActivar = document.getElementById('modalAsignacionBtnActivar');
+            var btnEliminar = document.getElementById('modalAsignacionBtnEliminar');
+            document.querySelectorAll('.asignacion-row-clickable').forEach(function(row) {
+                row.addEventListener('click', function(e) {
+                    if (window.innerWidth > 991) return;
+                    if (e.target.closest('a') || e.target.closest('button')) return;
+                    e.preventDefault();
+                    e.stopPropagation();
+                    var usuario = row.getAttribute('data-usuario') || '—';
+                    var fecha = row.getAttribute('data-fecha') || '—';
+                    var nombre = row.getAttribute('data-nombre') || '—';
+                    var categoria = row.getAttribute('data-categoria') || '—';
+                    var series = row.getAttribute('data-series') || '0';
+                    var estado = row.getAttribute('data-estado') || 'ACTIVA';
+                    var resena = row.getAttribute('data-resena') || '—';
+                    var token = row.getAttribute('data-token') || '';
+                    var urlEditar = row.getAttribute('data-url-editar') || '#';
+                    var urlVer = row.getAttribute('data-url-ver') || '#';
+                    var urlHoja = row.getAttribute('data-url-hoja') || '';
+                    var urlPausar = row.getAttribute('data-url-pausar') || '#';
+                    var urlActivar = row.getAttribute('data-url-activar') || '#';
+                    var urlEliminar = row.getAttribute('data-url-eliminar') || '#';
+                    if (spanUsuario) spanUsuario.textContent = usuario;
+                    if (spanFecha) spanFecha.textContent = fecha;
+                    if (spanNombre) spanNombre.textContent = nombre;
+                    if (spanCategoria) spanCategoria.textContent = categoria || '—';
+                    if (spanSeries) spanSeries.textContent = series;
+                    if (spanEstado) spanEstado.innerHTML = estado === 'INACTIVA' ? '<i class="fas fa-pause-circle text-secondary"></i> Inactiva' : '<i class="fas fa-circle-check text-success"></i> Activa';
+                    if (spanResena) spanResena.textContent = resena || '—';
+                    if (btnEditar) btnEditar.href = urlEditar;
+                    if (btnVer) btnVer.href = urlVer;
+                    if (btnPausar) btnPausar.href = urlPausar;
+                    if (btnActivar) btnActivar.href = urlActivar;
+                    if (btnEliminar) btnEliminar.href = urlEliminar;
+                    if (btnPausar) btnPausar.classList.toggle('d-none', estado === 'INACTIVA');
+                    if (btnActivar) btnActivar.classList.toggle('d-none', estado !== 'INACTIVA');
+                    var origin = window.location.origin;
+                    var fullUrl = (urlHoja && urlHoja.indexOf('/') === 0) ? origin + urlHoja : (token ? origin + '/rutinas/hoja/' + token : '');
+                    if (btnCopiar) {
+                        btnCopiar.onclick = function(ev) {
+                            ev.preventDefault();
+                            if (navigator.clipboard && navigator.clipboard.writeText) {
+                                navigator.clipboard.writeText(fullUrl).then(function() {
+                                    if (typeof window.mostrarAlertaDashboard === 'function') window.mostrarAlertaDashboard('Enlace copiado.');
+                                });
+                            } else {
+                                var temp = document.createElement('input');
+                                temp.value = fullUrl;
+                                temp.style.position = 'absolute';
+                                temp.style.left = '-9999px';
+                                document.body.appendChild(temp);
+                                temp.select();
+                                try { document.execCommand('copy'); if (typeof window.mostrarAlertaDashboard === 'function') window.mostrarAlertaDashboard('Enlace copiado.'); } catch (err) {}
+                                document.body.removeChild(temp);
+                            }
+                        };
+                    }
+                    modalEl.show();
+                });
+            });
         })();
 
         // Filtro por nombre en Series

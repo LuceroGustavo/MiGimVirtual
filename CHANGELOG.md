@@ -2,6 +2,38 @@
 
 > Nota: este changelog incluye histórico heredado de MiGym (referencias a admin/chat/websocket).
 
+## [2026-03-20] - feat(ui): pestaña Asignaciones – vistas y responsive completados ✅
+
+### 🎯 **Resumen**
+Vistas y responsividad del módulo **Asignaciones** (Rutinas Asignadas) en el panel del profesor finalizadas. Filtro alineado con Series/Rutinas; móvil con modal al tocar fila; consistencia de colores en botones Limpiar.
+
+### ✅ **Pestaña Asignaciones** (`profesor/dashboard.html`)
+
+**Filtro (ambos entornos):**
+- Card debajo del título, misma estructura que Series y Rutinas.
+- Input "Filtrar por alumno..." y botón "Limpiar" en la misma fila.
+- Botón Limpiar con tono verde claro (#c8e6c9) coherente con el tema Mis Alumnos.
+
+**Entorno 1 (escritorio):**
+- Tabla completa: Usuario, Rutina, Estado, Fecha, Acciones.
+
+**Entorno 2 (móvil ≤991px):**
+- Columna Acciones oculta.
+- Fila clickeable abre modal con detalle de la rutina asignada.
+- Modal: tarjeta con Alumno, Fecha, Rutina, Categorías, Series, Estado, Reseña.
+- Acciones: Modificar, Ver, Copiar enlace, Pausar/Activar, Eliminar (sin WhatsApp).
+
+### ✅ **Botón Limpiar – Mis Alumnos**
+- Color actualizado a verde claro (#c8e6c9) para diferenciarlo del botón "Crear alumno" (más oscuro), siguiendo el patrón de Mis Series.
+
+### 📁 **Archivos modificados**
+profesor/dashboard.html.
+
+### 📁 **Documentación**
+Documentacion/GUIA_RESPONSIVE.md (§5.5).
+
+---
+
 ## [2026-03-19] - feat(ui): asignar rutina colapso + ficha alumno rutinas móvil ✅
 
 ### 🎯 **Resumen**

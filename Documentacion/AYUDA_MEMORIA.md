@@ -100,8 +100,9 @@ Ver GUIA_RESPONSIVE.md §5.2.
 
 - ~~**Continuar con creación de rutinas** (crear, modificar, panel, hoja).~~ ✅ **Hecho (Mar 2026):** Ver CHANGELOG [2026-03-17] y GUIA_RESPONSIVE §5.3. Panel Rutinas con columna Acciones en escritorio; editar rutina mismo layout que crear; hoja responsive y header en dos filas; volver a tab Rutinas desde editar.
 - ~~**Mañana: mejorar responsive de asignación de rutinas:**~~ ✅ **Hecho (Mar 2026):** Tabla con búsqueda, modal de detalle, botón deseleccionar, enlace Ver corregido; móvil: columnas simplificadas (Nombre, Categoría, Series), click en fila abre modal, scroll al asignar. Ver CHANGELOG [2026-03-18] y GUIA_RESPONSIVE §5.4.
+- ~~**Pestaña Asignaciones – vistas y responsive:**~~ ✅ **Hecho (Mar 2026):** Filtro con card y Limpiar (estructura igual a Series); móvil: columna Acciones oculta, fila clickeable abre modal con detalle y acciones (sin WhatsApp). Botón Limpiar de Mis Alumnos en verde claro. Ver CHANGELOG [2026-03-20] y GUIA_RESPONSIVE §5.5.
 - **Barra inferior de navegación (accesos directos):** Pendiente cambiar los accesos directos de la barra inferior (Inicio, Alumnos, Rutinas, Más) cuando se definan las URLs o flujos finales; actualmente en panel profesor y en crear rutina usan enlaces al dashboard y a administración.
-- **Después de asignación:** Seguir con **ejercicios** — vista, creación y modificación (responsive y consistencia con el resto del panel).
+- **Siguiente:** **Ejercicios** — vista, creación y modificación (responsive y consistencia con el resto del panel).
 
 ---
 

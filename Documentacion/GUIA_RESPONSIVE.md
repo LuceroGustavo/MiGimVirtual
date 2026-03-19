@@ -203,11 +203,34 @@ profesor/asignar-rutina.html, ProfesorController.java.
 
 ---
 
+## 5.5 Pestaña Asignaciones – vista responsive (Mar 2026) – ✅ Completado
+
+> **Nota:** Vistas y responsividad del módulo de asignaciones (Rutinas Asignadas) en el panel del profesor finalizadas. Filtro alineado con Series/Rutinas; móvil con modal al tocar fila.
+
+### Panel del profesor – pestaña Asignaciones (`profesor/dashboard.html`)
+
+| Contexto | Comportamiento |
+|----------|----------------|
+| **Filtro (ambos entornos)** | Card debajo del título, misma estructura que Series/Rutinas. Input "Filtrar por alumno..." y botón "Limpiar" en la misma fila. Botón Limpiar con tono claro (#c8e6c9) coherente con el tema Alumnos. |
+| **Escritorio (≥992px)** | Tabla completa: Usuario, Rutina, Estado, Fecha, Acciones (Ver, Copiar enlace, Editar, Pausar/Activar, Eliminar). |
+| **Móvil (<992px)** | Columna **Acciones** oculta. Al tocar una fila se abre modal con detalle de la rutina asignada. |
+| **Modal móvil** | Tarjeta con Alumno, Fecha, Rutina, Categorías, Series, Estado, Reseña. Acciones: Modificar, Ver, Copiar enlace, Pausar/Activar, Eliminar (sin WhatsApp, a diferencia del detalle del alumno). |
+
+### Archivos
+profesor/dashboard.html.
+
+### Completado
+- Filtro por alumno con card y botón Limpiar (estructura igual a Series).
+- Entorno 2: columna Acciones oculta; fila clickeable abre modal con detalle y acciones.
+- Consistencia de colores en botón Limpiar (verde claro en Alumnos, violeta en Series, etc.).
+
+---
+
 ## 6. Orden sugerido para otras vistas (opcional)
 
 1. Revisar que **todas** las plantillas del panel tengan la meta **viewport** (ya está en varias).
-2. **Otras tablas** (series, rutinas, asignaciones): asegurar `table-responsive`; en móvil vista en cards opcional.
+2. **Tablas restantes:** series, rutinas y asignaciones ya tienen `table-responsive` y comportamiento móvil (modal al tocar fila). Opcional: vista en cards en otras tablas.
 3. **Formularios:** que los campos no queden con ancho fijo; usar `col-12 col-md-*` en móvil.
 ---
 
-*Documento de referencia para responsividad. Panel del profesor completado Mar 2026. Módulo de series completado Mar 2026. Módulo de rutinas (panel, editar, hoja, asignar) completado Mar 2026. Pendiente: ejercicios (vista, creación, modificación).*
+*Documento de referencia para responsividad. Panel del profesor completado Mar 2026. Módulo de series completado Mar 2026. Módulo de rutinas (panel, editar, hoja, asignar) completado Mar 2026. Pestaña Asignaciones completada Mar 2026. Pendiente: ejercicios (vista, creación, modificación).*

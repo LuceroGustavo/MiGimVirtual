@@ -375,7 +375,7 @@
 <!-- Timbre: logo, MiGimVirtual, nombre rutina, fecha (sin Copiar enlace en vista alumno) -->
 <header class="hoja-header">
     <div class="hoja-header-left">
-        <img class="hoja-header-logo" src="/img/logo.png" alt="MiGimVirtual" onerror="this.src='/img/not_imagen.png'">
+        <img class="hoja-header-logo" th:src="@{/img/mgvirtual_logo1.png}" src="/img/mgvirtual_logo1.png" alt="MiGimVirtual" onerror="this.src='/img/not_imagen.png'">
         <span class="hoja-header-marca">MiGimVirtual</span>
     </div>
     <h1 class="hoja-header-titulo" th:text="${rutina.nombre}">Nombre rutina</h1>
