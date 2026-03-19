@@ -226,6 +226,33 @@ profesor/dashboard.html.
 
 ---
 
+## 5.6 Módulo de Ejercicios – vista Mis Ejercicios responsive (Mar 2026) – ✅ Completado
+
+> **Nota:** La vista **Mis Ejercicios** (`/profesor/mis-ejercicios`) está terminada. Pendiente responsive: crear ejercicio, modificar ejercicio, crear grupos musculares, modificar grupos musculares.
+
+### Vista Mis Ejercicios (`profesor/ejercicios-lista.html`)
+
+| Área | Descripción |
+|------|-------------|
+| **Tarjetas (escritorio)** | Dos tarjetas del mismo tamaño (260px): "Total disponibles" (naranja) con cantidad de ejercicios; "Grupos musculares" (verde) con cantidad de grupos. Botón + en esquina superior derecha (como dashboard Alumnos/Series/Rutinas). Contenido centrado: icono, número, etiqueta. |
+| **Tarjetas (móvil ≤991px)** | Cuadradas, una al lado de la otra; gap reducido; iconos y fuentes escalados. |
+| **Filtros** | Card con búsqueda, selector de grupo y botón Limpiar (naranja pastel). |
+| **Tabla** | Entorno 2: columnas #, Tipo, Imagen, Acciones ocultas; fila clickeable abre modal con detalle, imagen y botones Editar/Eliminar. |
+| **Barra inferior móvil** | Inicio, Alumnos, Rutinas, Más. |
+
+### Pendiente (responsive)
+
+- **Crear ejercicio** (`/profesor/mis-ejercicios/nuevo`)
+- **Modificar ejercicio** (`/profesor/mis-ejercicios/editar/{id}`)
+- **Crear grupos musculares** (`/profesor/mis-grupos-musculares`)
+- **Modificar grupos musculares**
+
+### Archivos
+
+profesor/ejercicios-lista.html.
+
+---
+
 ## 6. Orden sugerido para otras vistas (opcional)
 
 1. Revisar que **todas** las plantillas del panel tengan la meta **viewport** (ya está en varias).
@@ -233,4 +260,4 @@ profesor/dashboard.html.
 3. **Formularios:** que los campos no queden con ancho fijo; usar `col-12 col-md-*` en móvil.
 ---
 
-*Documento de referencia para responsividad. Panel del profesor completado Mar 2026. Módulo de series completado Mar 2026. Módulo de rutinas (panel, editar, hoja, asignar) completado Mar 2026. Pestaña Asignaciones completada Mar 2026. Pendiente: ejercicios (vista, creación, modificación).*
+*Documento de referencia para responsividad. Panel del profesor completado Mar 2026. Módulo de series completado Mar 2026. Módulo de rutinas (panel, editar, hoja, asignar) completado Mar 2026. Pestaña Asignaciones completada Mar 2026. Vista Mis Ejercicios completada Mar 2026. Pendiente: responsive de crear ejercicio, modificar ejercicio, crear grupos musculares, modificar grupos musculares.*

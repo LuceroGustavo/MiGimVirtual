@@ -549,6 +549,9 @@ public class ProfesorController {
         if (usuarioActual == null || getProfesorParaUsuarioActual(usuarioActual) == null) {
             return "redirect:/login?error=true";
         }
+        if (!"DEVELOPER".equals(usuarioActual.getRol())) {
+            return "redirect:/profesor/mis-ejercicios";
+        }
         int n = exerciseCargaDefaultOptimizado.actualizarImagenesDesdeCarpeta();
         return "redirect:/profesor/mis-ejercicios?imagenesActualizadas=" + n;
     }
@@ -557,6 +560,9 @@ public class ProfesorController {
     public String actualizarImagenesEjercicios(@AuthenticationPrincipal Usuario usuarioActual) {
         if (usuarioActual == null || getProfesorParaUsuarioActual(usuarioActual) == null) {
             return "redirect:/login?error=true";
+        }
+        if (!"DEVELOPER".equals(usuarioActual.getRol())) {
+            return "redirect:/profesor/mis-ejercicios";
         }
         int n = exerciseCargaDefaultOptimizado.actualizarImagenesDesdeCarpeta();
         return "redirect:/profesor/mis-ejercicios?imagenesActualizadas=" + n;
@@ -603,21 +609,6 @@ public class ProfesorController {
             model.addAttribute("profesor", profesor);
             return "ejercicios/formulario-ejercicio";
         }
-    }
-
-    @GetMapping("/mis-ejercicios/ver/{id}")
-    public String verEjercicio(@PathVariable Long id,
-                              @AuthenticationPrincipal Usuario usuarioActual,
-                              Model model) {
-        if (usuarioActual == null) {
-            return "redirect:/login?error=true";
-        }
-        com.migimvirtual.entidades.Exercise ejercicio = exerciseService.findById(id);
-        if (ejercicio == null) {
-            return "redirect:/profesor/mis-ejercicios?error=ejercicio_no_encontrado";
-        }
-        model.addAttribute("ejercicio", ejercicio);
-        return "profesor/ver-ejercicio";
     }
 
     @GetMapping("/mis-ejercicios/editar/{id}")

@@ -2,6 +2,34 @@
 
 > Nota: este changelog incluye histórico heredado de MiGym (referencias a admin/chat/websocket).
 
+## [2026-03-21] - feat(ui): vista Mis Ejercicios – mejoras y documentación ✅
+
+### 🎯 **Resumen**
+Vista **Mis Ejercicios** terminada. Mejoras en tarjetas (botón + arriba derecha, mismo tamaño, cantidad en grupos musculares). Documentación actualizada: vista ejercicios completada; pendiente responsive de crear/modificar ejercicio y crear/modificar grupos musculares.
+
+### ✅ **Vista Mis Ejercicios** (`profesor/ejercicios-lista.html`)
+
+**Tarjetas (escritorio):**
+- Botón + en esquina superior derecha (como dashboard Alumnos/Series/Rutinas).
+- Quitado texto "Crear ejercicio" del centro; icono y número centrados.
+- Ambas tarjetas mismo tamaño (260px).
+- Tarjeta grupos musculares: muestra cantidad de grupos (como ejercicios).
+- Gap reducido entre tarjetas (gap-2).
+
+**Tarjetas (móvil ≤991px):**
+- Cuadradas, una al lado de la otra; gap mínimo; iconos y fuentes escalados.
+
+### 📁 **Archivos modificados**
+profesor/ejercicios-lista.html.
+
+### 📁 **Documentación**
+- Documentacion/GUIA_RESPONSIVE.md (§5.6): sección Mis Ejercicios completada; pendiente crear/modificar ejercicio y grupos musculares.
+- Documentacion/AYUDA_MEMORIA.md: actualizado estado ejercicios.
+- Documentacion/DOCUMENTACION_UNIFICADA.md: vista ejercicios terminada.
+- Documentacion/SUBPLAN_DESARROLLO_MODULOS.md: avances módulo Ejercicios.
+
+---
+
 ## [2026-03-20] - feat(ui): pestaña Asignaciones – vistas y responsive completados ✅
 
 ### 🎯 **Resumen**

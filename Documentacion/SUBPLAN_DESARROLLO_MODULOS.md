@@ -96,9 +96,12 @@ Cada módulo se cierra cuando: entidad/métodos están adaptados, vistas respons
 
 ## 6. Ejercicios
 
-- [ ] ABM ejercicios; grupos musculares.
-- [ ] Vistas lista/crear/editar y modal Ver: **responsive**.
-- [ ] Avances: _por anotar_.
+- [x] **Vista Mis Ejercicios:** responsive completada (Mar 2026). Tarjetas con + arriba derecha, mismo tamaño, cantidad grupos musculares; móvil cuadradas; filtros; modal al tocar fila; barra inferior. Ver GUIA_RESPONSIVE.md §5.6.
+- [ ] **Crear ejercicio:** responsive pendiente.
+- [ ] **Modificar ejercicio:** responsive pendiente.
+- [ ] **Crear grupos musculares:** responsive pendiente.
+- [ ] **Modificar grupos musculares:** responsive pendiente.
+- [ ] Avances: Vista lista terminada Mar 2026. Pendiente: formularios crear/modificar ejercicio y grupos musculares.
 
 ---
 

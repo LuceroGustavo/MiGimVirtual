@@ -4,6 +4,21 @@ Contenido importante reunido de los documentos del proyecto. Para contexto: [LEE
 
 ---
 
+## 0.1 Paleta de colores por módulo
+
+| Módulo | Color | Notas |
+|--------|-------|-------|
+| Alumnos | Verde | Pastel y derivaciones |
+| Series | Violeta / rosa viejo | Pastel y derivaciones |
+| Rutinas | Amarillo | Pastel y derivaciones |
+| Asignaciones | Azul / celeste | Pastel y derivaciones |
+| Ejercicios | Naranja | Pastel y derivaciones |
+| Administrar el sistema | Gris | Pastel y derivaciones |
+
+**Detalle:** Ver [PALETA_COLORES.md](PALETA_COLORES.md).
+
+---
+
 ## 0. Evolución MiGimVirtual (realizada)
 
 - **Proyecto:** Nombre MiGimVirtual; paquete `com.migimvirtual`; clase principal `MigimvirtualApplication`.
@@ -17,7 +32,7 @@ Contenido importante reunido de los documentos del proyecto. Para contexto: [LEE
 ## 1. Resumen de lo implementado
 
 - **Panel único:** Profesor (roles DEVELOPER, ADMIN, AYUDANTE). Sin panel alumno ni admin separado.
-- **Ejercicios:** Predeterminados 1–60 desde `uploads/ejercicios/`; ABM; grupos musculares como entidad (`GrupoMuscular`); formularios y modal Ver alineados con series/rutinas.
+- **Ejercicios:** Predeterminados 1–60 desde `uploads/ejercicios/`; ABM; grupos musculares como entidad (`GrupoMuscular`); formularios y modal Ver alineados con series/rutinas. **Vista Mis Ejercicios terminada (Mar 2026):** tarjetas con + arriba derecha, mismo tamaño, cantidad en grupos musculares; móvil cuadradas; filtros; modal al tocar fila; barra inferior. Pendiente responsive: crear ejercicio, modificar ejercicio, crear/modificar grupos musculares.
 - **Series y rutinas:** ABM; asignación rutina → alumno; enlace por token `/rutinas/hoja/{token}`; Copiar enlace y WhatsApp desde ficha alumno; orden de series; modificar rutina con tres bloques (Detalles, Series en rutina, Añadir más).
 - **Alumnos:** Solo ficha (sin login). Estado ACTIVO/INACTIVO; filtros por nombre y estado. Al eliminar alumno se borran mediciones y rutinas asignadas. Tarjeta "Progreso del alumno" con historial de registros (crear, editar, eliminar). **Vista del alumno terminada (Mar 2026):** responsive móvil, modal progreso al tocar registro, modal confirmar eliminar progreso, botón Guardar notas, Eliminar usuario debajo de todo, barra inferior móvil, formato fecha dd/MM/yy. Pendiente: scroll vertical en progresos móvil (>5 registros).
 - **Página pública:** Landing `/`, Planes `/planes`, consultas; administración en `/profesor/pagina-publica`.

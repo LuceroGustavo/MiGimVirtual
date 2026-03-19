@@ -57,6 +57,7 @@ Tras iniciar sesión se redirige al **Panel del profesor** (`/profesor/{id}`).
 | **SUBPLAN_DESARROLLO_MODULOS.md** | Avances por módulo (Alumnos → Series → Rutinas → Asignaciones → Ejercicios → Administrar); checklist y notas. |
 | **ELIMINACION_CALENDARIO_Y_PIZARRA_MAR2026.md** | Detalle de la eliminación de calendario, asistencias y pizarra online (Mar 2026). |
 | **DOCUMENTACION_UNIFICADA.md** | Resúmenes: lo implementado, backup, Excel alumnos, despliegue, manual (índice), referencias técnicas. |
+| **PALETA_COLORES.md** | Colores por módulo (Alumnos verde, Series violeta, Rutinas amarillo, Asignaciones azul, Ejercicios naranja, Administrar gris). Tonos pastel y derivaciones. |
 | **AYUDA_MEMORIA.md** | Lista rápida de pendientes (ejercicios/vistas), eliminar alumno, backup terminado. |
 
 **Carpeta `servidor/`:** Despliegue en VPS (SSH, Nginx, menú). Ver `servidor/DESPLIEGUE-SERVIDOR.md` y `servidor/nginx-detodoya.conf`.
