@@ -228,7 +228,7 @@ profesor/dashboard.html.
 
 ## 5.6 Módulo de Ejercicios – vista Mis Ejercicios responsive (Mar 2026) – ✅ Completado
 
-> **Nota:** La vista **Mis Ejercicios** (`/profesor/mis-ejercicios`) está terminada. **Grupos musculares** (lista + formulario editar): responsive (viewport, padding, tarjetas `col-12 col-sm-6`, barra inferior móvil, footer). Pendiente responsive: crear ejercicio, modificar ejercicio.
+> **Nota:** La vista **Mis Ejercicios** (`/profesor/mis-ejercicios`) está terminada. **Grupos musculares** (lista + formulario editar): responsive. **Crear ejercicio** y **Modificar ejercicio**: responsive y paleta naranja Mar 2026.
 
 ### Vista Mis Ejercicios (`profesor/ejercicios-lista.html`)
 
@@ -255,13 +255,18 @@ profesor/dashboard.html.
 | **Grupos musculares** | Checkboxes en **2 columnas** (`col-6`) también en móvil; etiquetas compactas ≤575px; bloque con fondo `fff8f5`. |
 | **Móvil** | Viewport; padding reducido; botones “Cancelar / Guardar” en columna en pantallas chicas; barra inferior + footer. |
 
-### Pendiente (responsive)
+### Modificar ejercicio (`/profesor/mis-ejercicios/editar/{id}`) — Mar 2026
 
-- **Modificar ejercicio** (`/profesor/mis-ejercicios/editar/{id}`)
+| Área | Detalle |
+|------|---------|
+| **Paleta** | Misma que crear: naranja pastel (#ffccbc, #ffab91), acentos #bf360c. |
+| **Layout** | `main-container` centrado; cabecera gradiente naranja; grupos musculares en 2 columnas (`col-6`); botones Cancelar/Guardar apilados en móvil. |
+| **Móvil** | Viewport; barra inferior; footer; imagen actual responsive. |
+| **Backend** | `urlImagenActual` (String, nunca null) y `returnUrlEditar` calculados en el controlador para evitar expresiones Thymeleaf que podían causar `ERR_INCOMPLETE_CHUNKED_ENCODING`. |
 
 ### Archivos
 
-profesor/ejercicios-lista.html, profesor/grupos-musculares-lista.html, profesor/grupo-muscular-form.html.
+profesor/ejercicios-lista.html, profesor/grupos-musculares-lista.html, profesor/grupo-muscular-form.html, ejercicios/formulario-ejercicio.html, ejercicios/formulario-modificar-ejercicio.html.
 
 ---
 
@@ -272,4 +277,4 @@ profesor/ejercicios-lista.html, profesor/grupos-musculares-lista.html, profesor/
 3. **Formularios:** que los campos no queden con ancho fijo; usar `col-12 col-md-*` en móvil.
 ---
 
-*Documento de referencia para responsividad. Panel del profesor completado Mar 2026. Módulo de series completado Mar 2026. Módulo de rutinas (panel, editar, hoja, asignar) completado Mar 2026. Pestaña Asignaciones completada Mar 2026. Vista Mis Ejercicios completada Mar 2026. Grupos musculares (lista + editar) responsive Mar 2026. Crear ejercicio responsive y paleta naranja Mar 2026. Pendiente: modificar ejercicio.*
+*Documento de referencia para responsividad. Panel del profesor completado Mar 2026. Módulo de series completado Mar 2026. Módulo de rutinas (panel, editar, hoja, asignar) completado Mar 2026. Pestaña Asignaciones completada Mar 2026. Vista Mis Ejercicios completada Mar 2026. Grupos musculares (lista + editar) responsive Mar 2026. Crear ejercicio y Modificar ejercicio responsive con paleta naranja Mar 2026.*

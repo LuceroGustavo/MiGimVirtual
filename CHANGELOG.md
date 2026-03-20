@@ -2,6 +2,55 @@
 
 > Nota: este changelog incluye histórico heredado de MiGym (referencias a admin/chat/websocket).
 
+## [2026-03-23] - fix(ui): modificar ejercicio – reparar módulo imagen y botón Guardar ✅
+
+### 🎯 **Resumen**
+Corrección del error `ERR_INCOMPLETE_CHUNKED_ENCODING` que impedía que se mostraran el módulo de imagen y el botón "Guardar cambios" en el formulario de editar ejercicio. El servidor cortaba la respuesta durante el renderizado por expresiones Thymeleaf que podían fallar.
+
+### 🐛 **Problema**
+- El formulario terminaba en "Grupos musculares"; no se mostraban la sección de imagen ni los botones.
+- Consola: `ERR_INCOMPLETE_CHUNKED_ENCODING 200 (OK)` — respuesta incompleta.
+
+### ✅ **Solución** (`ProfesorController.java`)
+- **`urlImagenActual`**: Siempre `String` (nunca `null`); si no hay imagen, se usa `""`.
+- **`returnUrlEditar`**: Calculado en el controlador (`/profesor/mis-ejercicios/editar/{id}`) y pasado a la vista; evita la expresión `__${}__` en la plantilla.
+- En GET y POST (errores validación/excepción): se añaden ambas variables al modelo.
+
+### ✅ **Solución** (`ejercicios/formulario-modificar-ejercicio.html`)
+- **Enlace "Crear grupo muscular"**: `th:href="@{/profesor/mis-grupos-musculares(returnUrl=${returnUrlEditar})}"` en lugar de la expresión con `__${}__`.
+- **Condiciones de imagen**: Uso de `#strings.isEmpty(urlImagenActual)` para manejar `null` y cadenas vacías de forma segura.
+- **Imagen actual**: `th:if="${!#strings.isEmpty(urlImagenActual)}"` para mostrar la imagen; `th:if="${#strings.isEmpty(urlImagenActual)}"` para el mensaje "sin imagen".
+
+### 📁 **Archivos modificados**
+ejercicios/formulario-modificar-ejercicio.html, ProfesorController.java.
+
+---
+
+## [2026-03-23] - feat(ui): modificar ejercicio – responsive y paleta naranja ✅
+
+### 🎯 **Resumen**
+Formulario **Editar ejercicio** alineado con **Crear ejercicio**: paleta naranja del módulo Ejercicios, mismo layout, grupos musculares en 2 columnas, viewport, barra inferior móvil y footer. Módulo Ejercicios responsive completado.
+
+### ✅ **Modificar ejercicio** (`ejercicios/formulario-modificar-ejercicio.html`)
+- Paleta naranja: fondo gradiente, cabecera `#ff8a65` → `#bf360c`, bordes y focus naranja.
+- Layout: `main-container`, título centrado, botón Volver arriba; misma estructura que crear.
+- **Grupos musculares:** `col-6` (2 columnas en móvil), `grupos-check-wrap`, botón "Crear grupo muscular" con estilo naranja.
+- Imagen actual y vista previa responsive; botones Cancelar/Guardar apilados en móvil.
+- Viewport, `style.css`, `footer.css`, barra inferior móvil, footer.
+
+### ✅ **Backend** (`ProfesorController.java`)
+- `model.addAttribute("usuario", usuarioActual)` en GET y POST de editar para la barra inferior.
+- En errores de validación o excepción: `ejercicioGrupoIds`, `usuario`, `urlImagenActual` y `returnUrlEditar` en el modelo.
+
+### 📁 **Documentación**
+- GUIA_RESPONSIVE.md §5.6: modificar ejercicio completado.
+- AYUDA_MEMORIA, DOCUMENTACION_UNIFICADA, SUBPLAN_DESARROLLO_MODULOS: módulo Ejercicios completado.
+
+### 📁 **Archivos modificados**
+ejercicios/formulario-modificar-ejercicio.html, ProfesorController.java, Documentacion/*.md.
+
+---
+
 ## [2026-03-22] - feat(ui): crear ejercicio (paleta naranja) + grupos en 2 columnas + docs ✅
 
 ### 🎯 **Resumen**

@@ -640,10 +640,18 @@ public class ProfesorController {
                 if (g != null && g.getId() != null) ejercicioGrupoIds.add(g.getId());
             }
         }
+        String urlImagenActual = "";
+        if (ejercicio.getImagen() != null) {
+            String u = ejercicio.getImagen().getUrl();
+            urlImagenActual = (u != null) ? u : "";
+        }
         model.addAttribute("exercise", ejercicio);
         model.addAttribute("ejercicioGrupoIds", ejercicioGrupoIds);
+        model.addAttribute("urlImagenActual", urlImagenActual);
+        model.addAttribute("returnUrlEditar", "/profesor/mis-ejercicios/editar/" + id);
         model.addAttribute("gruposMusculares", grupoMuscularService.findDisponiblesParaProfesor(profesor.getId()));
         model.addAttribute("profesor", profesor);
+        model.addAttribute("usuario", usuarioActual);
         return "ejercicios/formulario-modificar-ejercicio";
     }
 
@@ -667,8 +675,15 @@ public class ProfesorController {
             return "redirect:/profesor/ejercicios?error=sin_permisos_editar";
         }
         if (bindingResult.hasErrors()) {
+            exercise.setId(id);
+            com.migimvirtual.entidades.Exercise ejConImagen = exerciseService.findByIdWithImageAndGrupos(id);
+            model.addAttribute("ejercicioGrupoIds", grupoIds != null ? new java.util.HashSet<>(grupoIds) : new java.util.HashSet<Long>());
+            String u = (ejConImagen != null && ejConImagen.getImagen() != null) ? ejConImagen.getImagen().getUrl() : null;
+            model.addAttribute("urlImagenActual", (u != null) ? u : "");
+            model.addAttribute("returnUrlEditar", "/profesor/mis-ejercicios/editar/" + id);
             model.addAttribute("gruposMusculares", grupoMuscularService.findDisponiblesParaProfesor(profesor.getId()));
             model.addAttribute("profesor", profesor);
+            model.addAttribute("usuario", usuarioActual);
             return "ejercicios/formulario-modificar-ejercicio";
         }
         try {
@@ -680,9 +695,16 @@ public class ProfesorController {
             exerciseService.modifyExercise(id, exercise, imageFile, grupos, usuarioActual);
             return "redirect:/profesor/mis-ejercicios?success=ejercicio_actualizado";
         } catch (Exception e) {
+            exercise.setId(id);
+            com.migimvirtual.entidades.Exercise ej = exerciseService.findByIdWithImageAndGrupos(id);
             model.addAttribute("errorMessage", "Error al actualizar el ejercicio: " + e.getMessage());
+            model.addAttribute("ejercicioGrupoIds", grupoIds != null ? new java.util.HashSet<>(grupoIds) : new java.util.HashSet<Long>());
+            String u = (ej != null && ej.getImagen() != null) ? ej.getImagen().getUrl() : null;
+            model.addAttribute("urlImagenActual", (u != null) ? u : "");
+            model.addAttribute("returnUrlEditar", "/profesor/mis-ejercicios/editar/" + id);
             model.addAttribute("gruposMusculares", grupoMuscularService.findDisponiblesParaProfesor(profesor.getId()));
             model.addAttribute("profesor", profesor);
+            model.addAttribute("usuario", usuarioActual);
             return "ejercicios/formulario-modificar-ejercicio";
         }
     }

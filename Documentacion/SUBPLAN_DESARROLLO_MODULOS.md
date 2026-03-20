@@ -97,11 +97,10 @@ Cada módulo se cierra cuando: entidad/métodos están adaptados, vistas respons
 ## 6. Ejercicios
 
 - [x] **Vista Mis Ejercicios:** responsive completada (Mar 2026). Tarjetas con + arriba derecha, mismo tamaño, cantidad grupos musculares; móvil cuadradas; filtros; modal al tocar fila; barra inferior. Ver GUIA_RESPONSIVE.md §5.6.
-- [ ] **Crear ejercicio:** responsive pendiente.
-- [ ] **Modificar ejercicio:** responsive pendiente.
-- [ ] **Crear grupos musculares:** responsive pendiente.
-- [ ] **Modificar grupos musculares:** responsive pendiente.
-- [ ] Avances: Vista lista terminada Mar 2026. Pendiente: formularios crear/modificar ejercicio y grupos musculares.
+- [x] **Crear ejercicio:** responsive y paleta naranja (Mar 2026).
+- [x] **Modificar ejercicio:** responsive y paleta naranja, alineado con crear (Mar 2026).
+- [x] **Grupos musculares** (lista + editar): responsive (Mar 2026).
+- [x] Avances: Módulo Ejercicios responsive completado Mar 2026.
 
 ---
 

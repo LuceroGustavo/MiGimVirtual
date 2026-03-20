@@ -26,7 +26,7 @@ Para ver la lista de mejoras pendientes e implementadas (ítem por ítem), el ch
 1. **Vista Mis Ejercicios:** ✅ **Terminada (Mar 2026):** Tarjetas con botón + arriba derecha, mismo tamaño, cantidad en grupos musculares; móvil: cuadradas lado a lado; filtros en card; tabla con modal al tocar fila; barra inferior móvil. Ver GUIA_RESPONSIVE.md §5.6.
 2. **Mejorar HTML crear y modificar ejercicios:**
    - ~~Formularios acordes al resto de creaciones (estructura, estilos).~~ ✅ **Hecho (Mar 2026):** título compacto, ancho completo, cabecera gradiente "Datos del ejercicio", mismo criterio que crear serie. Colores por módulo ejercicios (violeta #764ba2/#667eea) aplicados.
-   - **Pendiente responsive:** ~~Crear ejercicio~~ ✅; modificar ejercicio.
+   - **Pendiente responsive:** ~~Crear ejercicio~~ ✅; ~~modificar ejercicio~~ ✅ (Mar 2026).
    - ~~**Acceso directo** a grupos musculares en crear ejercicio~~ ✅ botón “Crear grupo muscular”.
 3. **Grupos musculares:** ~~**Pendiente responsive**~~ ✅ **Hecho (Mar 2026):** lista y formulario editar responsive. Ver GUIA_RESPONSIVE §5.6.
 4. **Mejorar modal que muestra el ejercicio:** ~~En la lista de Mis Ejercicios.~~ ✅ **Hecho (Mar 2026):** modal con cabecera gradiente, botón cerrar, badge lavanda/violeta, imagen en contenedor redondeado, alineado con series y rutinas. En la hoja de rutina (alumno): botón "Ver video" solo si hay URL. Pendiente si hay otro modal de ejercicio en otras vistas por revisar.
@@ -34,6 +34,9 @@ Para ver la lista de mejoras pendientes e implementadas (ítem por ítem), el ch
 ---
 
 ## Verificar / reparar
+
+### Modificar ejercicio – módulo imagen y botón Guardar
+- ~~**Problema:** El formulario terminaba en "Grupos musculares"; no se mostraban la sección de imagen ni los botones. Consola: `ERR_INCOMPLETE_CHUNKED_ENCODING`.~~ ✅ **Reparado (Mar 2026):** `urlImagenActual` y `returnUrlEditar` calculados en el controlador; expresiones Thymeleaf simplificadas con `#strings.isEmpty()`. Ver CHANGELOG [2026-03-23] fix.
 
 ### Scroll vertical en vista de progresos (móvil)
 - **Pendiente:** Verificar que el scroll **vertical** se active al superar los 5 registros en la vista de progresos del alumno, solo en móvil. Actualmente no funciona correctamente (se activa scroll horizontal en lugar de vertical).
@@ -105,7 +108,7 @@ Ver GUIA_RESPONSIVE.md §5.2.
 - ~~**Mañana: mejorar responsive de asignación de rutinas:**~~ ✅ **Hecho (Mar 2026):** Tabla con búsqueda, modal de detalle, botón deseleccionar, enlace Ver corregido; móvil: columnas simplificadas (Nombre, Categoría, Series), click en fila abre modal, scroll al asignar. Ver CHANGELOG [2026-03-18] y GUIA_RESPONSIVE §5.4.
 - ~~**Pestaña Asignaciones – vistas y responsive:**~~ ✅ **Hecho (Mar 2026):** Filtro con card y Limpiar (estructura igual a Series); móvil: columna Acciones oculta, fila clickeable abre modal con detalle y acciones (sin WhatsApp). Botón Limpiar de Mis Alumnos en verde claro. Ver CHANGELOG [2026-03-20] y GUIA_RESPONSIVE §5.5.
 - **Barra inferior de navegación (accesos directos):** Pendiente cambiar los accesos directos de la barra inferior (Inicio, Alumnos, Rutinas, Más) cuando se definan las URLs o flujos finales; actualmente en panel profesor y en crear rutina usan enlaces al dashboard y a administración.
-- **Siguiente:** **Ejercicios** — ~~vista~~ ✅ terminada; ~~grupos musculares (lista + editar)~~ ✅ responsive; ~~crear ejercicio~~ ✅ paleta naranja + responsive Mar 2026; **pendiente responsive:** modificar ejercicio.
+- **Siguiente:** **Ejercicios** — ~~vista~~ ✅ terminada; ~~grupos musculares (lista + editar)~~ ✅ responsive; ~~crear ejercicio~~ ✅; ~~modificar ejercicio~~ ✅ paleta naranja + responsive Mar 2026.
 
 ---
 
@@ -115,7 +118,7 @@ Ver GUIA_RESPONSIVE.md §5.2.
 2. ~~**Vista de ficha del alumno – mejoras para móvil.**~~ ✅ **Hecho (Mar 2026):** contenedor, título y subtítulo adaptados; header (Volver/Eliminar) a ancho completo; tarjetas en 1 columna; bloque alumno-info apilado; botones de tabla con área táctil mínima 38px; breakpoints 991px y 575px. **Vista del alumno terminada:** modal progreso al tocar registro (móvil), modal confirmar eliminar progreso (estilo borrar alumno), botón Guardar notas, Eliminar usuario debajo de todo, barra inferior móvil igual al panel, formato fecha dd/MM/yy. **Rutinas asignadas (Entorno 2):** tabla Fecha|Nombre|Categorías|Estado; fila clickeable abre modal con tarjeta y acciones (Modificar, Ver, Copiar, Pausar/Activar, WhatsApp). Ver CHANGELOG [2026-03-19]. Pendiente: scroll vertical en progresos (móvil, >5 registros).
 3. ~~**Módulo de series (vista responsive).**~~ ✅ **Hecho (Mar 2026):** ver sección "Módulo de Series" más arriba. Opcional: revisar editar serie y flujos restantes.
 4. ~~**Módulo de rutinas (creación, modificar, panel, hoja, asignar).**~~ ✅ **Hecho (Mar 2026):** CHANGELOG [2026-03-17], [2026-03-18].
-5. ~~**Vista Mis Ejercicios.**~~ ✅ **Hecho (Mar 2026):** Tarjetas con + arriba derecha, mismo tamaño, cantidad grupos musculares; móvil cuadradas; filtros; modal al tocar fila; barra inferior. Ver GUIA_RESPONSIVE.md §5.6 y CHANGELOG [2026-03-21]. ~~Grupos musculares (lista + editar).~~ ~~Crear ejercicio (paleta + responsive).~~ ✅ **Pendiente:** modificar ejercicio (responsive / alinear con crear).
+5. ~~**Vista Mis Ejercicios.**~~ ✅ **Hecho (Mar 2026):** Tarjetas con + arriba derecha, mismo tamaño, cantidad grupos musculares; móvil cuadradas; filtros; modal al tocar fila; barra inferior. Ver GUIA_RESPONSIVE.md §5.6 y CHANGELOG [2026-03-21]. ~~Grupos musculares (lista + editar).~~ ~~Crear ejercicio (paleta + responsive).~~ ~~Modificar ejercicio (responsive / alinear con crear).~~ ✅ Módulo Ejercicios responsive completado.
 6. **Luego:** Revisar/cambiar el **sistema de backup** — todavía no está definido si va a quedar como está o se modificará.
 7. **Luego:** **Modificar el manual del usuario** (actualizar contenido y estructura según los cambios de la app).
 
