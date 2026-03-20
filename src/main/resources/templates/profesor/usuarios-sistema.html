@@ -2,7 +2,7 @@
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Administración de usuarios</title>
+    <title>Usuarios del sistema</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
@@ -19,7 +19,7 @@
 <th:block th:fragment="contenido">
 <div class="container-fluid py-4 px-4 admin-section-content" style="background: linear-gradient(135deg, #e8eaf6 0%, #f3e5f5 100%); min-height: 100vh;">
     <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-4">
-        <h3 class="mb-0"><i class="fas fa-users-cog me-2" style="color:#5e35b1;"></i>Administración de usuarios</h3>
+        <h3 class="mb-0"><i class="fas fa-users-cog me-2" style="color:#5e35b1;"></i>Usuarios del sistema</h3>
         <div class="d-flex gap-2">
             <a th:if="${(param.embed == null || param.embed.isEmpty()) && (param.fragment == null || param.fragment.isEmpty())}" th:href="@{/profesor/administracion}" class="btn btn-outline-secondary btn-sm"><i class="fas fa-arrow-left me-1"></i>Volver al panel</a>
             <a th:if="${puedeCrearUsuario}" th:href="@{/profesor/usuarios-sistema/crear}" class="btn btn-primary"><i class="fas fa-user-plus me-1"></i>Crear usuario</a>
@@ -34,7 +34,7 @@
                     <div class="card-body d-flex align-items-center">
                         <i class="fas fa-globe fa-2x me-3" style="color:#5e35b1;"></i>
                         <div>
-                            <div class="fw-semibold text-dark">Administración página pública</div>
+                            <div class="fw-semibold text-dark">Página Pública</div>
                             <small class="text-muted">Planes, precios, contacto</small>
                         </div>
                     </div>

@@ -108,8 +108,9 @@ Ver GUIA_RESPONSIVE.md §5.2.
 - ~~**Continuar con creación de rutinas** (crear, modificar, panel, hoja).~~ ✅ **Hecho (Mar 2026):** Ver CHANGELOG [2026-03-17] y GUIA_RESPONSIVE §5.3. Panel Rutinas con columna Acciones en escritorio; editar rutina mismo layout que crear; hoja responsive y header en dos filas; volver a tab Rutinas desde editar.
 - ~~**Mañana: mejorar responsive de asignación de rutinas:**~~ ✅ **Hecho (Mar 2026):** Tabla con búsqueda, modal de detalle, botón deseleccionar, enlace Ver corregido; móvil: columnas simplificadas (Nombre, Categoría, Series), click en fila abre modal, scroll al asignar. Ver CHANGELOG [2026-03-18] y GUIA_RESPONSIVE §5.4.
 - ~~**Pestaña Asignaciones – vistas y responsive:**~~ ✅ **Hecho (Mar 2026):** Filtro con card y Limpiar (estructura igual a Series); móvil: columna Acciones oculta, fila clickeable abre modal con detalle y acciones (sin WhatsApp). Botón Limpiar de Mis Alumnos en verde claro. Ver CHANGELOG [2026-03-20] y GUIA_RESPONSIVE §5.5.
-- **Barra inferior de navegación (accesos directos):** Pendiente cambiar los accesos directos de la barra inferior (Inicio, Alumnos, Rutinas, Más) cuando se definan las URLs o flujos finales; actualmente en panel profesor y en crear rutina usan enlaces al dashboard y a administración.
+- **Barra inferior de navegación (accesos directos):** ✅ **Hecho (Mar 2026):** Inicio → página pública; Manual → manual de usuario; Consultas → mensajes formulario contacto; Más → config. Fragmento `bottom-nav.html` usado en todas las plantillas del panel. Ver CHANGELOG [2026-03-16] feat(ui) accesos rápidos.
 - **Siguiente:** **Ejercicios** — ~~vista~~ ✅ terminada; ~~grupos musculares (lista + editar)~~ ✅ responsive; ~~crear ejercicio~~ ✅; ~~modificar ejercicio~~ ✅ paleta naranja + responsive Mar 2026.
+- **Siguiente sesión:** Terminar módulo de administración (revisar vistas, responsive); revisar manual de usuario (ABM categorías, accesos, etc.).
 
 ---
 
@@ -122,6 +123,13 @@ Ver GUIA_RESPONSIVE.md §5.2.
 5. ~~**Vista Mis Ejercicios.**~~ ✅ **Hecho (Mar 2026):** Tarjetas con + arriba derecha, mismo tamaño, cantidad grupos musculares; móvil cuadradas; filtros; modal al tocar fila; barra inferior. Ver GUIA_RESPONSIVE.md §5.6 y CHANGELOG [2026-03-21]. ~~Grupos musculares (lista + editar).~~ ~~Crear ejercicio (paleta + responsive).~~ ~~Modificar ejercicio (responsive / alinear con crear).~~ ✅ Módulo Ejercicios responsive completado.
 6. **Luego:** Revisar/cambiar el **sistema de backup** — todavía no está definido si va a quedar como está o se modificará.
 7. **Luego:** **Modificar el manual del usuario** (actualizar contenido y estructura según los cambios de la app).
+
+---
+
+## Pendientes – Módulo de administración y manual
+
+- **Terminar módulo de administración:** Responsive mejorado (textos cortos, dropdown móvil funcional, tabla consultas). Revisar vistas restantes, alineación y flujos en móvil.
+- **Revisar manual de usuario:** Se hicieron muchas modificaciones (ABM categorías, accesos rápidos del pie, módulo administración, etc.). Actualizar manual con contenido y estructura acordes a la app actual.
 
 ---
 

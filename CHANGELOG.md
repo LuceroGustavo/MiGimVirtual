@@ -2,6 +2,34 @@
 
 > Nota: este changelog incluye histórico heredado de MiGym (referencias a admin/chat/websocket).
 
+## [2026-03-16] - feat(ui): accesos rápidos pie de página + módulo administración responsive ✅
+
+### 🎯 **Resumen**
+Barra inferior de accesos rápidos unificada en todas las plantillas del panel. Módulo de administración mejorado para móvil: textos cortos, menú desplegable funcional, Manual oculto en móvil (ya está en pie).
+
+### ✅ **Accesos rápidos (fragmento `fragments/bottom-nav.html`)**
+- **Inicio** → Página pública (`/`)
+- **Manual** → Manual de usuario (`/profesor/manual`)
+- **Consultas** → Mensajes del formulario de contacto (`/profesor/administracion?seccion=pagina`)
+- **Más** → Configuración del sistema (`/profesor/administracion`) para ADMIN/DEVELOPER; dashboard para AYUDANTE
+
+Plantillas actualizadas para usar el fragmento: dashboard, categorías, grupos musculares, rutinas (crear/editar), series (crear), ejercicios (crear/modificar), alumno-detalle, asignar-rutina, grupo-muscular-form, ejercicios-lista.
+
+### ✅ **Módulo administración (responsive)**
+- **Textos acortados:** "Administración de página pública" → "Página Pública"; "Administración de usuarios del sistema" → "Usuarios del sistema" (menú lateral, títulos, tarjetas).
+- **Móvil (≤991px):** Menú lateral reemplazado por **dropdown compacto** (Usuarios, Página Pública, Backups). Manual de usuario oculto (accesible desde pie de página).
+- **Dropdown custom:** Bootstrap dropdown no funcionaba en móvil; se implementó menú propio con JS (toggle, cerrar al hacer clic fuera o al elegir opción).
+- **Alineación:** Márgenes 0.75rem en móvil; tabla de consultas con scroll horizontal y truncado de columna Mensaje.
+
+### 📁 **Archivos modificados**
+fragments/bottom-nav.html, profesor/administracion.html, profesor/pagina-publica-admin.html, profesor/usuarios-sistema.html, ProfesorController.java; plantillas que usan bottom-nav (dashboard, categorías, grupos, rutinas, series, ejercicios, alumno-detalle, asignar-rutina).
+
+### 📋 **Pendientes (documentados en AYUDA_MEMORIA)**
+- Terminar módulo de administración (revisar vistas restantes, responsive).
+- Revisar manual de usuario (actualizar según ABM categorías, accesos y demás cambios recientes).
+
+---
+
 ## [2026-03-16] - feat(rutinas): ABM de categorías de rutinas implementado ✅
 
 ### 🎯 **Resumen**

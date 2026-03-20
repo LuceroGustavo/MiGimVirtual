@@ -991,13 +991,7 @@
     </div>
 
     <!-- Barra inferior móvil: acceso rápido (podés asignar después cada enlace) -->
-    <nav class="bottom-nav-mobile" id="bottomNavMobile" aria-label="Accesos rápidos">
-        <a href="#" class="bottom-nav-item" data-action="inicio" aria-label="Inicio"><i class="fa-solid fa-house"></i><span>Inicio</span></a>
-        <a href="#" class="bottom-nav-item" data-action="tab" data-tab="alumnos" aria-label="Alumnos"><i class="fa-solid fa-users"></i><span>Alumnos</span></a>
-        <a href="#" class="bottom-nav-item" data-action="tab" data-tab="rutinas" aria-label="Rutinas"><i class="fa-solid fa-list-check"></i><span>Rutinas</span></a>
-        <a th:href="@{/profesor/administracion}" class="bottom-nav-item" th:if="${usuario != null && (usuario.rol == 'ADMIN' || usuario.rol == 'DEVELOPER')}" aria-label="Más"><i class="fa-solid fa-gear"></i><span>Más</span></a>
-        <a href="#" class="bottom-nav-item" data-action="mas" th:if="${usuario != null && usuario.rol != 'ADMIN' && usuario.rol != 'DEVELOPER'}" aria-label="Más"><i class="fa-solid fa-ellipsis"></i><span>Más</span></a>
-    </nav>
+    <div th:replace="~{fragments/bottom-nav :: bottom-nav}"></div>
 
     <!-- Footer Fragment -->
     <div th:replace="fragments/footer :: footer"></div>

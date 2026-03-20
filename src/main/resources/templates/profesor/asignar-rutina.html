@@ -362,13 +362,7 @@
 </div>
 
 <!-- Barra inferior móvil -->
-<nav class="bottom-nav-mobile" aria-label="Accesos rápidos">
-    <a th:href="@{/profesor/dashboard}" class="bottom-nav-item" aria-label="Inicio"><i class="fa-solid fa-house"></i><span>Inicio</span></a>
-    <a th:href="@{/profesor/dashboard(tab='alumnos')}" class="bottom-nav-item" aria-label="Alumnos"><i class="fa-solid fa-users"></i><span>Alumnos</span></a>
-    <a th:href="@{/profesor/dashboard(tab='rutinas')}" class="bottom-nav-item" aria-label="Rutinas"><i class="fa-solid fa-list-check"></i><span>Rutinas</span></a>
-    <a th:href="@{/profesor/administracion}" class="bottom-nav-item" th:if="${#authentication.principal != null && (#authentication.principal.rol == 'ADMIN' || #authentication.principal.rol == 'DEVELOPER')}" aria-label="Más"><i class="fa-solid fa-gear"></i><span>Más</span></a>
-    <a th:href="@{/profesor/dashboard}" class="bottom-nav-item" th:if="${#authentication.principal != null && #authentication.principal.rol != 'ADMIN' && #authentication.principal.rol != 'DEVELOPER'}" aria-label="Más"><i class="fa-solid fa-ellipsis"></i><span>Más</span></a>
-</nav>
+<div th:replace="~{fragments/bottom-nav :: bottom-nav}"></div>
 
 <!-- Footer Fragment -->
 <div th:replace="fragments/footer :: footer"></div>

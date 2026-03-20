@@ -136,7 +136,7 @@ public class ProfesorController {
         if (fragment != null && !fragment.isEmpty()) {
             return "profesor/manual-usuario :: contenido";
         }
-        return "redirect:/profesor/administracion";
+        return "profesor/manual-usuario";
     }
 
     /** Panel del profesor por URL /profesor/{id}. Misma vista y datos que /profesor/dashboard. */

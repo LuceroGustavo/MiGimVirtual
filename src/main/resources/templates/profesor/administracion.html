@@ -104,39 +104,91 @@
         .admin-sidebar .admin-nav-link .nav-link-text {
             font-size: 0.95rem;
         }
+        /* Móvil: menú desplegable compacto */
+        .admin-sidebar-mobile-dropdown {
+            display: none;
+        }
+        .admin-sidebar-desktop { display: block; }
         @media (max-width: 991px) {
             .admin-layout {
                 flex-direction: column;
             }
             .admin-sidebar {
                 width: 100%;
-                padding: 0 0 1rem 0;
+                padding: 0 0 0.75rem 0;
                 order: 0;
             }
+            .admin-sidebar-desktop { display: none; }
+            .admin-sidebar-mobile-dropdown {
+                display: block;
+                width: 100%;
+            }
+            .admin-sidebar-mobile-dropdown .dropdown-toggle {
+                width: 100%;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                padding: 0.6rem 1rem;
+                background: #fff;
+                border: 1px solid #e0e0e0;
+                border-radius: 0.5rem;
+                color: #37474f;
+                font-weight: 500;
+                box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+            }
+            .admin-sidebar-mobile-dropdown .dropdown-toggle:after { margin-left: auto; }
+            .admin-mobile-dropdown-wrap { position: relative; }
+            .admin-mobile-dropdown-menu {
+                display: none;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                right: 0;
+                margin: 0.25rem 0 0;
+                padding: 0.25rem 0;
+                list-style: none;
+                background: #fff;
+                border: 1px solid #e0e0e0;
+                border-radius: 0.5rem;
+                box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+                z-index: 1050;
+            }
+            .admin-mobile-dropdown-menu.show { display: block; }
+            .admin-mobile-dropdown-menu .dropdown-item {
+                display: flex;
+                align-items: center;
+                padding: 0.6rem 1rem;
+                color: #37474f;
+                text-decoration: none;
+                border: none;
+                background: transparent;
+                width: 100%;
+                text-align: left;
+            }
+            .admin-mobile-dropdown-menu .dropdown-item:hover, .admin-mobile-dropdown-menu .dropdown-item:focus { background: #f5f5f5; color: #5e35b1; }
+            .admin-mobile-dropdown-wrap.open .dropdown-toggle .fa-chevron-down { transform: rotate(180deg); }
             .admin-main { order: 1; }
             .admin-main .admin-content-wrap {
                 height: 480px;
                 min-height: 480px;
             }
-            .admin-sidebar .nav-section {
-                display: flex;
-                flex-wrap: wrap;
-                gap: 0.25rem;
-                padding: 0.5rem;
-            }
-            .admin-sidebar .admin-nav-link {
-                flex: 1 1 auto;
-                min-width: 140px;
-                border-radius: 0.5rem;
-                border: 1px solid #eee;
-            }
+        }
+        @media (min-width: 992px) {
+            .admin-sidebar-mobile-dropdown { display: none !important; }
+        }
+        @media (max-width: 575px) {
+            .admin-container { padding-left: 0.75rem !important; padding-right: 0.75rem !important; }
+            .admin-section-content { padding-left: 0.75rem !important; padding-right: 0.75rem !important; }
+            .admin-content-wrap .admin-consultas-table { margin-left: -0.75rem; margin-right: -0.75rem; padding-left: 0.75rem; padding-right: 0.75rem; -webkit-overflow-scrolling: touch; }
+            .admin-content-wrap .admin-consultas-table .table { font-size: 0.85rem; }
+            .admin-content-wrap .admin-consultas-table .table td:nth-child(5), .admin-content-wrap .admin-consultas-table .table th:nth-child(5) { max-width: 140px; overflow: hidden; text-overflow: ellipsis; }
         }
     </style>
 </head>
 <body>
 <div th:replace="~{fragments/navbar :: navbar}"></div>
 
-<div class="container-fluid py-3 px-3 px-md-4">
+<div class="container-fluid py-3 px-3 px-md-4 admin-container">
     <div id="adminAlerts" class="admin-alerts-container">
     <div th:if="${importResult}" class="alert mb-3 admin-alert-item" th:classappend="${importResult['success']} ? 'alert-success' : 'alert-danger'" role="alert">
         <span th:if="${importResult['success']}">
@@ -171,21 +223,37 @@
     </div>
     <div class="admin-layout">
         <aside class="admin-sidebar">
-            <nav class="nav-section">
+            <!-- Móvil: menú desplegable compacto (sin Manual, ya está en pie de página) -->
+            <div class="admin-sidebar-mobile-dropdown">
+                <div class="admin-mobile-dropdown-wrap">
+                    <button class="dropdown-toggle btn btn-light w-100 text-start" type="button" id="adminMobileDropdown" aria-expanded="false" aria-haspopup="true">
+                        <i class="fas fa-users-cog me-2" style="color:#5e35b1;"></i>
+                        <span id="adminMobileDropdownLabel">Usuarios del sistema</span>
+                        <i class="fas fa-chevron-down ms-auto" style="font-size:0.75rem; transition: transform 0.2s;"></i>
+                    </button>
+                    <ul class="admin-mobile-dropdown-menu" id="adminMobileDropdownMenu" role="menu">
+                        <li role="none"><a class="dropdown-item admin-mobile-option" href="#" data-src="/profesor/usuarios-sistema?fragment=1" data-label="Usuarios del sistema"><i class="fas fa-users-cog me-2" style="color:#5e35b1;"></i>Usuarios del sistema</a></li>
+                        <li role="none"><a class="dropdown-item admin-mobile-option" href="#" data-src="/profesor/pagina-publica?fragment=1" data-label="Página Pública"><i class="fas fa-globe me-2" style="color:#5e35b1;"></i>Página Pública</a></li>
+                        <li role="none"><a class="dropdown-item admin-mobile-option" href="#" data-src="/profesor/backup?fragment=1" data-label="Sistema de backups"><i class="fas fa-database me-2" style="color:#5e35b1;"></i>Sistema de backups</a></li>
+                    </ul>
+                </div>
+            </div>
+            <!-- Escritorio: menú lateral completo -->
+            <nav class="nav-section admin-sidebar-desktop">
                 <div class="nav-section-title"><i class="fas fa-cogs me-2" style="color:#5e35b1;"></i>Administración del sistema</div>
                 <a href="#" class="admin-nav-link active" data-src="/profesor/usuarios-sistema?fragment=1" data-label="usuarios">
                     <i class="fas fa-users-cog"></i>
-                    <span class="nav-link-text">Administración de usuarios del sistema</span>
+                    <span class="nav-link-text">Usuarios del sistema</span>
                 </a>
                 <a href="#" class="admin-nav-link" data-src="/profesor/pagina-publica?fragment=1" data-label="pagina">
                     <i class="fas fa-globe"></i>
-                    <span class="nav-link-text">Administración de la página pública</span>
+                    <span class="nav-link-text">Página Pública</span>
                 </a>
                 <a href="#" class="admin-nav-link" data-src="/profesor/backup?fragment=1" data-label="backup">
                     <i class="fas fa-database"></i>
                     <span class="nav-link-text">Sistema de backups</span>
                 </a>
-                <a href="#" class="admin-nav-link" data-src="/profesor/manual?fragment=1" data-label="manual">
+                <a href="#" class="admin-nav-link admin-nav-link-manual d-none d-lg-flex" data-src="/profesor/manual?fragment=1" data-label="manual">
                     <i class="fas fa-book"></i>
                     <span class="nav-link-text">Manual de usuario</span>
                 </a>
@@ -229,6 +297,7 @@
             .then(function(html) {
                 contentEl.classList.remove('loading');
                 contentEl.innerHTML = html;
+                updateMobileDropdownLabel(fullUrl);
                 contentEl.querySelectorAll('script').forEach(function(oldScript) {
                     var script = document.createElement('script');
                     if (oldScript.src) script.src = oldScript.src; else script.textContent = oldScript.textContent;
@@ -253,6 +322,51 @@
         });
     });
 
+    function updateMobileDropdownLabel(url) {
+        var lab = document.getElementById('adminMobileDropdownLabel');
+        if (!lab) return;
+        if ((url || '').indexOf('usuarios-sistema') >= 0) lab.textContent = 'Usuarios del sistema';
+        else if ((url || '').indexOf('pagina-publica') >= 0) lab.textContent = 'Página Pública';
+        else if ((url || '').indexOf('backup') >= 0) lab.textContent = 'Sistema de backups';
+        else if ((url || '').indexOf('manual') >= 0) lab.textContent = 'Manual de usuario';
+    }
+    var dropdownBtn = document.getElementById('adminMobileDropdown');
+    var dropdownMenu = document.getElementById('adminMobileDropdownMenu');
+    var dropdownWrap = document.querySelector('.admin-mobile-dropdown-wrap');
+    function toggleMobileDropdown() {
+        if (!dropdownWrap || !dropdownMenu) return;
+        var isOpen = dropdownWrap.classList.contains('open');
+        dropdownWrap.classList.toggle('open', !isOpen);
+        dropdownMenu.classList.toggle('show', !isOpen);
+        dropdownBtn && dropdownBtn.setAttribute('aria-expanded', !isOpen);
+    }
+    function closeMobileDropdown() {
+        if (dropdownWrap) dropdownWrap.classList.remove('open');
+        if (dropdownMenu) dropdownMenu.classList.remove('show');
+        if (dropdownBtn) dropdownBtn.setAttribute('aria-expanded', 'false');
+    }
+    if (dropdownBtn && dropdownMenu) {
+        dropdownBtn.addEventListener('click', function(e) { e.preventDefault(); e.stopPropagation(); toggleMobileDropdown(); });
+        document.addEventListener('click', function(e) {
+            if (dropdownWrap && dropdownWrap.contains(e.target)) return;
+            closeMobileDropdown();
+        });
+    }
+    document.querySelectorAll('.admin-mobile-option').forEach(function(opt) {
+        opt.addEventListener('click', function(e) {
+            e.preventDefault();
+            var url = this.getAttribute('data-src');
+            if (url) {
+                closeMobileDropdown();
+                var key = url.split('?')[0].split('/').filter(Boolean).pop();
+                var match = Array.prototype.find.call(links, function(l) { return (l.getAttribute('data-src') || '').indexOf(key) >= 0; });
+                if (match) setActive(match);
+                updateMobileDropdownLabel(url);
+                loadSection(url);
+            }
+        });
+    });
+
     var defaultUrl = '/profesor/usuarios-sistema?fragment=1';
     var params = new URLSearchParams(window.location.search);
     if (params.get('seccion') === 'backup') {
@@ -270,6 +384,15 @@
             setActive(paginaLink);
             loadSection(paginaLink.getAttribute('data-src'));
             try { sessionStorage.setItem(storageKey, paginaLink.getAttribute('data-src')); } catch (e) {}
+            defaultUrl = null;
+        }
+    }
+    if (params.get('seccion') === 'manual') {
+        var manualLink = Array.prototype.find.call(links, function(l) { return (l.getAttribute('data-src') || '').indexOf('manual') >= 0; });
+        if (manualLink) {
+            setActive(manualLink);
+            loadSection(manualLink.getAttribute('data-src'));
+            try { sessionStorage.setItem(storageKey, manualLink.getAttribute('data-src')); } catch (e) {}
             defaultUrl = null;
         }
     }
