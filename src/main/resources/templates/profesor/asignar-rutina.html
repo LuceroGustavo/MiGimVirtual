@@ -276,7 +276,7 @@
                                     th:attr="data-rutina-id=${rutina.id},
                                             data-rutina-nombre=${rutina.nombre},
                                             data-rutina-descripcion=${rutina.descripcion != null ? rutina.descripcion : ''},
-                                            data-rutina-categoria=${(rutina.categoriasList != null and !rutina.categoriasList.isEmpty()) ? #strings.listJoin(rutina.categoriasList, ', ') : (rutina.categoria != null ? rutina.categoria : '')},
+                                            data-rutina-categoria=${(rutina.categoriasList != null and !rutina.categoriasList.isEmpty()) ? #strings.listJoin(rutina.categoriasList, ', ') : ''},
                                             data-series-nombres=${rutina.series != null and !rutina.series.isEmpty() ? #strings.listJoin(rutina.series.![nombre], '|') : ''}">
                                     <td class="text-center col-seleccionar-movil">
                                         <button type="button" class="btn btn-sm btn-outline-success btn-seleccionar-rutina" 
@@ -286,11 +286,11 @@
                                         </button>
                                     </td>
                                     <td th:text="${rutina.nombre}">Nombre</td>
-                                    <td class="small col-categoria-movil" th:text="${(rutina.categoriasList != null and !rutina.categoriasList.isEmpty()) ? #strings.listJoin(rutina.categoriasList, ', ') : (rutina.categoria != null ? rutina.categoria : '—')}">—</td>
+                                    <td class="small col-categoria-movil" th:text="${(rutina.categoriasList != null and !rutina.categoriasList.isEmpty()) ? #strings.listJoin(rutina.categoriasList, ', ') : '—'}">—</td>
                                     <td class="text-center">
                                         <span class="badge bg-info" th:text="${rutina.series != null ? rutina.series.size() : 0}">0</span>
                                     </td>
-                                    <td class="small col-descripcion-movil" th:text="${(rutina.categoriasList != null and !rutina.categoriasList.isEmpty()) ? #strings.listJoin(rutina.categoriasList, ', ') : (rutina.categoria != null ? rutina.categoria : '—')}">—</td>
+                                    <td class="small col-descripcion-movil" th:text="${(rutina.categoriasList != null and !rutina.categoriasList.isEmpty()) ? #strings.listJoin(rutina.categoriasList, ', ') : '—'}">—</td>
                                     <td class="text-center col-accion-movil">
                                         <span th:if="${nombresRutinasAsignadasAlAlumno != null and nombresRutinasAsignadasAlAlumno.contains(rutina.nombre)}" 
                                               class="badge bg-success">

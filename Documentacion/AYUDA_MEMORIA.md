@@ -29,7 +29,8 @@ Para ver la lista de mejoras pendientes e implementadas (ítem por ítem), el ch
    - **Pendiente responsive:** ~~Crear ejercicio~~ ✅; ~~modificar ejercicio~~ ✅ (Mar 2026).
    - ~~**Acceso directo** a grupos musculares en crear ejercicio~~ ✅ botón “Crear grupo muscular”.
 3. **Grupos musculares:** ~~**Pendiente responsive**~~ ✅ **Hecho (Mar 2026):** lista y formulario editar responsive. Ver GUIA_RESPONSIVE §5.6.
-4. **Mejorar modal que muestra el ejercicio:** ~~En la lista de Mis Ejercicios.~~ ✅ **Hecho (Mar 2026):** modal con cabecera gradiente, botón cerrar, badge lavanda/violeta, imagen en contenedor redondeado, alineado con series y rutinas. En la hoja de rutina (alumno): botón "Ver video" solo si hay URL. Pendiente si hay otro modal de ejercicio en otras vistas por revisar.
+4. **Categorías de rutinas:** ✅ **ABM implementado (Mar 2026):** entidad `Categoria`; categorías del sistema + propias del profesor; lista en `/profesor/mis-categorias`; crear, editar, eliminar; selección en crear/editar rutina. Ver DOCUMENTACION_UNIFICADA §1 y §5.
+5. **Mejorar modal que muestra el ejercicio:** ~~En la lista de Mis Ejercicios.~~ ✅ **Hecho (Mar 2026):** modal con cabecera gradiente, botón cerrar, badge lavanda/violeta, imagen en contenedor redondeado, alineado con series y rutinas. En la hoja de rutina (alumno): botón "Ver video" solo si hay URL. Pendiente si hay otro modal de ejercicio en otras vistas por revisar.
 
 ---
 

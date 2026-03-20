@@ -3,9 +3,10 @@ package com.migimvirtual.entidades;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
-import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Entity
@@ -22,7 +23,12 @@ public class Rutina {
     private LocalDateTime fechaModificacion;
     private boolean esPlantilla; // true = rutina plantilla, false = rutina asignada
     private String creador; // "ADMIN" (único gestor del panel)
-    private String categoria; // "FUERZA", "CARDIO", "FLEXIBILIDAD", etc.
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "rutina_categoria",
+               joinColumns = @JoinColumn(name = "rutina_id"),
+               inverseJoinColumns = @JoinColumn(name = "categoria_id"))
+    private Set<Categoria> categorias = new HashSet<>();
     @Column(unique = true, length = 32)
     private String tokenPublico;
 
@@ -129,20 +135,20 @@ public class Rutina {
         this.creador = creador;
     }
 
-    public String getCategoria() {
-        return categoria;
+    public Set<Categoria> getCategorias() {
+        return categorias != null ? categorias : new HashSet<>();
     }
 
-    public void setCategoria(String categoria) {
-        this.categoria = categoria;
+    public void setCategorias(Set<Categoria> categorias) {
+        this.categorias = categorias != null ? categorias : new HashSet<>();
     }
 
-    /** Lista de categorías (ej. FUERZA, CARDIO) cuando categoria se guarda separada por comas. */
+    /** Lista de nombres de categorías (para mostrar en vistas). */
     public List<String> getCategoriasList() {
-        if (categoria == null || categoria.isBlank()) return Collections.emptyList();
-        return Arrays.stream(categoria.split(","))
-                .map(String::trim)
-                .filter(s -> !s.isEmpty())
+        if (categorias == null || categorias.isEmpty()) return Collections.emptyList();
+        return categorias.stream()
+                .map(Categoria::getNombre)
+                .filter(n -> n != null && !n.isBlank())
                 .collect(Collectors.toList());
     }
 

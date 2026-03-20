@@ -15,7 +15,7 @@ import java.util.Optional;
 public interface SerieRepository extends JpaRepository<Serie, Long> {
 
     /** Carga una serie con sus SerieEjercicios y Exercise para evitar LazyInitializationException al editar. */
-    @Query("SELECT s FROM Serie s LEFT JOIN FETCH s.serieEjercicios se LEFT JOIN FETCH se.exercise WHERE s.id = :id")
+    @Query("SELECT DISTINCT s FROM Serie s LEFT JOIN FETCH s.serieEjercicios se LEFT JOIN FETCH se.exercise WHERE s.id = :id")
     Optional<Serie> findByIdWithSerieEjercicios(@Param("id") Long id);
 
     /** Carga varias series por id con serieEjercicios y exercise (para hoja pública de rutina). */

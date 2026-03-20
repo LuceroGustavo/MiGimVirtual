@@ -4,6 +4,9 @@ import com.migimvirtual.entidades.Profesor;
 import com.migimvirtual.entidades.Usuario;
 import com.migimvirtual.repositorios.UsuarioRepository;
 import com.migimvirtual.servicios.ConfiguracionPaginaPublicaService;
+import com.migimvirtual.servicios.CategoriaService;
+import com.migimvirtual.servicios.ExerciseCargaDefaultOptimizado;
+import com.migimvirtual.servicios.ExerciseService;
 import com.migimvirtual.servicios.GrupoMuscularService;
 import com.migimvirtual.servicios.PlanPublicoService;
 import com.migimvirtual.servicios.ProfesorService;
@@ -29,10 +32,19 @@ public class DataInitializer implements CommandLineRunner {
     private GrupoMuscularService grupoMuscularService;
 
     @Autowired
+    private CategoriaService categoriaService;
+
+    @Autowired
     private PlanPublicoService planPublicoService;
 
     @Autowired
     private ConfiguracionPaginaPublicaService configuracionPaginaPublicaService;
+
+    @Autowired
+    private ExerciseService exerciseService;
+
+    @Autowired
+    private ExerciseCargaDefaultOptimizado exerciseCargaDefaultOptimizado;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -49,6 +61,8 @@ public class DataInitializer implements CommandLineRunner {
                 createProfesorUsuarioIfNeeded();
                 createDeveloperUsuarioIfNeeded();
                 grupoMuscularService.asegurarGruposSistema();
+                categoriaService.asegurarCategoriasSistema();
+                asegurarEjerciciosPredeterminadosSiNecesario();
                 planPublicoService.asegurarPlanesIniciales();
                 configuracionPaginaPublicaService.asegurarConfigInicial();
                 System.out.println("=== DataInitializer completado en " + (System.currentTimeMillis() - startTime) + "ms ===");
@@ -62,6 +76,10 @@ public class DataInitializer implements CommandLineRunner {
 
             // Asegurar los 6 grupos musculares del sistema (BRAZOS, PIERNAS, PECHO, ESPALDA, CARDIO, ELONGACION)
             grupoMuscularService.asegurarGruposSistema();
+            // Asegurar las categorías del sistema (FUERZA, CARDIO, FLEXIBILIDAD, FUNCIONAL, HIIT)
+            categoriaService.asegurarCategoriasSistema();
+            // Asegurar los 60 ejercicios predeterminados (necesarios para scripts de prueba 03 y 04)
+            asegurarEjerciciosPredeterminadosSiNecesario();
             // Asegurar planes y configuración de la página pública
             planPublicoService.asegurarPlanesIniciales();
             configuracionPaginaPublicaService.asegurarConfigInicial();
@@ -226,6 +244,22 @@ public class DataInitializer implements CommandLineRunner {
             }
             } catch (Exception e) {
             System.err.println("❌ Error asignando avatares: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Carga los 60 ejercicios predeterminados si no existen.
+     * Necesario para que los scripts de prueba (03_series, 04_rutinas) funcionen correctamente.
+     */
+    private void asegurarEjerciciosPredeterminadosSiNecesario() {
+        try {
+            if (exerciseService.countEjerciciosPredeterminados() == 0) {
+                System.out.println("📦 Cargando 60 ejercicios predeterminados...");
+                int cargados = exerciseCargaDefaultOptimizado.asegurarEjerciciosPredeterminados();
+                System.out.println("✅ Ejercicios predeterminados cargados: " + cargados);
+            }
+        } catch (Exception e) {
+            System.err.println("⚠️ No se pudieron cargar ejercicios predeterminados: " + e.getMessage());
         }
     }
 

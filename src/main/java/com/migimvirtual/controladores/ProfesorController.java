@@ -69,6 +69,9 @@ public class ProfesorController {
     private com.migimvirtual.servicios.GrupoMuscularService grupoMuscularService;
 
     @Autowired
+    private com.migimvirtual.servicios.CategoriaService categoriaService;
+
+    @Autowired
     private com.migimvirtual.servicios.RegistroProgresoService registroProgresoService;
 
     @Autowired
@@ -884,6 +887,157 @@ public class ProfesorController {
         }
         grupoMuscularService.eliminar(id);
         return "redirect:/profesor/mis-grupos-musculares?success=grupo_eliminado";
+    }
+
+    // ========== MIS CATEGORÍAS (ABM) ==========
+
+    @GetMapping("/mis-categorias")
+    public String listarCategorias(@AuthenticationPrincipal Usuario usuarioActual,
+                                  @RequestParam(required = false) String returnUrl,
+                                  Model model) {
+        Profesor profesor = getProfesorParaUsuarioActual(usuarioActual);
+        if (usuarioActual == null || profesor == null) {
+            return "redirect:/login?error=true";
+        }
+        List<com.migimvirtual.entidades.Categoria> categoriasSistema = categoriaService.findCategoriasSistema();
+        List<com.migimvirtual.entidades.Categoria> misCategorias = categoriaService.findByProfesorId(profesor.getId());
+        model.addAttribute("categoriasSistema", categoriasSistema);
+        model.addAttribute("misCategorias", misCategorias);
+        model.addAttribute("profesor", profesor);
+        if (!model.containsAttribute("categoria")) {
+            model.addAttribute("categoria", new com.migimvirtual.entidades.Categoria());
+        }
+        if (returnUrl != null && !returnUrl.isBlank() && returnUrl.startsWith("/")) {
+            model.addAttribute("returnUrl", returnUrl);
+        }
+        model.addAttribute("usuario", usuarioActual);
+        return "profesor/categorias-lista";
+    }
+
+    @GetMapping("/mis-categorias/nuevo")
+    public String nuevoCategoriaForm(@AuthenticationPrincipal Usuario usuarioActual,
+                                    @RequestParam(required = false) String returnUrl) {
+        StringBuilder url = new StringBuilder("redirect:/profesor/mis-categorias");
+        if (returnUrl != null && !returnUrl.isBlank() && returnUrl.startsWith("/")) {
+            url.append("?returnUrl=").append(URLEncoder.encode(returnUrl, StandardCharsets.UTF_8));
+        }
+        return url.toString();
+    }
+
+    @PostMapping("/mis-categorias/nuevo")
+    public String crearCategoria(@Valid @ModelAttribute("categoria") com.migimvirtual.entidades.Categoria categoria,
+                                BindingResult bindingResult,
+                                @AuthenticationPrincipal Usuario usuarioActual,
+                                @RequestParam(required = false) String returnUrl,
+                                RedirectAttributes redirectAttributes) {
+        Profesor profesor = getProfesorParaUsuarioActual(usuarioActual);
+        if (usuarioActual == null || profesor == null) {
+            return "redirect:/login?error=true";
+        }
+        String redirectList = "redirect:/profesor/mis-categorias";
+        if (returnUrl != null && !returnUrl.isBlank() && returnUrl.startsWith("/")) {
+            redirectList += "?returnUrl=" + URLEncoder.encode(returnUrl, StandardCharsets.UTF_8);
+        }
+        if (bindingResult.hasErrors()) {
+            redirectAttributes.addFlashAttribute("categoria", categoria);
+            redirectAttributes.addFlashAttribute("org.springframework.validation.BindingResult.categoria", bindingResult);
+            return redirectList;
+        }
+        String nombre = categoria.getNombre() != null ? categoria.getNombre().trim().toUpperCase() : "";
+        if (categoriaService.findByNombreSistema(nombre).isPresent()) {
+            redirectAttributes.addFlashAttribute("categoria", categoria);
+            redirectAttributes.addFlashAttribute("errorMessage", "Ya existe una categoría del sistema con ese nombre. Elige otro.");
+            return redirectList;
+        }
+        if (categoriaService.existeNombreParaProfesor(nombre, profesor.getId())) {
+            redirectAttributes.addFlashAttribute("categoria", categoria);
+            redirectAttributes.addFlashAttribute("errorMessage", "Ya tienes una categoría con ese nombre.");
+            return redirectList;
+        }
+        categoria.setNombre(nombre);
+        categoria.setProfesor(profesor);
+        categoriaService.guardar(categoria);
+        if (returnUrl != null && !returnUrl.isBlank() && returnUrl.startsWith("/")) {
+            return "redirect:" + returnUrl + (returnUrl.contains("?") ? "&" : "?") + "success=categoria_creada";
+        }
+        return "redirect:/profesor/mis-categorias?success=categoria_creada";
+    }
+
+    @GetMapping("/mis-categorias/editar/{id}")
+    public String editarCategoriaForm(@PathVariable Long id,
+                                     @AuthenticationPrincipal Usuario usuarioActual,
+                                     Model model) {
+        Profesor profesor = getProfesorParaUsuarioActual(usuarioActual);
+        if (usuarioActual == null || profesor == null) {
+            return "redirect:/login?error=true";
+        }
+        if (!categoriaService.puedeSerEditadoPorProfesor(id, profesor.getId())) {
+            return "redirect:/profesor/mis-categorias?error=sin_permisos";
+        }
+        com.migimvirtual.entidades.Categoria categoria = categoriaService.findById(id)
+                .orElseThrow(() -> new RuntimeException("Categoría no encontrada"));
+        model.addAttribute("categoria", categoria);
+        model.addAttribute("profesor", profesor);
+        model.addAttribute("esEdicion", true);
+        model.addAttribute("usuario", usuarioActual);
+        return "profesor/categoria-form";
+    }
+
+    @PostMapping("/mis-categorias/editar/{id}")
+    public String actualizarCategoria(@PathVariable Long id,
+                                     @Valid @ModelAttribute("categoria") com.migimvirtual.entidades.Categoria categoria,
+                                     BindingResult bindingResult,
+                                     @AuthenticationPrincipal Usuario usuarioActual,
+                                     Model model) {
+        Profesor profesor = getProfesorParaUsuarioActual(usuarioActual);
+        if (usuarioActual == null || profesor == null) {
+            return "redirect:/login?error=true";
+        }
+        if (!categoriaService.puedeSerEditadoPorProfesor(id, profesor.getId())) {
+            return "redirect:/profesor/mis-categorias?error=sin_permisos";
+        }
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("profesor", profesor);
+            model.addAttribute("esEdicion", true);
+            model.addAttribute("usuario", usuarioActual);
+            return "profesor/categoria-form";
+        }
+        com.migimvirtual.entidades.Categoria existente = categoriaService.findById(id).orElseThrow();
+        String nombre = categoria.getNombre() != null ? categoria.getNombre().trim().toUpperCase() : "";
+        if (categoriaService.findByNombreSistema(nombre).isPresent() && !nombre.equals(existente.getNombre())) {
+            model.addAttribute("errorMessage", "Ya existe una categoría del sistema con ese nombre. Elige otro.");
+            model.addAttribute("profesor", profesor);
+            model.addAttribute("esEdicion", true);
+            model.addAttribute("usuario", usuarioActual);
+            return "profesor/categoria-form";
+        }
+        if (!nombre.equals(existente.getNombre()) && categoriaService.existeNombreParaProfesor(nombre, profesor.getId())) {
+            model.addAttribute("errorMessage", "Ya tienes una categoría con ese nombre.");
+            model.addAttribute("profesor", profesor);
+            model.addAttribute("esEdicion", true);
+            model.addAttribute("usuario", usuarioActual);
+            return "profesor/categoria-form";
+        }
+        existente.setNombre(nombre);
+        categoriaService.guardar(existente);
+        return "redirect:/profesor/mis-categorias?success=categoria_actualizada";
+    }
+
+    @GetMapping("/mis-categorias/eliminar/{id}")
+    public String eliminarCategoria(@PathVariable Long id,
+                                   @AuthenticationPrincipal Usuario usuarioActual) {
+        Profesor profesor = getProfesorParaUsuarioActual(usuarioActual);
+        if (usuarioActual == null || profesor == null) {
+            return "redirect:/login?error=true";
+        }
+        if (!categoriaService.puedeSerEditadoPorProfesor(id, profesor.getId())) {
+            return "redirect:/profesor/mis-categorias?error=sin_permisos";
+        }
+        if (categoriaService.hayRutinasEnUso(id)) {
+            return "redirect:/profesor/mis-categorias?error=categoria_en_uso";
+        }
+        categoriaService.eliminar(id);
+        return "redirect:/profesor/mis-categorias?success=categoria_eliminada";
     }
 
     @GetMapping("/mis-ejercicios/debug")

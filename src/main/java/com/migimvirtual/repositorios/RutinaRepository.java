@@ -12,8 +12,8 @@ import java.util.Optional;
 @Repository
 public interface RutinaRepository extends JpaRepository<Rutina, Long> {
 
-    /** Carga la rutina con sus series para evitar LazyInitializationException al editar. (El orden se aplica en el servicio.) */
-    @Query("SELECT DISTINCT r FROM Rutina r LEFT JOIN FETCH r.series WHERE r.id = :id")
+    /** Carga la rutina con sus series y categorías para evitar LazyInitializationException al editar. (El orden se aplica en el servicio.) */
+    @Query("SELECT DISTINCT r FROM Rutina r LEFT JOIN FETCH r.series LEFT JOIN FETCH r.categorias WHERE r.id = :id")
     Optional<Rutina> findByIdWithSeries(@Param("id") Long id);
 
     List<Rutina> findByUsuarioId(Long usuarioId); // ← ESTA ES LA CLAVE
@@ -29,15 +29,17 @@ public interface RutinaRepository extends JpaRepository<Rutina, Long> {
     // Buscar rutinas plantilla por profesor
     List<Rutina> findByProfesorIdAndEsPlantillaTrue(Long profesorId);
 
-    /** Rutinas plantilla del profesor con series cargadas (para dashboard y modal detalle). */
+    /** Rutinas plantilla del profesor con series cargadas (para dashboard y modal detalle). Categorías se cargan lazy. */
     @Query("SELECT DISTINCT r FROM Rutina r LEFT JOIN FETCH r.series WHERE r.profesor.id = :profesorId AND r.esPlantilla = true")
     List<Rutina> findByProfesorIdAndEsPlantillaTrueWithSeries(@Param("profesorId") Long profesorId);
 
-    // Buscar rutinas plantilla por profesor y categoría (coincidencia exacta)
-    List<Rutina> findByProfesorIdAndEsPlantillaTrueAndCategoria(Long profesorId, String categoria);
+    /** Rutinas que tienen una categoría con nombre que contiene el texto (para búsqueda). */
+    @Query("SELECT DISTINCT r FROM Rutina r JOIN r.categorias c WHERE r.profesor.id = :profesorId AND r.esPlantilla = true AND LOWER(c.nombre) LIKE LOWER(CONCAT('%', :categoria, '%'))")
+    List<Rutina> findByProfesorIdAndEsPlantillaTrueAndCategoriaContaining(@Param("profesorId") Long profesorId, @Param("categoria") String categoria);
 
-    // Buscar rutinas plantilla por profesor y categoría (incluye rutinas con varias categorías)
-    List<Rutina> findByProfesorIdAndEsPlantillaTrueAndCategoriaContaining(Long profesorId, String categoria);
+    /** Rutinas que usan una categoría por ID (para verificar antes de eliminar). */
+    @Query("SELECT r FROM Rutina r JOIN r.categorias c WHERE c.id = :categoriaId")
+    List<Rutina> findByCategoriaId(@Param("categoriaId") Long categoriaId);
 
     // Buscar rutinas plantilla por profesor y nombre
     List<Rutina> findByProfesorIdAndEsPlantillaTrueAndNombreContainingIgnoreCase(Long profesorId, String nombre);

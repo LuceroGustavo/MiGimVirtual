@@ -2,6 +2,24 @@
 
 > Nota: este changelog incluye histórico heredado de MiGym (referencias a admin/chat/websocket).
 
+## [2026-03-16] - feat(rutinas): ABM de categorías de rutinas implementado ✅
+
+### 🎯 **Resumen**
+Las categorías de rutinas pasan de valores fijos a entidad gestionable por el usuario, siguiendo el modelo de grupos musculares. Las categorías se asocian a **rutinas** (no a series).
+
+### ✅ **Implementado**
+- **Entidad `Categoria`:** `id`, `nombre`, `profesor` (null = categoría del sistema).
+- **Relación Rutina–Categoria:** `@ManyToMany` (tabla `rutina_categoria`).
+- **Categorías del sistema:** FUERZA, CARDIO, FLEXIBILIDAD, FUNCIONAL, HIIT (creadas por DataInitializer al arrancar).
+- **ABM:** Lista en `/profesor/mis-categorias`; crear, editar, eliminar categorías propias; las del sistema no se editan ni eliminan.
+- **Crear/editar rutina:** Checkboxes de categorías; botón "Crear categoría" en el módulo; fondo pastel para diferenciar de descripción.
+- **Scripts BD:** `04_rutinas_prueba.sql` actualizado para usar `rutina_categoria`; `00_limpiar_datos_prueba.sql` limpia la tabla; ejercicios cargados en DataInitializer para que los scripts funcionen con BD vacía.
+
+### 📁 **Documentación**
+- DOCUMENTACION_UNIFICADA: ABM categorías en §1 y §5 (referencias técnicas).
+
+---
+
 ## [2026-03-23] - fix(ui): modificar ejercicio – reparar módulo imagen y botón Guardar ✅
 
 ### 🎯 **Resumen**

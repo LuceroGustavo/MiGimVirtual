@@ -5,8 +5,11 @@ Scripts SQL para cargar datos de prueba en la base de datos. **Ejecutar en el or
 ## Requisitos previos
 
 - Base de datos `migimvirtual` creada y con tablas (la app debe haber arrancado al menos una vez).
-- Ejercicios predeterminados cargados (60 ejercicios del sistema).
+- **Importante:** La app carga automáticamente los 60 ejercicios predeterminados al arrancar (DataInitializer). Si no existen ejercicios, el script 03 insertará `serie_ejercicio` con `exercise_id` NULL y las series/rutinas quedarán vacías en las vistas.
 - Al menos un profesor existente (creado por DataInitializer: profesor@migymvirtual.com).
+- Categorías del sistema creadas (FUERZA, CARDIO, FLEXIBILIDAD, FUNCIONAL, HIIT — creadas por DataInitializer al arrancar).
+
+**Orden recomendado:** 1) Borrar BD si aplica. 2) Arrancar la app (para que cargue ejercicios, categorías, etc.). 3) Ejecutar scripts 01, 02, 03, 04.
 
 ## Orden de ejecución
 
@@ -38,7 +41,7 @@ O desde MySQL Workbench / DBeaver: abrir cada archivo y ejecutarlo en orden.
 | 01 | 10 usuarios | Alumnos con todos los campos del formulario completos |
 | 02 | Variable | 0–4 progresos por alumno (algunos sin progresos) |
 | 03 | 10 series | Cada una con 3–4 ejercicios, reps/peso/tiempo variados |
-| 04 | 5 rutinas | Plantillas que usan las series del script 03 |
+| 04 | 5 rutinas | Plantillas que usan las series del script 03 (con categorías en tabla rutina_categoria) |
 
 ## Notas
 

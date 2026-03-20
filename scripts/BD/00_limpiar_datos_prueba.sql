@@ -13,6 +13,11 @@ SET SQL_SAFE_UPDATES = 0;
 SET @profesor_id = (SELECT id FROM profesor LIMIT 1);
 
 -- Eliminar rutinas plantilla de prueba (y sus series por CASCADE o manual)
+-- Primero: desvincular categorías (tabla rutina_categoria)
+DELETE rc FROM rutina_categoria rc
+JOIN rutina r ON rc.rutina_id = r.id
+WHERE r.token_publico LIKE 'test_rutina%' AND r.profesor_id = @profesor_id;
+
 DELETE se FROM serie_ejercicio se
 JOIN serie s ON se.serie_id = s.id
 JOIN rutina r ON s.rutina_id = r.id
@@ -47,6 +52,12 @@ JOIN usuario u ON rp.usuario_id = u.id
 WHERE u.correo LIKE 'test_alumno_%@migimvirtual.test';
 
 -- Eliminar usuarios de prueba (si tienen rutinas asignadas, eliminarlas antes)
+-- Primero: desvincular categorías de rutinas asignadas a alumnos de prueba
+DELETE rc FROM rutina_categoria rc
+JOIN rutina rr ON rc.rutina_id = rr.id
+JOIN usuario u ON rr.usuario_id = u.id
+WHERE u.correo LIKE 'test_alumno_%@migimvirtual.test';
+
 DELETE rr FROM rutina rr
 JOIN usuario u ON rr.usuario_id = u.id
 WHERE u.correo LIKE 'test_alumno_%@migimvirtual.test';

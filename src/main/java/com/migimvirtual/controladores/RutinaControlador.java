@@ -1,8 +1,10 @@
 package com.migimvirtual.controladores;
 
+import com.migimvirtual.entidades.Categoria;
 import com.migimvirtual.entidades.Rutina;
 import com.migimvirtual.entidades.Usuario;
 import com.migimvirtual.entidades.Serie;
+import com.migimvirtual.servicios.CategoriaService;
 import com.migimvirtual.servicios.RutinaService;
 import com.migimvirtual.servicios.UsuarioService;
 import com.migimvirtual.servicios.SerieService;
@@ -35,6 +37,9 @@ public class RutinaControlador {
     private SerieService serieService;
 
     @Autowired
+    private CategoriaService categoriaService;
+
+    @Autowired
     private ProfesorService profesorService;
 
     // GET: Mostrar formulario de creación de rutina plantilla
@@ -56,18 +61,20 @@ public class RutinaControlador {
                 .filter(Serie::isEsPlantilla)
                 .collect(java.util.stream.Collectors.toList());
 
+        List<Categoria> categorias = categoriaService.findDisponiblesParaProfesor(profesorId);
         model.addAttribute("seriesPlantilla", seriesPlantilla);
         model.addAttribute("rutina", new Rutina());
+        model.addAttribute("categorias", categorias);
         model.addAttribute("usuario", usuarioActual);
 
         return "rutinas/crearRutina";
     }
 
-    // POST: Crear rutina plantilla (categorias: una o más, guardadas como string separado por comas)
+    // POST: Crear rutina plantilla (categoriaIds: IDs de categorías entidad)
     @PostMapping("/crear-plantilla")
     public String crearRutinaPlantilla(@RequestParam String nombre,
             @RequestParam(required = false) String descripcion,
-            @RequestParam(required = false) List<String> categorias,
+            @RequestParam(required = false) List<Long> categoriaIds,
             @RequestParam(required = false) List<Long> selectedSeries,
             @RequestParam Map<String, String> allParams,
             Model model) {
@@ -76,19 +83,13 @@ public class RutinaControlador {
         if (profesor == null) {
             return "redirect:/login";
         }
-        if (categorias == null || categorias.isEmpty() || categorias.stream().allMatch(s -> s == null || s.isBlank())) {
+        if (categoriaIds == null || categoriaIds.isEmpty() || categoriaIds.stream().allMatch(id -> id == null)) {
             model.addAttribute("errorMessage", "Seleccioná al menos una categoría.");
             return "redirect:/rutinas/crear";
         }
-        String categoriaStr = categorias.stream()
-                .filter(Objects::nonNull)
-                .map(String::trim)
-                .filter(s -> !s.isEmpty())
-                .distinct()
-                .collect(Collectors.joining(","));
         Long profesorId = profesor.getId();
         try {
-            Rutina rutina = rutinaService.crearRutinaPlantilla(profesorId, nombre, descripcion, categoriaStr);
+            Rutina rutina = rutinaService.crearRutinaPlantilla(profesorId, nombre, descripcion, categoriaIds);
 
             // Si hay series seleccionadas, agregarlas a la rutina con sus repeticiones
             if (selectedSeries != null && !selectedSeries.isEmpty()) {
@@ -158,8 +159,10 @@ public class RutinaControlador {
                     .filter(plantilla -> !idsSeriesEnRutina.contains(plantilla.getId()))
                     .collect(Collectors.toList());
 
+            List<Categoria> categorias = categoriaService.findDisponiblesParaProfesor(profesorId);
             model.addAttribute("rutina", rutina);
             model.addAttribute("seriesDisponibles", seriesDisponibles);
+            model.addAttribute("categorias", categorias);
             model.addAttribute("usuario", usuarioActual);
             model.addAttribute("returnAlumnoId", alumnoId);
             model.addAttribute("returnTab", (returnTab != null && !returnTab.isBlank()) ? returnTab : "rutinas");
@@ -187,7 +190,7 @@ public class RutinaControlador {
     public String actualizarRutina(@PathVariable Long id,
             @RequestParam String nombre,
             @RequestParam(required = false) String descripcion,
-            @RequestParam(required = false) List<String> categorias,
+            @RequestParam(required = false) List<Long> categoriaIds,
             @RequestParam(required = false) String notaParaAlumno,
             @RequestParam(required = false) List<Long> seriesIds,
             @RequestParam(required = false) List<Integer> repeticionesExistentes,
@@ -210,17 +213,9 @@ public class RutinaControlador {
         if (!isDeveloper(usuarioActual) && (rutina.getProfesor() == null || !rutina.getProfesor().getId().equals(profesor.getId()))) {
             return "redirect:/profesor/dashboard?tab=rutinas&error=No+tiene+permiso+para+editar+esta+rutina";
         }
-        String categoriaStr = (categorias != null && !categorias.isEmpty())
-                ? categorias.stream()
-                        .filter(Objects::nonNull)
-                        .map(String::trim)
-                        .filter(s -> !s.isEmpty())
-                        .distinct()
-                        .collect(Collectors.joining(","))
-                : "";
         try {
             // Actualiza la información básica de la rutina
-            rutinaService.actualizarInformacionBasicaRutina(id, nombre, descripcion, categoriaStr);
+            rutinaService.actualizarInformacionBasicaRutina(id, nombre, descripcion, categoriaIds);
 
             // Si es rutina asignada (no plantilla), actualizar nota para el alumno
             if (!rutina.isEsPlantilla() && rutina.getProfesor() != null && rutina.getProfesor().getId().equals(profesor.getId())) {

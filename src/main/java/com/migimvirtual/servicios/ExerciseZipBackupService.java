@@ -30,6 +30,7 @@ import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -58,6 +59,7 @@ public class ExerciseZipBackupService {
     private final RutinaRepository rutinaRepository;
     private final SerieRepository serieRepository;
     private final ProfesorRepository profesorRepository;
+    private final CategoriaService categoriaService;
     private final PlatformTransactionManager transactionManager;
     private final ObjectMapper objectMapper;
 
@@ -68,6 +70,7 @@ public class ExerciseZipBackupService {
                                     RutinaRepository rutinaRepository,
                                     SerieRepository serieRepository,
                                     ProfesorRepository profesorRepository,
+                                    CategoriaService categoriaService,
                                     PlatformTransactionManager transactionManager) {
         this.exerciseService = exerciseService;
         this.grupoMuscularService = grupoMuscularService;
@@ -76,6 +79,7 @@ public class ExerciseZipBackupService {
         this.rutinaRepository = rutinaRepository;
         this.serieRepository = serieRepository;
         this.profesorRepository = profesorRepository;
+        this.categoriaService = categoriaService;
         this.transactionManager = transactionManager;
         this.objectMapper = new ObjectMapper();
         this.objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
@@ -218,7 +222,7 @@ public class ExerciseZipBackupService {
                 rutinaItem.put("nombre", rutina.getNombre());
                 rutinaItem.put("descripcion", rutina.getDescripcion());
                 rutinaItem.put("estado", rutina.getEstado());
-                rutinaItem.put("categoria", rutina.getCategoria());
+                rutinaItem.put("categoria", rutina.getCategoriasList() != null ? String.join(",", rutina.getCategoriasList()) : "");
                 rutinaItem.put("creador", rutina.getCreador());
                 rutinaItem.put("esPlantilla", rutina.isEsPlantilla());
                 rutinasParaJson.add(rutinaItem);
@@ -500,7 +504,11 @@ public class ExerciseZipBackupService {
                     rutina.setNombre(nombreRutina);
                     rutina.setDescripcion((String) rd.get("descripcion"));
                     rutina.setEstado(rd.get("estado") != null ? (String) rd.get("estado") : "ACTIVA");
-                    rutina.setCategoria((String) rd.get("categoria"));
+                    String catStr = (String) rd.get("categoria");
+                    if (catStr != null && !catStr.isBlank()) {
+                        List<String> catNames = Arrays.stream(catStr.split(",")).map(String::trim).filter(s -> !s.isEmpty()).collect(Collectors.toList());
+                        rutina.setCategorias(categoriaService.resolveCategoriasByNames(catNames, profesorRestore.getId()));
+                    }
                     rutina.setCreador(rd.get("creador") != null ? (String) rd.get("creador") : "ADMIN");
                     rutina.setEsPlantilla(rd.get("esPlantilla") == null || Boolean.TRUE.equals(rd.get("esPlantilla")));
                     rutina.setProfesor(profesorRestore);

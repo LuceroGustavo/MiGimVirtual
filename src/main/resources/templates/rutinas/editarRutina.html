@@ -89,6 +89,22 @@
         }
         .bottom-nav-mobile a:hover, .bottom-nav-mobile a:focus { color: #fff; }
         .bottom-nav-mobile a i { font-size: 1.25rem; }
+        /* Módulo categorías: fondo pastel para diferenciarlo de descripción */
+        .modulo-categorias {
+            background: linear-gradient(135deg, #e8f5e9 0%, #f1f8e9 100%);
+            border-radius: 10px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border: 1px solid rgba(0, 184, 148, 0.2);
+        }
+        .modulo-categorias .titulo-categoria-fila {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
     </style>
 </head>
 <body>
@@ -125,29 +141,19 @@
                                 <label for="nombre" class="form-label fw-bold">Nombre de la Rutina:</label>
                                 <input type="text" class="form-control" id="nombre" name="nombre" th:value="${rutina.nombre}" required>
                             </div>
-                            <div class="mb-3">
-                                <label class="form-label fw-bold">Categoría(s):</label>
+                            <div class="modulo-categorias">
+                                <div class="titulo-categoria-fila">
+                                    <label class="form-label fw-bold mb-0">Categoría(s):</label>
+                                    <a th:href="@{/profesor/mis-categorias(returnUrl='/rutinas/editar/' + ${rutina.id})}" class="btn btn-sm btn-outline-success">
+                                        <i class="fas fa-plus me-1"></i>Crear categoría
+                                    </a>
+                                </div>
                                 <p class="small text-muted mb-2">Podés elegir más de una.</p>
-                                <div class="d-flex flex-wrap gap-3">
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" name="categorias" value="FUERZA" id="cat_fuerza" th:checked="${rutina.categoriasList != null && rutina.categoriasList.contains('FUERZA')}">
-                                        <label class="form-check-label" for="cat_fuerza">Fuerza</label>
-                                    </div>
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" name="categorias" value="CARDIO" id="cat_cardio" th:checked="${rutina.categoriasList != null && rutina.categoriasList.contains('CARDIO')}">
-                                        <label class="form-check-label" for="cat_cardio">Cardio</label>
-                                    </div>
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" name="categorias" value="FLEXIBILIDAD" id="cat_flex" th:checked="${rutina.categoriasList != null && rutina.categoriasList.contains('FLEXIBILIDAD')}">
-                                        <label class="form-check-label" for="cat_flex">Flexibilidad</label>
-                                    </div>
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" name="categorias" value="FUNCIONAL" id="cat_func" th:checked="${rutina.categoriasList != null && rutina.categoriasList.contains('FUNCIONAL')}">
-                                        <label class="form-check-label" for="cat_func">Funcional</label>
-                                    </div>
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" name="categorias" value="HIIT" id="cat_hiit" th:checked="${rutina.categoriasList != null && rutina.categoriasList.contains('HIIT')}">
-                                        <label class="form-check-label" for="cat_hiit">HIIT</label>
+                                <div class="d-flex flex-wrap gap-3" th:if="${categorias != null}">
+                                    <div th:each="cat : ${categorias}" class="form-check">
+                                        <input class="form-check-input input-categoria" type="checkbox" name="categoriaIds" th:value="${cat.id}" th:id="${'cat_' + cat.id}"
+                                               th:checked="${rutina.categorias != null && rutina.categorias.![id].contains(cat.id)}">
+                                        <label class="form-check-label" th:for="${'cat_' + cat.id}" th:text="${cat.nombre}">Categoría</label>
                                     </div>
                                 </div>
                             </div>
