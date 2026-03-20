@@ -2,58 +2,114 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title th:text="${esEdicion} ? 'Editar Grupo Muscular' : 'Nuevo Grupo Muscular'">Grupo Muscular</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="/style.css" rel="stylesheet">
+    <link href="/css/footer.css" rel="stylesheet">
     <style>
-        body { background-color: #f8f9fa; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background-color: #f8f9fa; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; min-height: 100vh; }
         .hero-section {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white; padding: 2rem 0; border-radius: 15px; margin-bottom: 2rem; text-align: center;
+            color: white;
+            padding: 1rem 0.75rem 1.25rem;
+            border-radius: 12px;
+            margin-bottom: 1.25rem;
+            text-align: center;
         }
-        .btn-volver { background: linear-gradient(135deg, #6c757d 0%, #495057 100%); color: white; border: none; padding: 10px 20px; border-radius: 10px; font-weight: 600; }
-        .btn-volver:hover { color: white; }
+        @media (min-width: 576px) {
+            .hero-section { padding: 1.5rem 1rem; border-radius: 15px; margin-bottom: 1.5rem; }
+        }
+        .hero-section .btn-volver {
+            background: rgba(255,255,255,0.15);
+            border: 1px solid rgba(255,255,255,0.5);
+            color: #fff;
+            padding: 0.5rem 0.85rem;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+        .hero-section .btn-volver:hover { background: rgba(255,255,255,0.25); color: #fff; }
+        .hero-title {
+            font-size: clamp(1.2rem, 4vw, 1.65rem);
+            margin: 0.75rem 0 0;
+            line-height: 1.2;
+            word-wrap: break-word;
+        }
         .btn-guardar { background: linear-gradient(135deg, #28a745 0%, #20c997 100%); color: white; border: none; padding: 12px 24px; border-radius: 12px; font-weight: 600; }
         .btn-guardar:hover { color: white; }
+        .bottom-nav-mobile {
+            display: none;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(180deg, #2c3e50 0%, #34495e 100%);
+            color: #ecf0f1;
+            padding: 0.5rem 0 0.6rem;
+            padding-bottom: max(0.6rem, env(safe-area-inset-bottom));
+            box-shadow: 0 -2px 12px rgba(0,0,0,0.15);
+            z-index: 1030;
+        }
+        @media (max-width: 991px) {
+            .bottom-nav-mobile { display: flex !important; justify-content: space-around; align-items: center; }
+            .grm-form-wrap { padding-bottom: 5rem !important; }
+        }
+        @media (min-width: 992px) {
+            .bottom-nav-mobile { display: none !important; }
+        }
+        .bottom-nav-mobile a {
+            color: #bdc3c7;
+            text-decoration: none;
+            font-size: 0.7rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.2rem;
+        }
+        .bottom-nav-mobile a:hover, .bottom-nav-mobile a:focus { color: #fff; }
+        .bottom-nav-mobile a i { font-size: 1.25rem; }
     </style>
 </head>
 <body>
-<div class="container py-4">
+<div th:replace="fragments/navbar :: navbar"></div>
+<div class="container-fluid py-3 px-2 px-sm-3 px-md-4 grm-form-wrap">
     <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show" role="alert">
         <span th:text="${errorMessage}">Error</span>
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
 
-    <div class="hero-section mb-4">
-        <div class="d-flex justify-content-between align-items-center px-3">
-            <a th:href="${returnUrl != null} ? ${returnUrl} : @{/profesor/mis-grupos-musculares}" class="btn btn-outline-light btn-volver">
-                <i class="fas fa-arrow-left me-2"></i><span th:text="${returnUrl != null} ? 'Volver al ejercicio' : 'Volver a Grupos'">Volver a Grupos</span>
+    <div class="hero-section mb-3 mb-md-4">
+        <div class="d-flex justify-content-start flex-wrap">
+            <a th:href="${returnUrl != null} ? ${returnUrl} : @{/profesor/mis-grupos-musculares}" class="btn btn-volver">
+                <i class="fas fa-arrow-left me-1 me-sm-2"></i><span th:text="${returnUrl != null} ? 'Volver al ejercicio' : 'Volver a Grupos'">Volver a Grupos</span>
             </a>
         </div>
-        <h1 class="hero-title">
+        <h1 class="hero-title px-1">
             <i class="fas fa-dumbbell me-2"></i>
             <span th:text="${esEdicion} ? 'Editar Grupo Muscular' : 'Nuevo Grupo Muscular'">Formulario</span>
         </h1>
     </div>
 
     <div class="row justify-content-center">
-        <div class="col-md-8 col-lg-6">
+        <div class="col-12 col-md-10 col-lg-6">
             <div class="card shadow-sm border-0 rounded-3">
-                <div class="card-body p-4">
+                <div class="card-body p-3 p-md-4">
                     <form th:action="${esEdicion} ? @{/profesor/mis-grupos-musculares/editar/{id}(id=${grupo.id})} : @{/profesor/mis-grupos-musculares/nuevo}"
                           th:object="${grupo}" method="post">
                         <input type="hidden" name="returnUrl" th:value="${returnUrl}" th:if="${returnUrl != null}">
                         <div class="mb-3">
                             <label for="nombre" class="form-label fw-bold">Nombre del grupo</label>
-                            <input type="text" id="nombre" th:field="*{nombre}" class="form-control form-control-lg" 
+                            <input type="text" id="nombre" th:field="*{nombre}" class="form-control form-control-lg"
                                    placeholder="Ej: HOMBROS, CORE, etc." required maxlength="100"
                                    th:classappend="${#fields.hasErrors('nombre')} ? 'is-invalid' : ''">
                             <div th:if="${#fields.hasErrors('nombre')}" th:errors="*{nombre}" class="invalid-feedback"></div>
                             <div class="form-text">Se guardará en mayúsculas. No puede repetirse con otro grupo tuyo ni con los del sistema.</div>
                         </div>
-                        <div class="d-flex gap-2 justify-content-end mt-4">
-                            <a th:href="${returnUrl != null} ? ${returnUrl} : @{/profesor/mis-grupos-musculares}" class="btn btn-outline-secondary">Cancelar</a>
-                            <button type="submit" class="btn btn-guardar">
+                        <div class="d-flex flex-column flex-sm-row gap-2 justify-content-stretch justify-content-sm-end mt-4">
+                            <a th:href="${returnUrl != null} ? ${returnUrl} : @{/profesor/mis-grupos-musculares}" class="btn btn-outline-secondary order-2 order-sm-1 py-2 text-center">Cancelar</a>
+                            <button type="submit" class="btn btn-guardar order-1 order-sm-2 py-2">
                                 <i class="fas fa-save me-2"></i>
                                 <span th:text="${esEdicion} ? 'Guardar cambios' : 'Crear grupo'">Guardar</span>
                             </button>
@@ -64,6 +120,16 @@
         </div>
     </div>
 </div>
+
+<nav class="bottom-nav-mobile" id="bottomNavMobile" aria-label="Accesos rápidos">
+    <a th:href="@{/profesor/dashboard}" class="bottom-nav-item" aria-label="Inicio"><i class="fa-solid fa-house"></i><span>Inicio</span></a>
+    <a th:href="@{/profesor/dashboard(tab='alumnos')}" class="bottom-nav-item" aria-label="Alumnos"><i class="fa-solid fa-users"></i><span>Alumnos</span></a>
+    <a th:href="@{/profesor/dashboard(tab='rutinas')}" class="bottom-nav-item" aria-label="Rutinas"><i class="fa-solid fa-list-check"></i><span>Rutinas</span></a>
+    <a th:href="@{/profesor/administracion}" class="bottom-nav-item" th:if="${usuario != null && (usuario.rol == 'ADMIN' || usuario.rol == 'DEVELOPER')}" aria-label="Más"><i class="fa-solid fa-gear"></i><span>Más</span></a>
+    <a th:href="@{/profesor/dashboard}" class="bottom-nav-item" th:if="${usuario != null && usuario.rol != 'ADMIN' && usuario.rol != 'DEVELOPER'}" aria-label="Más"><i class="fa-solid fa-ellipsis"></i><span>Más</span></a>
+</nav>
+<div th:replace="fragments/footer :: footer"></div>
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

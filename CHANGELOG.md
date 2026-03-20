@@ -2,6 +2,32 @@
 
 > Nota: este changelog incluye histórico heredado de MiGym (referencias a admin/chat/websocket).
 
+## [2026-03-22] - feat(ui): crear ejercicio (paleta naranja) + grupos en 2 columnas + docs ✅
+
+### 🎯 **Resumen**
+Formulario **Nuevo ejercicio** alineado al módulo Ejercicios (`PALETA_COLORES.md`: pastel `#ffccbc` / `#ffab91`, acento `#bf360c`). Responsive con viewport, barra inferior móvil y footer. Selección de **grupos musculares** en **2 columnas** también en móvil (`col-6`). Controlador pasa `usuario` para la barra inferior.
+
+### ✅ **Crear ejercicio** (`ejercicios/formulario-ejercicio.html`)
+- Fondo en gradiente naranja; `main-container` blanco; cabecera de card con gradiente `#ff8a65` → `#bf360c`.
+- Campos con bordes y focus naranja; botón “Crear grupo muscular” con estilo propio; botones Cancelar / Guardar apilados en móvil.
+- **Grupos musculares:** checkboxes en `col-6` (dos columnas en entorno móvil); etiquetas compactas ≤575px (`word-break`).
+- Enlaces a `/style.css`, `/css/footer.css`; barra inferior (Inicio, Alumnos, Rutinas, Más) y fragmento footer.
+
+### ✅ **Backend** (`ProfesorController.java`)
+- `model.addAttribute("usuario", usuarioActual)` en GET `/mis-ejercicios/nuevo` y en POST cuando se vuelve al formulario por error de validación o excepción.
+
+### ✅ **Grupos musculares (lista)** — misma época
+- Vista `/profesor/mis-grupos-musculares`: responsive, tarjetas **2 por fila** en móvil (`col-6`), formulario crear con botón ancho en móvil, barra inferior, `usuario` en modelo. Ver commits previos en el mismo sprint.
+
+### 📁 **Documentación**
+- `Documentacion/GUIA_RESPONSIVE.md` (§5.6): crear ejercicio; grupos en 2 columnas.
+- `Documentacion/AYUDA_MEMORIA.md`: crear ejercicio hecho; pendiente modificar ejercicio.
+
+### 📁 **Archivos modificados**
+`ejercicios/formulario-ejercicio.html`, `ProfesorController.java`, `Documentacion/GUIA_RESPONSIVE.md`, `Documentacion/AYUDA_MEMORIA.md`.
+
+---
+
 ## [2026-03-21] - feat(ui): vista Mis Ejercicios – mejoras y documentación ✅
 
 ### 🎯 **Resumen**

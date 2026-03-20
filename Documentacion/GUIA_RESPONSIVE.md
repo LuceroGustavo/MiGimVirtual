@@ -228,7 +228,7 @@ profesor/dashboard.html.
 
 ## 5.6 Módulo de Ejercicios – vista Mis Ejercicios responsive (Mar 2026) – ✅ Completado
 
-> **Nota:** La vista **Mis Ejercicios** (`/profesor/mis-ejercicios`) está terminada. Pendiente responsive: crear ejercicio, modificar ejercicio, crear grupos musculares, modificar grupos musculares.
+> **Nota:** La vista **Mis Ejercicios** (`/profesor/mis-ejercicios`) está terminada. **Grupos musculares** (lista + formulario editar): responsive (viewport, padding, tarjetas `col-12 col-sm-6`, barra inferior móvil, footer). Pendiente responsive: crear ejercicio, modificar ejercicio.
 
 ### Vista Mis Ejercicios (`profesor/ejercicios-lista.html`)
 
@@ -240,16 +240,28 @@ profesor/dashboard.html.
 | **Tabla** | Entorno 2: columnas #, Tipo, Imagen, Acciones ocultas; fila clickeable abre modal con detalle, imagen y botones Editar/Eliminar. |
 | **Barra inferior móvil** | Inicio, Alumnos, Rutinas, Más. |
 
+### Grupos musculares (`/profesor/mis-grupos-musculares`)
+| Vista | Responsive |
+|-------|------------|
+| **Lista** (`grupos-musculares-lista.html`) | Viewport; formulario crear con botón ancho completo en móvil; tarjetas **2 por fila en móvil** (`col-6`), 3 por fila desde `md` (`col-md-4`); nombres con `text-break`; botones Volver apilados en móvil; barra inferior + footer. |
+| **Editar** (`grupo-muscular-form.html`) | Navbar, hero compacto, formulario con botones Cancelar/Guardar en columna en móvil; barra inferior + footer. |
+
+### Crear ejercicio (`/profesor/mis-ejercicios/nuevo`) — Mar 2026
+
+| Área | Detalle |
+|------|---------|
+| **Paleta** | Módulo Ejercicios: fondo gradiente pastel `#ffccbc` / `#ffab91`, acentos `#bf360c` (ver `PALETA_COLORES.md`). |
+| **Layout** | `main-container` centrado; cabecera de card con gradiente naranja; campos con bordes `ffe0b2`; botón guardar con gradiente naranja. |
+| **Grupos musculares** | Checkboxes en **2 columnas** (`col-6`) también en móvil; etiquetas compactas ≤575px; bloque con fondo `fff8f5`. |
+| **Móvil** | Viewport; padding reducido; botones “Cancelar / Guardar” en columna en pantallas chicas; barra inferior + footer. |
+
 ### Pendiente (responsive)
 
-- **Crear ejercicio** (`/profesor/mis-ejercicios/nuevo`)
 - **Modificar ejercicio** (`/profesor/mis-ejercicios/editar/{id}`)
-- **Crear grupos musculares** (`/profesor/mis-grupos-musculares`)
-- **Modificar grupos musculares**
 
 ### Archivos
 
-profesor/ejercicios-lista.html.
+profesor/ejercicios-lista.html, profesor/grupos-musculares-lista.html, profesor/grupo-muscular-form.html.
 
 ---
 
@@ -260,4 +272,4 @@ profesor/ejercicios-lista.html.
 3. **Formularios:** que los campos no queden con ancho fijo; usar `col-12 col-md-*` en móvil.
 ---
 
-*Documento de referencia para responsividad. Panel del profesor completado Mar 2026. Módulo de series completado Mar 2026. Módulo de rutinas (panel, editar, hoja, asignar) completado Mar 2026. Pestaña Asignaciones completada Mar 2026. Vista Mis Ejercicios completada Mar 2026. Pendiente: responsive de crear ejercicio, modificar ejercicio, crear grupos musculares, modificar grupos musculares.*
+*Documento de referencia para responsividad. Panel del profesor completado Mar 2026. Módulo de series completado Mar 2026. Módulo de rutinas (panel, editar, hoja, asignar) completado Mar 2026. Pestaña Asignaciones completada Mar 2026. Vista Mis Ejercicios completada Mar 2026. Grupos musculares (lista + editar) responsive Mar 2026. Crear ejercicio responsive y paleta naranja Mar 2026. Pendiente: modificar ejercicio.*

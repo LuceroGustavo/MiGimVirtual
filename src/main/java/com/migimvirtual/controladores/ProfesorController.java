@@ -578,6 +578,7 @@ public class ProfesorController {
         model.addAttribute("exercise", new com.migimvirtual.entidades.Exercise());
         model.addAttribute("gruposMusculares", grupoMuscularService.findDisponiblesParaProfesor(profesor.getId()));
         model.addAttribute("profesor", profesor);
+        model.addAttribute("usuario", usuarioActual);
         return "ejercicios/formulario-ejercicio";
     }
 
@@ -595,6 +596,7 @@ public class ProfesorController {
         if (bindingResult.hasErrors()) {
             model.addAttribute("gruposMusculares", grupoMuscularService.findDisponiblesParaProfesor(profesor.getId()));
             model.addAttribute("profesor", profesor);
+            model.addAttribute("usuario", usuarioActual);
             return "ejercicios/formulario-ejercicio";
         }
         try {
@@ -607,6 +609,7 @@ public class ProfesorController {
             model.addAttribute("errorMessage", "Error al crear el ejercicio: " + e.getMessage());
             model.addAttribute("gruposMusculares", grupoMuscularService.findDisponiblesParaProfesor(profesor.getId()));
             model.addAttribute("profesor", profesor);
+            model.addAttribute("usuario", usuarioActual);
             return "ejercicios/formulario-ejercicio";
         }
     }
@@ -731,6 +734,7 @@ public class ProfesorController {
         if (returnUrl != null && !returnUrl.isBlank() && returnUrl.startsWith("/profesor/")) {
             model.addAttribute("returnUrl", returnUrl);
         }
+        model.addAttribute("usuario", usuarioActual);
         return "profesor/grupos-musculares-lista";
     }
 
@@ -799,6 +803,7 @@ public class ProfesorController {
         model.addAttribute("grupo", grupo);
         model.addAttribute("profesor", profesor);
         model.addAttribute("esEdicion", true);
+        model.addAttribute("usuario", usuarioActual);
         return "profesor/grupo-muscular-form";
     }
 
@@ -818,6 +823,7 @@ public class ProfesorController {
         if (bindingResult.hasErrors()) {
             model.addAttribute("profesor", profesor);
             model.addAttribute("esEdicion", true);
+            model.addAttribute("usuario", usuarioActual);
             return "profesor/grupo-muscular-form";
         }
         com.migimvirtual.entidades.GrupoMuscular existente = grupoMuscularService.findById(id).orElseThrow();
@@ -826,12 +832,14 @@ public class ProfesorController {
             model.addAttribute("errorMessage", "Ya existe un grupo del sistema con ese nombre. Elige otro.");
             model.addAttribute("profesor", profesor);
             model.addAttribute("esEdicion", true);
+            model.addAttribute("usuario", usuarioActual);
             return "profesor/grupo-muscular-form";
         }
         if (!nombre.equals(existente.getNombre()) && grupoMuscularService.existeNombreParaProfesor(nombre, profesor.getId())) {
             model.addAttribute("errorMessage", "Ya tienes un grupo muscular con ese nombre.");
             model.addAttribute("profesor", profesor);
             model.addAttribute("esEdicion", true);
+            model.addAttribute("usuario", usuarioActual);
             return "profesor/grupo-muscular-form";
         }
         existente.setNombre(nombre);
