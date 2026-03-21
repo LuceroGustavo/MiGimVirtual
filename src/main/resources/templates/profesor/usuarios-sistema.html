@@ -11,13 +11,36 @@
         body { background: linear-gradient(135deg, #e8eaf6 0%, #f3e5f5 100%); min-height: 100vh; }
         .card { border: none; border-radius: 1.25rem; box-shadow: 0 4px 16px rgba(0,0,0,0.06); }
         .table th { color: #5e35b1; font-weight: 600; }
+        /* Embebido en Administración (móvil): menos márgenes laterales */
+        .usuarios-sistema-embed-root {
+            padding-left: 0.5rem !important;
+            padding-right: 0.5rem !important;
+        }
+        @media (min-width: 576px) {
+            .usuarios-sistema-embed-root {
+                padding-left: 0.75rem !important;
+                padding-right: 0.75rem !important;
+            }
+        }
+        @media (min-width: 768px) {
+            .usuarios-sistema-embed-root {
+                padding-left: 1rem !important;
+                padding-right: 1rem !important;
+            }
+        }
+        @media (min-width: 992px) {
+            .usuarios-sistema-embed-root {
+                padding-left: 1.5rem !important;
+                padding-right: 1.5rem !important;
+            }
+        }
     </style>
 </head>
 <body>
 <div th:if="${param.embed == null || param.embed.isEmpty()}" th:replace="~{fragments/navbar :: navbar}"></div>
 
 <th:block th:fragment="contenido">
-<div class="container-fluid py-4 px-4 admin-section-content" style="background: linear-gradient(135deg, #e8eaf6 0%, #f3e5f5 100%); min-height: 100vh;">
+<div class="container-fluid py-3 py-md-4 usuarios-sistema-embed-root admin-section-content" style="background: linear-gradient(135deg, #e8eaf6 0%, #f3e5f5 100%); min-height: 100vh;">
     <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-4">
         <h3 class="mb-0"><i class="fas fa-users-cog me-2" style="color:#5e35b1;"></i>Usuarios del sistema</h3>
         <div class="d-flex gap-2">
@@ -81,17 +104,23 @@
     <div th:if="${soloVistaProfesor}" class="card">
         <div class="card-header bg-light"><strong>Mi usuario</strong></div>
         <div class="card-body">
+            <p class="small text-muted mb-3 mb-md-2">
+                <i class="fas fa-info-circle me-1 opacity-75"></i>
+                El <strong>correo</strong> es tu <strong>usuario para iniciar sesión</strong> (debe ser un email válido y único en el sistema).
+                Si lo cambiás, la próxima vez ingresá con el correo nuevo; la sesión actual se actualiza al guardar.
+                El <strong>nombre</strong> es solo para mostrar (navbar, listados). La contraseña se cambia con <strong>Modificar</strong>.
+            </p>
             <!-- Admin: sin campo Rol (siempre es ADMIN en este login) -->
             <form th:action="@{/profesor/usuarios-sistema/perfil}" method="post" class="row g-2 align-items-end mb-3">
-                <div class="col-md-5">
+                <div class="col-12 col-md-5">
                     <label class="form-label small">Nombre</label>
-                    <input type="text" name="nombre" class="form-control form-control-sm" th:value="${usuarioActual != null ? usuarioActual.nombre : ''}" required>
+                    <input type="text" name="nombre" class="form-control form-control-sm" th:value="${usuarioActual != null ? usuarioActual.nombre : ''}" required maxlength="150" autocomplete="name" placeholder="Nombre para mostrar">
                 </div>
-                <div class="col-md-5">
-                    <label class="form-label small">Correo</label>
-                    <input type="email" name="correo" class="form-control form-control-sm" th:value="${usuarioActual != null ? usuarioActual.correo : ''}" required>
+                <div class="col-12 col-md-5">
+                    <label class="form-label small">Correo (usuario de acceso)</label>
+                    <input type="email" name="correo" class="form-control form-control-sm" th:value="${usuarioActual != null ? usuarioActual.correo : ''}" required maxlength="150" autocomplete="email" inputmode="email" placeholder="nombre@ejemplo.com">
                 </div>
-                <div class="col-md-2">
+                <div class="col-12 col-md-2">
                     <button type="submit" class="btn btn-outline-primary btn-sm w-100">Guardar</button>
                 </div>
             </form>
@@ -108,20 +137,25 @@
         <div class="card mb-4">
             <div class="card-header bg-light"><strong>Mi perfil</strong></div>
             <div class="card-body">
+                <p class="small text-muted mb-3 mb-md-2">
+                    <i class="fas fa-info-circle me-1 opacity-75"></i>
+                    El correo es el <strong>usuario de login</strong> (email válido, único). El nombre es para mostrar. Contraseña: enlace de edición o formulario de usuario.
+                </p>
                 <form th:action="@{/profesor/usuarios-sistema/perfil}" method="post" class="row g-2 align-items-end">
-                    <div class="col-md-4">
+                    <div class="col-12 col-md-4">
                         <label class="form-label small">Nombre</label>
-                        <input type="text" name="nombre" class="form-control form-control-sm" th:value="${usuarioActual != null ? usuarioActual.nombre : ''}" required>
+                        <input type="text" name="nombre" class="form-control form-control-sm" th:value="${usuarioActual != null ? usuarioActual.nombre : ''}" required maxlength="150" autocomplete="name">
                     </div>
-                    <div class="col-md-4">
-                        <label class="form-label small">Correo</label>
-                        <input type="email" name="correo" class="form-control form-control-sm" th:value="${usuarioActual != null ? usuarioActual.correo : ''}" required>
+                    <div class="col-12 col-md-4">
+                        <label class="form-label small">Correo (usuario de acceso)</label>
+                        <input type="email" name="correo" class="form-control form-control-sm" th:value="${usuarioActual != null ? usuarioActual.correo : ''}" required maxlength="150" autocomplete="email" inputmode="email">
                     </div>
-                    <div class="col-md-2">
+                    <div class="col-12 col-md-2">
                         <label class="form-label small">Rol</label>
                         <input type="text" class="form-control form-control-sm" th:value="${usuarioActual != null ? usuarioActual.rol : ''}" disabled>
                     </div>
-                    <div class="col-md-2">
+                    <div class="col-12 col-md-2">
+                        <label class="form-label small d-none d-md-block">&nbsp;</label>
                         <button type="submit" class="btn btn-outline-primary btn-sm w-100">Guardar</button>
                     </div>
                 </form>

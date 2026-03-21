@@ -23,8 +23,20 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
-    @Transactional
+@Transactional
 public class UsuarioService {
+
+    /** Formato de correo para usuarios de sistema (login = correo). No permite “usuario” sin @. */
+    private static final String PATRON_CORREO_SISTEMA = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$";
+
+    private static void validarFormatoCorreoLogin(String correoNorm) {
+        if (correoNorm == null || correoNorm.isEmpty()) {
+            return;
+        }
+        if (!correoNorm.matches(PATRON_CORREO_SISTEMA)) {
+            throw new IllegalArgumentException("El correo debe ser un email válido (ej.: nombre@dominio.com). Es el usuario con el que iniciás sesión; no podés usar solo un nombre sin @.");
+        }
+    }
 
     @Autowired
     private UsuarioRepository usuarioRepository;
@@ -176,16 +188,18 @@ public class UsuarioService {
         if (correo == null || correo.isBlank() || password == null || password.isBlank()) {
             throw new IllegalArgumentException("Correo y contraseña son obligatorios");
         }
+        String correoTrim = correo.trim();
+        validarFormatoCorreoLogin(correoTrim);
         String rolNorm = rol != null ? rol.toUpperCase().trim() : "AYUDANTE";
         if (!java.util.Set.of("ADMIN", "AYUDANTE").contains(rolNorm)) {
             throw new IllegalArgumentException("Rol inválido");
         }
-        if (usuarioRepository.findFirstByCorreo(correo).isPresent()) {
+        if (usuarioRepository.findFirstByCorreo(correoTrim).isPresent()) {
             throw new IllegalArgumentException("Ya existe un usuario con ese correo");
         }
         Usuario usuario = new Usuario();
-        usuario.setNombre(nombre != null && !nombre.isBlank() ? nombre.trim() : correo);
-        usuario.setCorreo(correo.trim());
+        usuario.setNombre(nombre != null && !nombre.isBlank() ? nombre.trim() : correoTrim);
+        usuario.setCorreo(correoTrim);
         usuario.setPassword(passwordEncoder.encode(password));
         usuario.setRol(rolNorm);
         usuario.setEdad(0);
@@ -230,6 +244,7 @@ public class UsuarioService {
         if (nombreNorm.isEmpty() || correoNorm.isEmpty()) {
             throw new IllegalArgumentException("Nombre y correo son obligatorios");
         }
+        validarFormatoCorreoLogin(correoNorm);
         Usuario usuario = usuarioRepository.findById(usuarioId)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
         usuarioRepository.findFirstByCorreo(correoNorm).ifPresent(existente -> {

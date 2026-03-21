@@ -190,9 +190,14 @@ public class UsuariosSistemaController {
         if (usuarioActual == null || !isAdminOrDeveloper(usuarioActual)) {
             return "redirect:/profesor/dashboard";
         }
-        usuarioService.actualizarDatosUsuarioSistema(usuarioActual.getId(), nombre, correo);
-        usuarioService.refrescarPrincipalEnSesionSiCorresponde(usuarioActual.getId());
-        return "redirect:/profesor/administracion?ok=perfil";
+        try {
+            usuarioService.actualizarDatosUsuarioSistema(usuarioActual.getId(), nombre, correo);
+            usuarioService.refrescarPrincipalEnSesionSiCorresponde(usuarioActual.getId());
+            return "redirect:/profesor/administracion?ok=perfil";
+        } catch (IllegalArgumentException ex) {
+            String msg = ex.getMessage() != null ? ex.getMessage() : "No se pudo actualizar el perfil";
+            return "redirect:/profesor/administracion?errorMessage=" + URLEncoder.encode(msg, StandardCharsets.UTF_8);
+        }
     }
 
     @PostMapping("/editar")
@@ -216,7 +221,12 @@ public class UsuariosSistemaController {
         if (isDeveloper(objetivo) && !isDeveloper(usuarioActual)) {
             return "redirect:/profesor/administracion?error=developer-locked";
         }
-        usuarioService.actualizarDatosUsuarioSistema(usuarioId, nombre, correo);
+        try {
+            usuarioService.actualizarDatosUsuarioSistema(usuarioId, nombre, correo);
+        } catch (IllegalArgumentException ex) {
+            String msg = ex.getMessage() != null ? ex.getMessage() : "No se pudo actualizar los datos";
+            return "redirect:/profesor/administracion?errorMessage=" + URLEncoder.encode(msg, StandardCharsets.UTF_8);
+        }
         if (!esAdminEditandoSoloPerfil && rol != null && !rol.isBlank() && !isDeveloper(objetivo)) {
             if (usuarioActual.getId() != null && usuarioActual.getId().equals(usuarioId) && !"ADMIN".equalsIgnoreCase(rol)) {
                 return "redirect:/profesor/administracion?error=self-rol";
