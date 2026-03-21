@@ -30,14 +30,21 @@
         .admin-main .admin-content-wrap {
             flex: 1;
             min-height: 560px;
+            min-width: 0;
+            max-width: 100%;
             height: calc(100vh - 180px);
             background: #fff;
             border-radius: 1rem;
             box-shadow: 0 4px 16px rgba(0,0,0,0.06);
             overflow-y: auto;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
         }
         .admin-main .admin-content-wrap .admin-section-content {
             min-height: 100%;
+            min-width: 0;
+            max-width: 100%;
+            box-sizing: border-box;
         }
         .admin-main .admin-content-wrap.loading {
             display: flex;
@@ -136,7 +143,31 @@
                 font-weight: 500;
                 box-shadow: 0 2px 8px rgba(0,0,0,0.06);
             }
-            .admin-sidebar-mobile-dropdown .dropdown-toggle:after { margin-left: auto; }
+            .admin-sidebar-mobile-dropdown .dropdown-toggle::after {
+                display: none !important;
+                content: none !important;
+                border: none !important;
+            }
+            /* Rayitas (más opciones) en lugar del triángulo del dropdown */
+            .admin-mobile-dropdown-bars {
+                display: inline-flex;
+                flex-direction: column;
+                justify-content: center;
+                gap: 3px;
+                margin-left: auto;
+                width: 1.15rem;
+                flex-shrink: 0;
+            }
+            .admin-mobile-dropdown-bars span {
+                display: block;
+                height: 2px;
+                width: 100%;
+                background: #5e35b1;
+                border-radius: 1px;
+            }
+            .admin-mobile-dropdown-wrap.open .admin-mobile-dropdown-bars span {
+                background: #4527a0;
+            }
             .admin-mobile-dropdown-wrap { position: relative; }
             .admin-mobile-dropdown-menu {
                 display: none;
@@ -166,7 +197,6 @@
                 text-align: left;
             }
             .admin-mobile-dropdown-menu .dropdown-item:hover, .admin-mobile-dropdown-menu .dropdown-item:focus { background: #f5f5f5; color: #5e35b1; }
-            .admin-mobile-dropdown-wrap.open .dropdown-toggle .fa-chevron-down { transform: rotate(180deg); }
             .admin-main { order: 1; }
             .admin-main .admin-content-wrap {
                 height: 480px;
@@ -178,10 +208,17 @@
         }
         @media (max-width: 575px) {
             .admin-container { padding-left: 0.75rem !important; padding-right: 0.75rem !important; }
-            .admin-section-content { padding-left: 0.75rem !important; padding-right: 0.75rem !important; }
-            .admin-content-wrap .admin-consultas-table { margin-left: -0.75rem; margin-right: -0.75rem; padding-left: 0.75rem; padding-right: 0.75rem; -webkit-overflow-scrolling: touch; }
-            .admin-content-wrap .admin-consultas-table .table { font-size: 0.85rem; }
-            .admin-content-wrap .admin-consultas-table .table td:nth-child(5), .admin-content-wrap .admin-consultas-table .table th:nth-child(5) { max-width: 140px; overflow: hidden; text-overflow: ellipsis; }
+            /* Tablas anchas: scroll dentro del panel, sin márgenes negativos que ensanchen el layout */
+            .admin-content-wrap .admin-consultas-table,
+            .admin-content-wrap .admin-planes-table {
+                -webkit-overflow-scrolling: touch;
+            }
+            .admin-content-wrap .admin-consultas-table .table,
+            .admin-content-wrap .admin-planes-table .table { font-size: 0.85rem; }
+            .admin-content-wrap .admin-consultas-table .table td:nth-child(5),
+            .admin-content-wrap .admin-consultas-table .table th:nth-child(5) {
+                max-width: 10rem;
+            }
         }
     </style>
 </head>
@@ -226,10 +263,10 @@
             <!-- Móvil: menú desplegable compacto (sin Manual, ya está en pie de página) -->
             <div class="admin-sidebar-mobile-dropdown">
                 <div class="admin-mobile-dropdown-wrap">
-                    <button class="dropdown-toggle btn btn-light w-100 text-start" type="button" id="adminMobileDropdown" aria-expanded="false" aria-haspopup="true">
+                    <button class="dropdown-toggle btn btn-light w-100 text-start" type="button" id="adminMobileDropdown" aria-expanded="false" aria-haspopup="true" aria-label="Elegir sección de administración">
                         <i class="fas fa-users-cog me-2" style="color:#5e35b1;"></i>
                         <span id="adminMobileDropdownLabel">Usuarios del sistema</span>
-                        <i class="fas fa-chevron-down ms-auto" style="font-size:0.75rem; transition: transform 0.2s;"></i>
+                        <span class="admin-mobile-dropdown-bars" aria-hidden="true" title="Más opciones"><span></span><span></span><span></span><span></span></span>
                     </button>
                     <ul class="admin-mobile-dropdown-menu" id="adminMobileDropdownMenu" role="menu">
                         <li role="none"><a class="dropdown-item admin-mobile-option" href="#" data-src="/profesor/usuarios-sistema?fragment=1" data-label="Usuarios del sistema"><i class="fas fa-users-cog me-2" style="color:#5e35b1;"></i>Usuarios del sistema</a></li>

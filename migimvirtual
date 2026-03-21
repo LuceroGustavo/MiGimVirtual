@@ -44,16 +44,16 @@ get_pid() {
 check_app_status() {
     if pgrep -f "migimvirtual.*$JAR_NAME" > /dev/null; then
         PID=$(get_pid); [ -z "$PID" ] && PID=$(pgrep -f "migimvirtual.*$JAR_NAME")
-        echo -e "${GREEN}◆ MiGimVirtual corriendo (PID: $PID) - Puerto $APP_PORT${NC}"
+        echo -e "${GREEN}◆ MiGymVirtual corriendo (PID: $PID) - Puerto $APP_PORT${NC}"
         return 0
     else
-        echo -e "${RED}◆ MiGimVirtual no está corriendo${NC}"
+        echo -e "${RED}◆ MiGymVirtual no está corriendo${NC}"
         return 1
     fi
 }
 
 stop_app() {
-    print_option "1️⃣ Parando aplicación MiGimVirtual..."
+    print_option "1️⃣ Parando aplicación MiGymVirtual..."
     if pgrep -f "migimvirtual.*$JAR_NAME" > /dev/null; then
         pkill -f "migimvirtual.*$JAR_NAME"
         sleep 3
@@ -62,9 +62,9 @@ stop_app() {
             pkill -9 -f "migimvirtual.*$JAR_NAME"
         fi
         rm -f "$PID_FILE"
-        print_success "Aplicación MiGimVirtual detenida"
+        print_success "Aplicación MiGymVirtual detenida"
     else
-        print_warning "No hay aplicación MiGimVirtual corriendo"
+        print_warning "No hay aplicación MiGymVirtual corriendo"
     fi
 }
 
@@ -99,7 +99,7 @@ update_code() {
 }
 
 compile_app() {
-    print_option "3️⃣ Compilando aplicación MiGimVirtual..."
+    print_option "3️⃣ Compilando aplicación MiGymVirtual..."
     print_warning "Esto puede tomar varios minutos..."
     cd "$APP_DIR" || { print_error "Error: No se pudo cambiar al directorio del proyecto"; return 1; }
     if [ -x "./mvnw" ]; then
@@ -113,7 +113,7 @@ compile_app() {
 }
 
 start_app() {
-    print_option "4️⃣ Iniciando aplicación MiGimVirtual..."
+    print_option "4️⃣ Iniciando aplicación MiGymVirtual..."
     cd "$APP_DIR" || { print_error "Error: No se pudo cambiar al directorio del proyecto"; return 1; }
     if [ ! -f "$JAR_PATH" ]; then
         print_error "No se encontró el JAR. Compila primero (opción 3)"
@@ -144,7 +144,7 @@ start_app() {
     echo $! > "$PID_FILE"
     sleep 5
     if check_app_status; then
-        print_success "Aplicación MiGimVirtual iniciada correctamente"
+        print_success "Aplicación MiGymVirtual iniciada correctamente"
         echo -e "${CYAN}🌐 Disponible en: http://149.50.144.53:$APP_PORT${NC}"
     else
         print_error "Error al iniciar la aplicación"
@@ -159,7 +159,7 @@ full_deploy() {
     compile_app || return 1
     start_app
     echo ""
-    print_success "🎉 Despliegue completo de MiGimVirtual finalizado"
+    print_success "🎉 Despliegue completo de MiGymVirtual finalizado"
 }
 
 system_status() {
@@ -187,7 +187,7 @@ system_status() {
 }
 
 view_logs() {
-    print_option "7️⃣ Mostrando logs de la aplicación MiGimVirtual..."
+    print_option "7️⃣ Mostrando logs de la aplicación MiGymVirtual..."
     if [ -f "$LOG_FILE" ]; then
         echo -e "${YELLOW}Últimas 50 líneas de logs:${NC}"
         tail -50 "$LOG_FILE"
@@ -201,14 +201,14 @@ view_logs() {
 }
 
 restart_app() {
-    print_option "8️⃣ Reiniciando aplicación MiGimVirtual..."
+    print_option "8️⃣ Reiniciando aplicación MiGymVirtual..."
     stop_app
     sleep 2
     start_app
 }
 
 project_info() {
-    print_option "9️⃣ Información del proyecto MiGimVirtual:"
+    print_option "9️⃣ Información del proyecto MiGymVirtual:"
     cd "$APP_DIR" || { print_error "Error: No se pudo cambiar al directorio del proyecto"; return 1; }
     echo ""
     echo -e "${CYAN}=== INFORMACIÓN GIT ===${NC}"
@@ -274,14 +274,14 @@ while true; do
     echo ""
     print_option "Selecciona una opción:"
     echo ""
-    echo "1.  Parar aplicación MiGimVirtual"
+    echo "1.  Parar aplicación MiGymVirtual"
     echo "2.  Actualizar código (git pull)"
-    echo "3.  Compilar aplicación MiGimVirtual"
-    echo "4.  Iniciar aplicación MiGimVirtual"
+    echo "3.  Compilar aplicación MiGymVirtual"
+    echo "4.  Iniciar aplicación MiGymVirtual"
     echo "5.  Despliegue completo (1+2+3+4)"
     echo "6.  Ver estado del sistema"
     echo "7.  Ver logs de la aplicación"
-    echo "8.  Reiniciar aplicación MiGimVirtual"
+    echo "8.  Reiniciar aplicación MiGymVirtual"
     echo "9.  Información del proyecto"
     echo "10. Ver espacio en disco"
     echo "11. Borrar base de datos"

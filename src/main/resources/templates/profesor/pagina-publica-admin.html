@@ -7,23 +7,28 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="/style.css">
-    <style>
-        body { background: linear-gradient(135deg, #e8eaf6 0%, #f3e5f5 100%); min-height: 100vh; }
-        .card { border: none; border-radius: 1.25rem; box-shadow: 0 4px 16px rgba(0,0,0,0.06); }
-        .card-header { background: #f8f9fa !important; border-radius: 1.25rem 1.25rem 0 0; font-weight: 600; color: #5e35b1; }
-        .table th { color: #5e35b1; font-weight: 600; }
-    </style>
+    <link rel="stylesheet" href="/css/pagina-publica-admin.css">
 </head>
 <body>
 <div th:if="${param.embed == null || param.embed.isEmpty()}" th:replace="~{fragments/navbar :: navbar}"></div>
 
-<div th:fragment="contenido" class="container-fluid py-4 px-4 admin-section-content" style="background: linear-gradient(135deg, #e8eaf6 0%, #f3e5f5 100%); min-height: 100vh;">
-    <div class="d-flex align-items-center justify-content-between mb-4 flex-wrap gap-2">
-        <h3 class="mb-0"><i class="fas fa-globe me-2" style="color:#5e35b1;"></i>Página Pública</h3>
-        <a href="/planes" target="_blank" class="btn btn-outline-secondary btn-sm"><i class="fas fa-external-link-alt me-1"></i>Ver página pública</a>
+<div th:fragment="contenido" class="container-fluid py-3 py-md-4 admin-section-content publica-admin-root" style="background: linear-gradient(145deg, #e8eaf6 0%, #ede7f6 35%, #f3e5f5 70%, #fce4ec 100%); min-height: 100vh;">
+    <!-- Estilos del módulo: deben ir en el fragmento para que se apliquen al cargar el panel (AJAX); el <head> de esta página no se envía en fragment=1 -->
+    <link rel="stylesheet" href="/css/pagina-publica-admin.css">
+    <div class="publica-header-hero">
+        <div class="d-flex flex-column flex-sm-row align-items-stretch align-items-sm-center justify-content-between gap-3 publica-header-actions">
+            <div class="d-flex align-items-center gap-3">
+                <span class="publica-globe-badge flex-shrink-0"><i class="fas fa-globe"></i></span>
+                <div>
+                    <h3 class="mb-0 text-break">Página pública</h3>
+                    <small class="text-muted d-block mt-1" style="font-size:0.8rem;">Consultas, planes y datos que ven tus visitantes</small>
+                </div>
+            </div>
+            <a href="/planes" target="_blank" class="btn btn-publica-ver-sitio btn-sm flex-shrink-0 align-self-stretch align-self-sm-center"><i class="fas fa-external-link-alt me-1"></i>Ver sitio público</a>
+        </div>
     </div>
 
-    <div th:if="${ok}" class="alert alert-success" th:text="${ok}">Guardado</div>
+    <div th:if="${ok}" class="alert alert-success publica-alert-ok d-flex align-items-center gap-2" role="alert"><i class="fas fa-check-circle"></i><span th:text="${ok}">Guardado</span></div>
 
     <!-- Tarjetas de acceso directo (ocultas cuando se muestra embebido o como fragmento) -->
     <div th:if="${(param.embed == null || param.embed.isEmpty()) && (param.fragment == null || param.fragment.isEmpty())}" class="row g-3 mb-4">
@@ -56,20 +61,55 @@
     </div>
 
     <!-- 1. Consultas recibidas -->
-    <div class="card mb-4">
-        <div class="card-header bg-light"><strong><i class="fas fa-envelope me-2"></i>Consultas recibidas</strong></div>
+    <div class="card mb-4 card-modulo-consultas">
+        <div class="card-header"><strong><i class="fas fa-envelope me-2"></i>Consultas recibidas</strong></div>
         <div class="card-body">
-            <p class="text-muted small mb-3">Últimas consultas del formulario de contacto en la página pública.</p>
-            <div class="table-responsive admin-consultas-table">
-                <table class="table table-sm table-hover align-middle">
+            <p class="publica-modulo-hint mb-3"><i class="fas fa-info-circle me-1 opacity-75"></i>Últimas consultas del formulario de contacto en la página pública.</p>
+
+            <!-- Móvil: filas fecha + nombre → modal detalle -->
+            <div class="d-md-none list-group list-group-flush list-publica-consultas" th:if="${consultas != null && !consultas.isEmpty()}">
+                <button type="button" class="list-group-item list-group-item-action text-start border-0 shadow-sm d-flex align-items-stretch justify-content-between gap-2"
+                        th:each="c : ${consultas}"
+                        th:classappend="${c.visto} ? ' consulta-fila-leida' : ' consulta-fila-sin-leer'"
+                        data-bs-toggle="modal" data-bs-target="#modalConsultaDetalle"
+                        th:attr="data-id=${c.id},
+                                 data-fecha=${c.fechaCreacion != null ? #temporals.format(c.fechaCreacion, 'dd/MM/yyyy HH:mm') : '—'},
+                                 data-nombre=${c.nombre},
+                                 data-email=${c.email != null ? c.email : ''},
+                                 data-telefono=${c.telefono != null ? c.telefono : ''},
+                                 data-mensaje=${c.mensaje != null ? c.mensaje : ''},
+                                 data-visto=${c.visto}">
+                    <div class="consulta-fila-main flex-grow-1 min-w-0">
+                        <div class="consulta-fila-fecha" th:text="${c.fechaCreacion != null ? #temporals.format(c.fechaCreacion, 'dd/MM/yyyy HH:mm') : '—'}">fecha</div>
+                        <div class="consulta-fila-nombre-row">
+                            <span class="consulta-fila-nombre" th:text="${c.nombre}">nombre</span>
+                            <span class="consulta-sobre-indicador"
+                                  th:classappend="${c.visto} ? ' consulta-sobre-abierto' : ' consulta-sobre-cerrado'"
+                                  th:title="${c.visto} ? 'Ya revisada' : 'Sin revisar'"
+                                  aria-hidden="true">
+                                <i th:class="${c.visto} ? 'fas fa-envelope-open' : 'fas fa-envelope'"></i>
+                            </span>
+                        </div>
+                        <div class="consulta-fila-tap-hint"><i class="fas fa-hand-pointer me-1"></i>Tocá la fila para ver el detalle</div>
+                    </div>
+                    <div class="consulta-fila-ojo flex-shrink-0 d-flex align-items-center" title="Ver detalle">
+                        <span class="consulta-ver-icon"><i class="fas fa-eye"></i></span>
+                    </div>
+                </button>
+            </div>
+            <div class="d-md-none text-center text-muted py-4 rounded-3" style="background: rgba(237,231,246,0.35);" th:if="${consultas == null || consultas.isEmpty()}">Sin consultas aún.</div>
+
+            <!-- Escritorio: tabla completa -->
+            <div class="d-none d-md-block table-responsive admin-consultas-table rounded-bottom">
+                <table class="table table-sm table-hover align-middle mb-0">
                     <thead class="table-light">
                     <tr>
                         <th>Fecha</th>
                         <th>Nombre</th>
                         <th>Email</th>
                         <th>Teléfono</th>
-                        <th>Mensaje</th>
-                        <th class="text-end">Acciones</th>
+                        <th class="publica-col-wrap">Mensaje</th>
+                        <th class="text-end publica-consultas-acciones-th">Acciones</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -79,15 +119,15 @@
                         <td th:if="${c.email != null && !c.email.isEmpty()}"><a th:href="'mailto:' + ${c.email}" th:text="${c.email}">-</a></td>
                         <td th:if="${c.email == null || c.email.isEmpty()}" class="text-muted">-</td>
                         <td th:text="${c.telefono != null && !c.telefono.isEmpty() ? c.telefono : '-'}">-</td>
-                        <td><span class="small text-muted" th:text="${c.mensaje != null && !c.mensaje.isEmpty() ? c.mensaje : '-'}">-</span></td>
-                        <td class="text-end">
+                        <td class="publica-col-wrap"><span class="small text-muted" th:text="${c.mensaje != null && !c.mensaje.isEmpty() ? c.mensaje : '-'}">-</span></td>
+                        <td class="publica-consultas-acciones">
                             <th:block th:if="${!c.visto}">
-                                <form th:action="@{/profesor/pagina-publica/consulta/marcar-visto/{id}(id=${c.id})}" method="post" class="d-inline me-1">
+                                <form th:action="@{/profesor/pagina-publica/consulta/marcar-visto/{id}(id=${c.id})}" method="post" class="form-consulta-accion">
                                     <button type="submit" class="btn btn-outline-success btn-sm" title="Marcar como visto"><i class="fas fa-check me-1"></i>Visto</button>
                                 </form>
                             </th:block>
-                            <span th:if="${c.visto}" class="badge bg-secondary me-1">Visto</span>
-                            <form th:action="@{/profesor/pagina-publica/consulta/eliminar}" method="post" class="d-inline form-eliminar-consulta">
+                            <span th:if="${c.visto}" class="badge bg-secondary align-self-center">Visto</span>
+                            <form th:action="@{/profesor/pagina-publica/consulta/eliminar}" method="post" class="form-consulta-accion form-eliminar-consulta">
                                 <input type="hidden" name="id" th:value="${c.id}">
                                 <button type="button" class="btn btn-outline-danger btn-sm btn-confirmar-eliminar" title="Eliminar" data-msg="¿Eliminar esta consulta?"><i class="fas fa-trash-alt"></i></button>
                             </form>
@@ -103,29 +143,63 @@
     </div>
 
     <!-- 2. Planes -->
-    <div class="card mb-4">
-        <div class="card-header bg-light"><strong><i class="fas fa-list-alt me-2"></i>Planes</strong></div>
+    <div class="card mb-4 card-modulo-planes">
+        <div class="card-header"><strong><i class="fas fa-list-alt me-2"></i>Planes</strong></div>
         <div class="card-body">
-            <p class="text-muted small mb-3">Los planes se muestran como tarjetas en la página pública. Editá el precio y los datos; los cambios se reflejan al instante.</p>
-            <div class="table-responsive">
-                <table class="table table-sm table-hover align-middle">
+            <p class="publica-modulo-hint mb-3"><i class="fas fa-layer-group me-1 opacity-75"></i>Los planes se muestran como tarjetas en la página pública. Editá precio y datos; los cambios se reflejan al instante.</p>
+
+            <!-- Móvil: fila por plan — tap izquierda = detalle; derecha = subir/bajar orden -->
+            <div class="d-md-none list-group list-group-flush list-publica-planes" th:if="${planes != null && !planes.isEmpty()}">
+                <div class="list-group-item border-0 shadow-sm d-flex flex-row align-items-stretch p-0 overflow-hidden plan-fila-movil-row"
+                     th:each="plan, planStat : ${planes}"
+                     th:classappend="${'plan-fila-tono-' + (planStat.count % 4)}">
+                    <button type="button" class="plan-fila-contenido-modal list-group-item-action flex-grow-1 text-start border-0 rounded-0 bg-transparent py-3 ps-3 pe-2 min-w-0"
+                            data-bs-toggle="modal" data-bs-target="#modalPlanDetalle"
+                            th:attr="data-id=${plan.id},
+                                     data-numero=${planStat.count},
+                                     data-nombre=${plan.nombre},
+                                     data-precio=${plan.precio},
+                                     data-veces=${plan.vecesPorSemana != null ? plan.vecesPorSemana : ''},
+                                     data-descripcion=${plan.descripcion != null ? plan.descripcion : ''},
+                                     data-orden=${plan.orden}">
+                        <div class="plan-fila-numero" th:text="'Plan ' + ${planStat.count}">Plan 1</div>
+                        <div class="plan-fila-nombre text-truncate" th:text="${plan.nombre}">Nombre</div>
+                    </button>
+                    <div class="plan-fila-flechas-movil d-flex flex-column justify-content-center align-items-center gap-1 flex-shrink-0 py-2 px-2"
+                         onclick="event.stopPropagation();" role="group" aria-label="Cambiar orden del plan">
+                        <form th:if="${!planStat.first}" th:action="@{/profesor/pagina-publica/plan/subir/{id}(id=${plan.id})}" method="post" class="d-inline m-0">
+                            <button type="submit" class="btn btn-sm btn-outline-secondary plan-flecha-movil" title="Subir en la lista"><i class="fas fa-arrow-up"></i></button>
+                        </form>
+                        <button th:if="${planStat.first}" type="button" class="btn btn-sm btn-outline-secondary plan-flecha-movil disabled" disabled title="Ya es el primero"><i class="fas fa-arrow-up"></i></button>
+                        <form th:if="${!planStat.last}" th:action="@{/profesor/pagina-publica/plan/bajar/{id}(id=${plan.id})}" method="post" class="d-inline m-0">
+                            <button type="submit" class="btn btn-sm btn-outline-secondary plan-flecha-movil" title="Bajar en la lista"><i class="fas fa-arrow-down"></i></button>
+                        </form>
+                        <button th:if="${planStat.last}" type="button" class="btn btn-sm btn-outline-secondary plan-flecha-movil disabled" disabled title="Ya es el último"><i class="fas fa-arrow-down"></i></button>
+                    </div>
+                </div>
+            </div>
+            <div class="d-md-none text-center text-muted py-4 rounded-3" style="background: rgba(178, 235, 242, 0.25);" th:if="${planes == null || planes.isEmpty()}">Sin planes. Se crean automáticamente al iniciar la app.</div>
+
+            <!-- Escritorio: tabla -->
+            <div class="d-none d-md-block table-responsive admin-planes-table rounded-bottom">
+                <table class="table table-sm table-hover align-middle mb-0">
                     <thead class="table-light">
                     <tr>
                         <th>Nombre</th>
                         <th>Precio</th>
                         <th>Veces/sem</th>
-                        <th>Descripción</th>
-                        <th style="width: 180px;">Acciones</th>
+                        <th class="publica-col-wrap">Descripción</th>
+                        <th class="text-nowrap" style="min-width: 9rem;">Acciones</th>
                     </tr>
                     </thead>
                     <tbody>
-                    <tr th:each="plan, planStat : ${planes}">
+                    <tr th:each="plan, planStat : ${planes}" th:classappend="${'plan-fila-tono-' + (planStat.count % 4)}">
                         <td th:text="${plan.nombre}">Plan</td>
                         <td th:text="'$' + ${#numbers.formatDecimal(plan.precio, 0, 'COMMA', 0, 'POINT')}">$0</td>
                         <td th:text="${plan.vecesPorSemana != null ? plan.vecesPorSemana : 'Libre'}">-</td>
-                        <td><span class="small" th:text="${plan.descripcion}">-</span></td>
+                        <td class="publica-col-wrap"><span class="small" th:text="${plan.descripcion}">-</span></td>
                         <td>
-                            <div class="d-flex align-items-center gap-1 flex-wrap">
+                            <div class="d-flex align-items-center gap-1 flex-wrap publica-planes-acciones">
                                 <div class="btn-group btn-group-sm flex-shrink-0">
                                     <form th:if="${!planStat.first}" th:action="@{/profesor/pagina-publica/plan/subir/{id}(id=${plan.id})}" method="post" class="d-inline">
                                         <button type="submit" class="btn btn-sm btn-outline-secondary py-0 px-1" title="Subir"><i class="fas fa-arrow-up" style="font-size: 0.7rem;"></i></button>
@@ -150,14 +224,15 @@
                     </tbody>
                 </table>
             </div>
-            <button type="button" class="btn btn-success btn-sm mt-2" data-bs-toggle="modal" data-bs-target="#modalPlan" th:attr="data-id='', data-nombre='', data-descripcion='', data-precio='0', data-veces='', data-orden='0'"><i class="fas fa-plus me-1"></i>Nuevo plan</button>
+            <button type="button" class="btn btn-publica-nuevo-plan btn-sm mt-2" data-bs-toggle="modal" data-bs-target="#modalPlan" th:attr="data-id='', data-nombre='', data-descripcion='', data-precio='0', data-veces='', data-orden='0'"><i class="fas fa-plus me-1"></i>Nuevo plan</button>
         </div>
     </div>
 
     <!-- 3. Configuración de datos -->
-    <div class="card mb-4">
-        <div class="card-header bg-light"><strong><i class="fas fa-cog me-2"></i>Configuración de datos</strong></div>
+    <div class="card mb-4 card-modulo-config">
+        <div class="card-header"><strong><i class="fas fa-cog me-2"></i>Configuración de datos</strong></div>
         <div class="card-body">
+            <p class="publica-modulo-hint mb-3"><i class="fas fa-map-marker-alt me-1 opacity-75"></i>WhatsApp, redes, dirección y horarios que se muestran en la página pública.</p>
             <form th:action="@{/profesor/pagina-publica/config}" method="post" class="row g-3">
                 <div class="col-md-6">
                     <label class="form-label">WhatsApp (número con código país, ej. 5491112345678)</label>
@@ -165,7 +240,7 @@
                 </div>
                 <div class="col-md-6">
                     <label class="form-label">Instagram (URL o @usuario)</label>
-                    <input type="text" name="instagram" class="form-control" th:value="${config != null ? config.get('instagram') : ''}" placeholder="https://instagram.com/MiGimVirtual">
+                    <input type="text" name="instagram" class="form-control" th:value="${config != null ? config.get('instagram') : ''}" placeholder="https://instagram.com/MiGymVirtual">
                 </div>
                 <div class="col-12">
                     <label class="form-label">Dirección</label>
@@ -187,14 +262,93 @@
         </div>
     </div>
 
-    <a th:href="@{/profesor/administracion}" class="btn btn-outline-secondary"><i class="fas fa-arrow-left me-1"></i>Volver al panel de administración</a>
+    <!-- Modal detalle consulta (móvil / estilo MiGymVirtual) -->
+    <div class="modal fade" id="modalConsultaDetalle" tabindex="-1" aria-labelledby="modalConsultaDetalleTitulo" aria-hidden="true"
+         th:attr="data-url-marcar-base=@{/profesor/pagina-publica/consulta/marcar-visto/}">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content border-0 shadow">
+                <div class="modal-header modal-publica-consulta-header">
+                    <h5 class="modal-title" id="modalConsultaDetalleTitulo"><i class="fas fa-envelope-open-text me-2"></i>Detalle de la consulta</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body modal-publica-consulta-body">
+                    <div class="modal-consulta-card modal-consulta-card-destacado">
+                        <div class="modal-consulta-label"><i class="fas fa-user me-1"></i>Quien escribió</div>
+                        <p class="modal-consulta-valor fw-semibold mb-1" id="consultaDetalleNombre">—</p>
+                        <p class="small text-muted mb-0" id="consultaDetalleFecha"></p>
+                        <span id="consultaDetalleBadgeVisto" class="badge modal-consulta-badge-visto mt-2 d-none">Ya revisada</span>
+                    </div>
+                    <div class="modal-consulta-card modal-consulta-card-mail">
+                        <div class="modal-consulta-label"><i class="fas fa-at me-1"></i>Email</div>
+                        <p class="modal-consulta-valor mb-0" id="consultaDetalleEmail">—</p>
+                    </div>
+                    <a id="consultaDetalleTelCard" class="modal-consulta-card modal-consulta-card-tel text-decoration-none text-reset d-block pe-none opacity-75" href="#" aria-label="Teléfono">
+                        <div class="d-flex align-items-start justify-content-between gap-2">
+                            <div class="flex-grow-1 min-w-0">
+                                <div class="modal-consulta-label"><i class="fas fa-phone me-1"></i>Teléfono</div>
+                                <p class="modal-consulta-valor mb-0" id="consultaDetalleTelefono">—</p>
+                            </div>
+                            <span class="consulta-wa-badge align-self-center flex-shrink-0 d-none text-success" id="consultaDetalleWaIcon" title="WhatsApp"><i class="fab fa-whatsapp fa-2x"></i></span>
+                        </div>
+                        <small class="consulta-wa-hint d-none text-success fw-semibold mt-2" id="consultaDetalleWaHint"><i class="fab fa-whatsapp me-1"></i>Tocá para abrir WhatsApp y chatear</small>
+                    </a>
+                    <div class="modal-consulta-card modal-consulta-card-mensaje mb-0">
+                        <div class="modal-consulta-label"><i class="fas fa-comment-dots me-1"></i>Mensaje</div>
+                        <p class="modal-consulta-valor mb-0" id="consultaDetalleMensaje">—</p>
+                    </div>
+                </div>
+                <div class="modal-footer modal-publica-consulta-footer flex-wrap gap-2 justify-content-end">
+                    <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">Cerrar</button>
+                    <form id="formConsultaEliminarMobile" th:action="@{/profesor/pagina-publica/consulta/eliminar}" method="post" class="d-inline">
+                        <input type="hidden" name="id" id="consultaEliminarId" value="">
+                        <button type="button" class="btn btn-outline-danger btn-sm btn-confirmar-eliminar" data-msg="¿Eliminar esta consulta?"><i class="fas fa-trash-alt me-1"></i>Eliminar</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal detalle plan (móvil) -->
+    <div class="modal fade" id="modalPlanDetalle" tabindex="-1" aria-labelledby="modalPlanDetalleTitulo" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content border-0 shadow">
+                <div class="modal-header modal-publica-plan-header">
+                    <h5 class="modal-title" id="modalPlanDetalleTitulo"><i class="fas fa-clipboard-list me-2"></i>Plan</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body modal-publica-plan-body">
+                    <p class="mb-1"><span id="planDetalleNumero" class="fw-bold" style="color:#006064;"></span> <span id="planDetalleNombre" class="fw-semibold"></span></p>
+                    <dl class="detalle-dl mb-0 mt-3">
+                        <dt>Precio</dt>
+                        <dd id="planDetallePrecio">—</dd>
+                        <dt>Veces por semana</dt>
+                        <dd id="planDetalleVeces">—</dd>
+                        <dt>Orden</dt>
+                        <dd id="planDetalleOrden">—</dd>
+                        <dt>Descripción</dt>
+                        <dd id="planDetalleDescripcion" class="small" style="white-space: pre-wrap;">—</dd>
+                    </dl>
+                </div>
+                <div class="modal-footer modal-publica-plan-footer flex-wrap gap-2 justify-content-between">
+                    <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">Cerrar</button>
+                    <div class="d-flex gap-2 ms-auto flex-wrap">
+                        <button type="button" class="btn btn-primary btn-sm" id="btnPlanDetalleEditar"><i class="fas fa-pen me-1"></i>Editar</button>
+                        <form id="formPlanEliminarMobile" th:action="@{/profesor/pagina-publica/plan/eliminar}" method="post" class="d-inline">
+                            <input type="hidden" name="id" id="planEliminarIdMobile" value="">
+                            <button type="button" class="btn btn-danger btn-sm btn-confirmar-eliminar" data-msg="¿Eliminar este plan?"><i class="fas fa-trash-alt me-1"></i>Eliminar</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- Modal Editar/Crear Plan (dentro del fragmento para que funcione en carga AJAX) -->
     <div class="modal fade" id="modalPlan" tabindex="-1">
     <div class="modal-dialog">
         <div class="modal-content">
             <form id="formPlan" th:action="@{/profesor/pagina-publica/plan/guardar}" method="post">
-                <div class="modal-header">
+                <div class="modal-header modal-publica-plan-form-header">
                     <h5 class="modal-title" id="modalPlanTitle">Editar plan</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
@@ -221,16 +375,16 @@
                         <textarea name="descripcion" class="form-control" rows="2" placeholder="Opcional"></textarea>
                     </div>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="submit" class="btn btn-primary">Guardar</button>
+                <div class="modal-footer modal-publica-plan-form-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary"><i class="fas fa-save me-1"></i>Guardar</button>
                 </div>
             </form>
         </div>
     </div>
 </div>
 
-    <!-- Modal confirmación (estilo MiGimVirtual, reutilizable) -->
+    <!-- Modal confirmación (estilo MiGymVirtual, reutilizable) -->
     <div class="modal fade" id="modalConfirmar" tabindex="-1">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
@@ -249,10 +403,13 @@
 
     <script>
     (function() {
+        var planModalTriggerBtn = null;
+
         var modalEl = document.getElementById('modalPlan');
         if (modalEl) {
             modalEl.addEventListener('show.bs.modal', function(e) {
-                var btn = e.relatedTarget;
+                var btn = e.relatedTarget || planModalTriggerBtn;
+                planModalTriggerBtn = null;
                 var id = btn ? (btn.getAttribute('data-id') || '') : '';
                 var planId = document.getElementById('planId');
                 if (planId) planId.value = id;
@@ -268,6 +425,156 @@
                 if (descInp) descInp.value = btn ? (btn.getAttribute('data-descripcion') || '') : '';
                 var titleEl = document.getElementById('modalPlanTitle');
                 if (titleEl) titleEl.textContent = id ? 'Editar plan' : 'Nuevo plan';
+            });
+        }
+
+        /** Solo dígitos para wa.me; heurística Argentina (15… / 11…) si falta prefijo 54 */
+        function telefonoParaWhatsApp(raw) {
+            if (!raw) return '';
+            var d = String(raw).replace(/\D/g, '');
+            if (!d) return '';
+            if (d.startsWith('54')) return d;
+            d = d.replace(/^0+/, '');
+            if (d.length >= 10 && d.startsWith('15')) {
+                return '54911' + d.substring(2);
+            }
+            if (d.length === 10 && d.startsWith('11')) {
+                return '549' + d;
+            }
+            if (d.length === 8) {
+                return '54911' + d;
+            }
+            if (d.length >= 10 && d.length <= 15) return d;
+            return d.length >= 8 ? d : '';
+        }
+
+        var modalConsultaDetalle = document.getElementById('modalConsultaDetalle');
+        if (modalConsultaDetalle) {
+            modalConsultaDetalle.addEventListener('show.bs.modal', function(e) {
+                var btn = e.relatedTarget;
+                if (!btn) return;
+                var id = btn.getAttribute('data-id') || '';
+                var base = modalConsultaDetalle.getAttribute('data-url-marcar-base') || '';
+                var visto = (btn.getAttribute('data-visto') || '') === 'true';
+                document.getElementById('consultaDetalleNombre').textContent = btn.getAttribute('data-nombre') || '—';
+                document.getElementById('consultaDetalleFecha').textContent = btn.getAttribute('data-fecha') || '';
+                var email = btn.getAttribute('data-email') || '';
+                var emailEl = document.getElementById('consultaDetalleEmail');
+                emailEl.textContent = '';
+                if (email && email.indexOf('@') >= 0) {
+                    var a = document.createElement('a');
+                    a.href = 'mailto:' + email;
+                    a.textContent = email;
+                    emailEl.appendChild(a);
+                } else {
+                    emailEl.textContent = email || '—';
+                }
+                var telRaw = (btn.getAttribute('data-telefono') || '').trim();
+                var telValorEl = document.getElementById('consultaDetalleTelefono');
+                var telCard = document.getElementById('consultaDetalleTelCard');
+                var waIcon = document.getElementById('consultaDetalleWaIcon');
+                var waHint = document.getElementById('consultaDetalleWaHint');
+                var waDigits = telefonoParaWhatsApp(telRaw);
+                var textoWa = encodeURIComponent('Hola, te escribo por tu consulta desde MiGymVirtual. ');
+                telValorEl.textContent = telRaw || '—';
+                if (telCard) {
+                    if (waDigits) {
+                        telCard.href = 'https://wa.me/' + waDigits + '?text=' + textoWa;
+                        telCard.target = '_blank';
+                        telCard.rel = 'noopener noreferrer';
+                        telCard.classList.remove('pe-none', 'opacity-75');
+                        telCard.classList.add('modal-consulta-wa-activo');
+                        telCard.setAttribute('aria-label', 'Abrir WhatsApp con este número');
+                        if (waIcon) waIcon.classList.remove('d-none');
+                        if (waHint) { waHint.classList.remove('d-none'); waHint.classList.add('d-block'); }
+                    } else {
+                        telCard.href = '#';
+                        telCard.removeAttribute('target');
+                        telCard.removeAttribute('rel');
+                        telCard.classList.add('pe-none', 'opacity-75');
+                        telCard.classList.remove('modal-consulta-wa-activo');
+                        telCard.setAttribute('aria-label', 'Teléfono (sin número para WhatsApp)');
+                        if (waIcon) waIcon.classList.add('d-none');
+                        if (waHint) { waHint.classList.add('d-none'); waHint.classList.remove('d-block'); }
+                    }
+                }
+                document.getElementById('consultaDetalleMensaje').textContent = btn.getAttribute('data-mensaje') || '—';
+                var badge = document.getElementById('consultaDetalleBadgeVisto');
+                if (visto) {
+                    badge.classList.remove('d-none');
+                } else {
+                    badge.classList.add('d-none');
+                    /* Móvil: al abrir el detalle se marca como vista automáticamente (en escritorio sigue la tabla con botón Visto) */
+                    if (id && base) {
+                        fetch(base + id, { method: 'POST', credentials: 'same-origin' })
+                            .then(function(res) {
+                                if (!res.ok) return;
+                                badge.classList.remove('d-none');
+                                btn.setAttribute('data-visto', 'true');
+                                btn.classList.remove('consulta-fila-sin-leer');
+                                btn.classList.add('consulta-fila-leida');
+                                var ind = btn.querySelector('.consulta-sobre-indicador');
+                                if (ind) {
+                                    ind.classList.remove('consulta-sobre-cerrado');
+                                    ind.classList.add('consulta-sobre-abierto');
+                                    ind.setAttribute('title', 'Ya revisada');
+                                    var ic = ind.querySelector('i');
+                                    if (ic) ic.className = 'fas fa-envelope-open';
+                                }
+                            })
+                            .catch(function() { /* sin cambios si falla la red */ });
+                    }
+                }
+                var hid = document.getElementById('consultaEliminarId');
+                if (hid) hid.value = id;
+            });
+        }
+
+        function formatPrecioPlan(p) {
+            if (p == null || p === '') return '—';
+            var n = parseFloat(String(p).replace(/\s/g, '').replace(',', '.'));
+            if (isNaN(n)) return String(p);
+            return '$' + n.toLocaleString('es-AR', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+        }
+
+        var modalPlanDetalle = document.getElementById('modalPlanDetalle');
+        if (modalPlanDetalle) {
+            modalPlanDetalle.addEventListener('show.bs.modal', function(e) {
+                var btn = e.relatedTarget;
+                if (!btn) return;
+                var id = btn.getAttribute('data-id') || '';
+                var num = btn.getAttribute('data-numero') || '';
+                document.getElementById('planDetalleNumero').textContent = 'Plan ' + num;
+                document.getElementById('planDetalleNombre').textContent = btn.getAttribute('data-nombre') || '';
+                document.getElementById('planDetallePrecio').textContent = formatPrecioPlan(btn.getAttribute('data-precio'));
+                var veces = btn.getAttribute('data-veces');
+                document.getElementById('planDetalleVeces').textContent = (veces !== null && veces !== '') ? veces : 'Libre';
+                document.getElementById('planDetalleOrden').textContent = btn.getAttribute('data-orden') || '—';
+                document.getElementById('planDetalleDescripcion').textContent = btn.getAttribute('data-descripcion') || '—';
+                var hidP = document.getElementById('planEliminarIdMobile');
+                if (hidP) hidP.value = id;
+                var editBtn = document.getElementById('btnPlanDetalleEditar');
+                if (editBtn) {
+                    editBtn.setAttribute('data-id', id);
+                    editBtn.setAttribute('data-nombre', btn.getAttribute('data-nombre') || '');
+                    editBtn.setAttribute('data-descripcion', btn.getAttribute('data-descripcion') || '');
+                    editBtn.setAttribute('data-precio', btn.getAttribute('data-precio') || '0');
+                    editBtn.setAttribute('data-veces', btn.getAttribute('data-veces') || '');
+                    editBtn.setAttribute('data-orden', btn.getAttribute('data-orden') || '0');
+                }
+            });
+        }
+
+        var btnPlanDetalleEditar = document.getElementById('btnPlanDetalleEditar');
+        if (btnPlanDetalleEditar) {
+            btnPlanDetalleEditar.addEventListener('click', function() {
+                planModalTriggerBtn = this;
+                var det = bootstrap.Modal.getInstance(modalPlanDetalle);
+                if (det) det.hide();
+                setTimeout(function() {
+                    var m = bootstrap.Modal.getOrCreateInstance(document.getElementById('modalPlan'));
+                    m.show();
+                }, 350);
             });
         }
 

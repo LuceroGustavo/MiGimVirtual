@@ -9,7 +9,7 @@
     <version>0.0.1-SNAPSHOT</version>
     <packaging>jar</packaging>
 
-    <name>MiGimVirtual</name>
+    <name>MiGymVirtual</name>
     <description>App de gestión de gimnasio virtual - ejercicios, series, rutinas y hoja por token</description>
 
     <parent>

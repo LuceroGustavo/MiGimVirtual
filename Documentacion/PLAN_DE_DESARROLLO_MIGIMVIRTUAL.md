@@ -1,4 +1,4 @@
-# Plan de desarrollo – MiGimVirtual
+# Plan de desarrollo – MiGymVirtual
 
 **Objetivo:** Llevar la app a **100 % virtual** (sin asistencias presenciales, sin pizarra/sala TV, sin gestión de alumnos presenciales). Mantener ejercicios, series, rutinas, hoja por token y hacer todo responsive.
 
@@ -8,8 +8,8 @@
 
 ## Evolución ya realizada
 
-- **Fase 1 – Base de datos:** BD `migimvirtual` en `application*.properties`; MySQL crea la BD si no existe; Hibernate `ddl-auto=update`. Scripts `reset_db_migimvirtual.sql` y `reset_db_migimvirtual.sh`.
-- **Fase 2 – Renombre:** Paquete `com.migimvirtual`, clase `MigimvirtualApplication`, pom MiGimVirtual, credenciales `@migimvirtual.com`, templates y docs actualizados. Script de servidor `./migimvirtual`.
+- **Fase 1 – Base de datos:** BD `MiGymVirtual` en `application*.properties`; MySQL crea la BD si no existe; Hibernate `ddl-auto=update`. Scripts `reset_db_MiGymVirtual.sql` y `reset_db_MiGymVirtual.sh`.
+- **Fase 2 – Renombre:** Paquete `com.MiGymVirtual`, clase `MiGymVirtualApplication`, pom MiGymVirtual, credenciales `@MiGymVirtual.com`, templates y docs actualizados. Script de servidor `./MiGymVirtual`.
 - **Marca e interfaz:** Navbar logo `mgvirtual_logo1.png`, fondo `fondo-navbar.png`. Página pública: videos del carrusel `video_mgvirtual_inicio_escritorio.mp4` (escritorio) y `Video_mgvirtual_inicio_movil.mp4` (móvil).
 
 ---
@@ -19,12 +19,12 @@
 | Fase | Contenido | Estado |
 |------|-----------|--------|
 | **0** | Subplan: listado detallado de lo que se elimina (módulos, clases, rutas, templates) | Pendiente |
-| **1** | Nueva base de datos y configuración | **Completado** (BD `migimvirtual`) |
-| **2** | Renombrar todo Mattfuncional → MiGimVirtual | **Completado** |
+| **1** | Nueva base de datos y configuración | **Completado** (BD `MiGymVirtual`) |
+| **2** | Renombrar todo Mattfuncional → MiGymVirtual | **Completado** |
 | **3** | Ejecutar eliminaciones según subplan (calendario, pizarra, sala, simplificar alumnos) | Pendiente |
 | **4** | Continuar: responsive, ajustes UX, pruebas, documentación | Pendiente |
 
-**Por qué este orden:** Definir el subplan (Fase 0) primero evita renombrar o migrar código que después vamos a borrar. La base nueva (Fase 1) se crea limpia para MiGimVirtual. El renombre (Fase 2) deja el proyecto con identidad única. En Fase 3 se elimina todo lo que no es virtual y en Fase 4 se cierra responsive y mejoras.
+**Por qué este orden:** Definir el subplan (Fase 0) primero evita renombrar o migrar código que después vamos a borrar. La base nueva (Fase 1) se crea limpia para MiGymVirtual. El renombre (Fase 2) deja el proyecto con identidad única. En Fase 3 se elimina todo lo que no es virtual y en Fase 4 se cierra responsive y mejoras.
 
 ---
 
@@ -85,22 +85,22 @@ Checklist para marcar al ejecutar la Fase 3. Todo lo que se elimina es por enfoq
 2. **Configuración:**
    - En `application.properties` (y perfiles `application-dev.properties`, etc.): cambiar `jdbc:mysql://.../mattfuncional?...` por `.../mgvirtual?...`.
    - Dejar el resto de configuración JPA igual (`ddl-auto=update` para que Hibernate cree/actualice el esquema según entidades que queden tras Fase 3).
-3. **Scripts:** Si existen `scripts/servidor/reset_db_mattfuncional.sql` (y similares), crear versión `reset_db_migimvirtual.sql` o equivalente para `mgvirtual`, y actualizar referencias en documentación.
+3. **Scripts:** Si existen `scripts/servidor/reset_db_mattfuncional.sql` (y similares), crear versión `reset_db_MiGymVirtual.sql` o equivalente para `mgvirtual`, y actualizar referencias en documentación.
 4. **No migrar datos** de mattfuncional a mgvirtual; arrancar limpio con la app ya recortada (tras Fase 3) para que el esquema coincida con el código.
 
-**Nota:** Si se prefiere que la BD se llame `migimvirtual` en lugar de `mgvirtual`, basta usar ese nombre en la URL y en los scripts.
+**Nota:** Si se prefiere que la BD se llame `MiGymVirtual` en lugar de `mgvirtual`, basta usar ese nombre en la URL y en los scripts.
 
 ---
 
-## Fase 2 – Renombrar Mattfuncional → MiGimVirtual
+## Fase 2 – Renombrar Mattfuncional → MiGymVirtual
 
-1. **Paquete Java:** `com.mattfuncional` → `com.migimvirtual` (refactor en IDE: rename package; actualizar todos los imports).
-2. **pom.xml:** `groupId` y `artifactId` a `com.migimvirtual` y `migimvirtual`; `name` y `description` a MiGimVirtual.
-3. **Clase principal:** `MattfuncionalApplication.java` → `MigimvirtualApplication.java` (o `MiGimVirtualApplication.java`) y mismo en `ServletInitializer` si referencia la aplicación.
-4. **application.properties:** `spring.application.name=MiGimVirtual`; propiedades con prefijo `mattfuncional.*` → `migimvirtual.*` (y actualizar código que las use).
-5. **Títulos y marca:** En templates (navbar, login, footer), reemplazar "Mattfuncional" / "Mat Funcional" por "MiGimVirtual".
+1. **Paquete Java:** `com.mattfuncional` → `com.MiGymVirtual` (refactor en IDE: rename package; actualizar todos los imports).
+2. **pom.xml:** `groupId` y `artifactId` a `com.MiGymVirtual` y `MiGymVirtual`; `name` y `description` a MiGymVirtual.
+3. **Clase principal:** `MattfuncionalApplication.java` → `MiGymVirtualApplication.java` (o `MiGymVirtualApplication.java`) y mismo en `ServletInitializer` si referencia la aplicación.
+4. **application.properties:** `spring.application.name=MiGymVirtual`; propiedades con prefijo `mattfuncional.*` → `MiGymVirtual.*` (y actualizar código que las use).
+5. **Títulos y marca:** En templates (navbar, login, footer), reemplazar "Mattfuncional" / "Mat Funcional" por "MiGymVirtual".
 6. **Documentación:** README.md, LEEME_PRIMERO.md, DOCUMENTACION_UNIFICADA.md, este plan: actualizar nombre del proyecto y referencias a paquete/BD.
-7. **Scripts y carpeta raíz:** Renombrar `mattfuncional` (script servidor) a `migimvirtual` si se sigue usando, y referencias en Documentacion/servidor.
+7. **Scripts y carpeta raíz:** Renombrar `mattfuncional` (script servidor) a `MiGymVirtual` si se sigue usando, y referencias en Documentacion/servidor.
 
 ---
 
@@ -117,7 +117,7 @@ Checklist para marcar al ejecutar la Fase 3. Todo lo que se elimina es por enfoq
 - **Responsive:** Revisar todas las vistas (ejercicios, series, rutinas, hoja por token, alumnos, panel, página pública) para 100 % responsive (móvil primero si se desea).
 - **UX:** Ajustes de textos, mensajes y flujos para contexto virtual.
 - **Pruebas:** Login, CRUD ejercicios/series/rutinas, asignación y hoja por token.
-- **Documentación:** Actualizar LEEME_PRIMERO, DOCUMENTACION_UNIFICADA y CHANGELOG con el estado MiGimVirtual.
+- **Documentación:** Actualizar LEEME_PRIMERO, DOCUMENTACION_UNIFICADA y CHANGELOG con el estado MiGymVirtual.
 - **Opcional:** Depuración de rutinas asignadas, backup/export sin asistencias/pizarra; manual de usuario actualizado.
 
 ---
@@ -127,7 +127,7 @@ Checklist para marcar al ejecutar la Fase 3. Todo lo que se elimina es por enfoq
 | Tu punto | Ajuste / mejora |
 |----------|------------------|
 | 1. Nueva BD `mgvirtual` | Incluido en Fase 1. Sin migración de datos; BD nueva para esquema limpio tras eliminar módulos. |
-| 2. Renombrar todo Mattfuncional → MiGimVirtual | Fase 2, con detalle de paquete, pom, properties, títulos y docs. |
+| 2. Renombrar todo Mattfuncional → MiGymVirtual | Fase 2, con detalle de paquete, pom, properties, títulos y docs. |
 | 3. Subplan con métodos a eliminar | Fase 0: subplan detallado (controladores, servicios, entidades, repos, templates, rutas) para marcar al ejecutar Fase 3. |
 | 4. Después continuar | Fase 4: responsive, UX, pruebas y documentación. |
 

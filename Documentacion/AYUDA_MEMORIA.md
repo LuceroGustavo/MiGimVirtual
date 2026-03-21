@@ -4,7 +4,7 @@
 
 Para ver la lista de mejoras pendientes e implementadas (ítem por ítem), el checklist y los pendientes detallados, consultá:
 
-**[PLAN_DE_DESARROLLO_MIGIMVIRTUAL.md](PLAN_DE_DESARROLLO_MIGIMVIRTUAL.md)** – Fases y subplan de eliminaciones para app 100 % virtual; pendientes.
+**[PLAN_DE_DESARROLLO_MiGymVirtual.md](PLAN_DE_DESARROLLO_MiGymVirtual.md)** – Fases y subplan de eliminaciones para app 100 % virtual; pendientes.
 
 ---
 
@@ -130,6 +130,30 @@ Ver GUIA_RESPONSIVE.md §5.2.
 
 - **Terminar módulo de administración:** Responsive mejorado (textos cortos, dropdown móvil funcional, tabla consultas). Revisar vistas restantes, alineación y flujos en móvil.
 - **Revisar manual de usuario:** Se hicieron muchas modificaciones (ABM categorías, accesos rápidos del pie, módulo administración, etc.). Actualizar manual con contenido y estructura acordes a la app actual.
+
+---
+
+## Página pública y admin página pública — gimnasio virtual (recordatorio)
+
+**Contexto:** La **página pública** (`/`, `/planes`) y el bloque de **configuración en administración de página pública** (`/profesor/pagina-publica`) fueron pensados en origen para un **gimnasio físico** (administración presencial): campos y textos tipo **dirección**, **días y horarios**, teléfono fijo, etc.
+
+**Objetivo:** Adaptar todo al modelo **gimnasio virtual** (entrenamiento online / planes digitales):
+
+1. **Página pública**  
+   - Revisar secciones y textos: lo que implique **local físico**, **horarios de sala** o **contacto presencial** no debería ser obligatorio o debería eliminarse/sustituirse (ej. enfocar en WhatsApp, redes, valor del servicio virtual).  
+   - Ajustar landing y `/planes` para que el mensaje y los datos mostrados reflejen **virtual** y no “administración de gimnasio” clásica.
+
+2. **Administración de la página pública**  
+   - Tras definir qué muestra la pública, **simplificar o reorganizar** el formulario de configuración (quitar campos que ya no apliquen, renombrar ayudas, validaciones).  
+   - Mantener coherencia con el formulario de contacto (ej. ya se usa “Celular” en `/planes`).
+
+**Documentación de lo ya hecho (Mar 2026):** Ver `DOCUMENTACION_UNIFICADA.md` §1.1 (WhatsApp en modal consulta, marca MiGymVirtual, consultas auto-leídas en móvil, acciones en fila en tabla, flechas orden en tarjetas móvil, etc.).
+
+---
+
+## Hecho recientemente — resumen rápido (Mar 2026)
+
+- Marca **MiGymVirtual** en UI y mensajes; consulta → **WhatsApp** desde modal; consulta móvil **auto “vista”**; tabla consultas **Visto + Eliminar** en una línea; **Celular** en formulario `/planes`; menú admin móvil con **rayitas**; **orden de planes** con flechas en la tarjeta (móvil), no en el modal.
 
 ---
 

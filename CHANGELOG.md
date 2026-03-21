@@ -2,6 +2,31 @@
 
 > Nota: este changelog incluye histórico heredado de MiGym (referencias a admin/chat/websocket).
 
+## [2026-03-14] - feat(ui): marca MiGymVirtual, página pública, consultas, planes admin móvil ✅
+
+### Resumen
+Mejoras de marca, formulario público, administración de página pública (consultas, planes, menú admin móvil) y documentación.
+
+### Marca
+- **MiGimVirtual → MiGymVirtual** en plantillas Thymeleaf, `spring.application.name`, `pom.xml`, script `migimvirtual`, README, docs `.md`, logs/export (`ExerciseExportImportService`, `DuplicadosCheckRunner`). Sin renombrar paquete `com.migimvirtual` ni BD `migimvirtual`.
+
+### Página pública (`/planes`)
+- Formulario **Consultanos:** label/placeholder/validación **“Celular”** en lugar de “Teléfono” (`planes-publica.html`); campo `name="telefono"` sin cambios.
+
+### Administración página pública (`pagina-publica-admin.html` + `pagina-publica-admin.css`)
+- **Modal consulta (móvil):** tarjeta teléfono → enlace **WhatsApp** (`wa.me`, texto prefijado MiGymVirtual); estilos `.modal-consulta-wa-activo`.
+- **Modal consulta (móvil):** al abrir, **marcar como vista** automático (POST); eliminado botón “Marcar como visto”. Escritorio: sin cambio en botón “Visto” de tabla.
+- **Tabla consultas (escritorio):** **Acciones** en una fila (Visto + eliminar) vía `.publica-consultas-acciones` y formularios `inline-flex`.
+- **Planes (móvil):** **Subir/Bajar** en columna derecha de cada tarjeta; removido del modal de detalle; JS del modal simplificado.
+
+### Administración del sistema (`administracion.html`)
+- Menú desplegable móvil: **cuatro rayitas** a la derecha en lugar del triángulo Bootstrap; sin caret `::after`.
+
+### Documentación
+- `Documentacion/DOCUMENTACION_UNIFICADA.md` §1.1; `Documentacion/AYUDA_MEMORIA.md` (hecho reciente + **pendiente** rediseño página pública / admin para gimnasio virtual).
+
+---
+
 ## [2026-03-16] - feat(ui): accesos rápidos pie de página + módulo administración responsive ✅
 
 ### 🎯 **Resumen**
@@ -253,7 +278,7 @@ Mejoras en el módulo de rutinas: panel del profesor (columna Acciones en escrit
 ### ✅ **Vista hoja de rutina** (`rutinas/verRutina.html`) – responsive
 - **Vista profesor** (`/profesor/rutinas/ver/{id}`): `esVistaEscritorio` pasado a `false` en `ProfesorController`, misma experiencia responsive que el enlace compartido.
 - **Móvil (≤767px):** Grid de ejercicios en **1 columna** (un ejercicio bajo el otro); nombres de ejercicio hasta 2 líneas; `overflow-x: hidden` en el contenedor.
-- **Header en dos filas:** Fila 1 = logo + MiGimVirtual (izq) y fecha (der); Fila 2 = nombre de la rutina a ancho completo, centrado, con `word-wrap` para nombres largos (evita que se vea “justificado” o en una sola línea apretada).
+- **Header en dos filas:** Fila 1 = logo + MiGymVirtual (izq) y fecha (der); Fila 2 = nombre de la rutina a ancho completo, centrado, con `word-wrap` para nombres largos (evita que se vea “justificado” o en una sola línea apretada).
 
 ### 📁 **Archivos modificados**
 profesor/dashboard.html, rutinas/editarRutina.html, rutinas/verRutina.html, ProfesorController.java.
@@ -320,7 +345,7 @@ Mejoras de vista móvil para el panel del profesor: login, navbar compacto, dash
 - Viewport meta; padding y tamaños adaptados para pantallas ≤ 576px; botón con min-height táctil.
 
 ### ✅ **Navbar (móvil ≤ 991px)**
-- Una fila: logo + MiGimVirtual (clic lleva al panel si es profesor), sobre (consultas), nombre abreviado, Salir. Logo enlace a `/profesor/dashboard` cuando sesión profesor. Ocultos: Volver, Ir a mi Panel, correo completo, avatar.
+- Una fila: logo + MiGymVirtual (clic lleva al panel si es profesor), sobre (consultas), nombre abreviado, Salir. Logo enlace a `/profesor/dashboard` cuando sesión profesor. Ocultos: Volver, Ir a mi Panel, correo completo, avatar.
 
 ### ✅ **Dashboard (móvil ≤ 991px)**
 - Pantalla principal: 6 tarjetas (Alumnos, Series, Rutinas, Asignaciones, Ejercicios, Administrar). Al tocar una de las cuatro primeras se activa la pestaña y se hace scroll al contenido. Eliminado "Volver al inicio" (el logo del navbar cumple esa función). Sección de pestañas con mismo ancho que las tarjetas (max-width 480px). Tarjetas más altas (min-height 150px), iconos y texto un poco más grandes.
@@ -329,7 +354,7 @@ Mejoras de vista móvil para el panel del profesor: login, navbar compacto, dash
 - Columna "Acción" (singular). Celular: solo en móvil icono + popover al tocar; en escritorio se muestra el número. Botón Ver: solo icono de ojo. Botón Asignar rutina oculto en móvil (d-none d-lg-inline-block): las asignaciones se hacen desde el detalle del alumno.
 
 ### ✅ **Footer**
-- Una fila compacta: MiGimVirtual + lucerogustavosi. Sin año. Menos padding para ganar espacio vertical (footer.css, fragments/footer.html).
+- Una fila compacta: MiGymVirtual + lucerogustavosi. Sin año. Menos padding para ganar espacio vertical (footer.css, fragments/footer.html).
 
 ### 📁 **Archivos modificados**
 login.html, fragments/navbar.html, fragments/footer.html, footer.css, profesor/dashboard.html.

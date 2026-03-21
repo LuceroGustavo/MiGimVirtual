@@ -1,8 +1,8 @@
-# Subplan de desarrollo por módulos – MiGimVirtual
+# Subplan de desarrollo por módulos – MiGymVirtual
 
 **Objetivo:** Ir módulo por módulo (en el orden del panel del profesor) adaptando la app a **uso 100 % online** para personal trainers que no tienen gimnasio físico y envían rutinas a alumnos virtuales. Hacer **todo el panel responsive** (hoy solo la parte pública lo es).
 
-**Referencia:** [PLAN_DE_DESARROLLO_MIGIMVIRTUAL.md](PLAN_DE_DESARROLLO_MIGIMVIRTUAL.md), [LEEME_PRIMERO.md](LEEME_PRIMERO.md).
+**Referencia:** [PLAN_DE_DESARROLLO_MiGymVirtual.md](PLAN_DE_DESARROLLO_MiGymVirtual.md), [LEEME_PRIMERO.md](LEEME_PRIMERO.md).
 
 ---
 
@@ -89,7 +89,7 @@ Cada módulo se cierra cuando: entidad/métodos están adaptados, vistas respons
 ## 5. Calendario
 
 - [ ] Decisión: **eliminar** (app 100 % virtual) o **reorientar** (ej. recordatorios, fechas de envío).
-- [ ] Si se elimina: según subplan en PLAN_DE_DESARROLLO_MIGIMVIRTUAL (controlador, servicio, entidades, templates).
+- [ ] Si se elimina: según subplan en PLAN_DE_DESARROLLO_MiGymVirtual (controlador, servicio, entidades, templates).
 - [ ] Avances: _por anotar_.
 
 ---
@@ -107,7 +107,7 @@ Cada módulo se cierra cuando: entidad/métodos están adaptados, vistas respons
 ## 7. Pizarra
 
 - [ ] Decisión: **eliminar** (sala TV presencial) o reemplazar por funcionalidad virtual.
-- [ ] Si se elimina: según subplan en PLAN_DE_DESARROLLO_MIGIMVIRTUAL.
+- [ ] Si se elimina: según subplan en PLAN_DE_DESARROLLO_MiGymVirtual.
 - [ ] Avances: _por anotar_.
 
 ---

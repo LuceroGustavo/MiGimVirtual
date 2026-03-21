@@ -56,19 +56,19 @@
         </div>
     </div>
 
-    <div th:if="${param.ok != null}" class="alert alert-success alert-MiGimVirtual"><i class="fas fa-check-circle me-2"></i>Operación realizada correctamente.</div>
-    <div th:if="${param.error == 'notfound'}" class="alert alert-danger alert-MiGimVirtual"><i class="fas fa-exclamation-circle me-2"></i>Usuario no encontrado.</div>
-    <div th:if="${param.error == 'developer-locked'}" class="alert alert-warning alert-MiGimVirtual"><i class="fas fa-lock me-2"></i>No está permitido modificar el usuario developer.</div>
-    <div th:if="${param.error == 'no-permitido'}" class="alert alert-danger alert-MiGimVirtual"><i class="fas fa-ban me-2"></i>No tenés permiso para eliminar ese usuario.</div>
-    <div th:if="${param.error == 'self-rol'}" class="alert alert-warning alert-MiGimVirtual"><i class="fas fa-user-shield me-2"></i>No podés cambiar tu propio rol a otro que no sea Admin.</div>
-    <div th:if="${param.error == 'solo-developer-crea'}" class="alert alert-warning alert-MiGimVirtual"><i class="fas fa-lock me-2"></i>Solo un usuario Developer puede crear nuevos usuarios del sistema.</div>
-    <div th:if="${param.error == 'solo-developer-edita'}" class="alert alert-warning alert-MiGimVirtual"><i class="fas fa-lock me-2"></i>Solo un usuario Developer puede modificar otros usuarios. Podés editar solo tu perfil para cambiar tu contraseña.</div>
-    <div th:if="${param.error == 'solo-developer-elimina'}" class="alert alert-warning alert-MiGimVirtual"><i class="fas fa-lock me-2"></i>Solo un usuario Developer puede eliminar usuarios.</div>
-    <div th:if="${param.error == 'solo-developer-rol'}" class="alert alert-warning alert-MiGimVirtual"><i class="fas fa-lock me-2"></i>Solo un usuario Developer puede cambiar roles.</div>
-    <div th:if="${param.error == 'solo-propia-password'}" class="alert alert-warning alert-MiGimVirtual"><i class="fas fa-lock me-2"></i>Solo podés modificar tu propia contraseña.</div>
-    <div th:if="${errorMessage != null}" class="alert alert-danger alert-MiGimVirtual"><i class="fas fa-exclamation-circle me-2"></i><span th:text="${errorMessage}">Error</span></div>
+    <div th:if="${param.ok != null}" class="alert alert-success alert-MiGymVirtual"><i class="fas fa-check-circle me-2"></i>Operación realizada correctamente.</div>
+    <div th:if="${param.error == 'notfound'}" class="alert alert-danger alert-MiGymVirtual"><i class="fas fa-exclamation-circle me-2"></i>Usuario no encontrado.</div>
+    <div th:if="${param.error == 'developer-locked'}" class="alert alert-warning alert-MiGymVirtual"><i class="fas fa-lock me-2"></i>No está permitido modificar el usuario developer.</div>
+    <div th:if="${param.error == 'no-permitido'}" class="alert alert-danger alert-MiGymVirtual"><i class="fas fa-ban me-2"></i>No tenés permiso para eliminar ese usuario.</div>
+    <div th:if="${param.error == 'self-rol'}" class="alert alert-warning alert-MiGymVirtual"><i class="fas fa-user-shield me-2"></i>No podés cambiar tu propio rol a otro que no sea Admin.</div>
+    <div th:if="${param.error == 'solo-developer-crea'}" class="alert alert-warning alert-MiGymVirtual"><i class="fas fa-lock me-2"></i>Solo un usuario Developer puede crear nuevos usuarios del sistema.</div>
+    <div th:if="${param.error == 'solo-developer-edita'}" class="alert alert-warning alert-MiGymVirtual"><i class="fas fa-lock me-2"></i>Solo un usuario Developer puede modificar otros usuarios. Podés editar solo tu perfil para cambiar tu contraseña.</div>
+    <div th:if="${param.error == 'solo-developer-elimina'}" class="alert alert-warning alert-MiGymVirtual"><i class="fas fa-lock me-2"></i>Solo un usuario Developer puede eliminar usuarios.</div>
+    <div th:if="${param.error == 'solo-developer-rol'}" class="alert alert-warning alert-MiGymVirtual"><i class="fas fa-lock me-2"></i>Solo un usuario Developer puede cambiar roles.</div>
+    <div th:if="${param.error == 'solo-propia-password'}" class="alert alert-warning alert-MiGymVirtual"><i class="fas fa-lock me-2"></i>Solo podés modificar tu propia contraseña.</div>
+    <div th:if="${errorMessage != null}" class="alert alert-danger alert-MiGymVirtual"><i class="fas fa-exclamation-circle me-2"></i><span th:text="${errorMessage}">Error</span></div>
 
-    <div th:if="${correosDuplicados != null && !correosDuplicados.isEmpty()}" class="alert alert-warning alert-dismissible fade show alert-MiGimVirtual">
+    <div th:if="${correosDuplicados != null && !correosDuplicados.isEmpty()}" class="alert alert-warning alert-dismissible fade show alert-MiGymVirtual">
         <strong><i class="fas fa-exclamation-triangle me-1"></i> Correos duplicados en la base de datos</strong>
         <p class="mb-1 mt-2 small">Revisá los correos en la tabla <code>usuario</code> o <code>profesor</code>.</p>
         <ul class="mb-0 small">
@@ -81,18 +81,15 @@
     <div th:if="${soloVistaProfesor}" class="card">
         <div class="card-header bg-light"><strong>Mi usuario</strong></div>
         <div class="card-body">
+            <!-- Admin: sin campo Rol (siempre es ADMIN en este login) -->
             <form th:action="@{/profesor/usuarios-sistema/perfil}" method="post" class="row g-2 align-items-end mb-3">
-                <div class="col-md-4">
+                <div class="col-md-5">
                     <label class="form-label small">Nombre</label>
                     <input type="text" name="nombre" class="form-control form-control-sm" th:value="${usuarioActual != null ? usuarioActual.nombre : ''}" required>
                 </div>
-                <div class="col-md-4">
+                <div class="col-md-5">
                     <label class="form-label small">Correo</label>
                     <input type="email" name="correo" class="form-control form-control-sm" th:value="${usuarioActual != null ? usuarioActual.correo : ''}" required>
-                </div>
-                <div class="col-md-2">
-                    <label class="form-label small">Rol</label>
-                    <input type="text" class="form-control form-control-sm" th:value="${usuarioActual != null ? usuarioActual.rol : ''}" disabled>
                 </div>
                 <div class="col-md-2">
                     <button type="submit" class="btn btn-outline-primary btn-sm w-100">Guardar</button>
@@ -177,7 +174,7 @@
     </div>
 </div>
 
-<!-- Modal confirmación (estilo MiGimVirtual) -->
+<!-- Modal confirmación (estilo MiGymVirtual) -->
     <div class="modal fade" id="modalConfirmar" tabindex="-1">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">

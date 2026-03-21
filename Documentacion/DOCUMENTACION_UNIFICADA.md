@@ -1,6 +1,6 @@
 # Documentación unificada – Referencias y resúmenes
 
-Contenido importante reunido de los documentos del proyecto. Para contexto: [LEEME_PRIMERO.md](LEEME_PRIMERO.md), [AYUDA_MEMORIA.md](AYUDA_MEMORIA.md) y [PLAN_DE_DESARROLLO_MIGIMVIRTUAL.md](PLAN_DE_DESARROLLO_MIGIMVIRTUAL.md).
+Contenido importante reunido de los documentos del proyecto. Para contexto: [LEEME_PRIMERO.md](LEEME_PRIMERO.md), [AYUDA_MEMORIA.md](AYUDA_MEMORIA.md) y [PLAN_DE_DESARROLLO_MiGymVirtual.md](PLAN_DE_DESARROLLO_MiGymVirtual.md).
 
 ---
 
@@ -19,13 +19,13 @@ Contenido importante reunido de los documentos del proyecto. Para contexto: [LEE
 
 ---
 
-## 0. Evolución MiGimVirtual (realizada)
+## 0. Evolución MiGymVirtual (realizada)
 
-- **Proyecto:** Nombre MiGimVirtual; paquete `com.migimvirtual`; clase principal `MigimvirtualApplication`.
-- **Base de datos:** `migimvirtual` (URL en `application*.properties`); se crea al arrancar si no existe; tablas con `ddl-auto=update`.
+- **Proyecto:** Nombre MiGymVirtual; paquete `com.MiGymVirtual`; clase principal `MiGymVirtualApplication`.
+- **Base de datos:** `MiGymVirtual` (URL en `application*.properties`); se crea al arrancar si no existe; tablas con `ddl-auto=update`.
 - **Credenciales de desarrollo:** `profesor@migymvirtual.com` / `profesor`; `lucerogustavosi@gmail.com` / `Qbasic.1977`.
 - **Marca:** Navbar con logo `mgvirtual_logo1.png` y fondo `fondo-navbar.png`. Página pública: carrusel con videos `video_mgvirtual_inicio_escritorio.mp4` (escritorio) y `Video_mgvirtual_inicio_movil.mp4` (móvil).
-- **Servidor:** Menú `./migimvirtual`; scripts `reset_db_migimvirtual.sql` / `reset_db_migimvirtual.sh`; variables `MIGIMVIRTUAL_DB_USER`, `MIGIMVIRTUAL_DB_PASSWORD`.
+- **Servidor:** Menú `./MiGymVirtual`; scripts `reset_db_MiGymVirtual.sql` / `reset_db_MiGymVirtual.sh`; variables `MiGymVirtual_DB_USER`, `MiGymVirtual_DB_PASSWORD`.
 
 ---
 
@@ -37,6 +37,19 @@ Contenido importante reunido de los documentos del proyecto. Para contexto: [LEE
 - **Alumnos:** Solo ficha (sin login). Estado ACTIVO/INACTIVO; filtros por nombre y estado. Al eliminar alumno se borran mediciones y rutinas asignadas. Tarjeta "Progreso del alumno" con historial de registros (crear, editar, eliminar). **Vista del alumno terminada (Mar 2026):** responsive móvil, modal progreso al tocar registro, modal confirmar eliminar progreso, botón Guardar notas, Eliminar usuario debajo de todo, barra inferior móvil, formato fecha dd/MM/yy. Pendiente: scroll vertical en progresos móvil (>5 registros).
 - **Página pública:** Landing `/`, Planes `/planes`, consultas; administración en `/profesor/pagina-publica`.
 - **Manual del usuario:** HTML en `/profesor/manual` (botón en panel); cubre acceso, panel, alumnos, ejercicios, series, rutinas, usuarios, administración. (Calendario y pizarra eliminados en Mar 2026.)
+
+### 1.1 Página pública y administración — mejoras UX (Mar 2026)
+
+- **Marca:** Texto visible unificado como **MiGymVirtual** (antes “MiGimVirtual”) en plantillas HTML, `spring.application.name`, mensajes de WhatsApp desde el modal de consulta, `pom.xml`, scripts y documentación. Paquete Java y nombre de BD (`com.migimvirtual`, `migimvirtual`) sin cambiar.
+- **Modal consulta (móvil / admin página pública):** Tarjeta de teléfono abre **WhatsApp** (`wa.me` + heurística Argentina); estilos hover `.modal-consulta-wa-activo`. Texto prefijado del mensaje menciona MiGymVirtual.
+- **Consultas — móvil:** Al abrir el modal de detalle, la consulta se **marca como vista automáticamente** (POST); se quitó el botón “Marcar como visto” del modal. En **escritorio** sigue el botón “Visto” en la tabla.
+- **Consultas — escritorio (tabla):** Columna **Acciones** con **Visto** y **Eliminar** en **una sola fila** (flex + `publica-consultas-acciones` en `pagina-publica-admin.css`).
+- **Formulario contacto en `/planes`:** Placeholder y textos de validación: **“Celular”** en lugar de “Teléfono” (`planes-publica.html`). El campo sigue enviándose como `telefono` en el backend.
+- **Administración del sistema (móvil):** Menú desplegable de secciones: icono de **cuatro rayitas horizontales** a la derecha (en lugar del chevron/triángulo), indicando más opciones (`administracion.html`).
+- **Planes (móvil) en admin página pública:** **Subir / Bajar** orden del plan con **flechas en la tarjeta** (columna derecha); mismo POST que escritorio. **Quitado** del modal de detalle del plan. Tap en la parte izquierda de la fila sigue abriendo el modal (detalle, Editar, Eliminar).
+- **Estilos:** `pagina-publica-admin.css` (consultas, modal WhatsApp, planes móvil, acciones tabla).
+
+**Pendiente de producto (ver AYUDA_MEMORIA):** Replantear la **página pública** y la **administración de página pública** para modelo **gimnasio virtual** (menos énfasis en dirección física, horarios presenciales, etc.).
 - **Backup (terminado Mar 2026):** Ver sección 2.
 - **Depuración de datos:** Módulo eliminado en Mar 2026 (ya no existe en Administración).
 
@@ -64,7 +77,7 @@ El módulo "Depuración de datos" fue eliminado por completo en marzo 2026. No e
 
 ### 2.2 Modales y avisos unificados (confirmaciones y alertas)
 
-**Estado:** Completado (febrero 2026). En toda la app las confirmaciones y avisos usan modales con estilo MiGimVirtual (cabecera morada `.modal-confirmar-header`, pie `.modal-confirmar-footer` en `style.css`), reemplazando `alert()` y `confirm()` nativos del navegador.
+**Estado:** Completado (febrero 2026). En toda la app las confirmaciones y avisos usan modales con estilo MiGymVirtual (cabecera morada `.modal-confirmar-header`, pie `.modal-confirmar-footer` en `style.css`), reemplazando `alert()` y `confirm()` nativos del navegador.
 
 **Vistas con modal de confirmación y/o alerta:**
 
@@ -91,7 +104,7 @@ El módulo "Depuración de datos" fue eliminado por completo en marzo 2026. No e
 
 ## 3. Despliegue y servidor
 
-**Resumen:** App en VPS Donweb. Acceso SSH: `ssh -p 5638 root@149.50.144.53`. Aplicación en puerto 8080. Si PowerShell está bloqueado, usar Consola VNC de Donweb y menú `./migimvirtual` / `screen -r migimvirtual`. **Límite de subida (Nginx):** Para restaurar backups grandes, configurar `client_max_body_size` (ej. 50M) en la config de Nginx; ver archivo de ejemplo en `servidor/nginx-detodoya.conf`.
+**Resumen:** App en VPS Donweb. Acceso SSH: `ssh -p 5638 root@149.50.144.53`. Aplicación en puerto 8080. Si PowerShell está bloqueado, usar Consola VNC de Donweb y menú `./MiGymVirtual` / `screen -r MiGymVirtual`. **Límite de subida (Nginx):** Para restaurar backups grandes, configurar `client_max_body_size` (ej. 50M) en la config de Nginx; ver archivo de ejemplo en `servidor/nginx-detodoya.conf`.
 
 **Detalle completo:** [servidor/DESPLIEGUE-SERVIDOR.md](servidor/DESPLIEGUE-SERVIDOR.md) (acceso SSH, Consola VNC, menú, Nginx, reinicio, backups en servidor).
 
@@ -131,4 +144,4 @@ El manual en la app (`/profesor/manual`) incluye:
 
 ---
 
-*Última actualización: Marzo 2026. Depuración de datos eliminada (§2.1). Para pendientes ver PENDIENTES_FINALES.md.*
+*Última actualización: Marzo 2026 (§1.1 mejoras página pública / admin). Depuración de datos eliminada (§2.1). Pendientes: AYUDA_MEMORIA.md.*

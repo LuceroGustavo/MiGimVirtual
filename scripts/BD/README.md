@@ -1,10 +1,10 @@
-# Scripts de datos de prueba - MiGimVirtual
+# Scripts de datos de prueba - MiGymVirtual
 
 Scripts SQL para cargar datos de prueba en la base de datos. **Ejecutar en el orden indicado.**
 
 ## Requisitos previos
 
-- Base de datos `migimvirtual` creada y con tablas (la app debe haber arrancado al menos una vez).
+- Base de datos `MiGymVirtual` creada y con tablas (la app debe haber arrancado al menos una vez).
 - **Importante:** La app carga automáticamente los 60 ejercicios predeterminados al arrancar (DataInitializer). Si no existen ejercicios, el script 03 insertará `serie_ejercicio` con `exercise_id` NULL y las series/rutinas quedarán vacías en las vistas.
 - Al menos un profesor existente (creado por DataInitializer: profesor@migymvirtual.com).
 - Categorías del sistema creadas (FUERZA, CARDIO, FLEXIBILIDAD, FUNCIONAL, HIIT — creadas por DataInitializer al arrancar).
@@ -26,10 +26,10 @@ Scripts SQL para cargar datos de prueba en la base de datos. **Ejecutar en el or
 
 ```bash
 # Desde la raíz del proyecto, con MySQL en localhost:
-mysql -u root -p migimvirtual < scripts/BD/01_usuarios_prueba.sql
-mysql -u root -p migimvirtual < scripts/BD/02_progresos_prueba.sql
-mysql -u root -p migimvirtual < scripts/BD/03_series_prueba.sql
-mysql -u root -p migimvirtual < scripts/BD/04_rutinas_prueba.sql
+mysql -u root -p MiGymVirtual < scripts/BD/01_usuarios_prueba.sql
+mysql -u root -p MiGymVirtual < scripts/BD/02_progresos_prueba.sql
+mysql -u root -p MiGymVirtual < scripts/BD/03_series_prueba.sql
+mysql -u root -p MiGymVirtual < scripts/BD/04_rutinas_prueba.sql
 ```
 
 O desde MySQL Workbench / DBeaver: abrir cada archivo y ejecutarlo en orden.
@@ -45,5 +45,5 @@ O desde MySQL Workbench / DBeaver: abrir cada archivo y ejecutarlo en orden.
 
 ## Notas
 
-- Los alumnos de prueba usan correos `test_alumno_N@migimvirtual.test` (N = 1 a 10).
+- Los alumnos de prueba usan correos `test_alumno_N@MiGymVirtual.test` (N = 1 a 10).
 - Los alumnos no tienen contraseña (no inician sesión; se gestionan desde el panel del profesor).

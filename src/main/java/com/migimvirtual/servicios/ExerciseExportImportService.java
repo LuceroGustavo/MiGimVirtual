@@ -104,7 +104,7 @@ public class ExerciseExportImportService {
                 if (profesor == null) {
                     throw new RuntimeException("No se encontró el profesor con ID: " + profesorId);
                 }
-                nombreArchivo = profesor.getCorreo().replace("@", "_") + "_MiGimVirtual_ejer_" + LocalDateTime.now().format(DATE_FORMATTER);
+                nombreArchivo = profesor.getCorreo().replace("@", "_") + "_MiGymVirtual_ejer_" + LocalDateTime.now().format(DATE_FORMATTER);
                 ejercicios = exerciseService.findEjerciciosPropiosDelProfesor(profesorId);
                 if (ejercicios.isEmpty()) {
                     throw new RuntimeException("No hay ejercicios propios para exportar del profesor: " + profesor.getNombre());

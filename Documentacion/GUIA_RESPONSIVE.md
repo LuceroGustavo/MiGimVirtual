@@ -1,4 +1,4 @@
-# Guía: diseño responsivo en MiGimVirtual
+# Guía: diseño responsivo en MiGymVirtual
 
 Resumen para entender **cómo funciona** el diseño responsivo, **qué consume recursos** y **qué se recomienda** en este proyecto.
 
@@ -24,7 +24,7 @@ Las dos formas son válidas:
 | **Desktop-first** | Diseñás para pantalla grande y con `@media (max-width: ...)` adaptás para pantallas chicas. | Cuando la versión principal es la de escritorio (como en tu caso). |
 | **Mobile-first** | Diseñás primero para móvil y con `@media (min-width: ...)` agregás espacio/columnas para pantallas grandes. | Cuando la prioridad es móvil o querés forzar simplicidad en móvil. |
 
-**Para MiGimVirtual:** tiene sentido **mantener desktop como referencia** (como ahora) y **ir agregando reglas para pantallas chicas**. No hace falta reescribir todo en mobile-first. Si en móvil algo se ve mal, se ajusta con media queries o clases de Bootstrap; el escritorio puede quedar igual.
+**Para MiGymVirtual:** tiene sentido **mantener desktop como referencia** (como ahora) y **ir agregando reglas para pantallas chicas**. No hace falta reescribir todo en mobile-first. Si en móvil algo se ve mal, se ajusta con media queries o clases de Bootstrap; el escritorio puede quedar igual.
 
 **Sobre “si está pensado para celular, ¿no sería malo para escritorio?”:** No. “Pensado para móvil” solo significa que el diseño base funciona en pantalla chica. En pantallas grandes ese mismo diseño se **expande** (más columnas, más espacio). No implica que escritorio quede peor; con buenos breakpoints ambos quedan bien.
 
@@ -77,10 +77,10 @@ Responsividad del panel del profesor terminada para móvil (breakpoint 991px / 9
 | Área | En móvil (≤ 991px) |
 |------|---------------------|
 | **Login** | Viewport, padding y tamaños reducidos; botón táctil. |
-| **Navbar** | Una fila: logo + MiGimVirtual (link al panel), sobre, nombre, Salir. Sin Volver, Ir a mi Panel, correo ni avatar. Logo lleva a `/profesor/dashboard` si es profesor. |
+| **Navbar** | Una fila: logo + MiGymVirtual (link al panel), sobre, nombre, Salir. Sin Volver, Ir a mi Panel, correo ni avatar. Logo lleva a `/profesor/dashboard` si es profesor. |
 | **Dashboard** | 6 tarjetas como pantalla principal; al tocar Alumnos/Series/Rutinas/Asignaciones se abre la pestaña. Sin "Volver al inicio" (logo = volver). Contenido de pestañas con mismo ancho que tarjetas (480px). Tarjetas más altas (150px), iconos y texto un poco más grandes. |
 | **Tabla Mis Alumnos** | Columna "Acción"; celular = icono + popover (solo móvil); Ver = solo ícono ojo; Asignar rutina oculto (se hace desde detalle del alumno). |
-| **Footer** | Una fila: MiGimVirtual + lucerogustavosi. Sin año. Compacto. |
+| **Footer** | Una fila: MiGymVirtual + lucerogustavosi. Sin año. Compacto. |
 
 **Archivos:** login.html, fragments/navbar.html, fragments/footer.html, footer.css, profesor/dashboard.html. Detalle en CHANGELOG [2026-03-15] feat(ui): responsividad del panel del profesor.
 
@@ -165,7 +165,7 @@ Responsividad del panel del profesor terminada para móvil (breakpoint 991px / 9
 |------|----------|
 | **Vista profesor y enlace compartido** | Misma plantilla; `esVistaEscritorio = false` para vista profesor, grid 1 columna. |
 | **Grid de ejercicios** | 1 columna (≤767px); nombres hasta 2 líneas; sin overflow horizontal. |
-| **Header** | Fila 1: logo + MiGimVirtual \| fecha. Fila 2: nombre de la rutina a ancho completo, centrado, con word-wrap para nombres largos. |
+| **Header** | Fila 1: logo + MiGymVirtual \| fecha. Fila 2: nombre de la rutina a ancho completo, centrado, con word-wrap para nombres largos. |
 
 **Archivos:** profesor/dashboard.html, rutinas/editarRutina.html, rutinas/verRutina.html, ProfesorController.java.
 

@@ -1,4 +1,4 @@
-# Paleta de colores por módulo – MiGimVirtual
+# Paleta de colores por módulo – MiGymVirtual
 
 Referencia de los colores asignados a cada módulo del panel del profesor. Se usan tonos **pastel** y sus derivaciones para mantener consistencia visual.
 

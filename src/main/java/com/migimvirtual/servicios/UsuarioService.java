@@ -11,6 +11,7 @@ import com.migimvirtual.repositorios.ProfesorRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -239,6 +240,46 @@ public class UsuarioService {
         usuario.setNombre(nombreNorm);
         usuario.setCorreo(correoNorm);
         usuarioRepository.save(usuario);
+    }
+
+    /**
+     * Tras actualizar nombre/correo en BD, el {@link org.springframework.security.core.annotation.AuthenticationPrincipal}
+     * sigue apuntando al objeto cargado al login. Refresca el principal en la sesión para que navbar y vistas muestren datos actuales.
+     * Si cambió el correo, también mantiene coherente el nombre de usuario de la autenticación.
+     */
+    public void refrescarPrincipalEnSesionSiCorresponde(Long usuarioId) {
+        if (usuarioId == null) {
+            return;
+        }
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth == null || !auth.isAuthenticated() || !(auth.getPrincipal() instanceof Usuario)) {
+            return;
+        }
+        Usuario actualEnSesion = (Usuario) auth.getPrincipal();
+        if (actualEnSesion.getId() == null || !actualEnSesion.getId().equals(usuarioId)) {
+            return;
+        }
+        Usuario desdeBd = usuarioRepository.findById(usuarioId).orElse(null);
+        if (desdeBd == null) {
+            return;
+        }
+        // Misma lógica que getUsuarioActual: enlazar profesor al admin si aplica
+        if ("ADMIN".equals(desdeBd.getRol()) && desdeBd.getProfesor() == null) {
+            try {
+                Profesor profesor = profesorRepository.findFirstByCorreo(desdeBd.getCorreo()).orElse(null);
+                if (profesor != null) {
+                    desdeBd.setProfesor(profesor);
+                }
+            } catch (Exception ignored) {
+                // continuar sin profesor
+            }
+        }
+        UsernamePasswordAuthenticationToken nuevo = new UsernamePasswordAuthenticationToken(
+                desdeBd,
+                auth.getCredentials(),
+                desdeBd.getAuthorities());
+        nuevo.setDetails(auth.getDetails());
+        SecurityContextHolder.getContext().setAuthentication(nuevo);
     }
 
     @CacheEvict(value = "usuarios", allEntries = true)

@@ -1,0 +1,552 @@
+body { background: linear-gradient(145deg, #e8eaf6 0%, #ede7f6 35%, #f3e5f5 70%, #fce4ec 100%); min-height: 100vh; }
+.card { border: none; border-radius: 1.25rem; box-shadow: 0 6px 24px rgba(94, 53, 177, 0.08); overflow: hidden; }
+.card-header { background: #f8f9fa !important; border-radius: 1.25rem 1.25rem 0 0; font-weight: 600; color: #5e35b1; }
+.table th { color: #5e35b1; font-weight: 600; }
+/* Cabecera de página */
+.publica-header-hero {
+    background: linear-gradient(135deg, rgba(255,255,255,0.92) 0%, rgba(237,231,246,0.95) 45%, rgba(225,190,231,0.35) 100%);
+    border: 1px solid rgba(94, 53, 177, 0.12);
+    border-radius: 1.25rem;
+    padding: 1rem 1.25rem;
+    box-shadow: 0 4px 20px rgba(94, 53, 177, 0.07);
+    margin-bottom: 1.25rem;
+}
+.publica-header-hero h3 {
+    color: #4527a0;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+}
+.publica-header-hero .publica-globe-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 0.75rem;
+    background: linear-gradient(135deg, #7e57c2 0%, #5e35b1 100%);
+    color: #fff;
+    box-shadow: 0 4px 12px rgba(94, 53, 177, 0.35);
+}
+.btn-publica-ver-sitio {
+    border: 2px solid rgba(94, 53, 177, 0.35) !important;
+    color: #5e35b1 !important;
+    font-weight: 600;
+    border-radius: 0.75rem !important;
+    padding: 0.45rem 1rem !important;
+    background: rgba(255,255,255,0.85) !important;
+    transition: background 0.2s, box-shadow 0.2s, transform 0.15s;
+}
+.btn-publica-ver-sitio:hover {
+    background: linear-gradient(135deg, #ede7f6 0%, #e1bee7 100%) !important;
+    box-shadow: 0 4px 14px rgba(94, 53, 177, 0.2);
+    color: #4527a0 !important;
+    transform: translateY(-1px);
+}
+.publica-alert-ok {
+    border: none;
+    border-radius: 1rem;
+    background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+    color: #2e7d32;
+    border-left: 4px solid #66bb6a;
+    box-shadow: 0 2px 12px rgba(46, 125, 50, 0.12);
+}
+.publica-modulo-hint {
+    font-size: 0.875rem;
+    color: #5e35b1;
+    opacity: 0.82;
+    padding: 0.5rem 0.75rem;
+    border-radius: 0.65rem;
+    background: rgba(255,255,255,0.55);
+    border-left: 3px solid rgba(94, 53, 177, 0.25);
+    margin-bottom: 1rem;
+}
+.card-modulo-consultas .publica-modulo-hint {
+    border-left-color: rgba(106, 27, 154, 0.35);
+    background: rgba(250, 248, 255, 0.7);
+    color: #6a1b9a;
+}
+.card-modulo-planes .publica-modulo-hint {
+    border-left-color: rgba(0, 105, 92, 0.35);
+    background: rgba(224, 242, 241, 0.45);
+    color: #006064;
+}
+.card-modulo-config .publica-modulo-hint {
+    border-left-color: rgba(230, 81, 0, 0.35);
+    background: rgba(255, 243, 224, 0.6);
+    color: #e65100;
+}
+/* Márgenes simétricos (panel / móvil) + variables de tema */
+.publica-admin-root {
+    --publica-violet: #5e35b1;
+    --publica-violet-soft: #7e57c2;
+    max-width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+    padding-left: 0.875rem !important;
+    padding-right: 0.875rem !important;
+}
+@media (min-width: 576px) {
+    .publica-admin-root {
+        padding-left: 1rem !important;
+        padding-right: 1rem !important;
+    }
+}
+@media (min-width: 768px) {
+    .publica-admin-root {
+        padding-left: 1.25rem !important;
+        padding-right: 1.25rem !important;
+    }
+}
+@media (min-width: 992px) {
+    .publica-admin-root {
+        padding-left: 1.5rem !important;
+        padding-right: 1.5rem !important;
+    }
+}
+.publica-admin-root .card,
+.publica-admin-root .card-body {
+    min-width: 0;
+    max-width: 100%;
+}
+.publica-admin-root .table-responsive {
+    max-width: 100%;
+    -webkit-overflow-scrolling: touch;
+    overflow-x: auto;
+}
+.publica-admin-root .table { margin-bottom: 0; table-layout: auto; }
+.publica-admin-root .publica-header-actions .btn { white-space: nowrap; }
+/* Módulo consultas — pastel lavanda */
+.card-modulo-consultas {
+    border-left: 4px solid #9c27b0;
+    box-shadow: 0 8px 28px rgba(156, 39, 176, 0.1);
+}
+.card-modulo-consultas .card-body {
+    background: linear-gradient(180deg, rgba(250, 248, 255, 0.9) 0%, #fff 55%);
+}
+.card-modulo-consultas .card-header {
+    background: linear-gradient(135deg, #e1bee7 0%, #ce93d8 40%, #b39ddb 100%) !important;
+    color: #311b92 !important;
+    border: none;
+    padding: 0.9rem 1.15rem;
+    text-shadow: 0 1px 0 rgba(255,255,255,0.35);
+}
+.card-modulo-consultas .card-header i { opacity: 0.95; }
+.card-modulo-consultas .table thead.table-light {
+    background: linear-gradient(180deg, #f3e5f5 0%, #ede7f6 100%) !important;
+}
+.card-modulo-consultas .table tbody tr:hover { background-color: rgba(237, 231, 246, 0.45) !important; }
+/* Acciones: Visto + eliminar siempre en una fila (escritorio / panel admin) */
+.card-modulo-consultas .publica-consultas-acciones {
+    display: flex !important;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 0.35rem;
+    white-space: nowrap;
+    vertical-align: middle;
+    min-width: 8.5rem;
+}
+.card-modulo-consultas .publica-consultas-acciones .form-consulta-accion {
+    display: inline-flex;
+    margin: 0;
+    flex: 0 0 auto;
+}
+.card-modulo-consultas .publica-consultas-acciones .badge {
+    flex: 0 0 auto;
+}
+.card-modulo-consultas .publica-consultas-acciones-th {
+    white-space: nowrap;
+    text-align: right !important;
+}
+.list-publica-consultas .list-group-item {
+    border: 1px solid rgba(156, 39, 176, 0.2) !important;
+    border-radius: 0.85rem !important;
+    margin-bottom: 0.5rem;
+    padding: 0.85rem 1.05rem;
+    background: linear-gradient(135deg, #ffffff 0%, #f3e5f5 55%, #e1bee7 130%);
+    color: #4527a0;
+    box-shadow: 0 2px 10px rgba(94, 53, 177, 0.06);
+    transition: box-shadow 0.2s, transform 0.15s;
+}
+.list-publica-consultas .list-group-item:hover {
+    box-shadow: 0 4px 16px rgba(94, 53, 177, 0.12);
+}
+.list-publica-consultas .list-group-item:active { transform: scale(0.99); }
+.list-publica-consultas .consulta-fila-fecha { font-size: 0.8rem; color: #6a1b9a; opacity: 0.85; }
+.list-publica-consultas .consulta-fila-nombre { font-weight: 600; font-size: 1rem; }
+/* Consulta: sin leer vs leída + sobre + ojo */
+.list-publica-consultas .consulta-fila-sin-leer {
+    border-left: 4px solid #ab47bc !important;
+    box-shadow: 0 3px 14px rgba(171, 71, 188, 0.18) !important;
+}
+.list-publica-consultas .consulta-fila-leida {
+    opacity: 0.92;
+    border-left: 4px solid rgba(106, 27, 154, 0.25) !important;
+}
+.consulta-fila-main { min-width: 0; }
+.consulta-fila-nombre-row {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.35rem 0.5rem;
+}
+.consulta-sobre-indicador {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.85rem;
+    height: 1.85rem;
+    border-radius: 0.45rem;
+    font-size: 0.95rem;
+}
+.consulta-sobre-indicador.consulta-sobre-cerrado {
+    background: linear-gradient(135deg, #e1bee7 0%, #ce93d8 100%);
+    color: #4a148c;
+    box-shadow: 0 2px 8px rgba(74, 20, 140, 0.2);
+}
+.consulta-sobre-indicador.consulta-sobre-abierto {
+    background: rgba(186, 104, 200, 0.22);
+    color: #7b1fa2;
+    opacity: 0.75;
+}
+.consulta-fila-leida .consulta-sobre-indicador.consulta-sobre-abierto {
+    opacity: 0.55;
+}
+.consulta-fila-tap-hint {
+    margin-top: 0.35rem;
+    font-size: 0.72rem;
+    color: #7e57c2;
+    font-weight: 500;
+    letter-spacing: 0.01em;
+}
+.consulta-fila-leida .consulta-fila-tap-hint { color: #9575cd; opacity: 0.85; }
+.consulta-fila-ojo {
+    align-self: center;
+}
+.consulta-ver-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.25rem;
+    height: 2.25rem;
+    border-radius: 50%;
+    background: linear-gradient(135deg, rgba(126, 87, 194, 0.2) 0%, rgba(94, 53, 177, 0.12) 100%);
+    color: #5e35b1;
+    font-size: 0.95rem;
+    border: 1px solid rgba(94, 53, 177, 0.2);
+}
+.consulta-fila-sin-leer .consulta-ver-icon {
+    background: linear-gradient(135deg, #ede7f6 0%, #e1bee7 100%);
+    border-color: rgba(171, 71, 188, 0.35);
+    color: #6a1b9a;
+}
+/* Módulo planes — pastel menta */
+.card-modulo-planes {
+    border-left: 4px solid #00897b;
+    box-shadow: 0 8px 28px rgba(0, 137, 123, 0.1);
+}
+.card-modulo-planes .card-body {
+    background: linear-gradient(180deg, rgba(224, 247, 250, 0.45) 0%, #fff 50%);
+}
+.card-modulo-planes .card-header {
+    background: linear-gradient(135deg, #b2ebf2 0%, #80deea 45%, #4dd0e1 100%) !important;
+    color: #004d40 !important;
+    border: none;
+    padding: 0.9rem 1.15rem;
+    text-shadow: 0 1px 0 rgba(255,255,255,0.4);
+}
+.card-modulo-planes .card-header i { color: #00695c; }
+.card-modulo-planes .table thead.table-light {
+    background: linear-gradient(180deg, #e0f7fa 0%, #b2ebf2 100%) !important;
+}
+.list-publica-planes .list-group-item {
+    border: 1px solid rgba(0, 137, 123, 0.2) !important;
+    border-radius: 0.85rem !important;
+    margin-bottom: 0.5rem;
+    padding: 0.85rem 1.05rem;
+    background: linear-gradient(135deg, #ffffff 0%, #e0f7fa 50%, #b2ebf2 125%);
+    color: #004d40;
+    box-shadow: 0 2px 10px rgba(0, 105, 92, 0.07);
+    transition: box-shadow 0.2s, transform 0.15s;
+}
+.list-publica-planes .list-group-item:hover {
+    box-shadow: 0 4px 16px rgba(0, 137, 123, 0.14);
+}
+.list-publica-planes .plan-fila-numero { font-weight: 700; font-size: 1.05rem; }
+.list-publica-planes .plan-fila-nombre { font-size: 0.85rem; opacity: 0.9; }
+/* Planes: filas con tonos alternados (móvil y escritorio) */
+.list-publica-planes .list-group-item.plan-fila-tono-0 {
+    border-left: 4px solid #00897b !important;
+    background: linear-gradient(135deg, #fff 0%, #e0f7fa 55%, #b2ebf2 130%) !important;
+}
+.list-publica-planes .list-group-item.plan-fila-tono-1 {
+    border-left: 4px solid #0288d1 !important;
+    background: linear-gradient(135deg, #fff 0%, #e3f2fd 50%, #bbdefb 125%) !important;
+    border-color: rgba(2, 136, 209, 0.22) !important;
+}
+.list-publica-planes .list-group-item.plan-fila-tono-2 {
+    border-left: 4px solid #00838f !important;
+    background: linear-gradient(135deg, #fff 0%, #e0f2f1 50%, #b2dfdb 125%) !important;
+    border-color: rgba(0, 131, 143, 0.22) !important;
+}
+.list-publica-planes .list-group-item.plan-fila-tono-3 {
+    border-left: 4px solid #43a047 !important;
+    background: linear-gradient(135deg, #fff 0%, #e8f5e9 50%, #c8e6c9 125%) !important;
+    border-color: rgba(67, 160, 71, 0.22) !important;
+}
+.list-publica-planes .plan-fila-tono-1 .plan-fila-numero { color: #0277bd; }
+.list-publica-planes .plan-fila-tono-2 .plan-fila-numero { color: #006064; }
+.list-publica-planes .plan-fila-tono-3 .plan-fila-numero { color: #2e7d32; }
+/* Móvil: fila plan = tap (modal) + columna flechas orden */
+.list-publica-planes .plan-fila-movil-row { cursor: default; }
+.list-publica-planes .plan-fila-contenido-modal {
+    color: inherit;
+    -webkit-tap-highlight-color: transparent;
+}
+.list-publica-planes .plan-fila-contenido-modal:focus-visible {
+    outline: 2px solid rgba(0, 137, 123, 0.45);
+    outline-offset: -2px;
+    position: relative;
+    z-index: 1;
+}
+.list-publica-planes .plan-fila-contenido-modal:active {
+    filter: brightness(0.97);
+}
+.list-publica-planes .plan-fila-flechas-movil {
+    background: rgba(255, 255, 255, 0.5);
+    border-left: 1px solid rgba(0, 105, 92, 0.14);
+    align-self: stretch;
+}
+.list-publica-planes .plan-flecha-movil {
+    min-width: 2.45rem;
+    padding-top: 0.35rem;
+    padding-bottom: 0.35rem;
+    line-height: 1.2;
+}
+.list-publica-planes .plan-flecha-movil:not(.disabled) {
+    color: #006064;
+    border-color: rgba(0, 96, 100, 0.35);
+}
+.card-modulo-planes .table tbody tr.plan-fila-tono-0 td { background: rgba(224, 247, 250, 0.35); border-bottom-color: rgba(0, 137, 123, 0.12); }
+.card-modulo-planes .table tbody tr.plan-fila-tono-1 td { background: rgba(227, 242, 252, 0.45); border-bottom-color: rgba(2, 136, 209, 0.12); }
+.card-modulo-planes .table tbody tr.plan-fila-tono-2 td { background: rgba(224, 242, 241, 0.4); border-bottom-color: rgba(0, 131, 143, 0.12); }
+.card-modulo-planes .table tbody tr.plan-fila-tono-3 td { background: rgba(232, 245, 233, 0.45); border-bottom-color: rgba(67, 160, 71, 0.12); }
+.card-modulo-planes .table tbody tr.plan-fila-tono-0:hover td,
+.card-modulo-planes .table tbody tr.plan-fila-tono-1:hover td,
+.card-modulo-planes .table tbody tr.plan-fila-tono-2:hover td,
+.card-modulo-planes .table tbody tr.plan-fila-tono-3:hover td {
+    filter: brightness(0.98);
+}
+/* Modales detalle — cabeceras pasteles (btn-close oscuro) */
+#modalConsultaDetalle .modal-content {
+    border: 2px solid rgba(94, 53, 177, 0.2) !important;
+    border-radius: 1rem !important;
+    overflow: hidden;
+    box-shadow: 0 12px 40px rgba(94, 53, 177, 0.2) !important;
+}
+.modal-publica-consulta-header {
+    background: linear-gradient(135deg, #7e57c2 0%, #5e35b1 45%, #4527a0 100%) !important;
+    color: #fff !important;
+    border-radius: 0;
+    border-bottom: none;
+    padding: 1rem 1.15rem;
+}
+.modal-publica-consulta-header .modal-title { font-weight: 700; text-shadow: 0 1px 2px rgba(0,0,0,0.15); }
+.modal-publica-consulta-header .btn-close { filter: brightness(0) invert(1); opacity: 0.75; }
+.modal-publica-consulta-body {
+    background: linear-gradient(180deg, #f3e5f5 0%, #ede7f6 18%, #faf8ff 45%, #fff 100%);
+    padding: 1.1rem 1.15rem;
+}
+.modal-consulta-card {
+    border-radius: 0.75rem;
+    padding: 0.75rem 0.9rem;
+    margin-bottom: 0.65rem;
+    border: 1px solid rgba(94, 53, 177, 0.12);
+    box-shadow: 0 2px 10px rgba(94, 53, 177, 0.06);
+}
+.modal-consulta-card-destacado {
+    background: linear-gradient(135deg, #fff 0%, #f3e5f5 100%);
+    border-color: rgba(171, 71, 188, 0.28);
+}
+.modal-consulta-card-mail {
+    background: linear-gradient(135deg, #e8eaf6 0%, #e3f2fd 100%);
+    border-color: rgba(63, 81, 181, 0.2);
+}
+.modal-consulta-card-tel {
+    background: linear-gradient(135deg, #fce4ec 0%, #f3e5f5 100%);
+    border-color: rgba(194, 24, 91, 0.15);
+}
+/* Tarjeta teléfono → enlace WhatsApp (modal consulta) */
+a.modal-consulta-card-tel.modal-consulta-wa-activo {
+    cursor: pointer;
+    transition: box-shadow 0.2s, transform 0.15s, border-color 0.2s;
+}
+a.modal-consulta-card-tel.modal-consulta-wa-activo:hover {
+    border-color: rgba(37, 211, 102, 0.55) !important;
+    box-shadow: 0 4px 18px rgba(37, 211, 102, 0.22);
+    transform: translateY(-1px);
+}
+a.modal-consulta-card-tel.modal-consulta-wa-activo .modal-consulta-valor {
+    color: #2e7d32;
+    font-weight: 600;
+}
+.consulta-wa-badge {
+    filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.08));
+}
+.modal-consulta-card-mensaje {
+    background: linear-gradient(135deg, #fff8e1 0%, #fffde7 100%);
+    border-color: rgba(255, 179, 0, 0.25);
+}
+.modal-consulta-card .modal-consulta-label {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    font-weight: 700;
+    color: #5e35b1;
+    margin-bottom: 0.25rem;
+    opacity: 0.9;
+}
+.modal-consulta-card-mensaje .modal-consulta-label { color: #f57f17; }
+.modal-consulta-card .modal-consulta-valor { margin: 0; word-break: break-word; font-size: 0.95rem; color: #37474f; }
+.modal-consulta-card-mensaje .modal-consulta-valor { white-space: pre-wrap; font-size: 0.9rem; }
+#consultaDetalleBadgeVisto.modal-consulta-badge-visto {
+    background: linear-gradient(135deg, #78909c 0%, #546e7a 100%) !important;
+    font-weight: 600;
+    padding: 0.4em 0.65em;
+}
+.modal-publica-consulta-footer {
+    background: linear-gradient(180deg, #ede7f6 0%, #e1bee7 100%);
+    border-top: 2px solid rgba(94, 53, 177, 0.15);
+    padding: 0.85rem 1rem;
+}
+.modal-publica-consulta-footer .btn-success {
+    background: linear-gradient(135deg, #66bb6a 0%, #43a047 100%);
+    border: none;
+    font-weight: 600;
+}
+.modal-publica-plan-header {
+    background: linear-gradient(135deg, #b2ebf2 0%, #80deea 100%) !important;
+    color: #006064 !important;
+    border-radius: 0.5rem 0.5rem 0 0;
+    border-bottom: 1px solid rgba(0, 105, 92, 0.12);
+}
+.modal-publica-plan-header .btn-close { filter: none; opacity: 0.55; }
+.modal-publica-plan-body { background: linear-gradient(180deg, #f1fffe 0%, #fff 40%); }
+.modal-publica-plan-footer { background: #e8f5f4; border-top: 1px solid rgba(0, 105, 92, 0.1); }
+.modal-publica-plan-form-header {
+    background: linear-gradient(135deg, #c5e1a5 0%, #aed581 100%) !important;
+    color: #33691e !important;
+    border-radius: 0.5rem 0.5rem 0 0;
+}
+.modal-publica-plan-form-header .btn-close { filter: none; opacity: 0.55; }
+.modal-publica-plan-form-footer {
+    background: linear-gradient(180deg, #f9fbe7 0%, #f1f8e9 100%);
+    border-top: 1px solid rgba(174, 213, 129, 0.45);
+}
+.modal-publica-plan-form-footer .btn-primary {
+    background: linear-gradient(135deg, #7cb342 0%, #689f38 100%);
+    border: none;
+    font-weight: 600;
+}
+.modal-publica-plan-form-footer .btn-primary:hover {
+    background: linear-gradient(135deg, #689f38 0%, #558b2f 100%);
+}
+/* Config — pastel durazno (tercer bloque) */
+.card-modulo-config {
+    border-left: 4px solid #ff9800;
+    box-shadow: 0 8px 28px rgba(255, 152, 0, 0.1);
+}
+.card-modulo-config .card-body {
+    background: linear-gradient(180deg, rgba(255, 248, 225, 0.65) 0%, #fff 55%);
+}
+.card-modulo-config .card-header {
+    background: linear-gradient(135deg, #ffe0b2 0%, #ffcc80 50%, #ffb74d 100%) !important;
+    color: #bf360c !important;
+    border: none;
+    padding: 0.9rem 1.15rem;
+    text-shadow: 0 1px 0 rgba(255,255,255,0.45);
+}
+.card-modulo-config .card-header i { color: #e65100; }
+.card-modulo-config .form-control:focus,
+.card-modulo-config .form-control:focus-visible {
+    border-color: rgba(255, 152, 0, 0.55);
+    box-shadow: 0 0 0 0.2rem rgba(255, 183, 77, 0.25);
+}
+/* Botón nuevo plan */
+.btn-publica-nuevo-plan {
+    background: linear-gradient(135deg, #26a69a 0%, #00897b 100%) !important;
+    border: none !important;
+    color: #fff !important;
+    font-weight: 600;
+    border-radius: 0.75rem !important;
+    box-shadow: 0 4px 14px rgba(0, 137, 123, 0.28);
+}
+.btn-publica-nuevo-plan:hover {
+    background: linear-gradient(135deg, #00897b 0%, #00695c 100%) !important;
+    color: #fff !important;
+    transform: translateY(-1px);
+}
+.btn-publica-volver {
+    border-radius: 0.75rem;
+    border: 2px solid rgba(94, 53, 177, 0.25);
+    color: #5e35b1;
+    font-weight: 500;
+}
+.btn-publica-volver:hover {
+    background: #ede7f6;
+    border-color: #5e35b1;
+    color: #4527a0;
+}
+.detalle-dl dt { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.04em; color: #6c757d; margin-bottom: 0.15rem; }
+.detalle-dl dd { margin-bottom: 0.75rem; word-break: break-word; }
+@media (max-width: 767.98px) {
+    .list-publica-consultas, .list-publica-planes { margin-bottom: 0; }
+}
+@media (max-width: 575.98px) {
+    .publica-admin-root .publica-planes-acciones {
+        flex-direction: column !important;
+        align-items: stretch !important;
+        gap: 0.35rem !important;
+    }
+    .publica-admin-root .publica-planes-acciones .btn-group {
+        justify-content: center;
+    }
+    .publica-admin-root .table td,
+    .publica-admin-root .table th {
+        white-space: nowrap;
+    }
+    .publica-admin-root .table td.publica-col-wrap,
+    .publica-admin-root .table th.publica-col-wrap {
+        white-space: normal;
+        max-width: 12rem;
+        word-break: break-word;
+    }
+}
+/* Sobrescribe Bootstrap al cargar el fragmento en el panel (btn-primary) */
+.card-modulo-config .btn.btn-primary,
+.card-modulo-config button.btn-primary[type="submit"] {
+    --bs-btn-bg: #ff9800;
+    --bs-btn-border-color: #f57c00;
+    --bs-btn-hover-bg: #fb8c00;
+    --bs-btn-hover-border-color: #ef6c00;
+    --bs-btn-active-bg: #ef6c00;
+    --bs-btn-active-border-color: #e65100;
+    --bs-btn-color: #fff;
+    --bs-btn-hover-color: #fff;
+    background: linear-gradient(135deg, #ff9800 0%, #f57c00 100%) !important;
+    background-image: linear-gradient(135deg, #ff9800 0%, #f57c00 100%) !important;
+    border-color: #ef6c00 !important;
+    color: #fff !important;
+    border-radius: 0.75rem !important;
+    font-weight: 600 !important;
+    box-shadow: 0 4px 14px rgba(245, 124, 0, 0.35) !important;
+}
+.card-modulo-config .btn.btn-primary:hover,
+.card-modulo-config button.btn-primary[type="submit"]:hover {
+    background: linear-gradient(135deg, #fb8c00 0%, #ef6c00 100%) !important;
+    background-image: linear-gradient(135deg, #fb8c00 0%, #ef6c00 100%) !important;
+    border-color: #e65100 !important;
+    color: #fff !important;
+    transform: translateY(-1px);
+}

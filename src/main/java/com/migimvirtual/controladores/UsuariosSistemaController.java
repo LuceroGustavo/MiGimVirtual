@@ -191,6 +191,7 @@ public class UsuariosSistemaController {
             return "redirect:/profesor/dashboard";
         }
         usuarioService.actualizarDatosUsuarioSistema(usuarioActual.getId(), nombre, correo);
+        usuarioService.refrescarPrincipalEnSesionSiCorresponde(usuarioActual.getId());
         return "redirect:/profesor/administracion?ok=perfil";
     }
 
@@ -225,6 +226,7 @@ public class UsuariosSistemaController {
         if (password != null && !password.isBlank()) {
             usuarioService.cambiarPasswordUsuario(usuarioId, password);
         }
+        usuarioService.refrescarPrincipalEnSesionSiCorresponde(usuarioId);
         return "redirect:/profesor/administracion?ok=datos";
     }
 

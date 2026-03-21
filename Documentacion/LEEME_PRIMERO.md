@@ -27,10 +27,10 @@ Tras iniciar sesión se redirige al **Panel del profesor** (`/profesor/{id}`).
 
 ## 1. Qué es este proyecto
 
-- **Nombre:** MiGimVirtual (evolución desde Mattfuncional).
+- **Nombre:** MiGymVirtual (evolución desde Mattfuncional).
 - **Qué hace:** App para un profesor/entrenador: gestiona **alumnos** (ficha, sin login), **ejercicios**, **series** y **rutinas** (asignación por alumno, enlace público por token). Orientación 100 % virtual: sin calendario, asistencias ni pizarra en sala (eliminados Mar 2026).
 - **Quién usa:** Roles **DEVELOPER** (super admin), **ADMIN** y **AYUDANTE**. No hay panel alumno ni panel admin separado.
-- **Stack:** Spring Boot, Thymeleaf, MySQL, Bootstrap. Código en `src/main/java/com/migimvirtual/` (controladores, servicios, entidades, repositorios, config, dto, enums).
+- **Stack:** Spring Boot, Thymeleaf, MySQL, Bootstrap. Código en `src/main/java/com/MiGymVirtual/` (controladores, servicios, entidades, repositorios, config, dto, enums).
 
 ---
 
@@ -53,7 +53,7 @@ Tras iniciar sesión se redirige al **Panel del profesor** (`/profesor/{id}`).
 | Archivo | Para qué sirve |
 |---------|-----------------|
 | **LEEME_PRIMERO.md** (este) | Contexto del proyecto, acceso, evolución realizada, dónde está cada cosa. |
-| **PLAN_DE_DESARROLLO_MIGIMVIRTUAL.md** | Plan de desarrollo: fases (BD, renombre, eliminaciones virtual, responsive), subplan de lo que se quita. |
+| **PLAN_DE_DESARROLLO_MiGymVirtual.md** | Plan de desarrollo: fases (BD, renombre, eliminaciones virtual, responsive), subplan de lo que se quita. |
 | **SUBPLAN_DESARROLLO_MODULOS.md** | Avances por módulo (Alumnos → Series → Rutinas → Asignaciones → Ejercicios → Administrar); checklist y notas. |
 | **ELIMINACION_CALENDARIO_Y_PIZARRA_MAR2026.md** | Detalle de la eliminación de calendario, asistencias y pizarra online (Mar 2026). |
 | **DOCUMENTACION_UNIFICADA.md** | Resúmenes: lo implementado, backup, Excel alumnos, despliegue, manual (índice), referencias técnicas. |
@@ -66,28 +66,28 @@ Tras iniciar sesión se redirige al **Panel del profesor** (`/profesor/{id}`).
 
 ---
 
-## 4. Evolución ya realizada (MiGimVirtual)
+## 4. Evolución ya realizada (MiGymVirtual)
 
-- **Base de datos:** Nueva BD `migimvirtual`; en `application*.properties` la URL apunta a `migimvirtual`. MySQL crea la BD si no existe; Hibernate crea/actualiza tablas con `ddl-auto=update`.
-- **Renombre completo:** Paquete `com.mattfuncional` → `com.migimvirtual`; clase principal `MigimvirtualApplication`; `pom.xml` (groupId/artifactId/name) MiGimVirtual; credenciales de desarrollo `profesor@migymvirtual.com` y `lucerogustavosi@gmail.com`.
+- **Base de datos:** Nueva BD `MiGymVirtual`; en `application*.properties` la URL apunta a `MiGymVirtual`. MySQL crea la BD si no existe; Hibernate crea/actualiza tablas con `ddl-auto=update`.
+- **Renombre completo:** Paquete `com.mattfuncional` → `com.MiGymVirtual`; clase principal `MiGymVirtualApplication`; `pom.xml` (groupId/artifactId/name) MiGymVirtual; credenciales de desarrollo `profesor@migymvirtual.com` y `lucerogustavosi@gmail.com`.
 - **Marca e interfaz:** Navbar con logo `mgvirtual_logo1.png` y fondo `fondo-navbar.png`; página pública (carrusel) con videos `video_mgvirtual_inicio_escritorio.mp4` (escritorio) y `Video_mgvirtual_inicio_movil.mp4` (móvil).
-- **Servidor:** Script de menú `./migimvirtual` en la raíz; scripts `scripts/servidor/reset_db_migimvirtual.sql` y `reset_db_migimvirtual.sh`; variables de entorno `MIGIMVIRTUAL_DB_USER`, `MIGIMVIRTUAL_DB_PASSWORD`.
+- **Servidor:** Script de menú `./MiGymVirtual` en la raíz; scripts `scripts/servidor/reset_db_MiGymVirtual.sql` y `reset_db_MiGymVirtual.sh`; variables de entorno `MiGymVirtual_DB_USER`, `MiGymVirtual_DB_PASSWORD`.
 
-**Pendiente según plan:** Fase 0 (subplan detallado), Fase 4 (responsive, UX). Fase 3 (eliminar calendario, pizarra, sala, simplificar alumnos) realizada en Mar 2026. Ver ELIMINACION_CALENDARIO_Y_PIZARRA_MAR2026.md y PLAN_DE_DESARROLLO_MIGIMVIRTUAL.md.
+**Pendiente según plan:** Fase 0 (subplan detallado), Fase 4 (responsive, UX). Fase 3 (eliminar calendario, pizarra, sala, simplificar alumnos) realizada en Mar 2026. Ver ELIMINACION_CALENDARIO_Y_PIZARRA_MAR2026.md y PLAN_DE_DESARROLLO_MiGymVirtual.md.
 
 ---
 
 ## 5. Resumen rápido de estado (para la IA)
 
 - **Implementado:** Ejercicios, series, rutinas, grupos musculares, alumnos (sin login), página pública, manual en `/profesor/manual`, sistema de backup (ZIP, JSON y Excel alumnos). Calendario, asistencias y pizarra/sala eliminados (Mar 2026); app 100 % virtual. Ver DOCUMENTACION_UNIFICADA.md y ELIMINACION_CALENDARIO_Y_PIZARRA_MAR2026.md.
-- **Pendiente:** Responsive y UX. Ver PLAN_DE_DESARROLLO_MIGIMVIRTUAL.md.
+- **Pendiente:** Responsive y UX. Ver PLAN_DE_DESARROLLO_MiGymVirtual.md.
 
 ---
 
 ## 6. Frase para dar contexto a la IA desde otra PC
 
 - *"Leé Documentacion/LEEME_PRIMERO.md y Documentacion/DOCUMENTACION_UNIFICADA.md para tener contexto del proyecto."*
-- *"Plan de desarrollo: Documentacion/PLAN_DE_DESARROLLO_MIGIMVIRTUAL.md."*
+- *"Plan de desarrollo: Documentacion/PLAN_DE_DESARROLLO_MiGymVirtual.md."*
 
 ---
 
