@@ -13,7 +13,7 @@ Contenido importante reunido de los documentos del proyecto. Para contexto: [LEE
 | Rutinas | Amarillo | Pastel y derivaciones |
 | Asignaciones | Azul / celeste | Pastel y derivaciones |
 | Ejercicios | Naranja | Pastel y derivaciones |
-| Administrar el sistema | Gris | Pastel y derivaciones |
+| Administrar el sistema | Gris (menú); sectores violeta/azul en backups y usuarios | Pastel y derivaciones; marcos §1.2 y [PALETA_COLORES.md](PALETA_COLORES.md) |
 
 **Detalle:** Ver [PALETA_COLORES.md](PALETA_COLORES.md).
 
@@ -49,25 +49,55 @@ Contenido importante reunido de los documentos del proyecto. Para contexto: [LEE
 - **Planes (móvil) en admin página pública:** **Subir / Bajar** orden del plan con **flechas en la tarjeta** (columna derecha); mismo POST que escritorio. **Quitado** del modal de detalle del plan. Tap en la parte izquierda de la fila sigue abriendo el modal (detalle, Editar, Eliminar).
 - **Estilos:** `pagina-publica-admin.css` (consultas, modal WhatsApp, planes móvil, acciones tabla).
 
+### 1.2 Panel Administración — sectores visuales y CSS global (Mar 2026) — ✅ Cierre módulo
+
+Para **diferenciar** bloques dentro de **Administrar sistema** (vista embebida con `?fragment=1` y página completa), se añadieron **marcos de color** y fondo suave, alineados con la paleta del proyecto:
+
+| Sección | Contorno / criterio | Clases HTML (resumen) |
+|---------|---------------------|------------------------|
+| **Sistema de backups — contenido** (ZIP: ejercicios, rutinas plantilla, series, etc.) | Violeta `#7e57c2` (familia `#5e35b1`) | `.admin-backup-fragment .backup-sector-contenido` |
+| **Sistema de backups — alumnos** (JSON) | Azul `#039be5` | `.admin-backup-fragment .backup-sector-alumnos` |
+| **Usuarios del sistema — perfil** (“Mi usuario” / “Mi perfil”) | Mismo criterio violeta que backup contenido | `.admin-usuarios-sistema-root .usuarios-sistema-sector-cuenta` |
+| **Usuarios del sistema — listado** (tabla, vista DEVELOPER) | Mismo criterio azul que backup alumnos | `.admin-usuarios-sistema-root .usuarios-sistema-sector-listado` |
+
+**Técnico:** Los estilos viven en **`src/main/resources/static/style.css`** (no solo en `<style>` del `<head>` de cada plantilla), porque al cargar un **fragmento Thymeleaf** (`profesor/backup :: contenido`, `profesor/usuarios-sistema :: contenido`) el navegador **no recibe** el `<head>` de esa página: el shell es `administracion.html`, que ya enlaza `style.css`. Sin esto, los contornos no se aplicaban en el panel.
+
+**Backend (backup):** En `ExerciseZipBackupService`, el borrado previo para restauración “suplantar” se encapsuló en un método privado (`ejecutarBorradoPrevioSuplantar`) para claridad transaccional y mejor compatibilidad con analizadores/lambdas.
+
+**Referencia UX responsive:** [GUIA_RESPONSIVE.md](GUIA_RESPONSIVE.md) §5.7.
+
 **Pendiente de producto (ver AYUDA_MEMORIA):** Replantear la **página pública** y la **administración de página pública** para modelo **gimnasio virtual** (menos énfasis en dirección física, horarios presenciales, etc.).
-- **Backup (terminado Mar 2026):** Ver sección 2.
+- **Backup (terminado / actualizado Mar 2026):** Guardado en servidor, restauración total, export acotado al profesor del panel. Ver sección 2 y despliegue Ubuntu en [servidor/DESPLIEGUE-SERVIDOR.md](servidor/DESPLIEGUE-SERVIDOR.md) (carpeta `backup`).
 - **Depuración de datos:** Módulo eliminado en Mar 2026 (ya no existe en Administración).
 
 ---
 
 ## 2. Backup y exportación
 
-**Estado:** Terminado (marzo 2026). Acceso: Administración → Backup y resguardo.
+**Estado:** Terminado y revisado (marzo 2026). Acceso: **Administrar sistema → Sistema de backups** (`/profesor/backup`).
 
-| Funcionalidad | Descripción |
-|---------------|-------------|
-| **Ejercicios + grupos + rutinas + series** | Exportar/importar ZIP. Opciones por checkbox (Grupos, Ejercicios, Rutinas, Series). Modos Agregar o Suplantar. Imágenes con nombres originales. |
-| **Alumnos – JSON** | Exportar backup (datos, mediciones). Importar desde JSON (Agregar o Suplantar). Sin asistencias desde Mar 2026. |
-| **Alumnos – Excel** | Exportar a Excel para reportes. Una fila por alumno. Columnas: Nombre, Correo, Celular, Edad, Sexo, Estado, Fecha de alta, Fecha baja, Tipo de asistencia, Días y horarios, Objetivos personales, Restricciones médicas, Notas profesor, Cantidad de asignaciones. (Columna "Último trabajo" eliminada en Mar 2026.) |
+### 2.0 Comportamiento actual (Mar 2026)
 
-**Excel alumnos – columnas:** Título "Exportación de alumnos fecha dd/MM/yyyy". Sin columna Último trabajo desde Mar 2026.
+| Aspecto | Detalle |
+|---------|---------|
+| **Almacenamiento** | Los archivos **no se descargan al navegador** por defecto: se guardan en disco bajo la raíz configurada (`migimvirtual.backups.dir`, por defecto `backup/`), con subcarpetas `contenido/` (ZIP) y `alumnos/` (JSON). |
+| **Rotación** | Máximo **2** archivos por tipo; al guardar un tercero se elimina el más antiguo (por nombre con fecha). |
+| **Restaurar** | **Reemplazo total** (“foto del día”): al restaurar contenido o alumnos se borran los datos actuales de ese ámbito y se cargan los del snapshot. |
+| **Contenido (ZIP)** | Incluye catálogo global de **ejercicios** + imágenes, **grupos** y **categorías** (archivo `categorias.json`, manifest v1.2 con `profesorId`). **Rutinas plantilla y series** solo del **profesor del panel** (mismo criterio que «Mis rutinas» / «Mis series»), para no mezclar otros profesores ni inflar el conteo al restaurar. |
+| **Alumnos (JSON)** | Datos personales, **mediciones** y **registros de progreso** (`RegistroProgreso`). Sin asistencias, sin rutinas asignadas ni otras asignaciones. Versión JSON `1.1`. |
+| **Excel desde backup** | El botón “Exportar a Excel” en la pantalla de backup fue **eliminado**; el servicio `AlumnoExportService` puede seguir existiendo para otros usos si aplica. |
 
-**Servicios:** `ExerciseZipBackupService`, `AlumnoJsonBackupService`, `AlumnoExportService`. Rutas en `AdminPanelController`: `/profesor/backup`, exportar-zip, importar, exportar-alumnos-json, importar-alumnos, exportar-alumnos-excel.
+**Configuración:** `application.properties` → `migimvirtual.backups.dir=backup` (relativo al directorio de trabajo de la JVM al arrancar, o ruta absoluta recomendada en producción).
+
+**Clases principales:** `BackupStorageService` (listar, guardar, leer, rotar), `AdminPanelController` (POST `guardar-contenido`, `guardar-alumnos`, `restaurar-contenido`, `restaurar-alumnos`), `ExerciseZipBackupService` (export/import ZIP, `exportarEjerciciosAZip(Long profesorId)`, `importarSnapshotCompletoDesdeZipBytes`), `AlumnoJsonBackupService`, `CategoriaService` (`ensureCategoriaExiste`, `eliminarCategoriasDelProfesor` en restore con `categorias.json`).
+
+**Historial de cambios:** `CHANGELOG.md` — **[2026-03-22]** (cierre UX Administración, sectores de color, `style.css` + fragmentos); **[2026-03-21]** (backup en servidor, fix export por `profesorId`, manifest v1.2).
+
+**Despliegue Ubuntu / VPS:** No hace falta crear la carpeta `backup` a mano antes del primer uso: la app crea `backup/contenido` y `backup/alumnos` al primer guardado. Recomendaciones de permisos y ruta absoluta: [servidor/DESPLIEGUE-SERVIDOR.md](servidor/DESPLIEGUE-SERVIDOR.md) (sección carpeta backup).
+
+**Manual en la app:** `/profesor/manual` § 13.3 Sistema de backups (texto alineado con este flujo).
+
+**Interfaz (Mar 2026):** Marcos de color en la pantalla de backups (contenido vs alumnos). Ver §1.2.
 
 ---
 
@@ -83,7 +113,7 @@ El módulo "Depuración de datos" fue eliminado por completo en marzo 2026. No e
 
 | Vista | Confirmación | Alerta (éxito/error/info) |
 |-------|--------------|---------------------------|
-| Panel Administración (backup, depuracion, usuarios-sistema, pagina-publica-admin) | Sí | Sí |
+| Panel Administración (backup, usuarios-sistema, pagina-publica-admin) | Sí | Sí |
 | Dashboard profesor | Eliminar serie, rutina, rutina asignada | Enlace copiado, “Debe ser administrador” |
 | Detalle alumno | Eliminar alumno, inactivar todas las rutinas | Enlace copiado, “Datos actualizados” (flash) |
 | Series crear/editar | — | Validación, éxito con redirección, errores |
@@ -104,9 +134,9 @@ El módulo "Depuración de datos" fue eliminado por completo en marzo 2026. No e
 
 ## 3. Despliegue y servidor
 
-**Resumen:** App en VPS Donweb. Acceso SSH: `ssh -p 5638 root@149.50.144.53`. Aplicación en puerto 8080. Si PowerShell está bloqueado, usar Consola VNC de Donweb y menú `./MiGymVirtual` / `screen -r MiGymVirtual`. **Límite de subida (Nginx):** Para restaurar backups grandes, configurar `client_max_body_size` (ej. 50M) en la config de Nginx; ver archivo de ejemplo en `servidor/nginx-detodoya.conf`.
+**Resumen:** App en VPS Donweb. Acceso SSH: `ssh -p 5638 root@149.50.144.53`. Aplicación en puerto 8080. Si PowerShell está bloqueado, usar Consola VNC de Donweb y menú `./MiGymVirtual` / `screen -r MiGymVirtual`. **Backups en disco:** ver §2 y en despliegue la sección **Carpeta `backup` (Ubuntu / producción)** — creación automática al primer guardado; opcional ruta absoluta y permisos. **Nginx:** el flujo de backup actual es por formularios en el panel (no subida masiva por proxy en muchos casos); si en el futuro se suben archivos grandes por HTTP, mantener `client_max_body_size` en Nginx; ejemplo en `servidor/nginx-detodoya.conf`.
 
-**Detalle completo:** [servidor/DESPLIEGUE-SERVIDOR.md](servidor/DESPLIEGUE-SERVIDOR.md) (acceso SSH, Consola VNC, menú, Nginx, reinicio, backups en servidor).
+**Detalle completo:** [servidor/DESPLIEGUE-SERVIDOR.md](servidor/DESPLIEGUE-SERVIDOR.md) (acceso SSH, Consola VNC, menú, Nginx, reinicio, uploads, carpeta backup).
 
 ---
 
@@ -138,10 +168,11 @@ El manual en la app (`/profesor/manual`) incluye:
 | **Pizarra / sala TV** | Fase 7. Editor en panel; vista `/sala/{token}`; API estado y actualizaciones; columnas y ejercicios con peso/rep. |
 | **Página pública** | Fase 8. Landing `/`, Planes `/planes`, consultas; hero con video/carrusel; administración en panel. |
 | **Ejercicios predeterminados** | `ExerciseCargaDefaultOptimizado.asegurarEjerciciosPredeterminados()`; imágenes en `uploads/ejercicios/` (1.webp–60.webp). |
+| **Backups en servidor** | `BackupStorageService` + `migimvirtual.backups.dir`; ZIP contenido (`ExerciseZipBackupService`, `profesorId` en export) y JSON alumnos; máx. 2 archivos/tipo; ver §2 y DESPLIEGUE-SERVIDOR (carpeta backup). |
 | **Restricción AYUDANTE** | No puede acceder a "Administrar sistema"; redirección y mensaje si intenta entrar a `/profesor/administracion`. |
 | **Eliminar alumno** | `UsuarioService.eliminarUsuario`: borra asistencias, mediciones, excepciones, rutinas asignadas; luego el usuario. |
 | **Depuración de datos** | `DepuracionService`; panel en `/profesor/depuracion`; elimina asistencias o rutinas asignadas anteriores a una fecha elegida. |
 
 ---
 
-*Última actualización: Marzo 2026 (§1.1 mejoras página pública / admin). Depuración de datos eliminada (§2.1). Pendientes: AYUDA_MEMORIA.md.*
+*Última actualización: Marzo 2026 — §2 Backup (servidor, restauración total, export por profesor, Ubuntu). §1.1 página pública/admin. Depuración eliminada (§2.1).*

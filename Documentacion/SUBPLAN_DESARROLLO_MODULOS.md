@@ -114,10 +114,12 @@ Cada módulo se cierra cuando: entidad/métodos están adaptados, vistas respons
 
 ## 8. Administrar sistema
 
-- [ ] Backup, depuración, usuarios del sistema, configuración de página pública.
-- [ ] Vistas de administración: **responsive**.
-- [ ] Página pública: landing, planes, formulario de contacto (ya existe; revisar responsive y contenidos).
-- [ ] Avances: _por anotar_.
+- [x] **Backup** en servidor (ZIP + JSON), rotación, restauración total; export acotado al profesor del panel. Ver DOCUMENTACION_UNIFICADA §2.
+- [x] **Usuarios del sistema** y **configuración de página pública** (consultas, planes, etc.).
+- [x] **Depuración de datos:** módulo eliminado (Mar 2026); ya no forma parte de Administración.
+- [x] Vistas de administración: **responsive** (menú móvil, fragmentos en `administracion.html`); **Mar 2026:** sectores con marco de color (backups contenido vs alumnos; usuarios perfil vs listado) en `style.css` para `?fragment=1`.
+- [ ] Página pública: revisar **contenidos** para modelo gimnasio virtual (producto; ver AYUDA_MEMORIA).
+- **Avances Mar 2026:** Cierre UX módulo Administración — §1.2 DOCUMENTACION_UNIFICADA, GUIA_RESPONSIVE §5.7, CHANGELOG [2026-03-22].
 
 ---
 

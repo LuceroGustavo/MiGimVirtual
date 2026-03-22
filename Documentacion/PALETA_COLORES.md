@@ -17,6 +17,21 @@ Referencia de los colores asignados a cada módulo del panel del profesor. Se us
 
 ---
 
+## Sectores dentro de Administrar sistema (Mar 2026)
+
+Dentro del panel **Administrar sistema** (y en la URL directa de cada sección), algunos bloques usan **marco y fondo suave** para orientar al usuario. Los colores **riman** con el módulo de backups: violeta = “catálogo / perfil”, azul = “alumnos en bloque / listado”.
+
+| Bloque | Color de contorno (referencia) | Uso |
+|--------|--------------------------------|-----|
+| Backup **contenido** (ZIP) | `#7e57c2` (violeta, familia `#5e35b1`) | Ejercicios, rutinas plantilla, series, categorías, imágenes |
+| Backup **alumnos** (JSON) | `#039be5` (azul / cian) | Datos de alumnos, mediciones, progresos |
+| **Usuarios — Mi usuario / Mi perfil** | Mismo violeta que backup contenido | Edición de nombre, correo, acceso a cambiar contraseña |
+| **Usuarios — listado** (tabla) | Mismo azul que backup alumnos | Vista principalmente **DEVELOPER**; gestión de cuentas |
+
+**Implementación:** `static/style.css` — selectores `.admin-backup-fragment …` y `.admin-usuarios-sistema-root …` (necesario para fragmentos cargados sin `<head>` de la plantilla).
+
+---
+
 ## Criterios
 
 - **Tonos pastel:** Fondos, tarjetas y botones secundarios (ej. botón "Limpiar") usan el color pastel del módulo.
@@ -38,4 +53,4 @@ Los colores se definen en `profesor/dashboard.html` (y plantillas relacionadas):
 
 ---
 
-*Documento de referencia. Actualizado Marzo 2026.*
+*Documento de referencia. Actualizado Marzo 2026 (sectores Administración).*

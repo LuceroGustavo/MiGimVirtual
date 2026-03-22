@@ -1,6 +1,7 @@
 package com.migimvirtual.servicios;
 
 import com.migimvirtual.entidades.Categoria;
+import com.migimvirtual.entidades.Profesor;
 import com.migimvirtual.repositorios.CategoriaRepository;
 import com.migimvirtual.repositorios.RutinaRepository;
 import org.springframework.stereotype.Service;
@@ -116,5 +117,28 @@ public class CategoriaService {
     /** Verifica si hay rutinas que usan esta categoría. */
     public boolean hayRutinasEnUso(Long categoriaId) {
         return !rutinaRepository.findByCategoriaId(categoriaId).isEmpty();
+    }
+
+    /** Crea la categoría si no existe (sistema o del profesor). Idempotente para import de backup. */
+    @Transactional
+    public void ensureCategoriaExiste(String nombre, boolean esSistema, Profesor profesor) {
+        if (nombre == null || nombre.isBlank()) return;
+        String n = nombre.trim().toUpperCase();
+        if (esSistema) {
+            if (categoriaRepository.findFirstByNombreAndProfesorIsNull(n).isEmpty()) {
+                categoriaRepository.save(new Categoria(n, null));
+            }
+        } else if (profesor != null) {
+            if (categoriaRepository.findFirstByNombreAndProfesorId(n, profesor.getId()).isEmpty()) {
+                categoriaRepository.save(new Categoria(n, profesor));
+            }
+        }
+    }
+
+    /** Borra todas las categorías personalizadas del profesor (mantiene las del sistema). */
+    @Transactional
+    public void eliminarCategoriasDelProfesor(Long profesorId) {
+        if (profesorId == null) return;
+        categoriaRepository.deleteByProfesor_Id(profesorId);
     }
 }

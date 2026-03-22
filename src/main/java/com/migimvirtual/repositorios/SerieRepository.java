@@ -52,6 +52,9 @@ public interface SerieRepository extends JpaRepository<Serie, Long> {
     /** Series plantilla que no pertenecen a ninguna rutina (biblioteca del profesor). */
     List<Serie> findByEsPlantillaTrueAndRutinaIsNull();
 
+    /** Series plantilla sueltas de un profesor (misma visibilidad que el panel «Mis series»). */
+    List<Serie> findByProfesorIdAndEsPlantillaTrueAndRutinaIsNull(Long profesorId);
+
     // Buscar series plantilla por creador
     List<Serie> findByCreadorAndEsPlantillaTrue(String creador);
 

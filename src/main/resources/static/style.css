@@ -75,3 +75,102 @@
   background: linear-gradient(135deg, #fff8e1 0%, #ffecb3 100%);
   color: #f57f17;
 }
+
+/* ========== Sistema de backups: página completa y fragmento (?fragment=1 en administración) ==========
+   El fragmento Thymeleaf no incluye el <head> de backup.html; estos estilos deben vivir aquí. */
+.admin-backup-fragment .container {
+  max-width: 1140px;
+  margin-left: auto;
+  margin-right: auto;
+  text-align: left;
+}
+.admin-backup-fragment .backup-card {
+  border-radius: 1rem;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+  height: 100%;
+}
+.admin-backup-fragment .backup-card .card-header {
+  border-radius: 1rem 1rem 0 0;
+  font-weight: 600;
+  font-size: 0.95rem;
+  padding: 0.6rem 1rem;
+}
+.admin-backup-fragment .backup-card .card-body {
+  padding: 1rem;
+  font-size: 0.9rem;
+}
+.admin-backup-fragment .backup-card-compact .card-body {
+  padding: 0.85rem;
+}
+.admin-backup-fragment .backup-list-item {
+  font-size: 0.85rem;
+}
+.admin-backup-fragment .progress-modal .progress {
+  height: 8px;
+}
+.admin-backup-fragment .card-header-alumnos-export {
+  background: rgba(3, 169, 244, 0.15);
+  color: #0277bd;
+}
+.admin-backup-fragment .card-alumnos-export .card-body {
+  background: rgba(225, 245, 254, 0.5);
+}
+.admin-backup-fragment .card-header-alumnos-import {
+  background: rgba(92, 107, 192, 0.2);
+  color: #3949ab;
+}
+.admin-backup-fragment .card-alumnos-import .card-body {
+  background: rgba(232, 234, 246, 0.6);
+}
+/* Zonas: contenido (ejercicios + rutinas + series) vs alumnos — bordes bien visibles */
+.admin-backup-fragment .backup-sector-contenido {
+  border: 3px solid #7e57c2;
+  border-radius: 1rem;
+  padding: 0.75rem;
+  background: rgba(94, 53, 177, 0.06);
+  box-shadow: inset 0 0 0 1px rgba(94, 53, 177, 0.15);
+}
+.admin-backup-fragment .backup-sector-alumnos {
+  border: 3px solid #039be5;
+  border-radius: 1rem;
+  padding: 0.75rem;
+  background: rgba(3, 169, 244, 0.08);
+  box-shadow: inset 0 0 0 1px rgba(2, 136, 209, 0.18);
+}
+.admin-backup-fragment .backup-sector-contenido .backup-card {
+  border: 1px solid rgba(94, 53, 177, 0.35);
+}
+.admin-backup-fragment .backup-sector-alumnos .backup-card {
+  border: 1px solid rgba(2, 136, 209, 0.4);
+}
+.admin-backup-fragment .backup-sector-contenido .list-group.border {
+  border-color: rgba(94, 53, 177, 0.45) !important;
+}
+.admin-backup-fragment .backup-sector-alumnos .list-group.border {
+  border-color: rgba(2, 136, 209, 0.5) !important;
+}
+
+/* ========== Usuarios del sistema (mismo criterio que backups; funciona con ?fragment=1) ========== */
+.admin-usuarios-sistema-root .usuarios-sistema-sector-cuenta {
+  border: 3px solid #7e57c2;
+  border-radius: 1rem;
+  padding: 0.75rem;
+  background: rgba(94, 53, 177, 0.06);
+  box-shadow: inset 0 0 0 1px rgba(94, 53, 177, 0.15);
+}
+.admin-usuarios-sistema-root .usuarios-sistema-sector-listado {
+  border: 3px solid #039be5;
+  border-radius: 1rem;
+  padding: 0.75rem;
+  background: rgba(3, 169, 244, 0.08);
+  box-shadow: inset 0 0 0 1px rgba(2, 136, 209, 0.18);
+}
+.admin-usuarios-sistema-root .usuarios-sistema-sector-cuenta .card,
+.admin-usuarios-sistema-root .usuarios-sistema-sector-listado .card {
+  border: 1px solid rgba(94, 53, 177, 0.28);
+  border-radius: 1rem;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+}
+.admin-usuarios-sistema-root .usuarios-sistema-sector-listado .card {
+  border-color: rgba(2, 136, 209, 0.38);
+}

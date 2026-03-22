@@ -14,6 +14,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -23,31 +24,31 @@ import java.util.stream.Collectors;
 
 /**
  * Exporta e importa alumnos en formato JSON (backup completo).
- * Incluye: datos del alumno y mediciones físicas.
- * No incluye: rutinas asignadas (se reasignan manualmente tras importar).
+ * Incluye: datos del alumno, mediciones físicas y registros de progreso.
+ * No incluye: rutinas asignadas ni otras asignaciones (evita inconsistencias al restaurar contenido).
  */
 @Service
 public class AlumnoJsonBackupService {
 
-    private static final String VERSION = "1.0";
+    private static final String VERSION = "1.1";
     private static final DateTimeFormatter FECHA_FORMAT = DateTimeFormatter.ISO_LOCAL_DATE;
     private static final DateTimeFormatter HORA_FORMAT = DateTimeFormatter.ofPattern("HH:mm");
 
     private final UsuarioRepository usuarioRepository;
     private final MedicionFisicaRepository medicionFisicaRepository;
-    private final GrupoMuscularService grupoMuscularService;
+    private final RegistroProgresoRepository registroProgresoRepository;
     private final UsuarioService usuarioService;
     private final PlatformTransactionManager transactionManager;
     private final ObjectMapper objectMapper;
 
     public AlumnoJsonBackupService(UsuarioRepository usuarioRepository,
                                    MedicionFisicaRepository medicionFisicaRepository,
-                                   GrupoMuscularService grupoMuscularService,
+                                   RegistroProgresoRepository registroProgresoRepository,
                                    UsuarioService usuarioService,
                                    PlatformTransactionManager transactionManager) {
         this.usuarioRepository = usuarioRepository;
         this.medicionFisicaRepository = medicionFisicaRepository;
-        this.grupoMuscularService = grupoMuscularService;
+        this.registroProgresoRepository = registroProgresoRepository;
         this.usuarioService = usuarioService;
         this.transactionManager = transactionManager;
         this.objectMapper = new ObjectMapper();
@@ -118,6 +119,22 @@ public class AlumnoJsonBackupService {
         }
         m.put("mediciones", medicionesList);
 
+        List<Map<String, Object>> progresosList = new ArrayList<>();
+        List<RegistroProgreso> progresos = registroProgresoRepository.findByUsuario_IdOrderByFechaDescIdDesc(u.getId());
+        if (progresos != null) {
+            List<RegistroProgreso> progOrden = new ArrayList<>(progresos);
+            progOrden.sort(Comparator.comparing(RegistroProgreso::getFecha, Comparator.nullsLast(Comparator.naturalOrder()))
+                    .thenComparing(RegistroProgreso::getId, Comparator.nullsLast(Comparator.naturalOrder())));
+            for (RegistroProgreso rp : progOrden) {
+                Map<String, Object> pm = new LinkedHashMap<>();
+                pm.put("fecha", rp.getFecha() != null ? rp.getFecha().format(FECHA_FORMAT) : null);
+                pm.put("gruposMusculares", rp.getGruposMusculares());
+                pm.put("observaciones", rp.getObservaciones());
+                progresosList.add(pm);
+            }
+        }
+        m.put("progresos", progresosList);
+
         return m;
     }
 
@@ -127,6 +144,25 @@ public class AlumnoJsonBackupService {
      */
     @Transactional
     public Map<String, Object> importarDesdeJson(MultipartFile archivo, Profesor profesor, boolean pisarTodos) throws IOException {
+        if (archivo == null || archivo.isEmpty()) {
+            Map<String, Object> result = new HashMap<>();
+            result.put("success", false);
+            result.put("message", "No se envió ningún archivo");
+            return result;
+        }
+        return importarDesdeJsonBytes(archivo.getBytes(), profesor, pisarTodos);
+    }
+
+    /**
+     * Restauración completa desde JSON guardado en servidor: borra todos los alumnos del profesor y carga el backup.
+     */
+    @Transactional
+    public Map<String, Object> importarSnapshotCompletoDesdeJsonBytes(byte[] jsonBytes, Profesor profesor) throws IOException {
+        return importarDesdeJsonBytes(jsonBytes, profesor, true);
+    }
+
+    @Transactional
+    public Map<String, Object> importarDesdeJsonBytes(byte[] jsonBytes, Profesor profesor, boolean pisarTodos) throws IOException {
         Map<String, Object> result = new HashMap<>();
         if (profesor == null) {
             result.put("success", false);
@@ -134,7 +170,7 @@ public class AlumnoJsonBackupService {
             return result;
         }
 
-        String json = new String(archivo.getBytes(), java.nio.charset.StandardCharsets.UTF_8);
+        String json = new String(jsonBytes, StandardCharsets.UTF_8);
         @SuppressWarnings("unchecked")
         Map<String, Object> root = objectMapper.readValue(json, Map.class);
 
@@ -203,6 +239,17 @@ public class AlumnoJsonBackupService {
                     }
                 }
 
+                @SuppressWarnings("unchecked")
+                List<Map<String, Object>> progresos = (List<Map<String, Object>>) ad.get("progresos");
+                if (progresos != null) {
+                    for (Map<String, Object> pm : progresos) {
+                        RegistroProgreso rp = mapToRegistroProgreso(pm, nuevo);
+                        if (rp != null) {
+                            registroProgresoRepository.save(rp);
+                        }
+                    }
+                }
+
                 importados++;
             } catch (Exception e) {
                 errores.add("Fila " + (i + 1) + ": " + e.getMessage());
@@ -244,6 +291,17 @@ public class AlumnoJsonBackupService {
         u.setAvatar("/img/avatar" + ((int) (Math.random() * 8) + 1) + ".png");
         if (u.getFechaAlta() == null) u.setFechaAlta(LocalDate.now());
         return u;
+    }
+
+    private RegistroProgreso mapToRegistroProgreso(Map<String, Object> m, Usuario usuario) {
+        LocalDate fecha = parseFecha(m.get("fecha"));
+        if (fecha == null) return null;
+        RegistroProgreso rp = new RegistroProgreso();
+        rp.setUsuario(usuario);
+        rp.setFecha(fecha);
+        rp.setGruposMusculares(toString(m.get("gruposMusculares")));
+        rp.setObservaciones(toString(m.get("observaciones")));
+        return rp;
     }
 
     private MedicionFisica mapToMedicionFisica(Map<String, Object> m, Usuario usuario) {

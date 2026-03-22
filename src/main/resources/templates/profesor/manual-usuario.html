@@ -198,10 +198,13 @@
             <div class="card-section" id="administracion">
                 <h2>13. Administración del sistema</h2>
                 <p>Desde <strong>Administrar sistema</strong> en el panel accedés al panel de administración con las siguientes secciones. Solo visible para roles <strong>ADMIN</strong> y <strong>DEVELOPER</strong>.</p>
+                <p class="small text-muted"><i class="fa-solid fa-palette me-1"></i>En <strong>Usuarios del sistema</strong> y <strong>Sistema de backups</strong>, los bloques principales tienen un <strong>marco de color</strong> (violeta para perfil o contenido ZIP; azul para listado de usuarios o backup de alumnos JSON) para distinguirlos de un vistazo.</p>
 
                 <h3 id="administracion-usuarios">13.1 Administración de usuarios del sistema</h3>
                 <p>Gestioná los usuarios que pueden iniciar sesión en MiGymVirtual (ADMIN, AYUDANTE, DEVELOPER).</p>
                 <ul>
+                    <li><strong>Marco violeta:</strong> Tarjeta <strong>Mi usuario</strong> (ADMIN) o <strong>Mi perfil</strong> (DEVELOPER) — datos propios y guardado de nombre/correo.</li>
+                    <li><strong>Marco azul (DEVELOPER):</strong> Bloque <strong>Listado de usuarios</strong> con la tabla y acciones.</li>
                     <li><strong>Listado de usuarios:</strong> Se muestra una tabla con nombre, correo, rol y acciones (Editar, Eliminar).</li>
                     <li><strong>Crear usuario:</strong> Botón "+ Crear usuario". Completás nombre, correo, rol y contraseña. El correo debe ser único.</li>
                     <li><strong>Editar usuario:</strong> Podés cambiar nombre, correo, rol y contraseña. El usuario <strong>DEVELOPER</strong> del sistema no se puede modificar ni eliminar (protección del sistema).</li>
@@ -218,22 +221,16 @@
                 </ul>
 
                 <h3 id="administracion-backup">13.3 Sistema de backups</h3>
-                <p>Exportá e importá datos para respaldo o migración.</p>
-                <p><strong>Ejercicios, series, rutinas y grupos musculares:</strong></p>
+                <p>Los backups se guardan en una carpeta del servidor (configurable con <code>migimvirtual.backups.dir</code>). Se conservan como máximo <strong>dos</strong> archivos por tipo; al guardar uno nuevo se elimina el más antiguo.</p>
+                <p><strong>Contenido (ejercicios, series, rutinas plantilla, grupos musculares, categorías de rutinas, imágenes):</strong></p>
                 <ul>
-                    <li><strong>Exportar:</strong> Generá un archivo ZIP con todos los ejercicios, rutinas plantilla, series, grupos musculares e imágenes. Se descarga al instante.</li>
-                    <li><strong>Importar:</strong> Subí un ZIP exportado. Podés elegir qué importar (grupos, ejercicios, rutinas, series). Dos modos:
-                        <ul>
-                            <li><strong>Agregar:</strong> Importa solo lo que no existe. Los datos actuales se conservan. Ideal para sumar ejercicios o rutinas nuevas sin borrar nada.</li>
-                            <li><strong>Suplantar:</strong> Borra los datos actuales de las categorías marcadas y los reemplaza con los del backup. Acción irreversible. Usalo cuando querés restaurar un backup completo.</li>
-                        </ul>
-                    </li>
+                    <li><strong>Guardar backup:</strong> Genera un ZIP en el servidor. No incluye rutinas asignadas a alumnos (solo plantillas), para evitar inconsistencias al restaurar.</li>
+                    <li><strong>Restaurar:</strong> Reemplazo total del contenido importado: se borran los ejercicios, rutinas plantilla, series y datos vinculados y se cargan los del archivo elegido (como una “foto” del día del backup).</li>
                 </ul>
                 <p><strong>Backup de alumnos:</strong></p>
                 <ul>
-                    <li><strong>Exportar backup:</strong> Generá un JSON con todos los alumnos (datos, mediciones, asistencias). Sirve para respaldo.</li>
-                    <li><strong>Exportar a Excel:</strong> Solo para reportes; no se usa para importar.</li>
-                    <li><strong>Importar alumnos:</strong> Subí un JSON exportado. <strong>Agregar</strong> suma alumnos nuevos (por correo); <strong>Suplantar</strong> borra los actuales y reemplaza con los del archivo.</li>
+                    <li><strong>Guardar backup:</strong> Genera un JSON en el servidor con datos personales, mediciones y registros de progreso. No incluye asistencias ni rutinas asignadas.</li>
+                    <li><strong>Restaurar:</strong> Reemplazo total: se eliminan todos los alumnos del profesor y se cargan los del backup elegido.</li>
                 </ul>
 
             </div>
@@ -264,12 +261,12 @@
                         <tr><td>Pizarra para la TV</td><td>Pizarra → crear/editar → abrir URL en la TV</td></tr>
                         <tr><td>Gestionar usuarios del sistema</td><td>Administrar sistema → Usuarios</td></tr>
                         <tr><td>Configurar página pública y ver consultas</td><td>Administrar sistema → Página pública</td></tr>
-                        <tr><td>Exportar o importar ejercicios/rutinas</td><td>Administrar sistema → Sistema de backups</td></tr>
+                        <tr><td>Guardar o restaurar backups (contenido / alumnos)</td><td>Administrar sistema → Sistema de backups</td></tr>
                     </tbody>
                 </table>
             </div>
 
-            <p class="text-muted small mt-4"><i class="fa-solid fa-circle-info me-1"></i> Última actualización: Febrero 2026.</p>
+            <p class="text-muted small mt-4"><i class="fa-solid fa-circle-info me-1"></i> Última actualización: Marzo 2026 (administración: marcos de color en backups y usuarios).</p>
         </div>
     </div>
 

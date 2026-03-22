@@ -270,6 +270,31 @@ profesor/ejercicios-lista.html, profesor/grupos-musculares-lista.html, profesor/
 
 ---
 
+## 5.7 Administrar sistema — sectores visuales (Mar 2026) — ✅ Completado
+
+> **Nota:** Cierre UX del **módulo Administración**: marcos de color para orientar en **Sistema de backups** y **Usuarios del sistema**, en página completa y al cargar la sección dentro de `administracion.html` (`?fragment=1`).
+
+### Problema resuelto
+
+Las plantillas `backup.html` y `usuarios-sistema.html` definen estilos en su `<head>`. Al usar **solo el fragmento** Thymeleaf (`:: contenido`), ese `<head>` **no se envía**: el usuario ve el HTML inyectado dentro del panel, que ya cargó `style.css` desde `administracion.html`. Por eso los estilos de sectores deben estar en **`static/style.css`**.
+
+### Comportamiento
+
+| Pantalla | Móvil | Escritorio |
+|----------|-------|------------|
+| **Backups** | Dos bloques apilados: primero **contenido** (marco violeta), debajo **alumnos** (marco azul). | Dos columnas con el mismo criterio de color. |
+| **Usuarios** | **Mi usuario** (ADMIN) con marco violeta. **DEVELOPER:** “Mi perfil” violeta; “Listado” azul debajo. | Igual criterio; más espacio horizontal. |
+
+### Archivos
+
+`style.css`, `profesor/backup.html`, `profesor/usuarios-sistema.html`.
+
+### Documentación
+
+[DOCUMENTACION_UNIFICADA.md](DOCUMENTACION_UNIFICADA.md) §1.2, [PALETA_COLORES.md](PALETA_COLORES.md) (sectores Administración).
+
+---
+
 ## 6. Orden sugerido para otras vistas (opcional)
 
 1. Revisar que **todas** las plantillas del panel tengan la meta **viewport** (ya está en varias).
@@ -277,4 +302,4 @@ profesor/ejercicios-lista.html, profesor/grupos-musculares-lista.html, profesor/
 3. **Formularios:** que los campos no queden con ancho fijo; usar `col-12 col-md-*` en móvil.
 ---
 
-*Documento de referencia para responsividad. Panel del profesor completado Mar 2026. Módulo de series completado Mar 2026. Módulo de rutinas (panel, editar, hoja, asignar) completado Mar 2026. Pestaña Asignaciones completada Mar 2026. Vista Mis Ejercicios completada Mar 2026. Grupos musculares (lista + editar) responsive Mar 2026. Crear ejercicio y Modificar ejercicio responsive con paleta naranja Mar 2026.*
+*Documento de referencia para responsividad. Panel del profesor completado Mar 2026. Módulo de series completado Mar 2026. Módulo de rutinas (panel, editar, hoja, asignar) completado Mar 2026. Pestaña Asignaciones completada Mar 2026. Vista Mis Ejercicios completada Mar 2026. Grupos musculares (lista + editar) responsive Mar 2026. Crear ejercicio y Modificar ejercicio responsive con paleta naranja Mar 2026. **Administrar sistema:** sectores de color backups/usuarios y CSS en `style.css` para fragmentos (Mar 2026, §5.7).*

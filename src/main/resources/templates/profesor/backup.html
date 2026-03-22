@@ -7,24 +7,9 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="/style.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <!-- Estilos del módulo backup: ver /style.css (.admin-backup-fragment …). El fragmento ?fragment=1 no incluye este <head>. -->
     <style>
         body { background: linear-gradient(135deg, #e8eaf6 0%, #f3e5f5 100%); min-height: 100vh; }
-        .backup-card { border-radius: 1rem; box-shadow: 0 4px 16px rgba(0,0,0,0.06); height: 100%; }
-        .backup-card .card-header { border-radius: 1rem 1rem 0 0; font-weight: 600; font-size: 0.95rem; padding: 0.6rem 1rem; }
-        .backup-card .card-body { padding: 1rem; font-size: 0.9rem; }
-        .backup-card-compact .card-body { padding: 0.85rem; }
-        .backup-card-placeholder { opacity: 0.9; }
-        .detalle-archivo { background: #f8f9fa; border-radius: 0.5rem; padding: 0.6rem 0.75rem; font-size: 0.8rem; }
-        #zonaSubida, #zonaSubidaAlumnos { cursor: pointer; transition: background 0.2s; min-height: 56px !important; padding: 0.5rem !important; }
-        #zonaSubida:hover, #zonaSubidaAlumnos:hover { background: #f0f0f0 !important; }
-        #zonaSubida.dragover, #zonaSubidaAlumnos.dragover { border-color: #0d6efd !important; background: #e7f1ff !important; }
-        .progress-modal .progress { height: 8px; }
-        /* Alumnos: celeste y azul pastel */
-        .card-header-alumnos-export { background: rgba(3, 169, 244, 0.15); color: #0277bd; }
-        .card-alumnos-export .card-body { background: rgba(225, 245, 254, 0.5); }
-        .card-header-alumnos-import { background: rgba(92, 107, 192, 0.2); color: #3949ab; }
-        .card-alumnos-import .card-body { background: rgba(232, 234, 246, 0.6); }
     </style>
 </head>
 <body>
@@ -34,7 +19,11 @@
 <div class="container py-4 admin-section-content">
     <div class="text-center mb-3">
         <h1 class="fw-bold mb-1 fs-4"><i class="fas fa-database me-2" style="color:#5e35b1;"></i>Sistema de backup</h1>
-        <p class="text-muted mb-0 small">Exportar e importar ejercicios, series, rutinas, grupos musculares y alumnos</p>
+        <p class="text-muted mb-0 small">Contenido (ejercicios, rutinas plantilla, series, grupos, categorías, imágenes) y alumnos (datos, mediciones, progresos). Sin asignaciones de rutinas.</p>
+        <p class="text-muted small mb-0" th:if="${backupDirectorioAbs != null}">
+            <i class="fas fa-folder-open me-1"></i>Carpeta en servidor: <code class="small" th:text="${backupDirectorioAbs}">backup</code>
+            <span class="d-block mt-1">Se conservan como máximo <strong>2</strong> archivos por tipo; el más antiguo se elimina al guardar uno nuevo.</span>
+        </p>
     </div>
     <div class="d-flex justify-content-end mb-3">
         <a th:if="${(param.embed == null || param.embed.isEmpty()) && (param.fragment == null || param.fragment.isEmpty())}" th:href="@{/profesor/administracion}" class="btn btn-outline-secondary btn-sm">
@@ -42,67 +31,54 @@
         </a>
     </div>
 
-    <!-- 2 arriba, 2 abajo: izquierda = ejercicios/series/rutinas/grupos, derecha = alumnos -->
+    <div th:if="${backupContenidoMsg}" class="alert alert-success py-2 small" th:text="${backupContenidoMsg}"></div>
+    <div th:if="${backupContenidoErr}" class="alert alert-danger py-2 small" th:text="${backupContenidoErr}"></div>
+    <div th:if="${backupAlumnosMsg}" class="alert alert-success py-2 small" th:text="${backupAlumnosMsg}"></div>
+    <div th:if="${backupAlumnosErr}" class="alert alert-danger py-2 small" th:text="${backupAlumnosErr}"></div>
+
     <div class="row g-3">
-        <!-- Columna izquierda: Ejercicios + series + rutinas + grupos musculares -->
         <div class="col-12 col-md-6">
-            <div class="d-flex flex-column gap-3">
-                <!-- Arriba: Exportar -->
+            <div class="d-flex flex-column gap-3 backup-sector-contenido">
                 <div class="card backup-card backup-card-compact">
                     <div class="card-header bg-success bg-opacity-10 text-success">
-                        <i class="fas fa-file-export me-2"></i>Exportar ejercicios + series + rutinas + grupos musculares
+                        <i class="fas fa-save me-2"></i>Guardar backup de contenido
                     </div>
                     <div class="card-body">
-                        <p class="text-muted small mb-2">Generá un ZIP con ejercicios, rutinas plantilla, series e imágenes.</p>
-                        <a th:href="@{/profesor/backup/exportar-zip}" class="btn btn-success btn-sm" id="btnExportar" data-confirm-msg="¿Está seguro que desea exportar ejercicios, series, rutinas y grupos musculares? Se generará un archivo ZIP para descargar.">
-                            <i class="fas fa-file-export me-1"></i>Exportar
-                        </a>
+                        <p class="text-muted small mb-2">Genera un ZIP en el servidor con el <strong>catálogo de ejercicios</strong> (global) y las <strong>rutinas plantilla + series del profesor del panel</strong> (lo mismo que ves en «Mis rutinas» / «Mis series»), más grupos, categorías e imágenes. No incluye rutinas asignadas a alumnos ni datos de otros profesores.</p>
+                        <form th:action="@{/profesor/backup/guardar-contenido}" method="post" class="form-guardar-contenido">
+                            <button type="submit" class="btn btn-success btn-sm" data-confirm-msg="¿Guardar un nuevo backup de contenido en el servidor? Si ya hay 2, se eliminará el más antiguo.">
+                                <i class="fas fa-save me-1"></i>Guardar backup ahora
+                            </button>
+                        </form>
                     </div>
                 </div>
-                <!-- Abajo: Importar -->
                 <div class="card backup-card backup-card-compact">
                     <div class="card-header bg-info bg-opacity-10 text-info">
-                        <i class="fas fa-file-import me-2"></i>Importar ejercicios + series + rutinas + grupos musculares
+                        <i class="fas fa-undo me-2"></i>Restaurar contenido desde backup
                     </div>
                     <div class="card-body">
-                        <p class="text-muted small mb-2">Subí un ZIP exportado. Agregar o Suplantar.</p>
-                        <form th:action="@{/profesor/backup/importar}" method="post" enctype="multipart/form-data" id="formImportar">
-                            <div class="border rounded-2 p-2 text-center bg-light position-relative" id="zonaSubida">
-                                <p class="mb-1 text-muted small" id="textoZona">ZIP acá o clic</p>
-                                <label class="btn btn-outline-primary btn-sm mb-0" style="cursor:pointer">
-                                    <input type="file" name="archivoZip" id="archivoZip" accept=".zip" class="d-none">
-                                    Seleccionar...
-                                </label>
-                            </div>
-                            <div id="detalleArchivo" class="mt-2 d-none">
-                                <div class="detalle-archivo">
-                                    <p class="mb-1"><strong>Archivo:</strong> <span id="detalleNombre"></span></p>
-                                    <p class="mb-1"><strong>Ejercicios:</strong> <span id="detalleCantidad"></span> <span id="detalleRutinas" class="text-muted"></span></p>
-                                    <p class="mb-2"><strong>Fecha:</strong> <span id="detalleFecha"></span></p>
-                                    <p class="mb-2 small text-muted">Restaurar solo lo que marques:</p>
-                                    <div class="d-flex flex-wrap gap-3 mb-2">
-                                        <label class="d-flex align-items-center gap-1 small"><input type="checkbox" name="importarGrupos" value="true" class="form-check-input" checked> Grupos musculares</label>
-                                        <label class="d-flex align-items-center gap-1 small"><input type="checkbox" name="importarEjercicios" value="true" class="form-check-input" checked> Ejercicios</label>
-                                        <label class="d-flex align-items-center gap-1 small"><input type="checkbox" name="importarRutinas" value="true" class="form-check-input" checked> Rutinas</label>
-                                        <label class="d-flex align-items-center gap-1 small"><input type="checkbox" name="importarSeries" value="true" class="form-check-input" checked> Series</label>
-                                    </div>
-                                    <p class="mb-2 small text-muted">Si elegís Series, conviene tener también Rutinas y Ejercicios marcados.</p>
-                                    <div class="d-flex gap-1 flex-wrap">
-                                        <button type="button" class="btn btn-primary btn-sm" id="btnAgregarZip" data-confirm-msg="¿Agregar las diferencias? Se importarán solo los ejercicios, rutinas, series y grupos del backup que no existan en el sistema. Los datos actuales se conservan.">
-                                            <i class="fas fa-plus me-1"></i>Agregar
-                                        </button>
-                                        <button type="button" name="pisarTodos" value="true" class="btn btn-warning btn-sm" id="btnSuplantarZip" data-confirm-msg="¿Suplantar lo seleccionado? Se borrarán los datos actuales de las categorías marcadas (grupos, ejercicios, rutinas, series) y se reemplazarán con los del backup. Acción irreversible.">
-                                            <i class="fas fa-exchange-alt me-1"></i>Suplantar
-                                        </button>
-                                    </div>
+                        <p class="text-muted small mb-2"><strong class="text-danger">Reemplazo total:</strong> se borran ejercicios, rutinas plantilla, series y datos vinculados del contenido importado y se cargan los del archivo elegido (foto del día del backup). Las asignaciones de rutinas a alumnos no se respaldan.</p>
+                        <ul class="list-group list-group-flush border rounded mb-2" th:if="${backupsContenido != null && !backupsContenido.isEmpty()}">
+                            <li th:each="b : ${backupsContenido}" class="list-group-item backup-list-item d-flex flex-wrap justify-content-between align-items-center gap-2">
+                                <div>
+                                    <span class="fw-medium" th:text="${b.nombre}">archivo.zip</span>
+                                    <span class="text-muted small ms-1" th:text="'(' + ${#numbers.formatDecimal(b.tamanoBytes / 1024.0, 1, 1)} + ' KB)'"></span>
                                 </div>
-                            </div>
-                        </form>
+                                <form th:action="@{/profesor/backup/restaurar-contenido}" method="post" class="form-restaurar-contenido mb-0">
+                                    <input type="hidden" name="nombreArchivo" th:value="${b.nombre}">
+                                    <button type="submit" class="btn btn-warning btn-sm" th:data-confirm-msg="|¿Restaurar TODO el contenido desde ${b.nombre}? Se borrarán los datos actuales de ejercicios/rutinas plantilla/series. Acción irreversible.|">
+                                        <i class="fas fa-undo me-1"></i>Restaurar
+                                    </button>
+                                </form>
+                            </li>
+                        </ul>
+                        <p th:if="${backupsContenido == null || backupsContenido.isEmpty()}" class="text-muted small mb-0">No hay backups de contenido guardados. Usá «Guardar backup ahora».</p>
                         <div th:if="${importResult}" class="alert mt-2 py-2 px-2 small" th:classappend="${importResult['success']} ? 'alert-success' : 'alert-danger'" role="alert">
                             <span th:if="${importResult['success']}">
                                 <strong>OK.</strong>
                                 <span th:text="${importResult['ejerciciosImportados']} + ' ejercicios'">0</span>
-                                <span th:if="${importResult['rutinasImportadas'] != null && importResult['rutinasImportadas'] > 0}" th:text="', ' + ${importResult['rutinasImportadas']} + ' rutinas'"> </span>.
+                                <span th:if="${importResult['rutinasImportadas'] != null && importResult['rutinasImportadas'] > 0}" th:text="', ' + ${importResult['rutinasImportadas']} + ' rutinas'"> </span>
+                                <span th:if="${importResult['categoriasImportadas'] != null && importResult['categoriasImportadas'] > 0}" th:text="', ' + ${importResult['categoriasImportadas']} + ' categorías'"> </span>.
                             </span>
                             <span th:if="${!importResult['success']}" th:text="${importResult['message']}">Error</span>
                             <ul th:if="${importResult['errores'] != null && !importResult['errores'].isEmpty()}" class="mb-0 mt-1 ps-3 small">
@@ -114,58 +90,42 @@
             </div>
         </div>
 
-        <!-- Columna derecha: Alumnos (celeste y azul pastel) -->
         <div class="col-12 col-md-6">
-            <div class="d-flex flex-column gap-3">
-                <!-- Arriba: Backup de alumnos (JSON export + Excel aparte) -->
+            <div class="d-flex flex-column gap-3 backup-sector-alumnos">
                 <div class="card backup-card card-alumnos-export">
                     <div class="card-header card-header-alumnos-export">
-                        <i class="fas fa-users me-2"></i>Backup de alumnos
+                        <i class="fas fa-users me-2"></i>Guardar backup de alumnos
                     </div>
                     <div class="card-body">
-                        <p class="text-muted small mb-2">Exportá un JSON con datos completos (notas del profesor, mediciones, asistencias). Sirve para backup e importación.</p>
-                        <div class="d-flex gap-2 flex-wrap mb-2">
-                            <a th:href="@{/profesor/backup/exportar-alumnos-json}" class="btn btn-sm" style="background: rgba(3, 169, 244, 0.25); color: #0277bd; border: 1px solid #03a9f4;" id="btnExportarAlumnosJson" data-confirm-msg="¿Está seguro que desea exportar el backup de alumnos? Se generará un archivo JSON con todos los datos (notas, mediciones, asistencias).">
-                                <i class="fas fa-file-export me-1"></i>Exportar backup
-                            </a>
-                            <a th:href="@{/profesor/backup/exportar-alumnos-excel}" class="btn btn-outline-secondary btn-sm" id="btnExportarAlumnosExcel" data-confirm-msg="¿Está seguro que desea exportar los alumnos a Excel? Se generará un archivo para reportes (no se usa para importar).">
-                                <i class="fas fa-file-excel me-1"></i>Exportar a Excel
-                            </a>
-                        </div>
-                        <p class="small text-muted mb-0">Excel: solo para reportes; no se usa para importar.</p>
+                        <p class="text-muted small mb-2">Genera un JSON en el servidor con datos personales, mediciones y registros de progreso. <strong>No</strong> incluye asistencias ni rutinas asignadas.</p>
+                        <form th:action="@{/profesor/backup/guardar-alumnos}" method="post" class="form-guardar-alumnos">
+                            <button type="submit" class="btn btn-sm" style="background: rgba(3, 169, 244, 0.25); color: #0277bd; border: 1px solid #03a9f4;" data-confirm-msg="¿Guardar un nuevo backup de alumnos en el servidor? Si ya hay 2, se eliminará el más antiguo.">
+                                <i class="fas fa-save me-1"></i>Guardar backup ahora
+                            </button>
+                        </form>
                     </div>
                 </div>
-                <!-- Abajo: Importar backup de alumnos -->
                 <div class="card backup-card card-alumnos-import">
                     <div class="card-header card-header-alumnos-import">
-                        <i class="fas fa-file-import me-2"></i>Importar backup de alumnos
+                        <i class="fas fa-undo me-2"></i>Restaurar alumnos desde backup
                     </div>
                     <div class="card-body">
-                        <p class="text-muted small mb-2">Subí un JSON exportado. Agregar o Suplantar.</p>
-                        <form th:action="@{/profesor/backup/importar-alumnos}" method="post" enctype="multipart/form-data" id="formImportarAlumnos">
-                            <div class="border rounded-2 p-2 text-center bg-light position-relative" id="zonaSubidaAlumnos">
-                                <p class="mb-1 text-muted small" id="textoZonaAlumnos">JSON acá o clic</p>
-                                <label class="btn btn-outline-primary btn-sm mb-0" style="cursor:pointer">
-                                    <input type="file" name="archivoJson" id="archivoJsonAlumnos" accept=".json" class="d-none">
-                                    Seleccionar...
-                                </label>
-                            </div>
-                            <div id="detalleArchivoAlumnos" class="mt-2 d-none">
-                                <div class="detalle-archivo">
-                                    <p class="mb-1"><strong>Archivo:</strong> <span id="detalleNombreAlumnos"></span></p>
-                                    <p class="mb-1"><strong>Alumnos:</strong> <span id="detalleCantidadAlumnos"></span></p>
-                                    <p class="mb-2"><strong>Fecha:</strong> <span id="detalleFechaAlumnos"></span></p>
-                                    <div class="d-flex gap-1 flex-wrap">
-                                        <button type="button" class="btn btn-primary btn-sm" id="btnAgregarAlumnos" data-confirm-msg="¿Agregar las diferencias? Se importarán solo los alumnos del backup que no existan en el sistema (por correo). Los alumnos actuales se conservan.">
-                                            <i class="fas fa-plus me-1"></i>Agregar
-                                        </button>
-                                        <button type="button" name="pisarTodos" value="true" class="btn btn-warning btn-sm" id="btnSuplantarAlumnos" data-confirm-msg="¿Suplantar todos los alumnos? Se borrarán los alumnos actuales y se reemplazarán con los del backup. Acción irreversible.">
-                                            <i class="fas fa-exchange-alt me-1"></i>Suplantar
-                                        </button>
-                                    </div>
+                        <p class="text-muted small mb-2"><strong class="text-danger">Reemplazo total:</strong> se eliminan todos los alumnos actuales del profesor y se cargan los del backup elegido.</p>
+                        <ul class="list-group list-group-flush border rounded mb-2" th:if="${backupsAlumnos != null && !backupsAlumnos.isEmpty()}">
+                            <li th:each="b : ${backupsAlumnos}" class="list-group-item backup-list-item d-flex flex-wrap justify-content-between align-items-center gap-2">
+                                <div>
+                                    <span class="fw-medium" th:text="${b.nombre}">archivo.json</span>
+                                    <span class="text-muted small ms-1" th:text="'(' + ${#numbers.formatDecimal(b.tamanoBytes / 1024.0, 1, 1)} + ' KB)'"></span>
                                 </div>
-                            </div>
-                        </form>
+                                <form th:action="@{/profesor/backup/restaurar-alumnos}" method="post" class="form-restaurar-alumnos mb-0">
+                                    <input type="hidden" name="nombreArchivo" th:value="${b.nombre}">
+                                    <button type="submit" class="btn btn-warning btn-sm" th:data-confirm-msg="|¿Restaurar TODOS los alumnos desde ${b.nombre}? Se borrarán los alumnos actuales. Acción irreversible.|">
+                                        <i class="fas fa-undo me-1"></i>Restaurar
+                                    </button>
+                                </form>
+                            </li>
+                        </ul>
+                        <p th:if="${backupsAlumnos == null || backupsAlumnos.isEmpty()}" class="text-muted small mb-0">No hay backups de alumnos guardados.</p>
                         <div th:if="${importAlumnosResult}" class="alert mt-2 py-2 px-2 small" th:classappend="${importAlumnosResult['success']} ? 'alert-success' : 'alert-danger'" role="alert">
                             <span th:if="${importAlumnosResult['success']}">
                                 <strong>OK.</strong>
@@ -182,7 +142,6 @@
         </div>
     </div>
 
-    <!-- Modal progreso (incluido en fragmento para uso en panel administración) -->
     <div class="modal fade" id="modalProgreso" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
@@ -190,8 +149,8 @@
                 <div class="spinner-border text-primary mb-3" role="status" style="width: 3rem; height: 3rem;">
                     <span class="visually-hidden">Procesando...</span>
                 </div>
-                <h6 class="mb-2" id="modalProgresoTitulo">Exportando ejercicios...</h6>
-                <div class="progress mb-0" id="barraProgreso" style="height: 8px;">
+                <h6 class="mb-2" id="modalProgresoTitulo">Procesando...</h6>
+                <div class="progress mb-0" style="height: 8px;">
                     <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 100%"></div>
                 </div>
             </div>
@@ -199,7 +158,6 @@
     </div>
     </div>
 
-    <!-- Modal confirmación (estilo reutilizable para toda la app) -->
     <div class="modal fade" id="modalConfirmar" tabindex="-1">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
@@ -215,44 +173,14 @@
             </div>
         </div>
     </div>
-
-    <!-- Modal alerta/info (reemplaza alert() nativo) -->
-    <div class="modal fade" id="modalAlerta" tabindex="-1">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header modal-confirmar-header">
-                    <h5 class="modal-title" id="modalAlertaTitulo"><i class="fas fa-info-circle me-2"></i>Información</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
-                </div>
-                <div class="modal-body" id="modalAlertaMensaje"></div>
-                <div class="modal-footer modal-confirmar-footer">
-                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Aceptar</button>
-                </div>
-            </div>
-        </div>
-    </div>
 </div>
-<script th:inline="javascript">
+<script>
 (function() {
-    var zona = document.getElementById('zonaSubida');
-    var input = document.getElementById('archivoZip');
-    var detalleArchivo = document.getElementById('detalleArchivo');
-    var formImportar = document.getElementById('formImportar');
-    var modalProgreso = new bootstrap.Modal(document.getElementById('modalProgreso'));
+    var modalProgresoEl = document.getElementById('modalProgreso');
+    var modalProgreso = modalProgresoEl ? new bootstrap.Modal(modalProgresoEl) : null;
     var modalProgresoTitulo = document.getElementById('modalProgresoTitulo');
     var modalConfirmar = document.getElementById('modalConfirmar');
-    var modalAlerta = document.getElementById('modalAlerta');
 
-    /** Muestra alerta estilizada (reemplaza alert() nativo) */
-    function mostrarAlerta(titulo, mensaje) {
-        var tit = document.getElementById('modalAlertaTitulo');
-        var msg = document.getElementById('modalAlertaMensaje');
-        if (tit) tit.innerHTML = '<i class="fas fa-info-circle me-2"></i>' + (titulo || 'Información');
-        if (msg) msg.textContent = mensaje || '';
-        (new bootstrap.Modal(modalAlerta)).show();
-    }
-
-    /** Confirmación estilizada. Retorna Promise que resuelve true si confirma, false si cancela. */
     function confirmar(mensaje, titulo) {
         return new Promise(function(resolve) {
             var msgEl = document.getElementById('modalConfirmarMensaje');
@@ -280,238 +208,29 @@
         });
     }
 
-    function formatearFecha(fechaStr) {
-        if (!fechaStr) return '-';
-        var parts = fechaStr.split(/[-_]/);
-        if (parts.length >= 3) return parts[2] + '/' + parts[1] + '/' + parts[0] + (parts.length >= 6 ? ' ' + parts[3] + ':' + parts[4] : '');
-        return fechaStr;
-    }
-
-    input.addEventListener('change', async function() {
-        var file = input.files[0];
-        if (!file) {
-            detalleArchivo.classList.add('d-none');
-            return;
-        }
-        try {
-            if (typeof JSZip === 'undefined') {
-                detalleArchivo.classList.remove('d-none');
-                document.getElementById('detalleNombre').textContent = file.name;
-                document.getElementById('detalleCantidad').textContent = '?';
-                document.getElementById('detalleFecha').textContent = '-';
-                return;
-            }
-            var zip = await JSZip.loadAsync(file);
-            var manifestEntry = zip.file('manifest.json');
-            if (!manifestEntry) {
-                detalleArchivo.classList.add('d-none');
-                mostrarAlerta('Archivo no válido', 'El archivo no contiene manifest.json (no es un backup válido de ejercicios).');
-                return;
-            }
-            var manifestText = await manifestEntry.async('string');
-            var manifestInfo = JSON.parse(manifestText);
-            document.getElementById('detalleNombre').textContent = file.name;
-            document.getElementById('detalleCantidad').textContent = manifestInfo.cantidadEjercicios != null ? manifestInfo.cantidadEjercicios : '?';
-            var rutinasSpan = document.getElementById('detalleRutinas');
-            var parts = [];
-            if (manifestInfo.cantidadGruposMusculares != null) parts.push('Grupos: ' + manifestInfo.cantidadGruposMusculares);
-            if (manifestInfo.cantidadRutinas != null && manifestInfo.cantidadSeries != null) parts.push('Rutinas: ' + manifestInfo.cantidadRutinas, 'Series: ' + manifestInfo.cantidadSeries);
-            rutinasSpan.textContent = parts.length ? '| ' + parts.join(' | ') : '';
-            document.getElementById('detalleFecha').textContent = formatearFecha(manifestInfo.fecha) || '-';
-            detalleArchivo.classList.remove('d-none');
-        } catch (e) {
-            detalleArchivo.classList.add('d-none');
-            mostrarAlerta('Error', 'No se pudo leer el archivo ZIP: ' + e.message);
-        }
-    });
-
-    zona.addEventListener('dragover', function(e) { e.preventDefault(); e.stopPropagation(); zona.classList.add('dragover'); });
-    zona.addEventListener('dragleave', function(e) { e.preventDefault(); zona.classList.remove('dragover'); });
-    zona.addEventListener('drop', function(e) {
-        e.preventDefault();
-        e.stopPropagation();
-        zona.classList.remove('dragover');
-        var files = e.dataTransfer.files;
-        if (files.length && files[0].name.toLowerCase().endsWith('.zip')) {
-            var dt = new DataTransfer();
-            dt.items.add(files[0]);
-            input.files = dt.files;
-            input.dispatchEvent(new Event('change'));
-        }
-    });
-
-    formImportar.addEventListener('submit', function(e) {
-        if (!input.files || input.files.length === 0) {
-            e.preventDefault();
-            mostrarAlerta('Archivo requerido', 'Seleccioná un archivo ZIP primero.');
-            return false;
-        }
-        modalProgresoTitulo.textContent = 'Importando ejercicios...';
-        modalProgreso.show();
-        return true;
-    });
-
-    document.getElementById('btnExportar').addEventListener('click', function(e) {
-        e.preventDefault();
-        var msg = this.getAttribute('data-confirm-msg') || '¿Está seguro que desea exportar?';
-        confirmar(msg).then(function(ok) {
-            if (ok) {
-                modalProgresoTitulo.textContent = 'Preparando descarga...';
-                modalProgreso.show();
-                window.location.href = document.getElementById('btnExportar').getAttribute('href');
-                setTimeout(function() { modalProgreso.hide(); }, 4000);
-            }
-        });
-    });
-
-    document.getElementById('btnAgregarZip').addEventListener('click', function() {
-        if (!input.files || input.files.length === 0) {
-            mostrarAlerta('Archivo requerido', 'Seleccioná un archivo ZIP primero.');
-            return;
-        }
-        var msg = this.getAttribute('data-confirm-msg');
-        confirmar(msg).then(function(ok) {
-            if (ok) {
-                modalProgresoTitulo.textContent = 'Importando ejercicios...';
-                modalProgreso.show();
-                formImportar.submit();
-            }
-        });
-    });
-
-    document.getElementById('btnSuplantarZip').addEventListener('click', function() {
-        if (!input.files || input.files.length === 0) {
-            mostrarAlerta('Archivo requerido', 'Seleccioná un archivo ZIP primero.');
-            return;
-        }
-        var msg = this.getAttribute('data-confirm-msg');
-        confirmar(msg).then(function(ok) {
-            if (ok) {
-                var inp = document.createElement('input');
-                inp.type = 'hidden';
-                inp.name = 'pisarTodos';
-                inp.value = 'true';
-                formImportar.appendChild(inp);
-                modalProgresoTitulo.textContent = 'Importando ejercicios...';
-                modalProgreso.show();
-                formImportar.submit();
-            }
-        });
-    });
-
-    // Alumnos JSON: preview y submit
-    var zonaAlumnos = document.getElementById('zonaSubidaAlumnos');
-    var inputAlumnos = document.getElementById('archivoJsonAlumnos');
-    var detalleAlumnos = document.getElementById('detalleArchivoAlumnos');
-    var formImportarAlumnos = document.getElementById('formImportarAlumnos');
-    if (inputAlumnos) {
-        inputAlumnos.addEventListener('change', function() {
-            var file = inputAlumnos.files[0];
-            if (!file) {
-                if (detalleAlumnos) detalleAlumnos.classList.add('d-none');
-                return;
-            }
-            var reader = new FileReader();
-            reader.onload = function() {
-                try {
-                    var data = JSON.parse(reader.result);
-                    if (detalleAlumnos) {
-                        document.getElementById('detalleNombreAlumnos').textContent = file.name;
-                        document.getElementById('detalleCantidadAlumnos').textContent = data.cantidadAlumnos != null ? data.cantidadAlumnos : (data.alumnos ? data.alumnos.length : '?');
-                        document.getElementById('detalleFechaAlumnos').textContent = data.fecha ? data.fecha.substring(0, 10) : '-';
-                        detalleAlumnos.classList.remove('d-none');
+    function attachConfirmSubmit(selector, tituloProgreso) {
+        document.querySelectorAll(selector).forEach(function(form) {
+            form.addEventListener('submit', function(e) {
+                var btn = form.querySelector('[type=submit][data-confirm-msg]');
+                var msg = btn ? btn.getAttribute('data-confirm-msg') : '¿Continuar?';
+                e.preventDefault();
+                confirmar(msg).then(function(ok) {
+                    if (ok) {
+                        if (modalProgreso && modalProgresoTitulo) {
+                            modalProgresoTitulo.textContent = tituloProgreso || 'Procesando...';
+                            modalProgreso.show();
+                        }
+                        form.submit();
                     }
-                } catch (e) {
-                    if (detalleAlumnos) detalleAlumnos.classList.add('d-none');
-                    mostrarAlerta('Error', 'No se pudo leer el JSON: ' + e.message);
-                }
-            };
-            reader.readAsText(file);
-        });
-    }
-    if (zonaAlumnos) {
-        zonaAlumnos.addEventListener('dragover', function(e) { e.preventDefault(); e.stopPropagation(); zonaAlumnos.classList.add('dragover'); });
-        zonaAlumnos.addEventListener('dragleave', function(e) { e.preventDefault(); zonaAlumnos.classList.remove('dragover'); });
-        zonaAlumnos.addEventListener('drop', function(e) {
-            e.preventDefault();
-            e.stopPropagation();
-            zonaAlumnos.classList.remove('dragover');
-            var files = e.dataTransfer.files;
-            if (files.length && files[0].name.toLowerCase().endsWith('.json')) {
-                var dt = new DataTransfer();
-                dt.items.add(files[0]);
-                inputAlumnos.files = dt.files;
-                inputAlumnos.dispatchEvent(new Event('change'));
-            }
-        });
-    }
-    var btnAgregarAlumnos = document.getElementById('btnAgregarAlumnos');
-    if (btnAgregarAlumnos) {
-        btnAgregarAlumnos.addEventListener('click', function() {
-            if (!inputAlumnos.files || inputAlumnos.files.length === 0) {
-                mostrarAlerta('Archivo requerido', 'Seleccioná un archivo JSON primero.');
-                return;
-            }
-            var msg = this.getAttribute('data-confirm-msg');
-            confirmar(msg).then(function(ok) {
-                if (ok) {
-                    modalProgresoTitulo.textContent = 'Importando alumnos...';
-                    modalProgreso.show();
-                    formImportarAlumnos.submit();
-                }
+                });
             });
         });
     }
-    document.getElementById('btnSuplantarAlumnos').addEventListener('click', function() {
-        if (!inputAlumnos.files || inputAlumnos.files.length === 0) {
-            mostrarAlerta('Archivo requerido', 'Seleccioná un archivo JSON primero.');
-            return;
-        }
-        var msg = this.getAttribute('data-confirm-msg');
-        confirmar(msg).then(function(ok) {
-            if (ok) {
-                var inp = document.createElement('input');
-                inp.type = 'hidden';
-                inp.name = 'pisarTodos';
-                inp.value = 'true';
-                formImportarAlumnos.appendChild(inp);
-                modalProgresoTitulo.textContent = 'Importando alumnos...';
-                modalProgreso.show();
-                formImportarAlumnos.submit();
-            }
-        });
-    });
 
-    var btnExportarAlumnosJson = document.getElementById('btnExportarAlumnosJson');
-    if (btnExportarAlumnosJson) {
-        btnExportarAlumnosJson.addEventListener('click', function(e) {
-            e.preventDefault();
-            var msg = this.getAttribute('data-confirm-msg');
-            confirmar(msg).then(function(ok) {
-                if (ok) {
-                    modalProgresoTitulo.textContent = 'Preparando backup de alumnos...';
-                    modalProgreso.show();
-                    window.location.href = btnExportarAlumnosJson.getAttribute('href');
-                    setTimeout(function() { modalProgreso.hide(); }, 3000);
-                }
-            });
-        });
-    }
-    var btnExportarAlumnosExcel = document.getElementById('btnExportarAlumnosExcel');
-    if (btnExportarAlumnosExcel) {
-        btnExportarAlumnosExcel.addEventListener('click', function(e) {
-            e.preventDefault();
-            var msg = this.getAttribute('data-confirm-msg');
-            confirmar(msg).then(function(ok) {
-                if (ok) {
-                    modalProgresoTitulo.textContent = 'Preparando Excel...';
-                    modalProgreso.show();
-                    window.location.href = btnExportarAlumnosExcel.getAttribute('href');
-                    setTimeout(function() { modalProgreso.hide(); }, 3000);
-                }
-            });
-        });
-    }
+    attachConfirmSubmit('.form-guardar-contenido', 'Guardando backup de contenido...');
+    attachConfirmSubmit('.form-guardar-alumnos', 'Guardando backup de alumnos...');
+    attachConfirmSubmit('.form-restaurar-contenido', 'Restaurando contenido...');
+    attachConfirmSubmit('.form-restaurar-alumnos', 'Restaurando alumnos...');
 })();
 </script>
 </div>

@@ -56,8 +56,8 @@ Tras iniciar sesión se redirige al **Panel del profesor** (`/profesor/{id}`).
 | **PLAN_DE_DESARROLLO_MiGymVirtual.md** | Plan de desarrollo: fases (BD, renombre, eliminaciones virtual, responsive), subplan de lo que se quita. |
 | **SUBPLAN_DESARROLLO_MODULOS.md** | Avances por módulo (Alumnos → Series → Rutinas → Asignaciones → Ejercicios → Administrar); checklist y notas. |
 | **ELIMINACION_CALENDARIO_Y_PIZARRA_MAR2026.md** | Detalle de la eliminación de calendario, asistencias y pizarra online (Mar 2026). |
-| **DOCUMENTACION_UNIFICADA.md** | Resúmenes: lo implementado, backup, Excel alumnos, despliegue, manual (índice), referencias técnicas. |
-| **PALETA_COLORES.md** | Colores por módulo (Alumnos verde, Series violeta, Rutinas amarillo, Asignaciones azul, Ejercicios naranja, Administrar gris). Tonos pastel y derivaciones. |
+| **DOCUMENTACION_UNIFICADA.md** | Resúmenes: lo implementado, backup en servidor (§2), despliegue, manual (índice), referencias técnicas. |
+| **PALETA_COLORES.md** | Colores por módulo + **sectores de Administración** (backup contenido/alumnos, usuarios perfil/listado). Tonos pastel y derivaciones. |
 | **AYUDA_MEMORIA.md** | Lista rápida de pendientes (ejercicios/vistas), eliminar alumno, backup terminado. |
 
 **Carpeta `servidor/`:** Despliegue en VPS (SSH, Nginx, menú). Ver `servidor/DESPLIEGUE-SERVIDOR.md` y `servidor/nginx-detodoya.conf`.
@@ -79,8 +79,8 @@ Tras iniciar sesión se redirige al **Panel del profesor** (`/profesor/{id}`).
 
 ## 5. Resumen rápido de estado (para la IA)
 
-- **Implementado:** Ejercicios, series, rutinas, grupos musculares, alumnos (sin login), página pública, manual en `/profesor/manual`, sistema de backup (ZIP, JSON y Excel alumnos). Calendario, asistencias y pizarra/sala eliminados (Mar 2026); app 100 % virtual. Ver DOCUMENTACION_UNIFICADA.md y ELIMINACION_CALENDARIO_Y_PIZARRA_MAR2026.md.
-- **Pendiente:** Responsive y UX. Ver PLAN_DE_DESARROLLO_MiGymVirtual.md.
+- **Implementado:** Ejercicios, series, rutinas, grupos musculares, alumnos (sin login), página pública, manual en `/profesor/manual`, sistema de **backup en servidor** (ZIP contenido + JSON alumnos, restauración total, máx. 2 archivos/tipo; export rutinas/series por profesor del panel). **Administrar sistema:** UX de cierre Mar 2026 — sectores con marco de color (backups contenido vs alumnos; usuarios perfil vs listado), estilos en `style.css` para vista con `?fragment=1`. Calendario, asistencias y pizarra/sala eliminados (Mar 2026); app 100 % virtual. Ver DOCUMENTACION_UNIFICADA.md §1.2 y §2, DESPLIEGUE-SERVIDOR §6.6 (carpeta backup en Ubuntu) y ELIMINACION_CALENDARIO_Y_PIZARRA_MAR2026.md.
+- **Pendiente:** Otros refinamientos responsive/UX según plan; replantear página pública para modelo gimnasio virtual (AYUDA_MEMORIA). Ver PLAN_DE_DESARROLLO_MiGymVirtual.md.
 
 ---
 

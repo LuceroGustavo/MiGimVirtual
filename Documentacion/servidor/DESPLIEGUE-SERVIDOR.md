@@ -190,6 +190,42 @@ mkdir -p /root/mattfuncional/uploads
 
 La app crea automáticamente `uploads/ejercicios` al iniciar. Si las imágenes de ejercicios predeterminados (1.webp … 60.webp) no están, los ejercicios se crean igual pero sin imagen.
 
+### 6.6 Carpeta `backup` (MiGymVirtual – Ubuntu / producción)
+
+Los backups del panel (**Administrar sistema → Sistema de backups**) se escriben en disco según la propiedad Spring **`migimvirtual.backups.dir`** (por defecto el valor relativo `backup`).
+
+#### ¿Hay que crear la carpeta `backup` a mano?
+
+**No es obligatorio.** En el primer **“Guardar backup ahora”** (contenido o alumnos), el servicio `BackupStorageService` ejecuta `Files.createDirectories` y crea toda la ruta necesaria:
+
+- `{raíz}/backup/contenido/` — archivos ZIP de contenido  
+- `{raíz}/backup/alumnos/` — archivos JSON de alumnos  
+
+Si `migimvirtual.backups.dir` es **relativo** (ej. `backup`), la raíz base es el **directorio de trabajo de la JVM** (`user.dir`), que suele ser la carpeta desde la que se arrancó el JAR o el script (en muchos despliegues, la raíz del proyecto en el servidor, p. ej. `/root/mattfuncional` o `/root/Migimvirtual`).
+
+#### Recomendaciones en Ubuntu / VPS
+
+1. **Ruta absoluta (recomendado en producción)**  
+   En `application-donweb.properties` (o el perfil que uses en el servidor), definir por ejemplo:
+   ```properties
+   migimvirtual.backups.dir=/var/migimvirtual/backups
+   ```
+   Así los backups no dependen de `user.dir` y quedan en un lugar conocido para copias de seguridad del sistema operativo.
+
+2. **Permisos**  
+   El usuario con el que corre la app (root en muchos VPS, o un usuario dedicado) debe tener **permiso de escritura** en esa ruta. Si creás la carpeta a mano antes del primer backup:
+   ```bash
+   sudo mkdir -p /var/migimvirtual/backups
+   sudo chown -R usuario_que_corre_la_app:usuario_que_corre_la_app /var/migimvirtual/backups
+   ```
+   (Sustituí `usuario_que_corre_la_app` si no corrés como root.)
+
+3. **Espacio en disco**  
+   Los ZIP de contenido incluyen imágenes de ejercicios; con rotación a **2** archivos por tipo el uso acotado, pero conviene monitorear disco (`df -h`).
+
+4. **Nginx / subida por HTTP**  
+   El flujo actual de backup guarda desde el **mismo servidor** (no sube ZIP enormes por el navegador en ese módulo). Si en el futuro se expusiera subida de archivos grandes por HTTPS, revisar `client_max_body_size` (ver §8.1).
+
 ---
 
 ## 7. Uso por SSH con contraseña (alternativa)
@@ -337,5 +373,5 @@ Puede deberse a **duplicados en `slot_config`** o a **varios usuarios con el mis
 
 ---
 
-**Última actualización:** Febrero 2026.  
-Se documentó el acceso por **SSH con clave (sin contraseña)** como forma recomendada desde tu PC; con la clave configurada, Cursor u otras herramientas pueden ejecutar comandos en el servidor sin pedir contraseña.
+**Última actualización:** Marzo 2026 — Sección **6.6 Carpeta backup (MiGymVirtual)**: creación automática al primer guardado, ruta absoluta y permisos en Ubuntu.  
+*(Febrero 2026: SSH con clave recomendado desde PC.)*

@@ -2,6 +2,50 @@
 
 > Nota: este changelog incluye histórico heredado de MiGym (referencias a admin/chat/websocket).
 
+## [2026-03-22] - docs+feat(ui): cierre módulo Administración (sectores de color, documentación) ✅
+
+### Resumen
+- **Sistema de backups:** Marcos de color para distinguir **contenido** (ZIP, violeta `#7e57c2`) y **alumnos** (JSON, azul `#039be5`). Clases `.backup-sector-contenido` / `.backup-sector-alumnos` bajo `.admin-backup-fragment`.
+- **Usuarios del sistema:** Mismo criterio visual — perfil “Mi usuario” / “Mi perfil” (violeta) y **listado** de usuarios (azul). Raíz `.admin-usuarios-sistema-root`; sectores `usuarios-sistema-sector-cuenta` / `usuarios-sistema-sector-listado`.
+- **CSS:** Reglas en `static/style.css` para que apliquen al cargar fragmentos Thymeleaf en `administracion.html` (`?fragment=1`), donde no se incluye el `<head>` de `backup.html` / `usuarios-sistema.html`.
+- **Backup:** `ExerciseZipBackupService` — borrado previo “suplantar” refactorizado a método privado `ejecutarBorradoPrevioSuplantar` (transacciones / lambdas).
+- **Documentación:** `DOCUMENTACION_UNIFICADA.md` §1.2, §2 (nota UI), tabla modales sin “depuración”; `AYUDA_MEMORIA.md`; `LEEME_PRIMERO.md`; `PALETA_COLORES.md`; `SUBPLAN_DESARROLLO_MODULOS.md` §8; `GUIA_RESPONSIVE.md` §5.7; `manual-usuario.html` §13.
+
+### Archivos principales
+`style.css`, `profesor/backup.html`, `profesor/usuarios-sistema.html`, `ExerciseZipBackupService.java`, documentación en `Documentacion/*.md`, `templates/profesor/manual-usuario.html`.
+
+---
+
+## [2026-03-21] - docs: backup en DOCUMENTACION_UNIFICADA, DESPLIEGUE-SERVIDOR §6.6 (Ubuntu) ✅
+
+### Resumen
+- Actualizados `Documentacion/DOCUMENTACION_UNIFICADA.md` (§2 backup completo), `Documentacion/servidor/DESPLIEGUE-SERVIDOR.md` (§6.6 carpeta backup: creación automática, ruta absoluta, permisos), `AYUDA_MEMORIA.md`, `LEEME_PRIMERO.md`.
+- Javadoc en `BackupStorageService` con referencia a la guía de despliegue.
+
+---
+
+## [2026-03-21] - fix(backup): export ZIP solo rutinas/series del profesor del panel ✅
+
+### Resumen
+El ZIP ya no usa `findByEsPlantillaTrue()` global: exporta rutinas plantilla y series sueltas solo del **profesor** que guarda el backup (`profesorId` en manifest v1.2). Evita que al restaurar se importen series/rutinas de otros profesores o huérfanas y el contador del dashboard se dispare respecto a «Mis series».
+
+### Archivos
+- `ExerciseZipBackupService.exportarEjerciciosAZip(Long profesorId)`, `SerieRepository.findByProfesorIdAndEsPlantillaTrueAndRutinaIsNull`, `AdminPanelController`, `backup.html` (texto aclaratorio).
+
+---
+
+## [2026-03-21] - feat(backup): guardado en servidor, rotación 2 archivos, restauración total ✅
+
+### Resumen
+- Backups de **contenido** (ZIP) y **alumnos** (JSON) se guardan en carpeta configurable `migimvirtual.backups.dir` (`backup/contenido/`, `backup/alumnos/`). Máximo **2** archivos por tipo.
+- **Restaurar** = reemplazo total (“foto del día”). Eliminada exportación a Excel desde el panel de backup; eliminados endpoints de descarga/subida por navegador para este flujo.
+- ZIP incluye **`categorias.json`** (manifest v1.1). JSON alumnos v**1.1** incluye **progresos** (`RegistroProgreso`). Sin backup de asignaciones de rutinas.
+
+### Archivos principales
+- `BackupStorageService`, `AdminPanelController` (POST guardar/restaurar), `ExerciseZipBackupService`, `AlumnoJsonBackupService`, `CategoriaRepository.deleteByProfesor_Id`, `CategoriaService.ensureCategoriaExiste` / `eliminarCategoriasDelProfesor`, `profesor/backup.html`, `manual-usuario.html` §13.3.
+
+---
+
 ## [2026-03-14] - feat(ui): marca MiGymVirtual, página pública, consultas, planes admin móvil ✅
 
 ### Resumen

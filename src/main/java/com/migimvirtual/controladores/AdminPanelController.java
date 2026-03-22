@@ -2,15 +2,10 @@ package com.migimvirtual.controladores;
 
 import com.migimvirtual.entidades.Profesor;
 import com.migimvirtual.entidades.Usuario;
-import com.migimvirtual.servicios.AlumnoExportService;
 import com.migimvirtual.servicios.AlumnoJsonBackupService;
+import com.migimvirtual.servicios.BackupStorageService;
 import com.migimvirtual.servicios.ExerciseZipBackupService;
 import com.migimvirtual.servicios.ProfesorService;
-import org.springframework.core.io.ByteArrayResource;
-import org.springframework.core.io.Resource;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -18,15 +13,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -35,21 +25,20 @@ import java.util.Map;
 public class AdminPanelController {
 
     private static final Logger logger = LoggerFactory.getLogger(AdminPanelController.class);
-    private static final DateTimeFormatter ZIP_FILENAME_DATE = DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm");
 
     private final ExerciseZipBackupService exerciseZipBackupService;
     private final ProfesorService profesorService;
-    private final AlumnoExportService alumnoExportService;
     private final AlumnoJsonBackupService alumnoJsonBackupService;
+    private final BackupStorageService backupStorageService;
 
     public AdminPanelController(ExerciseZipBackupService exerciseZipBackupService,
                                 ProfesorService profesorService,
-                                AlumnoExportService alumnoExportService,
-                                AlumnoJsonBackupService alumnoJsonBackupService) {
+                                AlumnoJsonBackupService alumnoJsonBackupService,
+                                BackupStorageService backupStorageService) {
         this.exerciseZipBackupService = exerciseZipBackupService;
         this.profesorService = profesorService;
-        this.alumnoExportService = alumnoExportService;
         this.alumnoJsonBackupService = alumnoJsonBackupService;
+        this.backupStorageService = backupStorageService;
     }
 
     private Profesor getProfesorParaUsuario(Usuario usuario) {
@@ -79,172 +68,125 @@ public class AdminPanelController {
         if (usuarioActual == null || (!"ADMIN".equals(usuarioActual.getRol()) && !"DEVELOPER".equals(usuarioActual.getRol()))) {
             return "redirect:/profesor/dashboard";
         }
+        model.addAttribute("backupsContenido", backupStorageService.listarContenido());
+        model.addAttribute("backupsAlumnos", backupStorageService.listarAlumnos());
+        model.addAttribute("backupDirectorioAbs", backupStorageService.resolveRoot().toAbsolutePath().toString());
         if (fragment != null && !fragment.isEmpty()) {
             return "profesor/backup :: contenido";
         }
         return "profesor/backup";
     }
 
-    /**
-     * Importa ejercicios desde ZIP (form submit). Redirige con resultado en flash.
-     */
-    @PostMapping("/backup/importar")
-    public String importarBackupZip(@AuthenticationPrincipal Usuario usuarioActual,
-                                    @RequestParam("archivoZip") MultipartFile archivoZip,
-                                    @RequestParam(value = "pisarTodos", defaultValue = "false") boolean pisarTodos,
-                                    @RequestParam(value = "importarGrupos", defaultValue = "true") boolean importarGrupos,
-                                    @RequestParam(value = "importarEjercicios", defaultValue = "true") boolean importarEjercicios,
-                                    @RequestParam(value = "importarRutinas", defaultValue = "true") boolean importarRutinas,
-                                    @RequestParam(value = "importarSeries", defaultValue = "true") boolean importarSeries,
-                                    RedirectAttributes redirectAttributes) {
+    @PostMapping("/backup/guardar-contenido")
+    public String guardarBackupContenido(@AuthenticationPrincipal Usuario usuarioActual,
+                                         RedirectAttributes redirectAttributes) {
         if (usuarioActual == null || (!"ADMIN".equals(usuarioActual.getRol()) && !"DEVELOPER".equals(usuarioActual.getRol()))) {
             return "redirect:/profesor/dashboard";
         }
+        Profesor profesor = getProfesorParaUsuario(usuarioActual);
+        if (profesor == null) {
+            redirectAttributes.addFlashAttribute("backupContenidoErr", "No se pudo determinar el profesor para el backup de contenido.");
+            return "redirect:/profesor/administracion?seccion=backup";
+        }
         try {
-            Profesor profesor = getProfesorParaUsuario(usuarioActual);
-            Map<String, Object> result = exerciseZipBackupService.importarDesdeZip(archivoZip, pisarTodos, profesor,
-                    importarGrupos, importarEjercicios, importarRutinas, importarSeries);
-            redirectAttributes.addFlashAttribute("importResult", result);
-        } catch (IOException e) {
+            byte[] zipBytes = exerciseZipBackupService.exportarEjerciciosAZip(profesor.getId());
+            String nombre = backupStorageService.guardarContenidoZip(zipBytes);
+            redirectAttributes.addFlashAttribute("backupContenidoMsg", "Backup de contenido guardado en el servidor: " + nombre);
+        } catch (Exception e) {
+            logger.error("Error al guardar backup ZIP: {}", e.getMessage(), e);
+            redirectAttributes.addFlashAttribute("backupContenidoErr", "No se pudo guardar el backup: " + e.getMessage());
+        }
+        return "redirect:/profesor/administracion?seccion=backup";
+    }
+
+    @PostMapping("/backup/guardar-alumnos")
+    public String guardarBackupAlumnos(@AuthenticationPrincipal Usuario usuarioActual,
+                                       RedirectAttributes redirectAttributes) {
+        if (usuarioActual == null || (!"ADMIN".equals(usuarioActual.getRol()) && !"DEVELOPER".equals(usuarioActual.getRol()))) {
+            return "redirect:/profesor/dashboard";
+        }
+        Profesor profesor = getProfesorParaUsuario(usuarioActual);
+        if (profesor == null) {
+            redirectAttributes.addFlashAttribute("backupAlumnosErr", "No se pudo determinar el profesor.");
+            return "redirect:/profesor/administracion?seccion=backup";
+        }
+        try {
+            byte[] jsonBytes = alumnoJsonBackupService.exportarAlumnosAJson(profesor.getId());
+            String nombre = backupStorageService.guardarAlumnosJson(jsonBytes);
+            redirectAttributes.addFlashAttribute("backupAlumnosMsg", "Backup de alumnos guardado en el servidor: " + nombre);
+        } catch (Exception e) {
+            logger.error("Error al guardar backup alumnos: {}", e.getMessage(), e);
+            redirectAttributes.addFlashAttribute("backupAlumnosErr", "No se pudo guardar el backup: " + e.getMessage());
+        }
+        return "redirect:/profesor/administracion?seccion=backup";
+    }
+
+    @PostMapping("/backup/restaurar-contenido")
+    public String restaurarBackupContenido(@AuthenticationPrincipal Usuario usuarioActual,
+                                           @RequestParam("nombreArchivo") String nombreArchivo,
+                                           RedirectAttributes redirectAttributes) {
+        if (usuarioActual == null || (!"ADMIN".equals(usuarioActual.getRol()) && !"DEVELOPER".equals(usuarioActual.getRol()))) {
+            return "redirect:/profesor/dashboard";
+        }
+        Profesor profesor = getProfesorParaUsuario(usuarioActual);
+        if (profesor == null) {
             Map<String, Object> err = new HashMap<>();
             err.put("success", false);
-            err.put("message", "Error al leer el archivo: " + e.getMessage());
+            err.put("message", "No se pudo determinar el profesor.");
+            redirectAttributes.addFlashAttribute("importResult", err);
+            return "redirect:/profesor/administracion?seccion=backup";
+        }
+        try {
+            byte[] zipBytes = backupStorageService.leerContenido(nombreArchivo);
+            Map<String, Object> result = exerciseZipBackupService.importarSnapshotCompletoDesdeZipBytes(zipBytes, profesor);
+            redirectAttributes.addFlashAttribute("importResult", result);
+        } catch (IllegalArgumentException e) {
+            Map<String, Object> err = new HashMap<>();
+            err.put("success", false);
+            err.put("message", e.getMessage());
+            redirectAttributes.addFlashAttribute("importResult", err);
+        } catch (Exception e) {
+            logger.error("Error al restaurar ZIP: {}", e.getMessage(), e);
+            Map<String, Object> err = new HashMap<>();
+            err.put("success", false);
+            err.put("message", "Error al restaurar: " + e.getMessage());
             redirectAttributes.addFlashAttribute("importResult", err);
         }
         return "redirect:/profesor/administracion?seccion=backup";
     }
 
-    /**
-     * Importa ejercicios desde ZIP. Retorna JSON para uso con fetch (alternativa).
-     */
-    @PostMapping("/backup/importar-ejercicios")
-    @ResponseBody
-    public ResponseEntity<Map<String, Object>> importarEjerciciosZip(@AuthenticationPrincipal Usuario usuarioActual,
-                                                                      @RequestParam("archivoZip") MultipartFile archivoZip,
-                                                                      @RequestParam("pisarTodos") boolean pisarTodos,
-                                                                      @RequestParam(value = "importarGrupos", defaultValue = "true") boolean importarGrupos,
-                                                                      @RequestParam(value = "importarEjercicios", defaultValue = "true") boolean importarEjercicios,
-                                                                      @RequestParam(value = "importarRutinas", defaultValue = "true") boolean importarRutinas,
-                                                                      @RequestParam(value = "importarSeries", defaultValue = "true") boolean importarSeries) {
-        if (usuarioActual == null || (!"ADMIN".equals(usuarioActual.getRol()) && !"DEVELOPER".equals(usuarioActual.getRol()))) {
-            return ResponseEntity.status(403).body(Map.of("success", false, "message", "Sin permiso"));
-        }
-        try {
-            Profesor profesor = getProfesorParaUsuario(usuarioActual);
-            Map<String, Object> result = exerciseZipBackupService.importarDesdeZip(archivoZip, pisarTodos, profesor,
-                    importarGrupos, importarEjercicios, importarRutinas, importarSeries);
-            return ResponseEntity.ok(result);
-        } catch (IOException e) {
-            Map<String, Object> err = new HashMap<>();
-            err.put("success", false);
-            err.put("message", "Error al leer el archivo: " + e.getMessage());
-            return ResponseEntity.badRequest().body(err);
-        }
-    }
-
-    /**
-     * Exporta alumnos del profesor a JSON (backup completo: datos, mediciones, asistencias).
-     */
-    @GetMapping("/backup/exportar-alumnos-json")
-    public ResponseEntity<Resource> exportarAlumnosJson(@AuthenticationPrincipal Usuario usuarioActual) {
-        if (usuarioActual == null || (!"ADMIN".equals(usuarioActual.getRol()) && !"DEVELOPER".equals(usuarioActual.getRol()))) {
-            return ResponseEntity.notFound().build();
-        }
-        Profesor profesor = getProfesorParaUsuario(usuarioActual);
-        if (profesor == null) {
-            return ResponseEntity.badRequest().build();
-        }
-        try {
-            byte[] jsonBytes = alumnoJsonBackupService.exportarAlumnosAJson(profesor.getId());
-            String fileName = "alumnos_backup_" + LocalDateTime.now().format(ZIP_FILENAME_DATE) + ".json";
-            Resource resource = new ByteArrayResource(jsonBytes);
-            return ResponseEntity.ok()
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + fileName + "\"")
-                    .body(resource);
-        } catch (Exception e) {
-            logger.error("Error al exportar alumnos a JSON: {}", e.getMessage(), e);
-            return ResponseEntity.internalServerError().build();
-        }
-    }
-
-    /**
-     * Importa alumnos desde JSON (backup).
-     */
-    @PostMapping("/backup/importar-alumnos")
-    public String importarAlumnosJson(@AuthenticationPrincipal Usuario usuarioActual,
-                                      @RequestParam("archivoJson") MultipartFile archivoJson,
-                                      @RequestParam(value = "pisarTodos", defaultValue = "false") boolean pisarTodos,
-                                      RedirectAttributes redirectAttributes) {
+    @PostMapping("/backup/restaurar-alumnos")
+    public String restaurarBackupAlumnos(@AuthenticationPrincipal Usuario usuarioActual,
+                                         @RequestParam("nombreArchivo") String nombreArchivo,
+                                         RedirectAttributes redirectAttributes) {
         if (usuarioActual == null || (!"ADMIN".equals(usuarioActual.getRol()) && !"DEVELOPER".equals(usuarioActual.getRol()))) {
             return "redirect:/profesor/dashboard";
         }
-        try {
-            Profesor profesor = getProfesorParaUsuario(usuarioActual);
-            Map<String, Object> result = alumnoJsonBackupService.importarDesdeJson(archivoJson, profesor, pisarTodos);
-            redirectAttributes.addFlashAttribute("importAlumnosResult", result);
-        } catch (IOException e) {
+        Profesor profesor = getProfesorParaUsuario(usuarioActual);
+        if (profesor == null) {
             Map<String, Object> err = new HashMap<>();
             err.put("success", false);
-            err.put("message", "Error al leer el archivo: " + e.getMessage());
+            err.put("message", "No se pudo determinar el profesor.");
+            redirectAttributes.addFlashAttribute("importAlumnosResult", err);
+            return "redirect:/profesor/administracion?seccion=backup";
+        }
+        try {
+            byte[] jsonBytes = backupStorageService.leerAlumnos(nombreArchivo);
+            Map<String, Object> result = alumnoJsonBackupService.importarSnapshotCompletoDesdeJsonBytes(jsonBytes, profesor);
+            redirectAttributes.addFlashAttribute("importAlumnosResult", result);
+        } catch (IllegalArgumentException e) {
+            Map<String, Object> err = new HashMap<>();
+            err.put("success", false);
+            err.put("message", e.getMessage());
             redirectAttributes.addFlashAttribute("importAlumnosResult", err);
         } catch (Exception e) {
-            logger.error("Error al importar alumnos: {}", e.getMessage(), e);
+            logger.error("Error al restaurar JSON alumnos: {}", e.getMessage(), e);
             Map<String, Object> err = new HashMap<>();
             err.put("success", false);
-            err.put("message", "Error al importar: " + (e.getCause() != null ? e.getCause().getMessage() : e.getMessage()));
+            err.put("message", "Error al restaurar: " + e.getMessage());
             redirectAttributes.addFlashAttribute("importAlumnosResult", err);
         }
         return "redirect:/profesor/administracion?seccion=backup";
-    }
-
-    /**
-     * Exporta alumnos del profesor a Excel (datos, cantidad asignaciones, últimas 3 evoluciones).
-     * Solo para reportes; no se usa para importar.
-     */
-    @GetMapping("/backup/exportar-alumnos-excel")
-    public ResponseEntity<Resource> exportarAlumnosExcel(@AuthenticationPrincipal Usuario usuarioActual) {
-        if (usuarioActual == null || (!"ADMIN".equals(usuarioActual.getRol()) && !"DEVELOPER".equals(usuarioActual.getRol()))) {
-            return ResponseEntity.notFound().build();
-        }
-        Profesor profesor = getProfesorParaUsuario(usuarioActual);
-        if (profesor == null) {
-            return ResponseEntity.badRequest().build();
-        }
-        try {
-            byte[] excelBytes = alumnoExportService.exportarAlumnosAExcel(profesor.getId());
-            String fileName = "alumnos_" + LocalDateTime.now().format(ZIP_FILENAME_DATE) + ".xlsx";
-            Resource resource = new ByteArrayResource(excelBytes);
-            return ResponseEntity.ok()
-                    .contentType(MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))
-                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + fileName + "\"")
-                    .body(resource);
-        } catch (Exception e) {
-            logger.error("Error al exportar alumnos a Excel: {}", e.getMessage(), e);
-            return ResponseEntity.internalServerError().build();
-        }
-    }
-
-    /**
-     * Exporta todos los ejercicios del sistema a ZIP (ejercicios.json + carpeta imagenes/).
-     */
-    @GetMapping("/backup/exportar-zip")
-    public ResponseEntity<Resource> exportarEjerciciosZip(@AuthenticationPrincipal Usuario usuarioActual) {
-        if (usuarioActual == null || (!"ADMIN".equals(usuarioActual.getRol()) && !"DEVELOPER".equals(usuarioActual.getRol()))) {
-            return ResponseEntity.notFound().build();
-        }
-        try {
-            byte[] zipBytes = exerciseZipBackupService.exportarEjerciciosAZip();
-            String fileName = "ejercicios_backup_" + LocalDateTime.now().format(ZIP_FILENAME_DATE) + ".zip";
-            Resource resource = new ByteArrayResource(zipBytes);
-            return ResponseEntity.ok()
-                    .contentType(MediaType.parseMediaType("application/zip"))
-                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + fileName + "\"")
-                    .body(resource);
-        } catch (Exception e) {
-            logger.error("Error al exportar backup ZIP: {}", e.getMessage(), e);
-            return ResponseEntity.internalServerError().build();
-        }
     }
 
 }

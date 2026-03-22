@@ -47,7 +47,7 @@ Para ver la lista de mejoras pendientes e implementadas (ítem por ítem), el ch
 - **Problema:** Al eliminar todos los usuarios y luego ir a "Rutinas asignadas", al abrir una rutina aparecía que no se podía ver porque solo se pueden ver rutinas asignadas a usuarios (al no existir el usuario, la rutina quedaba huérfana).
 - **Lógica a seguir:** Al **eliminar un usuario**, deben **eliminarse también todas sus rutinas asignadas** (activas e inactivas). Así, si se eliminan todos los usuarios, no debe haber rutinas asignadas.
 - **Implementado:** En `UsuarioService.eliminarUsuario` se eliminan las rutinas del alumno con `rutinaService.eliminarRutina(id)` en lugar de solo desasignarlas (antes se hacía `setUsuario(null)`).
-- **Backup de alumnos:** El sistema de backup está **terminado** (marzo 2026). Si se quiere **mantener el historial del usuario** antes de eliminarlo, usar **Backup y resguardo** → "Exportar backup" (JSON de alumnos) o "Exportar a Excel" (reportes). Ver [DOCUMENTACION_UNIFICADA.md](DOCUMENTACION_UNIFICADA.md) § Backup y exportación.
+- **Backup de alumnos:** El sistema de backup está **terminado** (marzo 2026). Si se quiere **mantener el historial del usuario** antes de eliminarlo, usar **Administrar sistema → Sistema de backups** → **Guardar backup** (JSON de alumnos en servidor). Ver [DOCUMENTACION_UNIFICADA.md](DOCUMENTACION_UNIFICADA.md) §2.
 
 ---
 
@@ -81,11 +81,24 @@ Scripts SQL para cargar datos de prueba y testear la app:
 
 ---
 
-## Sistema de backup — terminado (Mar 2026)
+## Sistema de backup — terminado (actualizado Mar 2026)
 
-- **Ejercicios + grupos + rutinas + series:** Exportar/importar ZIP desde Administración → Backup y resguardo. Opciones por checkbox (Grupos, Ejercicios, Rutinas, Series). Agregar o Suplantar.
-- **Alumnos:** Exportar backup (JSON) o Exportar a Excel (reportes con columna Último trabajo). Importar desde JSON (Agregar o Suplantar).
-- **Documentación:** [DOCUMENTACION_UNIFICADA.md](DOCUMENTACION_UNIFICADA.md) (Backup y exportación, Excel alumnos).
+- **Dónde:** Administrar sistema → **Sistema de backups** (`/profesor/backup`).
+- **En disco:** ZIP (contenido) y JSON (alumnos) bajo `migimvirtual.backups.dir` (defecto `backup/contenido` y `backup/alumnos`). Máx. **2** archivos por tipo.
+- **Restaurar:** Reemplazo total (no “agregar” desde la UI). Export de rutinas/series **solo del profesor del panel** (`profesorId` en manifest v1.2).
+- **Alumnos:** JSON con mediciones y progresos; sin Excel en esta pantalla (el servicio Excel puede existir aparte).
+- **Ubuntu / servidor:** No hace falta crear `backup` antes: se crea al primer “Guardar backup”. Recomendado: ruta absoluta en `application-*.properties` y permisos de escritura — ver [servidor/DESPLIEGUE-SERVIDOR.md](servidor/DESPLIEGUE-SERVIDOR.md) §6.6.
+- **Resumen técnico:** [DOCUMENTACION_UNIFICADA.md](DOCUMENTACION_UNIFICADA.md) §2.
+- **Interfaz (Mar 2026):** En la pantalla de backups, bloques con **marco violeta** (contenido/ZIP) y **marco azul** (alumnos/JSON). Estilos en `style.css` para que funcionen también con **fragmento** en Administración (`?fragment=1`). Ver [DOCUMENTACION_UNIFICADA.md](DOCUMENTACION_UNIFICADA.md) §1.2.
+
+---
+
+## Módulo Administración del sistema — cierre UX (Mar 2026) — ✅ Completado
+
+- **Estado:** Módulo **Administrar sistema** dado por cerrado a nivel UX coherente con el resto del panel (responsive previo + diferenciación visual).
+- **Backups:** Marcos de color contenido vs alumnos (`backup.html` + `style.css`, clase raíz `.admin-backup-fragment`).
+- **Usuarios del sistema:** Marcos de color perfil (“Mi usuario” / “Mi perfil”) vs listado de usuarios (`.admin-usuarios-sistema-root`, sectores `usuarios-sistema-sector-cuenta` / `usuarios-sistema-sector-listado`).
+- **Documentación:** §1.2 en [DOCUMENTACION_UNIFICADA.md](DOCUMENTACION_UNIFICADA.md), [PALETA_COLORES.md](PALETA_COLORES.md), [GUIA_RESPONSIVE.md](GUIA_RESPONSIVE.md) §5.7, manual §13, `CHANGELOG.md` [2026-03-22].
 
 ---
 
@@ -110,7 +123,7 @@ Ver GUIA_RESPONSIVE.md §5.2.
 - ~~**Pestaña Asignaciones – vistas y responsive:**~~ ✅ **Hecho (Mar 2026):** Filtro con card y Limpiar (estructura igual a Series); móvil: columna Acciones oculta, fila clickeable abre modal con detalle y acciones (sin WhatsApp). Botón Limpiar de Mis Alumnos en verde claro. Ver CHANGELOG [2026-03-20] y GUIA_RESPONSIVE §5.5.
 - **Barra inferior de navegación (accesos directos):** ✅ **Hecho (Mar 2026):** Inicio → página pública; Manual → manual de usuario; Consultas → mensajes formulario contacto; Más → config. Fragmento `bottom-nav.html` usado en todas las plantillas del panel. Ver CHANGELOG [2026-03-16] feat(ui) accesos rápidos.
 - **Siguiente:** **Ejercicios** — ~~vista~~ ✅ terminada; ~~grupos musculares (lista + editar)~~ ✅ responsive; ~~crear ejercicio~~ ✅; ~~modificar ejercicio~~ ✅ paleta naranja + responsive Mar 2026.
-- **Siguiente sesión:** Terminar módulo de administración (revisar vistas, responsive); revisar manual de usuario (ABM categorías, accesos, etc.).
+- **Siguiente sesión:** ~~Terminar módulo de administración~~ ✅ **Mar 2026:** UX administración cerrada (sectores de color, docs). **Siguiente:** revisar manual de usuario (eliminar filas obsoletas calendario/pizarra si aplica, ABM categorías, accesos).
 
 ---
 
@@ -121,7 +134,7 @@ Ver GUIA_RESPONSIVE.md §5.2.
 3. ~~**Módulo de series (vista responsive).**~~ ✅ **Hecho (Mar 2026):** ver sección "Módulo de Series" más arriba. Opcional: revisar editar serie y flujos restantes.
 4. ~~**Módulo de rutinas (creación, modificar, panel, hoja, asignar).**~~ ✅ **Hecho (Mar 2026):** CHANGELOG [2026-03-17], [2026-03-18].
 5. ~~**Vista Mis Ejercicios.**~~ ✅ **Hecho (Mar 2026):** Tarjetas con + arriba derecha, mismo tamaño, cantidad grupos musculares; móvil cuadradas; filtros; modal al tocar fila; barra inferior. Ver GUIA_RESPONSIVE.md §5.6 y CHANGELOG [2026-03-21]. ~~Grupos musculares (lista + editar).~~ ~~Crear ejercicio (paleta + responsive).~~ ~~Modificar ejercicio (responsive / alinear con crear).~~ ✅ Módulo Ejercicios responsive completado.
-6. **Luego:** Revisar/cambiar el **sistema de backup** — todavía no está definido si va a quedar como está o se modificará.
+6. ~~**Sistema de backup**~~ — Actualizado Mar 2026 (servidor, restauración total, export por profesor). Ver § “Sistema de backup” arriba y DOCUMENTACION_UNIFICADA §2.
 7. **Luego:** **Modificar el manual del usuario** (actualizar contenido y estructura según los cambios de la app).
 
 ---

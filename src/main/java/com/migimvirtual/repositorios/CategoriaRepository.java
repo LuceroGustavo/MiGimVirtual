@@ -25,4 +25,7 @@ public interface CategoriaRepository extends JpaRepository<Categoria, Long> {
     Optional<Categoria> findFirstByNombreAndProfesorIsNull(String nombre);
 
     Optional<Categoria> findFirstByNombreAndProfesorId(String nombre, Long profesorId);
+
+    /** Elimina categorías creadas por un profesor (no las del sistema). Tras borrar rutinas que las referencian. */
+    void deleteByProfesor_Id(Long profesorId);
 }

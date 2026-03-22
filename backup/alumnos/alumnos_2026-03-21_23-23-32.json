@@ -1,0 +1,236 @@
+{
+  "version" : "1.1",
+  "fecha" : "2026-03-21T23:23:32.753311700",
+  "profesorId" : 1,
+  "cantidadAlumnos" : 10,
+  "tipo" : "backup_alumnos",
+  "alumnos" : [ {
+    "nombre" : "María García López",
+    "correo" : "test_alumno_1@migimvirtual.test",
+    "celular" : "+54 11 4567-8901",
+    "edad" : 28,
+    "sexo" : "F",
+    "peso" : 65.5,
+    "estadoAlumno" : "ACTIVO",
+    "fechaAlta" : "2025-09-22",
+    "fechaBaja" : null,
+    "fechaInicio" : "2025-09-22",
+    "notasProfesor" : "Alumna muy comprometida. Preferir entrenar por la mañana.",
+    "objetivosPersonales" : "Ganar masa muscular y definir abdomen.",
+    "restriccionesMedicas" : "Ninguna. Sin restricciones.",
+    "mediciones" : [ ],
+    "progresos" : [ {
+      "fecha" : "2026-01-25",
+      "gruposMusculares" : "PECHO, TRÍCEPS",
+      "observaciones" : "Fondos en paralelas. Ligera molestia en hombro derecho."
+    }, {
+      "fecha" : "2026-02-09",
+      "gruposMusculares" : "CARDIO, BRAZOS",
+      "observaciones" : "30 min cardio. Curl con mancuernas 12 kg."
+    }, {
+      "fecha" : "2026-02-24",
+      "gruposMusculares" : "PIERNAS, ESPALDA",
+      "observaciones" : "Sentadillas con buena técnica. Sin molestias."
+    }, {
+      "fecha" : "2026-03-11",
+      "gruposMusculares" : "BRAZOS, PECHO",
+      "observaciones" : "Buen avance en press banca. Subí 2 kg."
+    } ]
+  }, {
+    "nombre" : "Carlos Rodríguez Pérez",
+    "correo" : "test_alumno_2@migimvirtual.test",
+    "celular" : "+54 11 5678-9012",
+    "edad" : 35,
+    "sexo" : "M",
+    "peso" : 82.0,
+    "estadoAlumno" : "ACTIVO",
+    "fechaAlta" : "2025-11-21",
+    "fechaBaja" : null,
+    "fechaInicio" : "2025-11-21",
+    "notasProfesor" : "Trabaja de noche, prefiere entrenar tarde.",
+    "objetivosPersonales" : "Bajar peso y mejorar resistencia cardiovascular.",
+    "restriccionesMedicas" : "Problemas de rodilla izquierda. Evitar impacto.",
+    "mediciones" : [ ],
+    "progresos" : [ {
+      "fecha" : "2026-03-01",
+      "gruposMusculares" : "CARDIO, ELONGACIÓN",
+      "observaciones" : "Bici estática 25 min. Estiramientos al final."
+    }, {
+      "fecha" : "2026-03-16",
+      "gruposMusculares" : "PIERNAS",
+      "observaciones" : "Rodilla bien. Caminata 20 min sin dolor."
+    } ]
+  }, {
+    "nombre" : "Ana Martínez Fernández",
+    "correo" : "test_alumno_3@migimvirtual.test",
+    "celular" : "+54 11 6789-0123",
+    "edad" : 42,
+    "sexo" : "F",
+    "peso" : 58.3,
+    "estadoAlumno" : "ACTIVO",
+    "fechaAlta" : "2025-12-21",
+    "fechaBaja" : null,
+    "fechaInicio" : "2025-12-21",
+    "notasProfesor" : "Madre de dos hijos. Horario flexible.",
+    "objetivosPersonales" : "Tonificar y mantener flexibilidad. Prevenir osteoporosis.",
+    "restriccionesMedicas" : "Hipertensión controlada con medicación.",
+    "mediciones" : [ ],
+    "progresos" : [ {
+      "fecha" : "2026-03-14",
+      "gruposMusculares" : "ESPALDA, BRAZOS, ELONGACIÓN",
+      "observaciones" : "Rutina completa. Presión arterial normal post-entreno."
+    } ]
+  }, {
+    "nombre" : "Diego Sánchez Ruiz",
+    "correo" : "test_alumno_4@migimvirtual.test",
+    "celular" : "+54 11 7890-1234",
+    "edad" : 22,
+    "sexo" : "M",
+    "peso" : 75.0,
+    "estadoAlumno" : "ACTIVO",
+    "fechaAlta" : "2026-01-20",
+    "fechaBaja" : null,
+    "fechaInicio" : "2026-01-20",
+    "notasProfesor" : "Estudiante universitario. Entrena 4 veces por semana.",
+    "objetivosPersonales" : "Aumentar fuerza y volumen. Preparar para competencia amateur.",
+    "restriccionesMedicas" : "Ninguna.",
+    "mediciones" : [ ],
+    "progresos" : [ {
+      "fecha" : "2026-02-26",
+      "gruposMusculares" : "CARDIO",
+      "observaciones" : "HIIT 15 min. Manteniendo ritmo."
+    }, {
+      "fecha" : "2026-03-05",
+      "gruposMusculares" : "ESPALDA, BÍCEPS",
+      "observaciones" : "Dominadas 8 rep. Remo 50 kg."
+    }, {
+      "fecha" : "2026-03-12",
+      "gruposMusculares" : "PIERNAS",
+      "observaciones" : "Sentadilla 80 kg x 6. Subiendo carga."
+    }, {
+      "fecha" : "2026-03-19",
+      "gruposMusculares" : "PECHO, HOMBROS",
+      "observaciones" : "Press plano 60 kg x 8. Buen día."
+    } ]
+  }, {
+    "nombre" : "Laura Torres González",
+    "correo" : "test_alumno_5@migimvirtual.test",
+    "celular" : "+54 11 8901-2345",
+    "edad" : 31,
+    "sexo" : "F",
+    "peso" : 62.0,
+    "estadoAlumno" : "ACTIVO",
+    "fechaAlta" : "2026-02-04",
+    "fechaBaja" : null,
+    "fechaInicio" : "2026-02-04",
+    "notasProfesor" : "Trabaja de oficina. Sedentaria hasta hace 3 meses.",
+    "objetivosPersonales" : "Perder 5 kg y mejorar postura. Reducir dolor lumbar.",
+    "restriccionesMedicas" : "Lumbalgia crónica. Evitar ejercicios de alto impacto.",
+    "mediciones" : [ ],
+    "progresos" : [ {
+      "fecha" : "2026-03-07",
+      "gruposMusculares" : "ELONGACIÓN, PIERNAS",
+      "observaciones" : "Estiramientos y movilidad. Mejor postura."
+    }, {
+      "fecha" : "2026-03-18",
+      "gruposMusculares" : "ESPALDA, CORE",
+      "observaciones" : "Plancha 45 seg. Lumbar sin dolor."
+    } ]
+  }, {
+    "nombre" : "Fernando López Díaz",
+    "correo" : "test_alumno_6@migimvirtual.test",
+    "celular" : "+54 11 9012-3456",
+    "edad" : 48,
+    "sexo" : "M",
+    "peso" : 88.5,
+    "estadoAlumno" : "ACTIVO",
+    "fechaAlta" : "2025-09-02",
+    "fechaBaja" : null,
+    "fechaInicio" : "2025-09-02",
+    "notasProfesor" : "Ejecutivo. Viaja poco. Poco tiempo disponible.",
+    "objetivosPersonales" : "Mantener salud cardiovascular. Controlar presión arterial.",
+    "restriccionesMedicas" : "Diabetes tipo 2. Controlar glucemia antes de entrenar intenso.",
+    "mediciones" : [ ],
+    "progresos" : [ {
+      "fecha" : "2026-03-15",
+      "gruposMusculares" : "CARDIO",
+      "observaciones" : "Caminata 30 min. Glucemia pre: 110."
+    } ]
+  }, {
+    "nombre" : "Valentina Romero Castro",
+    "correo" : "test_alumno_7@migimvirtual.test",
+    "celular" : "+54 11 0123-4567",
+    "edad" : 19,
+    "sexo" : "F",
+    "peso" : 55.0,
+    "estadoAlumno" : "ACTIVO",
+    "fechaAlta" : "2026-02-19",
+    "fechaBaja" : null,
+    "fechaInicio" : "2026-02-19",
+    "notasProfesor" : "Deportista. Hace natación además.",
+    "objetivosPersonales" : "Mejorar rendimiento en natación. Fuerza en tren superior.",
+    "restriccionesMedicas" : "Ninguna.",
+    "mediciones" : [ ],
+    "progresos" : [ ]
+  }, {
+    "nombre" : "Ricardo Morales Vega",
+    "correo" : "test_alumno_8@migimvirtual.test",
+    "celular" : "+54 11 1234-5678",
+    "edad" : 55,
+    "sexo" : "M",
+    "peso" : 90.0,
+    "estadoAlumno" : "INACTIVO",
+    "fechaAlta" : "2025-07-14",
+    "fechaBaja" : "2026-02-19",
+    "fechaInicio" : "2025-07-14",
+    "notasProfesor" : "Jubilado. Mucho tiempo libre.",
+    "objetivosPersonales" : "Movilidad articular. Prevenir sarcopenia. Socializar.",
+    "restriccionesMedicas" : "Artrosis de cadera. Evitar sentadillas profundas.",
+    "mediciones" : [ ],
+    "progresos" : [ {
+      "fecha" : "2026-01-20",
+      "gruposMusculares" : "BRAZOS, ESPALDA",
+      "observaciones" : "Bandas elásticas. Fuerza mantenida."
+    }, {
+      "fecha" : "2026-02-04",
+      "gruposMusculares" : "PIERNAS, ELONGACIÓN",
+      "observaciones" : "Movilidad de cadera. Sin dolor."
+    } ]
+  }, {
+    "nombre" : "Sofía Herrera Mendoza",
+    "correo" : "test_alumno_9@migimvirtual.test",
+    "celular" : "+54 11 2345-6789",
+    "edad" : 26,
+    "sexo" : "F",
+    "peso" : 60.0,
+    "estadoAlumno" : "ACTIVO",
+    "fechaAlta" : "2026-03-06",
+    "fechaBaja" : null,
+    "fechaInicio" : "2026-03-06",
+    "notasProfesor" : "Empleada en gimnasio. Conoce bien el entrenamiento.",
+    "objetivosPersonales" : "Definición muscular. Preparar para competencia de fitness.",
+    "restriccionesMedicas" : "Alergia al polvo. Entrenar en ambiente limpio.",
+    "mediciones" : [ ],
+    "progresos" : [ {
+      "fecha" : "2026-03-20",
+      "gruposMusculares" : "PECHO, TRÍCEPS, HOMBROS",
+      "observaciones" : "Rutina de definición. 3 series por ejercicio."
+    } ]
+  }, {
+    "nombre" : "Pablo Jiménez Silva",
+    "correo" : "test_alumno_10@migimvirtual.test",
+    "celular" : "+54 11 3456-7890",
+    "edad" : 38,
+    "sexo" : "M",
+    "peso" : 78.0,
+    "estadoAlumno" : "ACTIVO",
+    "fechaAlta" : "2025-12-11",
+    "fechaBaja" : null,
+    "fechaInicio" : "2025-12-11",
+    "notasProfesor" : "Entrenador personal. Quiere complementar su propio entrenamiento.",
+    "objetivosPersonales" : "Mantener fuerza y movilidad. Prevenir lesiones por sobrecarga.",
+    "restriccionesMedicas" : "Ninguna.",
+    "mediciones" : [ ],
+    "progresos" : [ ]
+  } ]
+}
