@@ -2,6 +2,22 @@
 
 > Nota: este changelog incluye histórico heredado de MiGym (referencias a admin/chat/websocket).
 
+## [2026-03-22] - feat(publica): landing y planes alineados a virtual + redes y contacto desde BD ✅
+
+### Resumen
+- **Configuración:** Nuevas claves `url_mapa`, `tiktok`, `youtube`, `facebook`, `linkedin`, `twitter`, `email_contacto`, `eslogan`. Admin en Página pública ampliado.
+- **`ConfiguracionPaginaPublicaService.rellenarModeloPaginaPublica(Model)`** unifica atributos para `index-publica` y `planes-publica` (sin WhatsApp/IG hardcodeados; mapa opcional; íconos de redes solo si hay URL).
+- **Landing** (`index-publica.html`): textos carrusel y sección “Por qué…” orientados a online; contacto y pie dinámicos; corrección meta charset; botón flotante WA solo si hay número.
+- **Planes** (`planes-publica.html`): lista de servicios y pie alineados; mismo criterio de ubicación y redes.
+- **Defaults** solo para filas nuevas en `asegurarConfigInicial`: dirección vacía, horarios tipo consulta online, eslogan sugerido.
+- **Manual** §13.2 actualizado.
+- **Fix:** `PortalControlador` — restaurado `import java.util.List` (necesario para `/status` y `List<Exercise>`).
+
+### Archivos
+`ConfiguracionPaginaPublica.java`, `ConfiguracionPaginaPublicaService.java`, `PortalControlador.java`, `PaginaPublicaAdminController.java`, `pagina-publica-admin.html`, `index-publica.html`, `planes-publica.html`, `manual-usuario.html`, `Documentacion/DOCUMENTACION_UNIFICADA.md`, `Documentacion/AYUDA_MEMORIA.md`, `Documentacion/LEEME_PRIMERO.md`.
+
+---
+
 ## [2026-03-22] - docs+feat(ui): cierre módulo Administración (sectores de color, documentación) ✅
 
 ### Resumen

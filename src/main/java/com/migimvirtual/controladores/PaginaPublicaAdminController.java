@@ -123,6 +123,14 @@ public class PaginaPublicaAdminController {
                                 @RequestParam(required = false) String direccion,
                                 @RequestParam(required = false) String dias_horarios,
                                 @RequestParam(required = false) String telefono,
+                                @RequestParam(required = false) String url_mapa,
+                                @RequestParam(required = false) String tiktok,
+                                @RequestParam(required = false) String youtube,
+                                @RequestParam(required = false) String facebook,
+                                @RequestParam(required = false) String linkedin,
+                                @RequestParam(required = false) String twitter,
+                                @RequestParam(required = false) String email_contacto,
+                                @RequestParam(required = false) String eslogan,
                                 RedirectAttributes ra) {
         if (usuarioActual == null || !isAdminOrDeveloper(usuarioActual)) {
             return "redirect:/profesor/dashboard";
@@ -132,6 +140,14 @@ public class PaginaPublicaAdminController {
         configuracionPaginaPublicaService.actualizar(ConfiguracionPaginaPublica.CLAVE_DIRECCION, direccion);
         configuracionPaginaPublicaService.actualizar(ConfiguracionPaginaPublica.CLAVE_DIAS_HORARIOS, dias_horarios);
         configuracionPaginaPublicaService.actualizar(ConfiguracionPaginaPublica.CLAVE_TELEFONO, telefono);
+        configuracionPaginaPublicaService.actualizar(ConfiguracionPaginaPublica.CLAVE_URL_MAPA, url_mapa);
+        configuracionPaginaPublicaService.actualizar(ConfiguracionPaginaPublica.CLAVE_TIKTOK, tiktok);
+        configuracionPaginaPublicaService.actualizar(ConfiguracionPaginaPublica.CLAVE_YOUTUBE, youtube);
+        configuracionPaginaPublicaService.actualizar(ConfiguracionPaginaPublica.CLAVE_FACEBOOK, facebook);
+        configuracionPaginaPublicaService.actualizar(ConfiguracionPaginaPublica.CLAVE_LINKEDIN, linkedin);
+        configuracionPaginaPublicaService.actualizar(ConfiguracionPaginaPublica.CLAVE_TWITTER, twitter);
+        configuracionPaginaPublicaService.actualizar(ConfiguracionPaginaPublica.CLAVE_EMAIL_CONTACTO, email_contacto);
+        configuracionPaginaPublicaService.actualizar(ConfiguracionPaginaPublica.CLAVE_ESLOGAN, eslogan);
         ra.addFlashAttribute("ok", "Configuración guardada");
         return "redirect:/profesor/administracion?seccion=pagina";
     }

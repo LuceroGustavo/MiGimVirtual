@@ -232,28 +232,62 @@
     <div class="card mb-4 card-modulo-config">
         <div class="card-header"><strong><i class="fas fa-cog me-2"></i>Configuración de datos</strong></div>
         <div class="card-body">
-            <p class="publica-modulo-hint mb-3"><i class="fas fa-map-marker-alt me-1 opacity-75"></i>WhatsApp, redes, dirección y horarios que se muestran en la página pública.</p>
+            <p class="publica-modulo-hint mb-3"><i class="fas fa-globe me-1 opacity-75"></i>Datos de contacto y redes para la <strong>landing</strong> (<code>/</code>) y <strong>Planes</strong> (<code>/planes</code>). Orientado a servicio virtual: dirección y mapa son opcionales.</p>
             <form th:action="@{/profesor/pagina-publica/config}" method="post" class="row g-3">
+                <div class="col-12">
+                    <label class="form-label">Eslogan (subtítulo bajo la marca en el pie)</label>
+                    <input type="text" name="eslogan" class="form-control" maxlength="200" th:value="${config != null ? config.get('eslogan') : ''}" placeholder="Ej.: Entrenamiento personalizado online">
+                </div>
                 <div class="col-md-6">
                     <label class="form-label">WhatsApp (número con código país, ej. 5491112345678)</label>
                     <input type="text" name="whatsapp" class="form-control" th:value="${config != null ? config.get('whatsapp') : ''}" placeholder="5491112345678">
+                    <small class="form-text text-muted">Si lo dejás vacío, no se muestra el botón flotante ni el enlace en la home.</small>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Email de contacto (público)</label>
+                    <input type="email" name="email_contacto" class="form-control" maxlength="150" th:value="${config != null ? config.get('email_contacto') : ''}" placeholder="contacto@tudominio.com">
                 </div>
                 <div class="col-md-6">
                     <label class="form-label">Instagram (URL o @usuario)</label>
                     <input type="text" name="instagram" class="form-control" th:value="${config != null ? config.get('instagram') : ''}" placeholder="https://instagram.com/MiGymVirtual">
                 </div>
-                <div class="col-12">
-                    <label class="form-label">Dirección</label>
-                    <input type="text" name="direccion" class="form-control" th:value="${config != null ? config.get('direccion') : ''}" placeholder="Aconcagua 17, Ramos Mejía">
-                </div>
-                <div class="col-12">
-                    <label class="form-label">Días y horarios</label>
-                    <textarea name="dias_horarios" class="form-control" rows="4" placeholder="Una línea por horario, ej.:&#10;Lunes a Viernes 7:00 a 12:00 y 14:00 a 21:00&#10;Sábados 8:00 a 14:00" th:text="${(config != null && config.get('dias_horarios') != null) ? config.get('dias_horarios') : ''}"></textarea>
-                    <small class="form-text text-muted">Cada línea se mostrará debajo de la otra en la página pública.</small>
+                <div class="col-md-6">
+                    <label class="form-label">TikTok (URL o usuario sin @)</label>
+                    <input type="text" name="tiktok" class="form-control" th:value="${config != null ? config.get('tiktok') : ''}" placeholder="https://www.tiktok.com/@tuusuario">
                 </div>
                 <div class="col-md-6">
-                    <label class="form-label">Teléfono</label>
-                    <input type="text" name="telefono" class="form-control" th:value="${config != null ? config.get('telefono') : ''}" placeholder="(opcional)">
+                    <label class="form-label">YouTube (URL completa o @canal)</label>
+                    <input type="text" name="youtube" class="form-control" th:value="${config != null ? config.get('youtube') : ''}" placeholder="https://www.youtube.com/@canal">
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Facebook (URL o nombre de página)</label>
+                    <input type="text" name="facebook" class="form-control" th:value="${config != null ? config.get('facebook') : ''}" placeholder="https://facebook.com/...">
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">LinkedIn (URL o perfil)</label>
+                    <input type="text" name="linkedin" class="form-control" th:value="${config != null ? config.get('linkedin') : ''}" placeholder="https://linkedin.com/in/...">
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">X / Twitter (URL o @usuario)</label>
+                    <input type="text" name="twitter" class="form-control" th:value="${config != null ? config.get('twitter') : ''}" placeholder="https://twitter.com/usuario">
+                </div>
+                <div class="col-12">
+                    <label class="form-label">Dirección (opcional)</label>
+                    <input type="text" name="direccion" class="form-control" maxlength="300" th:value="${config != null ? config.get('direccion') : ''}" placeholder="Dejar vacío si el servicio es 100 % online">
+                </div>
+                <div class="col-12">
+                    <label class="form-label">Enlace al mapa (opcional)</label>
+                    <input type="url" name="url_mapa" class="form-control" maxlength="500" th:value="${config != null ? config.get('url_mapa') : ''}" placeholder="https://maps.google.com/...">
+                    <small class="form-text text-muted">Si completás esto, el pie enlaza a Google Maps (u otro). Si solo hay dirección sin enlace, se muestra texto sin link.</small>
+                </div>
+                <div class="col-12">
+                    <label class="form-label">Horarios / disponibilidad</label>
+                    <textarea name="dias_horarios" class="form-control" rows="4" placeholder="Ej.: Consultas por WhatsApp — respuesta en 24–48 h.&#10;Seguimiento y rutinas 100 % online." th:text="${(config != null && config.get('dias_horarios') != null) ? config.get('dias_horarios') : ''}"></textarea>
+                    <small class="form-text text-muted">Cada línea se muestra en Planes. Podés describir tiempos de respuesta u oficina virtual en lugar de horario de gimnasio.</small>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Teléfono (interno / notas)</label>
+                    <input type="text" name="telefono" class="form-control" th:value="${config != null ? config.get('telefono') : ''}" placeholder="(opcional, no se muestra en la pública salvo que lo uses en otro módulo)">
                 </div>
                 <div class="col-12">
                     <button type="submit" class="btn btn-primary"><i class="fas fa-save me-1"></i>Guardar configuración</button>

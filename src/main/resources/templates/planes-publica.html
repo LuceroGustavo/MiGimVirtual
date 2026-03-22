@@ -72,12 +72,12 @@
                     <div class="col-lg-5 mb-4">
                         <h4 class="text-white mb-3">Servicios</h4>
                         <ul class="list-unstyled text-white">
-                            <li><i class="fas fa-check strong me-2"></i>Entrenamiento personalizado</li>
-                            <li><i class="fas fa-check strong me-2"></i>Multi-horarios y flexibilidad</li>
-                            <li><i class="fas fa-check strong me-2"></i>Presencial y virtual</li>
+                            <li><i class="fas fa-check strong me-2"></i>Entrenamiento personalizado online</li>
                             <li><i class="fas fa-check strong me-2"></i>Rutinas y series a tu medida</li>
+                            <li><i class="fas fa-check strong me-2"></i>Seguimiento y progreso sin ir a un gimnasio</li>
+                            <li><i class="fas fa-check strong me-2"></i>Comunicación por WhatsApp y redes</li>
                         </ul>
-                        <h4 class="text-white mt-4 mb-2">Días y horarios</h4>
+                        <h4 class="text-white mt-4 mb-2">Disponibilidad</h4>
                         <ul class="list-unstyled text-white-50 dias-horarios-lista" th:if="${!diasHorariosLineas.isEmpty()}">
                             <li th:each="linea : ${diasHorariosLineas}" th:text="${linea}">Lunes a Viernes 7:00–21:00</li>
                         </ul>
@@ -128,14 +128,21 @@
             <div class="row align-items-center">
                 <div class="col-md-6 text-center text-md-start mb-3 mb-md-0">
                     <span class="fw-bold text-uppercase">MiGymVirtual</span>
-                    <p class="mb-0 small text-white-50">La nueva forma de entrenar</p>
-                    <p class="mb-0 mt-2 small">
-                        <a th:href="${direccionUrl}" href="https://www.google.com/maps/place/Aconcagua+17,+B1704+Ramos+Mej%C3%ADa,+Provincia+de+Buenos+Aires" target="_blank" rel="noopener" class="footer-link text-white-50"><i class="fas fa-map-marker-alt me-1"></i><span th:text="${direccion}">Aconcagua 17, Ramos Mejía</span></a>
+                    <p class="mb-0 small text-white-50" th:text="${eslogan != null ? eslogan : 'Entrenamiento personalizado online'}">Entrenamiento personalizado online</p>
+                    <p class="mb-0 mt-2 small" th:if="${mostrarUbicacionPie}">
+                        <a th:if="${direccionUrl != null}" th:href="${direccionUrl}" href="#" target="_blank" rel="noopener" class="footer-link text-white-50"><i class="fas fa-map-marker-alt me-1"></i><span th:text="${pieUbicacionTexto}">Ubicación</span></a>
+                        <span th:if="${direccionUrl == null}" class="text-white-50"><i class="fas fa-map-marker-alt me-1"></i><span th:text="${direccion}"></span></span>
                     </p>
                 </div>
                 <div class="col-md-6 text-center text-md-end">
-                    <a th:href="${whatsappUrl}" href="https://api.whatsapp.com/send?phone=5491164842554" target="_blank" rel="noopener" class="text-white me-3 footer-icon"><i class="fab fa-whatsapp"></i></a>
-                    <a th:href="${instagramUrl}" href="https://www.instagram.com/matt_funcional/" class="text-white footer-icon" target="_blank" rel="noopener"><i class="fab fa-instagram"></i></a>
+                    <a th:if="${whatsappUrl != null}" th:href="${whatsappUrl}" href="#" target="_blank" rel="noopener" class="text-white me-3 footer-icon" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+                    <a th:if="${instagramUrl != null}" th:href="${instagramUrl}" href="#" target="_blank" rel="noopener" class="text-white me-3 footer-icon" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                    <a th:if="${tiktokUrl != null}" th:href="${tiktokUrl}" href="#" target="_blank" rel="noopener" class="text-white me-3 footer-icon" aria-label="TikTok"><i class="fab fa-tiktok"></i></a>
+                    <a th:if="${youtubeUrl != null}" th:href="${youtubeUrl}" href="#" target="_blank" rel="noopener" class="text-white me-3 footer-icon" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
+                    <a th:if="${facebookUrl != null}" th:href="${facebookUrl}" href="#" target="_blank" rel="noopener" class="text-white me-3 footer-icon" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                    <a th:if="${linkedinUrl != null}" th:href="${linkedinUrl}" href="#" target="_blank" rel="noopener" class="text-white me-3 footer-icon" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+                    <a th:if="${twitterUrl != null}" th:href="${twitterUrl}" href="#" target="_blank" rel="noopener" class="text-white me-3 footer-icon" aria-label="X / Twitter"><i class="fab fa-twitter"></i></a>
+                    <a th:if="${mailtoUrl != null}" th:href="${mailtoUrl}" href="#" class="text-white footer-icon" aria-label="Email"><i class="fas fa-envelope"></i></a>
                 </div>
             </div>
         </div>
@@ -155,8 +162,8 @@
         </div>
     </div>
 
-    <div class="wapp">
-        <a th:href="${whatsappUrl}" href="https://api.whatsapp.com/send?phone=5491164842554" target="_blank" rel="noopener" aria-label="WhatsApp" style="display: flex; align-items: center; justify-content: center; background-color: #25D366;">
+    <div class="wapp" th:if="${whatsappUrl != null}">
+        <a th:href="${whatsappUrl}" href="#" target="_blank" rel="noopener" aria-label="WhatsApp" style="display: flex; align-items: center; justify-content: center; background-color: #25D366;">
             <i class="fab fa-whatsapp text-white fa-2x"></i>
         </a>
     </div>

@@ -35,7 +35,7 @@ Contenido importante reunido de los documentos del proyecto. Para contexto: [LEE
 - **Ejercicios:** Predeterminados 1–60 desde `uploads/ejercicios/`; ABM; grupos musculares como entidad (`GrupoMuscular`); formularios y modal Ver alineados con series/rutinas. **Módulo Ejercicios responsive completado (Mar 2026):** vista Mis Ejercicios, crear ejercicio, modificar ejercicio, grupos musculares (lista + editar); paleta naranja; barra inferior móvil.
 - **Series y rutinas:** ABM; asignación rutina → alumno; enlace por token `/rutinas/hoja/{token}`; Copiar enlace y WhatsApp desde ficha alumno; orden de series; modificar rutina con tres bloques (Detalles, Series en rutina, Añadir más). **ABM de categorías de rutinas implementado (Mar 2026):** entidad `Categoria`; categorías del sistema (FUERZA, CARDIO, FLEXIBILIDAD, FUNCIONAL, HIIT) + propias del profesor; lista en `/profesor/mis-categorias`; crear, editar, eliminar; selección en crear/editar rutina.
 - **Alumnos:** Solo ficha (sin login). Estado ACTIVO/INACTIVO; filtros por nombre y estado. Al eliminar alumno se borran mediciones y rutinas asignadas. Tarjeta "Progreso del alumno" con historial de registros (crear, editar, eliminar). **Vista del alumno terminada (Mar 2026):** responsive móvil, modal progreso al tocar registro, modal confirmar eliminar progreso, botón Guardar notas, Eliminar usuario debajo de todo, barra inferior móvil, formato fecha dd/MM/yy. Pendiente: scroll vertical en progresos móvil (>5 registros).
-- **Página pública:** Landing `/`, Planes `/planes`, consultas; administración en `/profesor/pagina-publica`.
+- **Página pública:** Landing `/`, Planes `/planes`, consultas; administración en `/profesor/pagina-publica`. **Mar 2026:** config unificada en BD (redes, email, eslogan, mapa opcional), textos virtual-first — ver §1.1 bis.
 - **Manual del usuario:** HTML en `/profesor/manual` (botón en panel); cubre acceso, panel, alumnos, ejercicios, series, rutinas, usuarios, administración. (Calendario y pizarra eliminados en Mar 2026.)
 
 ### 1.1 Página pública y administración — mejoras UX (Mar 2026)
@@ -48,6 +48,23 @@ Contenido importante reunido de los documentos del proyecto. Para contexto: [LEE
 - **Administración del sistema (móvil):** Menú desplegable de secciones: icono de **cuatro rayitas horizontales** a la derecha (en lugar del chevron/triángulo), indicando más opciones (`administracion.html`).
 - **Planes (móvil) en admin página pública:** **Subir / Bajar** orden del plan con **flechas en la tarjeta** (columna derecha); mismo POST que escritorio. **Quitado** del modal de detalle del plan. Tap en la parte izquierda de la fila sigue abriendo el modal (detalle, Editar, Eliminar).
 - **Estilos:** `pagina-publica-admin.css` (consultas, modal WhatsApp, planes móvil, acciones tabla).
+
+### 1.1 bis Página pública — modelo gimnasio virtual (Mar 2026) — ✅ Implementado
+
+La landing (`/`) y **Planes** (`/planes`) comparten la misma **configuración en BD** (`configuracion_pagina_publica`), cargada vía **`ConfiguracionPaginaPublicaService.rellenarModeloPaginaPublica(Model)`** desde `PortalControlador` (ya no hay WhatsApp/Instagram/dirección hardcodeados en `index-publica.html`).
+
+| Tema | Detalle |
+|------|---------|
+| **Nuevas claves** | `url_mapa`, `tiktok`, `youtube`, `facebook`, `linkedin`, `twitter`, `email_contacto`, `eslogan` |
+| **Opcional virtual** | Dirección y mapa vacíos si el servicio es 100 % online; el pie solo muestra ubicación si hay texto o URL de mapa |
+| **Redes** | Cada ícono/enlace en contacto y pie solo aparece si hay valor guardado |
+| **WhatsApp** | Botón flotante y enlaces solo si el número está configurado |
+| **Textos** | Carrusel y sección “Por qué…” en `index-publica.html` + lista “Servicios” en `planes-publica.html` orientados a entrenamiento online |
+| **Defaults (filas nuevas)** | `asegurarConfigInicial`: dirección vacía, horarios tipo consulta online, eslogan sugerido; instalaciones existentes conservan valores hasta que el admin guarde |
+
+**Admin:** `profesor/pagina-publica-admin.html` — bloque “Configuración de datos” ampliado. **Manual:** `/profesor/manual` §13.2.
+
+**Mantenimiento:** `PortalControlador` debe importar `java.util.List` (uso en `/status` con `List<Exercise>`).
 
 ### 1.2 Panel Administración — sectores visuales y CSS global (Mar 2026) — ✅ Cierre módulo
 
@@ -66,7 +83,7 @@ Para **diferenciar** bloques dentro de **Administrar sistema** (vista embebida c
 
 **Referencia UX responsive:** [GUIA_RESPONSIVE.md](GUIA_RESPONSIVE.md) §5.7.
 
-**Pendiente de producto (ver AYUDA_MEMORIA):** Replantear la **página pública** y la **administración de página pública** para modelo **gimnasio virtual** (menos énfasis en dirección física, horarios presenciales, etc.).
+**Pendiente de producto (ver AYUDA_MEMORIA):** Refinar **contenidos** de la página pública (imágenes del carrusel `/img/publica/`, textos finos, FAQ opcional). La base técnica “virtual” y la configuración administrable ya están (§1.1 bis).
 - **Backup (terminado / actualizado Mar 2026):** Guardado en servidor, restauración total, export acotado al profesor del panel. Ver sección 2 y despliegue Ubuntu en [servidor/DESPLIEGUE-SERVIDOR.md](servidor/DESPLIEGUE-SERVIDOR.md) (carpeta `backup`).
 - **Depuración de datos:** Módulo eliminado en Mar 2026 (ya no existe en Administración).
 

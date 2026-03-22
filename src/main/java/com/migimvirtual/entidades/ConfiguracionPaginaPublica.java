@@ -54,4 +54,14 @@ public class ConfiguracionPaginaPublica {
     public static final String CLAVE_DIRECCION = "direccion";
     public static final String CLAVE_DIAS_HORARIOS = "dias_horarios";
     public static final String CLAVE_TELEFONO = "telefono";
+    /** Enlace opcional a Google Maps u otro mapa; si está vacío y hay dirección, el pie muestra solo texto. */
+    public static final String CLAVE_URL_MAPA = "url_mapa";
+    public static final String CLAVE_TIKTOK = "tiktok";
+    public static final String CLAVE_YOUTUBE = "youtube";
+    public static final String CLAVE_FACEBOOK = "facebook";
+    public static final String CLAVE_LINKEDIN = "linkedin";
+    public static final String CLAVE_TWITTER = "twitter";
+    public static final String CLAVE_EMAIL_CONTACTO = "email_contacto";
+    /** Subtítulo bajo la marca en pie y bloques de contacto (ej. “Entrenamiento online personalizado”). */
+    public static final String CLAVE_ESLOGAN = "eslogan";
 }

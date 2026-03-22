@@ -14,10 +14,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.HashMap;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ClassPathResource;
 
@@ -51,6 +50,7 @@ public class PortalControlador {
         } catch (Exception e) {
             // Usuario no autenticado
         }
+        configuracionPaginaPublicaService.rellenarModeloPaginaPublica(model);
         return "index-publica";
     }
 
@@ -63,29 +63,8 @@ public class PortalControlador {
     /** Página de planes (pública). Cards con precios, servicios, días/horarios y formulario de consulta. */
     @GetMapping("/planes")
     public String planes(Model model) {
+        configuracionPaginaPublicaService.rellenarModeloPaginaPublica(model);
         model.addAttribute("planes", planPublicoService.getPlanesActivosParaPublica());
-        String diasHorarios = configuracionPaginaPublicaService.getDiasHorarios();
-        model.addAttribute("diasHorarios", diasHorarios);
-        List<String> diasHorariosLineas = new ArrayList<>();
-        if (diasHorarios != null && !diasHorarios.isEmpty()) {
-            for (String linea : diasHorarios.split("\\r?\\n|\\r")) {
-                if (linea != null && !linea.trim().isEmpty()) {
-                    diasHorariosLineas.add(linea.trim());
-                }
-            }
-        }
-        model.addAttribute("diasHorariosLineas", diasHorariosLineas);
-        String direccion = configuracionPaginaPublicaService.getDireccion();
-        model.addAttribute("direccion", direccion != null ? direccion : "Aconcagua 17, Ramos Mejía");
-        model.addAttribute("direccionUrl", "https://www.google.com/maps/place/Aconcagua+17,+B1704+Ramos+Mej%C3%ADa,+Provincia+de+Buenos+Aires");
-        String whatsapp = configuracionPaginaPublicaService.getWhatsapp();
-        model.addAttribute("whatsappUrl", whatsapp != null && !whatsapp.isEmpty()
-                ? "https://api.whatsapp.com/send?phone=" + whatsapp.replaceAll("[^0-9]", "")
-                : "https://api.whatsapp.com/send?phone=5491164842554");
-        String instagram = configuracionPaginaPublicaService.getInstagram();
-        model.addAttribute("instagramUrl", instagram != null && !instagram.isEmpty() && !"#".equals(instagram)
-                ? (instagram.startsWith("http") ? instagram : "https://www.instagram.com/" + instagram.replaceAll("^@", "").trim() + "/")
-                : "https://www.instagram.com/matt_funcional/");
         return "planes-publica";
     }
 

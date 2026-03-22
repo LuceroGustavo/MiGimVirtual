@@ -21,6 +21,15 @@ Para ver la lista de mejoras pendientes e implementadas (ítem por ítem), el ch
 
 ---
 
+## Página pública — virtual (Mar 2026) — ✅ Base implementada
+
+- **Qué:** Landing y Planes usan la misma config BD; eslogan, email, redes (IG, TikTok, YouTube, Facebook, LinkedIn, X/Twitter), dirección y **URL de mapa** opcionales; textos orientados a **online**.
+- **Dónde editar:** Administrar sistema → **Página pública** → Configuración de datos.
+- **Detalle técnico:** [DOCUMENTACION_UNIFICADA.md](DOCUMENTACION_UNIFICADA.md) §1.1 bis; `CHANGELOG.md` entrada **feat(publica)**.
+- **Pendiente opcional:** Reemplazar imágenes estáticas del carrusel y afinar copy; limpiar tabla §14 del manual si quedan filas obsoletas (calendario/pizarra).
+
+---
+
 ## Pendientes – Ejercicios y vistas
 
 1. **Vista Mis Ejercicios:** ✅ **Terminada (Mar 2026):** Tarjetas con botón + arriba derecha, mismo tamaño, cantidad en grupos musculares; móvil: cuadradas lado a lado; filtros en card; tabla con modal al tocar fila; barra inferior móvil. Ver GUIA_RESPONSIVE.md §5.6.
