@@ -36,7 +36,7 @@ Contenido importante reunido de los documentos del proyecto. Para contexto: [LEE
 - **Series y rutinas:** ABM; asignación rutina → alumno; enlace por token `/rutinas/hoja/{token}`; Copiar enlace y WhatsApp desde ficha alumno; orden de series; modificar rutina con tres bloques (Detalles, Series en rutina, Añadir más). **ABM de categorías de rutinas implementado (Mar 2026):** entidad `Categoria`; categorías del sistema (FUERZA, CARDIO, FLEXIBILIDAD, FUNCIONAL, HIIT) + propias del profesor; lista en `/profesor/mis-categorias`; crear, editar, eliminar; selección en crear/editar rutina.
 - **Alumnos:** Solo ficha (sin login). Estado ACTIVO/INACTIVO; filtros por nombre y estado. Al eliminar alumno se borran mediciones y rutinas asignadas. Tarjeta "Progreso del alumno" con historial de registros (crear, editar, eliminar). **Vista del alumno terminada (Mar 2026):** responsive móvil, modal progreso al tocar registro, modal confirmar eliminar progreso, botón Guardar notas, Eliminar usuario debajo de todo, barra inferior móvil, formato fecha dd/MM/yy. Pendiente: scroll vertical en progresos móvil (>5 registros).
 - **Página pública:** Landing `/`, Planes `/planes`, consultas; administración en `/profesor/pagina-publica`. **Mar 2026:** config unificada en BD (redes, email, eslogan, mapa opcional), textos virtual-first — ver §1.1 bis.
-- **Manual del usuario:** HTML en `/profesor/manual` (botón en panel); cubre acceso, panel, alumnos, ejercicios, series, rutinas, usuarios, administración. (Calendario y pizarra eliminados en Mar 2026.)
+- **Manual del usuario:** HTML en `/profesor/manual` (pie del panel, embebido en Administrar sistema); índice Mar 2026: acceso, panel, alumnos, ejercicios (incl. formatos imagen y 5 MB), grupos, series, rutinas, categorías, progreso, administración (usuarios + página pública + backups), resumen. Sin calendario/asistencias/pizarra (app 100 % virtual). Detalle de la última actualización: **§1.3**.
 
 ### 1.1 Página pública y administración — mejoras UX (Mar 2026)
 
@@ -58,11 +58,13 @@ La landing (`/`) y **Planes** (`/planes`) comparten la misma **configuración en
 | **Nuevas claves** | `url_mapa`, `tiktok`, `youtube`, `facebook`, `linkedin`, `twitter`, `email_contacto`, `eslogan` |
 | **Opcional virtual** | Dirección y mapa vacíos si el servicio es 100 % online; el pie solo muestra ubicación si hay texto o URL de mapa |
 | **Redes** | Cada ícono/enlace en contacto y pie solo aparece si hay valor guardado |
-| **WhatsApp** | Botón flotante y enlaces solo si el número está configurado |
+| **Celular / WhatsApp** | Un solo número en el admin (guardado en `telefono` y `whatsapp`); enlaces `wa.me` y botón flotante usan `getNumeroWhatsAppPublico()` (prioridad celular) |
 | **Textos** | Carrusel y sección “Por qué…” en `index-publica.html` + lista “Servicios” en `planes-publica.html` orientados a entrenamiento online |
 | **Defaults (filas nuevas)** | `asegurarConfigInicial`: dirección vacía, horarios tipo consulta online, eslogan sugerido; instalaciones existentes conservan valores hasta que el admin guarde |
 
-**Admin:** `profesor/pagina-publica-admin.html` — bloque “Configuración de datos” ampliado. **Manual:** `/profesor/manual` §13.2.
+**Planes de ejemplo (BD nueva):** `PlanPublicoService.asegurarPlanesIniciales()` crea cuatro planes **virtuales** (Esencial, Progreso, Intensivo, Premium online). Si ya hay filas en `plan_publico`, no se modifica nada — editar desde el admin.
+
+**Admin:** `profesor/pagina-publica-admin.html` — bloque “Configuración de datos” ampliado. **Manual:** `/profesor/manual` §10.2 (página pública).
 
 **Mantenimiento:** `PortalControlador` debe importar `java.util.List` (uso en `/status` con `List<Exercise>`).
 
@@ -86,6 +88,14 @@ Para **diferenciar** bloques dentro de **Administrar sistema** (vista embebida c
 **Pendiente de producto (ver AYUDA_MEMORIA):** Refinar **contenidos** de la página pública (imágenes del carrusel `/img/publica/`, textos finos, FAQ opcional). La base técnica “virtual” y la configuración administrable ya están (§1.1 bis).
 - **Backup (terminado / actualizado Mar 2026):** Guardado en servidor, restauración total, export acotado al profesor del panel. Ver sección 2 y despliegue Ubuntu en [servidor/DESPLIEGUE-SERVIDOR.md](servidor/DESPLIEGUE-SERVIDOR.md) (carpeta `backup`).
 - **Depuración de datos:** Módulo eliminado en Mar 2026 (ya no existe en Administración).
+
+### 1.3 Manual del usuario — últimos cambios (Mar 2026)
+
+- **Audiencia:** texto orientado al **profesor** y a la **cuenta administradora** de uso habitual (despliegue con un solo usuario operativo); no se mencionan roles técnicos AYUDANTE/DEVELOPER en el manual.
+- **Estructura:** **11 secciones** numeradas; eliminada la sección duplicada “Usuarios del sistema” como capítulo aparte — el tema queda en **§10.1** (dentro de Administración).
+- **Ejercicios §4.1:** formatos admitidos por extensión **JPEG/JPG, PNG, GIF, WebP, BMP**; tamaño máximo **5 MB** por archivo (`ImagenServicio`). Recomendaciones en el manual: WebP (calidad/peso), GIF (animación), PNG (transparencia).
+- **Referencias cruzadas en docs:** página pública **§10.2**; backups **§10.3** (actualizar textos antiguos que citaban §13.x).
+- **Historial:** `CHANGELOG.md` [2026-03-14] (revisión 100 % virtual + repaso profesor + §4.1).
 
 ---
 
@@ -112,7 +122,7 @@ Para **diferenciar** bloques dentro de **Administrar sistema** (vista embebida c
 
 **Despliegue Ubuntu / VPS:** No hace falta crear la carpeta `backup` a mano antes del primer uso: la app crea `backup/contenido` y `backup/alumnos` al primer guardado. Recomendaciones de permisos y ruta absoluta: [servidor/DESPLIEGUE-SERVIDOR.md](servidor/DESPLIEGUE-SERVIDOR.md) (sección carpeta backup).
 
-**Manual en la app:** `/profesor/manual` § 13.3 Sistema de backups (texto alineado con este flujo).
+**Manual en la app:** `/profesor/manual` §10.3 Sistema de backups (texto alineado con este flujo).
 
 **Interfaz (Mar 2026):** Marcos de color en la pantalla de backups (contenido vs alumnos). Ver §1.2.
 
@@ -161,17 +171,19 @@ El módulo "Depuración de datos" fue eliminado por completo en marzo 2026. No e
 
 El manual en la app (`/profesor/manual`) incluye:
 
-1. Acceso al sistema (URL, login, credenciales)
-2. Panel del profesor (dashboard, botones, tabs)
-3. Alumnos (lista, crear, editar, ficha, filtros, rutinas asignadas)
-4. Ejercicios (lista, crear, editar, grupos musculares)
-5. Series (crear, editar, ver)
-6. Rutinas (crear, modificar, asignar, enlace, WhatsApp)
-7. Usuarios del sistema (admin/ayudante, perfiles)
-8. Administración (backup, página pública, usuarios del sistema, etc.)
-9. Resumen rápido (tabla "Quiero… / Dónde")
+1. Acceso al sistema  
+2. Panel del profesor (tarjetas, pestañas, responsive)  
+3. Alumnos (lista, formulario, ficha, últimas rutinas, notas, progreso)  
+4. Ejercicios (predeterminados vs propios, permisos; §4.1 formatos de imagen y tamaño máx. 5 MB)  
+5. Grupos musculares  
+6. Series  
+7. Rutinas (plantillas, categorías obligatorias, asignación, enlaces, nota/reseña)  
+8. Categorías de rutinas (`/profesor/mis-categorias`)  
+9. Progreso del alumno (modal fecha + grupos + observaciones)  
+10. Administración del sistema (§10.1 usuarios, §10.2 página pública, §10.3 backups) — redactado para profesor/cuenta administradora; sin sección duplicada de “usuarios”  
+11. Resumen rápido  
 
-*(Secciones Calendario, Presentismo, Progreso con modal y Pizarra eliminadas en Mar 2026; ver ELIMINACION_CALENDARIO_Y_PIZARRA_MAR2026.md.)*
+*(No incluye calendario, asistencias ni pizarra TV — eliminados; ver `ELIMINACION_CALENDARIO_Y_PIZARRA_MAR2026.md`.)*
 
 ---
 
@@ -181,10 +193,11 @@ El manual en la app (`/profesor/manual`) incluye:
 |------|--------|
 | **Grupos musculares** | Entidad `GrupoMuscular`; sistema + por profesor; ABM en `/profesor/mis-grupos-musculares`; ejercicios con `@ManyToMany`. |
 | **Categorías de rutinas** | Entidad `Categoria`; sistema (5) + por profesor; ABM en `/profesor/mis-categorias`; rutinas con `@ManyToMany`; selección en crear/editar rutina. |
-| **Asistencia en calendario** | `CalendarioController`, `AsistenciaService`; endpoint `POST /calendario/api/marcar-asistencia` (estado PENDIENTE/PRESENTE/AUSENTE); columna Presente en Mis Alumnos usa el mismo endpoint. |
-| **Pizarra / sala TV** | Fase 7. Editor en panel; vista `/sala/{token}`; API estado y actualizaciones; columnas y ejercicios con peso/rep. |
+| **Asistencia en calendario** | *(Eliminado Mar 2026.)* |
+| **Pizarra / sala TV** | *(Eliminado Mar 2026.)* |
 | **Página pública** | Fase 8. Landing `/`, Planes `/planes`, consultas; hero con video/carrusel; administración en panel. |
 | **Ejercicios predeterminados** | `ExerciseCargaDefaultOptimizado.asegurarEjerciciosPredeterminados()`; imágenes en `uploads/ejercicios/` (1.webp–60.webp). |
+| **Imágenes ejercicio (subida)** | `ImagenServicio`: máx. **5 MB**; extensiones `png`, `gif`, `bmp`, `webp`, `jpg`/`jpeg`; GIF/WebP sin re-encode para no perder animación (`ImageOptimizationService`). |
 | **Backups en servidor** | `BackupStorageService` + `migimvirtual.backups.dir`; ZIP contenido (`ExerciseZipBackupService`, `profesorId` en export) y JSON alumnos; máx. 2 archivos/tipo; ver §2 y DESPLIEGUE-SERVIDOR (carpeta backup). |
 | **Restricción AYUDANTE** | No puede acceder a "Administrar sistema"; redirección y mensaje si intenta entrar a `/profesor/administracion`. |
 | **Eliminar alumno** | `UsuarioService.eliminarUsuario`: borra asistencias, mediciones, excepciones, rutinas asignadas; luego el usuario. |
@@ -192,4 +205,4 @@ El manual en la app (`/profesor/manual`) incluye:
 
 ---
 
-*Última actualización: Marzo 2026 — §2 Backup (servidor, restauración total, export por profesor, Ubuntu). §1.1 página pública/admin. Depuración eliminada (§2.1).*
+*Última actualización: Marzo 2026 — §1.3 manual del usuario (profesor, §4.1 imágenes 5 MB, §10 administración unificada). §2 Backup. §1.1 página pública/admin. Depuración eliminada (§2.1).*

@@ -26,7 +26,7 @@ Para ver la lista de mejoras pendientes e implementadas (ítem por ítem), el ch
 - **Qué:** Landing y Planes usan la misma config BD; eslogan, email, redes (IG, TikTok, YouTube, Facebook, LinkedIn, X/Twitter), dirección y **URL de mapa** opcionales; textos orientados a **online**.
 - **Dónde editar:** Administrar sistema → **Página pública** → Configuración de datos.
 - **Detalle técnico:** [DOCUMENTACION_UNIFICADA.md](DOCUMENTACION_UNIFICADA.md) §1.1 bis; `CHANGELOG.md` entrada **feat(publica)**.
-- **Pendiente opcional:** Reemplazar imágenes estáticas del carrusel y afinar copy; limpiar tabla §14 del manual si quedan filas obsoletas (calendario/pizarra).
+- **Pendiente opcional:** Reemplazar imágenes estáticas del carrusel y afinar copy. ~~Manual:~~ ✅ actualizado Mar 2026 (100 % virtual, §11 secciones, §4.1 imágenes 5 MB, sin calendario/pizarra) — ver `DOCUMENTACION_UNIFICADA.md` **§1.3**.
 
 ---
 
@@ -107,7 +107,7 @@ Scripts SQL para cargar datos de prueba y testear la app:
 - **Estado:** Módulo **Administrar sistema** dado por cerrado a nivel UX coherente con el resto del panel (responsive previo + diferenciación visual).
 - **Backups:** Marcos de color contenido vs alumnos (`backup.html` + `style.css`, clase raíz `.admin-backup-fragment`).
 - **Usuarios del sistema:** Marcos de color perfil (“Mi usuario” / “Mi perfil”) vs listado de usuarios (`.admin-usuarios-sistema-root`, sectores `usuarios-sistema-sector-cuenta` / `usuarios-sistema-sector-listado`).
-- **Documentación:** §1.2 en [DOCUMENTACION_UNIFICADA.md](DOCUMENTACION_UNIFICADA.md), [PALETA_COLORES.md](PALETA_COLORES.md), [GUIA_RESPONSIVE.md](GUIA_RESPONSIVE.md) §5.7, manual §13, `CHANGELOG.md` [2026-03-22].
+- **Documentación:** §1.2 y **§1.3** (manual Mar 2026) en [DOCUMENTACION_UNIFICADA.md](DOCUMENTACION_UNIFICADA.md), [PALETA_COLORES.md](PALETA_COLORES.md), [GUIA_RESPONSIVE.md](GUIA_RESPONSIVE.md) §5.7, manual en app **§10.2 / §10.3** (pública / backups), `CHANGELOG.md` [2026-03-14] y [2026-03-22].
 
 ---
 
@@ -132,7 +132,7 @@ Ver GUIA_RESPONSIVE.md §5.2.
 - ~~**Pestaña Asignaciones – vistas y responsive:**~~ ✅ **Hecho (Mar 2026):** Filtro con card y Limpiar (estructura igual a Series); móvil: columna Acciones oculta, fila clickeable abre modal con detalle y acciones (sin WhatsApp). Botón Limpiar de Mis Alumnos en verde claro. Ver CHANGELOG [2026-03-20] y GUIA_RESPONSIVE §5.5.
 - **Barra inferior de navegación (accesos directos):** ✅ **Hecho (Mar 2026):** Inicio → página pública; Manual → manual de usuario; Consultas → mensajes formulario contacto; Más → config. Fragmento `bottom-nav.html` usado en todas las plantillas del panel. Ver CHANGELOG [2026-03-16] feat(ui) accesos rápidos.
 - **Siguiente:** **Ejercicios** — ~~vista~~ ✅ terminada; ~~grupos musculares (lista + editar)~~ ✅ responsive; ~~crear ejercicio~~ ✅; ~~modificar ejercicio~~ ✅ paleta naranja + responsive Mar 2026.
-- **Siguiente sesión:** ~~Terminar módulo de administración~~ ✅ **Mar 2026:** UX administración cerrada (sectores de color, docs). **Siguiente:** revisar manual de usuario (eliminar filas obsoletas calendario/pizarra si aplica, ABM categorías, accesos).
+- **Siguiente sesión:** ~~Terminar módulo de administración~~ ✅ **Mar 2026:** UX administración cerrada (sectores de color, docs). ~~**Manual de usuario**~~ ✅ **Mar 2026:** revisión completa + §1.3 en DOCUMENTACION_UNIFICADA.
 
 ---
 
@@ -144,14 +144,14 @@ Ver GUIA_RESPONSIVE.md §5.2.
 4. ~~**Módulo de rutinas (creación, modificar, panel, hoja, asignar).**~~ ✅ **Hecho (Mar 2026):** CHANGELOG [2026-03-17], [2026-03-18].
 5. ~~**Vista Mis Ejercicios.**~~ ✅ **Hecho (Mar 2026):** Tarjetas con + arriba derecha, mismo tamaño, cantidad grupos musculares; móvil cuadradas; filtros; modal al tocar fila; barra inferior. Ver GUIA_RESPONSIVE.md §5.6 y CHANGELOG [2026-03-21]. ~~Grupos musculares (lista + editar).~~ ~~Crear ejercicio (paleta + responsive).~~ ~~Modificar ejercicio (responsive / alinear con crear).~~ ✅ Módulo Ejercicios responsive completado.
 6. ~~**Sistema de backup**~~ — Actualizado Mar 2026 (servidor, restauración total, export por profesor). Ver § “Sistema de backup” arriba y DOCUMENTACION_UNIFICADA §2.
-7. **Luego:** **Modificar el manual del usuario** (actualizar contenido y estructura según los cambios de la app).
+7. ~~**Modificar el manual del usuario**~~ ✅ **Mar 2026:** `manual-usuario.html` alineado a app virtual; **§1.3** en DOCUMENTACION_UNIFICADA (profesor, §4.1 imágenes, §10 administración).
 
 ---
 
 ## Pendientes – Módulo de administración y manual
 
 - **Terminar módulo de administración:** Responsive mejorado (textos cortos, dropdown móvil funcional, tabla consultas). Revisar vistas restantes, alineación y flujos en móvil.
-- **Revisar manual de usuario:** Se hicieron muchas modificaciones (ABM categorías, accesos rápidos del pie, módulo administración, etc.). Actualizar manual con contenido y estructura acordes a la app actual.
+- ~~**Revisar manual de usuario**~~ ✅ Mar 2026 — ver §1.3 y `CHANGELOG` [2026-03-14].
 
 ---
 
@@ -176,7 +176,8 @@ Ver GUIA_RESPONSIVE.md §5.2.
 ## Hecho recientemente — resumen rápido (Mar 2026)
 
 - Marca **MiGymVirtual** en UI y mensajes; consulta → **WhatsApp** desde modal; consulta móvil **auto “vista”**; tabla consultas **Visto + Eliminar** en una línea; **Celular** en formulario `/planes`; menú admin móvil con **rayitas**; **orden de planes** con flechas en la tarjeta (móvil), no en el modal.
+- **Manual de usuario** (`/profesor/manual`): revisión 100 % virtual, enfoque profesor, **§4.1** imágenes (5 MB), administración **§10**; documentado en **DOCUMENTACION_UNIFICADA §1.3**.
 
 ---
 
-*Última actualización: Marzo 2026. AYUDA_MEMORIA y PLAN_DE_DESARROLLO se unificaron en un solo documento.*
+*Última actualización: Marzo 2026 — doc sincronizada con manual (§1.3). AYUDA_MEMORIA y PLAN_DE_DESARROLLO se unificaron en un solo documento.*

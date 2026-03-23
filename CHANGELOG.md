@@ -2,6 +2,59 @@
 
 > Nota: este changelog incluye histórico heredado de MiGym (referencias a admin/chat/websocket).
 
+## [2026-03-14] - docs: sincronizar documentación con manual (§1.3, refs) ✅
+
+### Resumen
+- **DOCUMENTACION_UNIFICADA.md:** nueva **§1.3** (últimos cambios del manual: audiencia profesor, 11 secciones, §4.1 imágenes, §10.2/§10.3); fila tabla §5 **Imágenes ejercicio** (`ImagenServicio` 5 MB); pie de documento actualizado.
+- **AYUDA_MEMORIA.md:** pendientes de manual marcados como hechos; referencias §1.3 y §10.2/§10.3; limpieza ítem “tabla §14”.
+- **LEEME_PRIMERO.md:** §5 implementado — manual + enlace a §1.3.
+
+### Archivos
+`Documentacion/DOCUMENTACION_UNIFICADA.md`, `Documentacion/AYUDA_MEMORIA.md`, `Documentacion/LEEME_PRIMERO.md`, `CHANGELOG.md`.
+
+---
+
+## [2026-03-14] - docs(manual): revisión completa del manual de usuario (100 % virtual) ✅
+
+### Resumen
+- Eliminadas secciones obsoletas (calendario semanal, presentismo, pizarra TV) alineadas a la app sin asistencias presenciales ni sala.
+- Panel actualizado: cuatro tarjetas (Alumnos, Series, Rutinas, Asignaciones), accesos Ejercicios y Administrar; pestañas y comportamiento responsive (tablas / modales).
+- Alumnos: formulario y ficha acordes al flujo actual (últimas 3 rutinas, notas privadas, progreso sin “presente” en modal).
+- Rutinas: categorías obligatorias, nota/reseña para el alumno, pestaña Mis Rutinas con categorías y acciones en escritorio vs móvil.
+- Nueva sección **Categorías de rutinas** (`/profesor/mis-categorias`).
+- **Repaso profesor:** §1–2 sin AYUDANTE/DEVELOPER; texto para **un usuario operativo** típico; **sección duplicada de usuarios eliminada** (unificado en Administración §10.1).
+- **§4.1 imágenes:** JPG/PNG/GIF/WebP/BMP, **máx. 5 MB** (`ImagenServicio`), recomendaciones WebP/GIF/PNG.
+- Índice final: **11 secciones** (Administración §10, Resumen §11); `DOCUMENTACION_UNIFICADA.md` actualizada (§10.2 página pública).
+
+### Archivos
+`src/main/resources/templates/profesor/manual-usuario.html`, `CHANGELOG.md`, `Documentacion/DOCUMENTACION_UNIFICADA.md`.
+
+---
+
+## [2026-03-22] - fix(publica): un solo campo Celular/WhatsApp para botón flotante y enlaces ✅
+
+### Resumen
+- `ConfiguracionPaginaPublicaService.getNumeroWhatsAppPublico()`: prioriza `telefono` en BD, si no hay usa `whatsapp` (legacy).
+- Al guardar configuración pública: un input `celular_whatsapp` escribe **ambas** claves `telefono` y `whatsapp` para mantener consistencia.
+- Panel admin: un solo campo en lugar de WhatsApp + Teléfono separados; `celularWhatsappMostrar` en el modelo del formulario.
+
+### Archivos
+`ConfiguracionPaginaPublicaService.java`, `PaginaPublicaAdminController.java`, `pagina-publica-admin.html`, `manual-usuario.html`, `CHANGELOG.md`.
+
+---
+
+## [2026-03-22] - feat(planes): planes iniciales por defecto para gimnasio virtual ✅
+
+### Resumen
+- `PlanPublicoService.asegurarPlanesIniciales()` (solo si la tabla está vacía): **Plan Esencial online**, **Progreso virtual**, **Intensivo online**, **Premium virtual** — seguimiento por mensajes/revisiones, rutinas por enlace, sin asistencia a sede. Precios de ejemplo 15k–45k sin cambio.
+- `PlanPublico`: javadoc de `vecesPorSemana` como intensidad de seguimiento.
+- Manual §13.2: aclaración planes de ejemplo en BD nueva.
+
+### Archivos
+`PlanPublicoService.java`, `PlanPublico.java`, `manual-usuario.html`.
+
+---
+
 ## [2026-03-22] - feat(publica): landing y planes alineados a virtual + redes y contacto desde BD ✅
 
 ### Resumen

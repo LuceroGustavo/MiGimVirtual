@@ -80,16 +80,27 @@ public class PlanPublicoService {
         return true;
     }
 
-    /** Crea los 4 planes iniciales si no existen. */
+    /**
+     * Crea los 4 planes iniciales si no existen (solo BD vacía).
+     * Enfoque gimnasio virtual: seguimiento online, rutinas y comunicación; no asistencia a sede.
+     */
     @Transactional
     public void asegurarPlanesIniciales() {
         if (planPublicoRepository.count() > 0) {
             return;
         }
-        crearPlan("1 vez por semana", "Acceso una vez por semana.", 15000.0, 1, 0);
-        crearPlan("2 veces por semana", "Acceso dos veces por semana.", 25000.0, 2, 1);
-        crearPlan("3 veces por semana", "Acceso tres veces por semana.", 35000.0, 3, 2);
-        crearPlan("Opción libre", "Acceso libre sin restricción de días.", 45000.0, null, 3);
+        crearPlan("Plan Esencial online",
+                "Rutinas personalizadas y acceso a tus series por enlace. Una instancia de seguimiento o ajuste por semana (mensaje o revisión). Ideal para arrancar con constancia desde casa.",
+                15000.0, 1, 0);
+        crearPlan("Plan Progreso virtual",
+                "Todo lo del plan esencial, con seguimiento más cercano: dos contactos o revisiones por semana para ajustar cargas, técnica y evitar estancamiento.",
+                25000.0, 2, 1);
+        crearPlan("Plan Intensivo online",
+                "Pensado para objetivos exigentes: tres instancias semanales de feedback, prioridad en consultas y actualización del plan según tu disponibilidad y recuperación.",
+                35000.0, 3, 2);
+        crearPlan("Plan Premium virtual",
+                "Acompañamiento continuo: consultas y ajustes sin tope fijo dentro de lo acordado con tu profesor, rutinas y progresiones a medida, máxima flexibilidad 100 % online.",
+                45000.0, null, 3);
     }
 
     private void crearPlan(String nombre, String descripcion, Double precio, Integer vecesPorSemana, int orden) {

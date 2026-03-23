@@ -19,7 +19,7 @@ public class PlanPublico {
     @Column(nullable = false)
     private Double precio;
 
-    /** Veces por semana (1, 2, 3) o null para "opción libre". */
+    /** Intensidad de seguimiento: instancias por semana (1, 2, 3) o null para plan sin tope fijo (ej. premium virtual). */
     @Column(name = "veces_por_semana")
     private Integer vecesPorSemana;
 

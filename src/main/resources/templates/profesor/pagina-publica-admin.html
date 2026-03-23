@@ -187,7 +187,7 @@
                     <tr>
                         <th>Nombre</th>
                         <th>Precio</th>
-                        <th>Veces/sem</th>
+                        <th title="Instancias de seguimiento por semana">Seg./sem.</th>
                         <th class="publica-col-wrap">Descripción</th>
                         <th class="text-nowrap" style="min-width: 9rem;">Acciones</th>
                     </tr>
@@ -239,9 +239,11 @@
                     <input type="text" name="eslogan" class="form-control" maxlength="200" th:value="${config != null ? config.get('eslogan') : ''}" placeholder="Ej.: Entrenamiento personalizado online">
                 </div>
                 <div class="col-md-6">
-                    <label class="form-label">WhatsApp (número con código país, ej. 5491112345678)</label>
-                    <input type="text" name="whatsapp" class="form-control" th:value="${config != null ? config.get('whatsapp') : ''}" placeholder="5491112345678">
-                    <small class="form-text text-muted">Si lo dejás vacío, no se muestra el botón flotante ni el enlace en la home.</small>
+                    <label class="form-label">Celular / WhatsApp</label>
+                    <input type="text" name="celular_whatsapp" class="form-control" autocomplete="tel"
+                           th:value="${celularWhatsappMostrar != null ? celularWhatsappMostrar : ''}"
+                           placeholder="Ej. 5491112345678 (código país + número, sin +)">
+                    <small class="form-text text-muted">Un solo número para <strong>todos</strong> los enlaces de WhatsApp: botón flotante, sección contacto y pie en la landing y en Planes. Si lo dejás vacío, no se muestra el botón flotante ni esos enlaces.</small>
                 </div>
                 <div class="col-md-6">
                     <label class="form-label">Email de contacto (público)</label>
@@ -284,10 +286,6 @@
                     <label class="form-label">Horarios / disponibilidad</label>
                     <textarea name="dias_horarios" class="form-control" rows="4" placeholder="Ej.: Consultas por WhatsApp — respuesta en 24–48 h.&#10;Seguimiento y rutinas 100 % online." th:text="${(config != null && config.get('dias_horarios') != null) ? config.get('dias_horarios') : ''}"></textarea>
                     <small class="form-text text-muted">Cada línea se muestra en Planes. Podés describir tiempos de respuesta u oficina virtual en lugar de horario de gimnasio.</small>
-                </div>
-                <div class="col-md-6">
-                    <label class="form-label">Teléfono (interno / notas)</label>
-                    <input type="text" name="telefono" class="form-control" th:value="${config != null ? config.get('telefono') : ''}" placeholder="(opcional, no se muestra en la pública salvo que lo uses en otro módulo)">
                 </div>
                 <div class="col-12">
                     <button type="submit" class="btn btn-primary"><i class="fas fa-save me-1"></i>Guardar configuración</button>
@@ -355,7 +353,7 @@
                     <dl class="detalle-dl mb-0 mt-3">
                         <dt>Precio</dt>
                         <dd id="planDetallePrecio">—</dd>
-                        <dt>Veces por semana</dt>
+                        <dt>Seguimiento (por semana)</dt>
                         <dd id="planDetalleVeces">—</dd>
                         <dt>Orden</dt>
                         <dd id="planDetalleOrden">—</dd>
@@ -390,15 +388,16 @@
                     <input type="hidden" name="id" id="planId">
                     <div class="mb-2">
                         <label class="form-label">Nombre</label>
-                        <input type="text" name="nombre" class="form-control" placeholder="Ej. 1 vez por semana" required>
+                        <input type="text" name="nombre" class="form-control" placeholder="Ej. Plan Esencial online" required>
                     </div>
                     <div class="mb-2">
                         <label class="form-label">Precio</label>
                         <input type="number" name="precio" class="form-control" step="0.01" min="0" required>
                     </div>
                     <div class="mb-2">
-                        <label class="form-label">Veces por semana</label>
-                        <input type="number" name="vecesPorSemana" class="form-control" min="0" placeholder="Vacío = opción libre">
+                        <label class="form-label">Seguimiento (veces por semana)</label>
+                        <input type="number" name="vecesPorSemana" class="form-control" min="0" placeholder="Vacío = sin tope fijo (ej. premium)">
+                        <small class="text-muted">Para planes virtuales: instancias de contacto o revisión por semana.</small>
                     </div>
                     <div class="mb-2">
                         <label class="form-label">Orden</label>

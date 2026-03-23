@@ -36,6 +36,7 @@ public class PaginaPublicaAdminController {
         }
         model.addAttribute("planes", planPublicoService.getAllPlanes());
         model.addAttribute("config", configuracionPaginaPublicaService.getAllConfig());
+        model.addAttribute("celularWhatsappMostrar", configuracionPaginaPublicaService.getNumeroWhatsAppPublico());
         model.addAttribute("consultas", consultaService.getUltimasConsultas(20));
         if (fragment != null && !fragment.isEmpty()) {
             return "profesor/pagina-publica-admin :: contenido";
@@ -118,11 +119,10 @@ public class PaginaPublicaAdminController {
 
     @PostMapping("/config")
     public String guardarConfig(@AuthenticationPrincipal Usuario usuarioActual,
-                                @RequestParam(required = false) String whatsapp,
+                                @RequestParam(required = false) String celular_whatsapp,
                                 @RequestParam(required = false) String instagram,
                                 @RequestParam(required = false) String direccion,
                                 @RequestParam(required = false) String dias_horarios,
-                                @RequestParam(required = false) String telefono,
                                 @RequestParam(required = false) String url_mapa,
                                 @RequestParam(required = false) String tiktok,
                                 @RequestParam(required = false) String youtube,
@@ -135,11 +135,13 @@ public class PaginaPublicaAdminController {
         if (usuarioActual == null || !isAdminOrDeveloper(usuarioActual)) {
             return "redirect:/profesor/dashboard";
         }
-        configuracionPaginaPublicaService.actualizar(ConfiguracionPaginaPublica.CLAVE_WHATSAPP, whatsapp);
+        String celWa = celular_whatsapp != null ? celular_whatsapp.trim() : "";
+        /* Un solo dato en panel: se guarda en telefono y whatsapp para enlaces públicos y compatibilidad. */
+        configuracionPaginaPublicaService.actualizar(ConfiguracionPaginaPublica.CLAVE_TELEFONO, celWa);
+        configuracionPaginaPublicaService.actualizar(ConfiguracionPaginaPublica.CLAVE_WHATSAPP, celWa);
         configuracionPaginaPublicaService.actualizar(ConfiguracionPaginaPublica.CLAVE_INSTAGRAM, instagram);
         configuracionPaginaPublicaService.actualizar(ConfiguracionPaginaPublica.CLAVE_DIRECCION, direccion);
         configuracionPaginaPublicaService.actualizar(ConfiguracionPaginaPublica.CLAVE_DIAS_HORARIOS, dias_horarios);
-        configuracionPaginaPublicaService.actualizar(ConfiguracionPaginaPublica.CLAVE_TELEFONO, telefono);
         configuracionPaginaPublicaService.actualizar(ConfiguracionPaginaPublica.CLAVE_URL_MAPA, url_mapa);
         configuracionPaginaPublicaService.actualizar(ConfiguracionPaginaPublica.CLAVE_TIKTOK, tiktok);
         configuracionPaginaPublicaService.actualizar(ConfiguracionPaginaPublica.CLAVE_YOUTUBE, youtube);

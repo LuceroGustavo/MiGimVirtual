@@ -44,6 +44,19 @@ public class ConfiguracionPaginaPublicaService {
         return getValor(ConfiguracionPaginaPublica.CLAVE_TELEFONO);
     }
 
+    /**
+     * Número usado para wa.me, botón flotante y enlaces WhatsApp en la pública.
+     * Prioriza el celular ({@link #getTelefono()}); si está vacío, usa {@link #getWhatsapp()} (compatibilidad con datos viejos).
+     */
+    public String getNumeroWhatsAppPublico() {
+        String t = getTelefono();
+        if (t != null && !t.isBlank()) {
+            return t.trim();
+        }
+        String w = getWhatsapp();
+        return w != null && !w.isBlank() ? w.trim() : "";
+    }
+
     public Map<String, String> getAllConfig() {
         Map<String, String> map = new HashMap<>();
         configRepository.findAll().forEach(c -> map.put(c.getClave(), c.getValor()));
@@ -97,7 +110,7 @@ public class ConfiguracionPaginaPublicaService {
             model.addAttribute("pieUbicacionTexto", direccion);
         }
 
-        model.addAttribute("whatsappUrl", buildWhatsappUrl(getWhatsapp()));
+        model.addAttribute("whatsappUrl", buildWhatsappUrl(getNumeroWhatsAppPublico()));
         model.addAttribute("instagramUrl", buildInstagramUrl(getInstagram()));
         model.addAttribute("tiktokUrl", buildTiktokUrl(getValor(ConfiguracionPaginaPublica.CLAVE_TIKTOK)));
         model.addAttribute("youtubeUrl", buildYoutubeUrl(getValor(ConfiguracionPaginaPublica.CLAVE_YOUTUBE)));
