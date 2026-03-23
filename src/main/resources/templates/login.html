@@ -8,46 +8,177 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="/style.css">
     <style>
-        body {
-            background: linear-gradient(135deg, #f0f2f5 0%, #e6e9f0 100%);
+        /* Fondo con imagen + leve oscurecido para legibilidad */
+        body.login-page {
+            margin: 0;
             min-height: 100vh;
+            min-height: 100dvh;
+            background-color: #0a0e14;
+            background-image:
+                linear-gradient(135deg, rgba(8, 14, 26, 0.75) 0%, rgba(12, 22, 40, 0.55) 50%, rgba(6, 12, 24, 0.7) 100%),
+                url('/img/login.jpeg');
+            background-size: cover;
+            background-position: center center;
+            background-repeat: no-repeat;
+            background-attachment: scroll;
         }
+
         .login-container {
             min-height: 100vh;
+            min-height: 100dvh;
             display: flex;
             align-items: center;
             justify-content: center;
             padding: 1rem;
         }
+
+        /* Tarjeta “glass”: se ve el fondo detrás */
         .login-card {
             width: 100%;
             max-width: 420px;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            border: none;
+            border-radius: 18px;
+            border: 1px solid rgba(100, 200, 255, 0.28);
+            box-shadow:
+                0 8px 32px rgba(0, 0, 0, 0.45),
+                0 0 0 1px rgba(255, 255, 255, 0.04) inset,
+                0 0 40px rgba(0, 160, 255, 0.08);
+            background: rgba(15, 23, 35, 0.72);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            overflow: hidden;
         }
+
         .login-header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border-radius: 15px 15px 0 0;
-            padding: 2rem;
+            background: linear-gradient(145deg, rgba(30, 58, 95, 0.88) 0%, rgba(18, 36, 62, 0.92) 100%);
+            color: #e8f4ff;
+            border-bottom: 1px solid rgba(80, 180, 255, 0.22);
+            border-radius: 18px 18px 0 0;
+            padding: 1.75rem 1.5rem;
             text-align: center;
         }
+
         .login-header h2 {
             font-weight: 700;
+            text-shadow: 0 2px 12px rgba(0, 120, 200, 0.35);
         }
+
+        .login-header p {
+            color: rgba(200, 230, 255, 0.88);
+            font-size: 0.95rem;
+        }
+
+        .login-card .card-body {
+            background: rgba(8, 14, 24, 0.45);
+            color: #e2e8f0;
+        }
+
+        .login-card .form-label {
+            color: #cbd5e1;
+        }
+
+        .login-card .input-group-text {
+            background: rgba(255, 255, 255, 0.06);
+            border-color: rgba(100, 180, 255, 0.28);
+            color: #7dd3fc;
+        }
+
+        .login-card .form-control {
+            background: rgba(255, 255, 255, 0.07);
+            border-color: rgba(100, 180, 255, 0.25);
+            color: #f1f5f9;
+        }
+
+        .login-card .form-control::placeholder {
+            color: rgba(148, 163, 184, 0.85);
+        }
+
+        .login-card .form-control:focus {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(56, 189, 248, 0.65);
+            color: #fff;
+            box-shadow: 0 0 0 0.2rem rgba(14, 165, 233, 0.22);
+        }
+
+        .login-card #togglePassword {
+            border-color: rgba(100, 180, 255, 0.28);
+            background: rgba(255, 255, 255, 0.06);
+            color: #bae6fd;
+        }
+
+        .login-card #togglePassword:hover {
+            background: rgba(56, 189, 248, 0.15);
+            color: #e0f2fe;
+        }
+
+        /* Botón principal: azul eléctrico acorde al branding */
+        .login-card .btn-login-submit {
+            background: linear-gradient(180deg, #0ea5e9 0%, #0284c7 100%);
+            border: none;
+            color: #fff;
+            box-shadow: 0 4px 18px rgba(14, 165, 233, 0.4);
+        }
+
+        .login-card .btn-login-submit:hover {
+            background: linear-gradient(180deg, #38bdf8 0%, #0ea5e9 100%);
+            color: #fff;
+            box-shadow: 0 6px 22px rgba(14, 165, 233, 0.5);
+        }
+
+        .login-card .alert-danger {
+            background: rgba(127, 29, 29, 0.55);
+            border: 1px solid rgba(248, 113, 113, 0.45);
+            color: #fecaca;
+        }
+
+        .login-card .alert-success {
+            background: rgba(20, 83, 45, 0.5);
+            border: 1px solid rgba(74, 222, 128, 0.4);
+            color: #bbf7d0;
+        }
+
+        /* Entorno 2 (móvil / ≤991px): más aire y fondo fijo suave */
+        @media (max-width: 991px) {
+            body.login-page {
+                background-attachment: scroll;
+            }
+            .login-container {
+                align-items: flex-start;
+                padding-top: max(1.5rem, env(safe-area-inset-top));
+                padding-bottom: max(1rem, env(safe-area-inset-bottom));
+            }
+            .login-card {
+                margin-top: 0.5rem;
+            }
+        }
+
         @media (max-width: 576px) {
-            .login-container { padding: 0.75rem; align-items: flex-start; padding-top: 2rem; }
-            .login-header { padding: 1.25rem 1rem; }
-            .login-header h2 { font-size: 1.35rem; }
-            .login-header p { font-size: 0.9rem; }
-            .card-body { padding: 1.25rem !important; }
-            .form-label { font-size: 0.95rem; }
-            .btn-lg { padding: 0.75rem 1rem; min-height: 48px; }
+            .login-container {
+                padding: 0.75rem;
+                padding-top: max(1.25rem, env(safe-area-inset-top));
+            }
+            .login-header {
+                padding: 1.35rem 1rem;
+            }
+            .login-header h2 {
+                font-size: 1.35rem;
+            }
+            .login-header p {
+                font-size: 0.88rem;
+            }
+            .login-card .card-body {
+                padding: 1.25rem !important;
+            }
+            .login-card .form-label {
+                font-size: 0.95rem;
+            }
+            .login-card .btn-lg {
+                padding: 0.75rem 1rem;
+                min-height: 48px;
+            }
         }
     </style>
 </head>
-<body>
+<body class="login-page">
     <div class="login-container">
         <div class="card login-card">
             <div class="login-header">
@@ -55,7 +186,7 @@
                 <p class="mb-0">Bienvenido a MiGymVirtual</p>
             </div>
             <div class="card-body p-4 p-lg-5">
-                
+
                 <div th:if="${param.error}" class="alert alert-danger" role="alert">
                     <i class="fas fa-exclamation-triangle me-2"></i>
                     Usuario o contraseña incorrectos.
@@ -71,21 +202,21 @@
                         <label for="username" class="form-label fw-bold">Correo Electrónico</label>
                         <div class="input-group">
                             <span class="input-group-text"><i class="fas fa-envelope"></i></span>
-                            <input type="email" class="form-control" id="username" name="username" placeholder="tu.correo@ejemplo.com" required>
+                            <input type="email" class="form-control" id="username" name="username" placeholder="tu.correo@ejemplo.com" required autocomplete="username">
                         </div>
                     </div>
                     <div class="mb-4">
                         <label for="password" class="form-label fw-bold">Contraseña</label>
                          <div class="input-group">
                             <span class="input-group-text"><i class="fas fa-lock"></i></span>
-                            <input type="password" class="form-control" id="password" name="password" placeholder="Tu contraseña" required>
+                            <input type="password" class="form-control" id="password" name="password" placeholder="Tu contraseña" required autocomplete="current-password">
                             <button type="button" class="btn btn-outline-secondary" id="togglePassword" title="Mostrar/ocultar contraseña" aria-label="Mostrar contraseña">
                                 <i class="fas fa-eye" id="togglePasswordIcon"></i>
                             </button>
                         </div>
                     </div>
                     <div class="d-grid">
-                        <button type="submit" class="btn btn-primary btn-lg fw-bold">Ingresar</button>
+                        <button type="submit" class="btn btn-lg fw-bold btn-login-submit">Ingresar</button>
                     </div>
                 </form>
             </div>
@@ -111,4 +242,4 @@
         });
     </script>
 </body>
-</html> 
+</html>
