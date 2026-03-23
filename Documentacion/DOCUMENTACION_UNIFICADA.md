@@ -1,6 +1,6 @@
 # Documentación unificada – Referencias y resúmenes
 
-Contenido importante reunido de los documentos del proyecto. Para contexto: [LEEME_PRIMERO.md](LEEME_PRIMERO.md), [AYUDA_MEMORIA.md](AYUDA_MEMORIA.md) y [PLAN_DE_DESARROLLO_MiGymVirtual.md](PLAN_DE_DESARROLLO_MiGymVirtual.md).
+Contenido importante reunido de los documentos del proyecto. Para contexto: [LEEME_PRIMERO.md](LEEME_PRIMERO.md), [AYUDA_MEMORIA.md](AYUDA_MEMORIA.md), [INDICE_DOCUMENTACION.md](INDICE_DOCUMENTACION.md) y [PLAN_DE_DESARROLLO_MIGIMVIRTUAL.md](PLAN_DE_DESARROLLO_MIGIMVIRTUAL.md).
 
 ---
 
@@ -34,7 +34,7 @@ Contenido importante reunido de los documentos del proyecto. Para contexto: [LEE
 - **Panel único:** Profesor (roles DEVELOPER, ADMIN, AYUDANTE). Sin panel alumno ni admin separado.
 - **Ejercicios:** Predeterminados 1–60 desde `uploads/ejercicios/`; ABM; grupos musculares como entidad (`GrupoMuscular`); formularios y modal Ver alineados con series/rutinas. **Módulo Ejercicios responsive completado (Mar 2026):** vista Mis Ejercicios, crear ejercicio, modificar ejercicio, grupos musculares (lista + editar); paleta naranja; barra inferior móvil.
 - **Series y rutinas:** ABM; asignación rutina → alumno; enlace por token `/rutinas/hoja/{token}`; Copiar enlace y WhatsApp desde ficha alumno; orden de series; modificar rutina con tres bloques (Detalles, Series en rutina, Añadir más). **ABM de categorías de rutinas implementado (Mar 2026):** entidad `Categoria`; categorías del sistema (FUERZA, CARDIO, FLEXIBILIDAD, FUNCIONAL, HIIT) + propias del profesor; lista en `/profesor/mis-categorias`; crear, editar, eliminar; selección en crear/editar rutina.
-- **Alumnos:** Solo ficha (sin login). Estado ACTIVO/INACTIVO; filtros por nombre y estado. Al eliminar alumno se borran mediciones y rutinas asignadas. Tarjeta "Progreso del alumno" con historial de registros (crear, editar, eliminar). **Vista del alumno terminada (Mar 2026):** responsive móvil, modal progreso al tocar registro, modal confirmar eliminar progreso, botón Guardar notas, Eliminar usuario debajo de todo, barra inferior móvil, formato fecha dd/MM/yy. Pendiente: scroll vertical en progresos móvil (>5 registros).
+- **Alumnos:** Solo ficha (sin login). Estado ACTIVO/INACTIVO; filtros por nombre y estado. Al eliminar alumno se borran mediciones y rutinas asignadas. Tarjeta "Progreso del alumno" con historial de registros (crear, editar, eliminar). **Vista del alumno terminada (Mar 2026):** responsive móvil, modal progreso al tocar registro, modal confirmar eliminar progreso, botón Guardar notas, Eliminar usuario debajo de todo, barra inferior móvil, formato fecha dd/MM/yy. **Scroll móvil (Mar 2026):** tablas de lectura con `mgv-scroll-panel` / `mgv-scroll-embed` + scroll interno en ≤991px; progreso con `.progreso-scroll-mobile` (altura fija en móvil). Ver [GUIA_RESPONSIVE.md](GUIA_RESPONSIVE.md) §5.8.
 - **Página pública:** Landing `/`, Planes `/planes`, consultas; administración en `/profesor/pagina-publica`. **Mar 2026:** config unificada en BD (redes, email, eslogan, mapa opcional), textos virtual-first — ver §1.1 bis.
 - **Manual del usuario:** HTML en `/profesor/manual` (pie del panel, embebido en Administrar sistema); índice Mar 2026: acceso, panel, alumnos, ejercicios (incl. formatos imagen y 5 MB), grupos, series, rutinas, categorías, progreso, administración (usuarios + página pública + backups), resumen. Sin calendario/asistencias/pizarra (app 100 % virtual). Detalle de la última actualización: **§1.3**.
 
@@ -96,6 +96,20 @@ Para **diferenciar** bloques dentro de **Administrar sistema** (vista embebida c
 - **Ejercicios §4.1:** formatos admitidos por extensión **JPEG/JPG, PNG, GIF, WebP, BMP**; tamaño máximo **5 MB** por archivo (`ImagenServicio`). Recomendaciones en el manual: WebP (calidad/peso), GIF (animación), PNG (transparencia).
 - **Referencias cruzadas en docs:** página pública **§10.2**; backups **§10.3** (actualizar textos antiguos que citaban §13.x).
 - **Historial:** `CHANGELOG.md` [2026-03-14] (revisión 100 % virtual + repaso profesor + §4.1).
+
+### 1.4 Datos de prueba en MySQL (scripts `scripts/BD/`) — Mar 2026
+
+Para poblar **alumnos**, **progresos**, **series plantilla**, **rutinas plantilla** y **rutinas asignadas** en desarrollo o demos, usar los scripts SQL en orden: **`00`** (opcional, limpiar) → **`01`** → **`02`** → **`03`** → **`04`** → **`06`**. `05` es solo reparación si hay `serie_ejercicio` con `exercise_id` NULL.
+
+| Contenido | Detalle |
+|-----------|---------|
+| Alumnos | 20 usuarios `test_alumno_1` … `@migimvirtual.test` |
+| Series | 20 plantillas con ejercicios del catálogo |
+| Rutinas | 12 plantillas (`token_publico` `test_rutina*`) |
+| Asignaciones | Script **06** con procedimiento almacenado; tokens `test_asign_*` |
+| Progresos | Varios registros por alumno (incluye volumen para probar scroll en ficha) |
+
+**Fuente de verdad:** `scripts/BD/README.md` y `scripts/BD/LEEME_BD.txt`. **Índice general:** [INDICE_DOCUMENTACION.md](INDICE_DOCUMENTACION.md).
 
 ---
 

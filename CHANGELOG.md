@@ -2,6 +2,18 @@
 
 > Nota: este changelog incluye histórico heredado de MiGym (referencias a admin/chat/websocket).
 
+## [2026-03-15] - feat(ui)+chore: scroll tablas móvil, datos BD ampliados, docs reorganizadas (cierre) ✅
+
+### Resumen
+- **Responsive (≤991px):** Clases utilitarias en `static/style.css`: `mgv-scroll-panel` (~15 filas visibles) y `mgv-scroll-embed` (~6 filas) sobre `.table-responsive`; solo móvil/tablet, sin cambiar layout en escritorio. Aplicado en: `dashboard.html` (4 pestañas), `ejercicios-lista.html`, `asignar-rutina.html` (+ enlace a `style.css`), `usuarios-sistema.html`, `alumno-detalle.html` (tabla rutinas). Progreso del alumno sigue usando `.progreso-scroll-mobile` (ficha).
+- **Scripts BD (`scripts/BD/`):** Ampliación de datos de prueba — `01` 20 alumnos, `03` 20 series plantilla, `04` 12 rutinas plantilla, `02` más registros de progreso, nuevo **`06_asignaciones_prueba.sql`** (procedimiento `mgv_asignar_rutina_plantilla` + rutinas asignadas `test_asign_%`). `00_limpiar_datos_prueba.sql` actualizado (series nuevas, limpieza `test_asign_%`). **`LEEME_BD.txt`** + **`README.md`** de la carpeta alineados al orden y volúmenes.
+- **Documentación:** Nuevo **`Documentacion/INDICE_DOCUMENTACION.md`**; actualizados **DOCUMENTACION_UNIFICADA** (§1 scroll + §1.4 datos prueba), **GUIA_RESPONSIVE** §5.8, **AYUDA_MEMORIA** (pendiente scroll resuelto), **LEEME_PRIMERO**, **README** raíz.
+
+### Archivos principales
+`src/main/resources/static/style.css`, `templates/profesor/dashboard.html`, `ejercicios-lista.html`, `asignar-rutina.html`, `usuarios-sistema.html`, `alumno-detalle.html`, `scripts/BD/*.sql`, `scripts/BD/README.md`, `scripts/BD/LEEME_BD.txt`, `Documentacion/INDICE_DOCUMENTACION.md`, `Documentacion/DOCUMENTACION_UNIFICADA.md`, `Documentacion/GUIA_RESPONSIVE.md`, `Documentacion/AYUDA_MEMORIA.md`, `Documentacion/LEEME_PRIMERO.md`, `README.md`, `CHANGELOG.md`.
+
+---
+
 ## [2026-03-14] - docs: sincronizar documentación con manual (§1.3, refs) ✅
 
 ### Resumen

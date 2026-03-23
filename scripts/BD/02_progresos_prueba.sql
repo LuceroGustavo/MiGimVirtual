@@ -1,7 +1,7 @@
 -- =============================================================================
 -- Script 2: Progresos del alumno (registro_progreso)
 -- Ejecutar después de 01_usuarios_prueba.sql
--- Distribución: algunos alumnos con 0, otros con 1, 2 o 4 progresos.
+-- Distribución: varios alumnos con 0–12 progresos (alumno 1 con más filas para probar scroll).
 -- =============================================================================
 
 USE migimvirtual;
@@ -76,6 +76,109 @@ SELECT id, CURDATE() - INTERVAL 1 DAY, 'PECHO, TRÍCEPS, HOMBROS', 'Rutina de de
 FROM usuario WHERE correo = 'test_alumno_9@migimvirtual.test' LIMIT 1;
 
 -- Alumno 10 (test_alumno_10): 0 progresos (ninguno)
+
+-- Alumno 1: más registros (probar scroll en ficha)
+INSERT INTO registro_progreso (usuario_id, fecha, grupos_musculares, observaciones)
+SELECT id, CURDATE() - INTERVAL 70 DAY, 'CORE', 'Plancha lateral 30 seg.'
+FROM usuario WHERE correo = 'test_alumno_1@migimvirtual.test' LIMIT 1;
+INSERT INTO registro_progreso (usuario_id, fecha, grupos_musculares, observaciones)
+SELECT id, CURDATE() - INTERVAL 85 DAY, 'HOMBROS', 'Press militar con mancuernas.'
+FROM usuario WHERE correo = 'test_alumno_1@migimvirtual.test' LIMIT 1;
+INSERT INTO registro_progreso (usuario_id, fecha, grupos_musculares, observaciones)
+SELECT id, CURDATE() - INTERVAL 100 DAY, 'PIERNAS', 'Zancadas con peso corporal.'
+FROM usuario WHERE correo = 'test_alumno_1@migimvirtual.test' LIMIT 1;
+INSERT INTO registro_progreso (usuario_id, fecha, grupos_musculares, observaciones)
+SELECT id, CURDATE() - INTERVAL 115 DAY, 'CARDIO', 'Elíptica 25 min zona 2.'
+FROM usuario WHERE correo = 'test_alumno_1@migimvirtual.test' LIMIT 1;
+INSERT INTO registro_progreso (usuario_id, fecha, grupos_musculares, observaciones)
+SELECT id, CURDATE() - INTERVAL 130 DAY, 'ESPALDA', 'Jalón al pecho 40 kg.'
+FROM usuario WHERE correo = 'test_alumno_1@migimvirtual.test' LIMIT 1;
+INSERT INTO registro_progreso (usuario_id, fecha, grupos_musculares, observaciones)
+SELECT id, CURDATE() - INTERVAL 145 DAY, 'BRAZOS, CORE', 'Circuito bíceps + plancha.'
+FROM usuario WHERE correo = 'test_alumno_1@migimvirtual.test' LIMIT 1;
+INSERT INTO registro_progreso (usuario_id, fecha, grupos_musculares, observaciones)
+SELECT id, CURDATE() - INTERVAL 160 DAY, 'PECHO', 'Aperturas con mancuernas.'
+FROM usuario WHERE correo = 'test_alumno_1@migimvirtual.test' LIMIT 1;
+INSERT INTO registro_progreso (usuario_id, fecha, grupos_musculares, observaciones)
+SELECT id, CURDATE() - INTERVAL 175 DAY, 'PIERNAS, GLÚTEOS', 'Hip thrust 3x12.'
+FROM usuario WHERE correo = 'test_alumno_1@migimvirtual.test' LIMIT 1;
+
+-- Alumnos 11–20: 2–3 progresos cada uno
+INSERT INTO registro_progreso (usuario_id, fecha, grupos_musculares, observaciones)
+SELECT id, CURDATE() - INTERVAL 5 DAY, 'PIERNAS', 'Bandas y glúteos.'
+FROM usuario WHERE correo = 'test_alumno_11@migimvirtual.test' LIMIT 1;
+INSERT INTO registro_progreso (usuario_id, fecha, grupos_musculares, observaciones)
+SELECT id, CURDATE() - INTERVAL 18 DAY, 'CORE', 'Abdominales en fitball.'
+FROM usuario WHERE correo = 'test_alumno_11@migimvirtual.test' LIMIT 1;
+
+INSERT INTO registro_progreso (usuario_id, fecha, grupos_musculares, observaciones)
+SELECT id, CURDATE() - INTERVAL 4 DAY, 'CARDIO', 'Trote suave 5 km.'
+FROM usuario WHERE correo = 'test_alumno_12@migimvirtual.test' LIMIT 1;
+INSERT INTO registro_progreso (usuario_id, fecha, grupos_musculares, observaciones)
+SELECT id, CURDATE() - INTERVAL 12 DAY, 'PIERNAS', 'Estabilidad tobillo.'
+FROM usuario WHERE correo = 'test_alumno_12@migimvirtual.test' LIMIT 1;
+INSERT INTO registro_progreso (usuario_id, fecha, grupos_musculares, observaciones)
+SELECT id, CURDATE() - INTERVAL 22 DAY, 'ELONGACIÓN', 'Estiramientos post-carrera.'
+FROM usuario WHERE correo = 'test_alumno_12@migimvirtual.test' LIMIT 1;
+
+INSERT INTO registro_progreso (usuario_id, fecha, grupos_musculares, observaciones)
+SELECT id, CURDATE() - INTERVAL 3 DAY, 'FULL BODY', 'Rutina corta en casa.'
+FROM usuario WHERE correo = 'test_alumno_13@migimvirtual.test' LIMIT 1;
+INSERT INTO registro_progreso (usuario_id, fecha, grupos_musculares, observaciones)
+SELECT id, CURDATE() - INTERVAL 14 DAY, 'CARDIO', 'HIIT 12 min.'
+FROM usuario WHERE correo = 'test_alumno_13@migimvirtual.test' LIMIT 1;
+
+INSERT INTO registro_progreso (usuario_id, fecha, grupos_musculares, observaciones)
+SELECT id, CURDATE() - INTERVAL 6 DAY, 'CARDIO, PIERNAS', 'Caminata inclinada.'
+FROM usuario WHERE correo = 'test_alumno_14@migimvirtual.test' LIMIT 1;
+INSERT INTO registro_progreso (usuario_id, fecha, grupos_musculares, observaciones)
+SELECT id, CURDATE() - INTERVAL 19 DAY, 'CORE', 'Planchas y vacío.'
+FROM usuario WHERE correo = 'test_alumno_14@migimvirtual.test' LIMIT 1;
+
+INSERT INTO registro_progreso (usuario_id, fecha, grupos_musculares, observaciones)
+SELECT id, CURDATE() - INTERVAL 2 DAY, 'PECHO, HOMBROS', 'Press plano 50 kg.'
+FROM usuario WHERE correo = 'test_alumno_15@migimvirtual.test' LIMIT 1;
+INSERT INTO registro_progreso (usuario_id, fecha, grupos_musculares, observaciones)
+SELECT id, CURDATE() - INTERVAL 11 DAY, 'ESPALDA', 'Dominadas asistidas.'
+FROM usuario WHERE correo = 'test_alumno_15@migimvirtual.test' LIMIT 1;
+INSERT INTO registro_progreso (usuario_id, fecha, grupos_musculares, observaciones)
+SELECT id, CURDATE() - INTERVAL 24 DAY, 'CORE', 'Ab wheel ruedas.'
+FROM usuario WHERE correo = 'test_alumno_15@migimvirtual.test' LIMIT 1;
+
+INSERT INTO registro_progreso (usuario_id, fecha, grupos_musculares, observaciones)
+SELECT id, CURDATE() - INTERVAL 4 DAY, 'ESPALDA, CUELLO', 'Movilidad y remo.'
+FROM usuario WHERE correo = 'test_alumno_16@migimvirtual.test' LIMIT 1;
+INSERT INTO registro_progreso (usuario_id, fecha, grupos_musculares, observaciones)
+SELECT id, CURDATE() - INTERVAL 15 DAY, 'CORE', 'Bird dog y cat-cow.'
+FROM usuario WHERE correo = 'test_alumno_16@migimvirtual.test' LIMIT 1;
+
+INSERT INTO registro_progreso (usuario_id, fecha, grupos_musculares, observaciones)
+SELECT id, CURDATE() - INTERVAL 3 DAY, 'PIERNAS, GLÚTEOS', 'Sentadilla sumo.'
+FROM usuario WHERE correo = 'test_alumno_17@migimvirtual.test' LIMIT 1;
+INSERT INTO registro_progreso (usuario_id, fecha, grupos_musculares, observaciones)
+SELECT id, CURDATE() - INTERVAL 16 DAY, 'ELONGACIÓN', 'Estiramientos de cadera.'
+FROM usuario WHERE correo = 'test_alumno_17@migimvirtual.test' LIMIT 1;
+
+INSERT INTO registro_progreso (usuario_id, fecha, grupos_musculares, observaciones)
+SELECT id, CURDATE() - INTERVAL 4 DAY, 'CARDIO', 'Bici 20 min.'
+FROM usuario WHERE correo = 'test_alumno_18@migimvirtual.test' LIMIT 1;
+INSERT INTO registro_progreso (usuario_id, fecha, grupos_musculares, observaciones)
+SELECT id, CURDATE() - INTERVAL 9 DAY, 'PIERNAS', 'Prensa 3x15.'
+FROM usuario WHERE correo = 'test_alumno_18@migimvirtual.test' LIMIT 1;
+
+INSERT INTO registro_progreso (usuario_id, fecha, grupos_musculares, observaciones)
+SELECT id, CURDATE() - INTERVAL 2 DAY, 'CORE, PELVIS', 'Kegel y hipopresivos.'
+FROM usuario WHERE correo = 'test_alumno_19@migimvirtual.test' LIMIT 1;
+INSERT INTO registro_progreso (usuario_id, fecha, grupos_musculares, observaciones)
+SELECT id, CURDATE() - INTERVAL 10 DAY, 'BRAZOS', 'Mancuernas livianas.'
+FROM usuario WHERE correo = 'test_alumno_19@migimvirtual.test' LIMIT 1;
+
+INSERT INTO registro_progreso (usuario_id, fecha, grupos_musculares, observaciones)
+SELECT id, CURDATE() - INTERVAL 1 DAY, 'FULL BODY', 'Técnica con barra vacía.'
+FROM usuario WHERE correo = 'test_alumno_20@migimvirtual.test' LIMIT 1;
+INSERT INTO registro_progreso (usuario_id, fecha, grupos_musculares, observaciones)
+SELECT id, CURDATE() - INTERVAL 7 DAY, 'PIERNAS', 'Sentadilla goblet.'
+FROM usuario WHERE correo = 'test_alumno_20@migimvirtual.test' LIMIT 1;
 
 SELECT CONCAT('Insertados progresos. Total en registro_progreso: ', COUNT(*), '.') AS resultado
 FROM registro_progreso r

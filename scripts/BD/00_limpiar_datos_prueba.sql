@@ -36,15 +36,37 @@ WHERE s.es_plantilla = 1 AND s.rutina_id IS NULL AND s.profesor_id = @profesor_i
   AND s.nombre IN (
     'Pecho y Tríceps - Básico', 'Piernas - Fuerza', 'Espalda y Bíceps', 'Full Body - Circuito',
     'Hombros - Desarrollo', 'Cardio + Core', 'Upper Body - Empuje', 'Lower Body - Glúteos',
-    'Elongación y Movilidad', 'Mixto - Alta Intensidad'
+    'Elongación y Movilidad', 'Mixto - Alta Intensidad',
+    'Core - Estabilidad', 'Prensa y Gemelos', 'Antebrazo y Agarre', 'HIIT - Tabata',
+    'Movilidad Cadera', 'Empuje Inclinado', 'Tirón Remo', 'Calentamiento General',
+    'Enfriamiento Activo', 'Superserie Brazos'
   );
 
 DELETE FROM serie WHERE es_plantilla = 1 AND rutina_id IS NULL AND profesor_id = @profesor_id
   AND nombre IN (
     'Pecho y Tríceps - Básico', 'Piernas - Fuerza', 'Espalda y Bíceps', 'Full Body - Circuito',
     'Hombros - Desarrollo', 'Cardio + Core', 'Upper Body - Empuje', 'Lower Body - Glúteos',
-    'Elongación y Movilidad', 'Mixto - Alta Intensidad'
+    'Elongación y Movilidad', 'Mixto - Alta Intensidad',
+    'Core - Estabilidad', 'Prensa y Gemelos', 'Antebrazo y Agarre', 'HIIT - Tabata',
+    'Movilidad Cadera', 'Empuje Inclinado', 'Tirón Remo', 'Calentamiento General',
+    'Enfriamiento Activo', 'Superserie Brazos'
   );
+
+-- Rutinas asignadas de prueba (tokens test_asign_*) — antes de borrar usuarios
+DELETE se FROM serie_ejercicio se
+JOIN serie s ON se.serie_id = s.id
+JOIN rutina r ON s.rutina_id = r.id
+WHERE r.token_publico LIKE 'test_asign_%' AND r.profesor_id = @profesor_id;
+
+DELETE s FROM serie s
+JOIN rutina r ON s.rutina_id = r.id
+WHERE r.token_publico LIKE 'test_asign_%' AND r.profesor_id = @profesor_id;
+
+DELETE rc FROM rutina_categoria rc
+JOIN rutina r ON rc.rutina_id = r.id
+WHERE r.token_publico LIKE 'test_asign_%' AND r.profesor_id = @profesor_id;
+
+DELETE FROM rutina WHERE token_publico LIKE 'test_asign_%' AND profesor_id = @profesor_id;
 
 -- Eliminar progresos de usuarios de prueba
 DELETE rp FROM registro_progreso rp

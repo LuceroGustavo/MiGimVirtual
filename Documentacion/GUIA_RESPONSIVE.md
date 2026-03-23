@@ -295,11 +295,34 @@ Las plantillas `backup.html` y `usuarios-sistema.html` definen estilos en su `<h
 
 ---
 
+## 5.8 Tablas de listado — scroll interno en móvil (Mar 2026) — ✅
+
+> **Objetivo:** En **entorno 2** (viewport ≤991px), las tablas de **solo lectura** no estiran la página indefinidamente: el contenedor `table-responsive` gana **altura máxima** y **scroll vertical** (`overflow-y: auto`), manteniendo el diseño actual en escritorio.
+
+### Clases (`static/style.css`)
+
+| Clase | Uso | Altura orientativa (solo ≤991px) |
+|-------|-----|-----------------------------------|
+| `mgv-scroll-panel` | Pestañas del dashboard, Mis ejercicios, Asignar rutina, Usuarios del sistema | `min(72vh, 34rem)` (~15 filas) |
+| `mgv-scroll-embed` | Tabla de rutinas en **ficha del alumno** | `min(40vh, 15rem)` (~6 filas) |
+
+**No aplicado** a tablas de “armado” en crear/editar rutina o serie (listas de trabajo).
+
+**Ficha alumno — progreso:** Sigue la regla existente `.progreso-scroll-mobile` (altura fija y scroll en móvil).
+
+### Archivos
+
+`style.css`, `profesor/dashboard.html`, `profesor/ejercicios-lista.html`, `profesor/asignar-rutina.html` (incluye `link` a `style.css`), `profesor/usuarios-sistema.html`, `profesor/alumno-detalle.html` (wrapper rutinas asignadas).
+
+**Historial:** `CHANGELOG.md` [2026-03-15].
+
+---
+
 ## 6. Orden sugerido para otras vistas (opcional)
 
 1. Revisar que **todas** las plantillas del panel tengan la meta **viewport** (ya está en varias).
-2. **Tablas restantes:** series, rutinas y asignaciones ya tienen `table-responsive` y comportamiento móvil (modal al tocar fila). Opcional: vista en cards en otras tablas.
+2. **Tablas de listado:** scroll interno en móvil (§5.8) aplicado a las vistas principales; opcional extender a otras si hace falta.
 3. **Formularios:** que los campos no queden con ancho fijo; usar `col-12 col-md-*` en móvil.
 ---
 
-*Documento de referencia para responsividad. Panel del profesor completado Mar 2026. Módulo de series completado Mar 2026. Módulo de rutinas (panel, editar, hoja, asignar) completado Mar 2026. Pestaña Asignaciones completada Mar 2026. Vista Mis Ejercicios completada Mar 2026. Grupos musculares (lista + editar) responsive Mar 2026. Crear ejercicio y Modificar ejercicio responsive con paleta naranja Mar 2026. **Administrar sistema:** sectores de color backups/usuarios y CSS en `style.css` para fragmentos (Mar 2026, §5.7).*
+*Documento de referencia para responsividad. Panel del profesor completado Mar 2026. Módulo de series completado Mar 2026. Módulo de rutinas (panel, editar, hoja, asignar) completado Mar 2026. Pestaña Asignaciones completada Mar 2026. Vista Mis Ejercicios completada Mar 2026. Grupos musculares (lista + editar) responsive Mar 2026. Crear ejercicio y Modificar ejercicio responsive con paleta naranja Mar 2026. **Administrar sistema:** sectores de color backups/usuarios y CSS en `style.css` para fragmentos (Mar 2026, §5.7). **Scroll tablas móvil:** §5.8 (Mar 2026).*

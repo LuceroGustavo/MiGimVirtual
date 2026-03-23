@@ -1,49 +1,56 @@
-# Scripts de datos de prueba - MiGymVirtual
+# Scripts SQL — datos de prueba (MiGymVirtual / migimvirtual)
 
-Scripts SQL para cargar datos de prueba en la base de datos. **Ejecutar en el orden indicado.**
+Scripts para cargar **alumnos**, **progresos**, **series plantilla**, **rutinas plantilla** y **rutinas asignadas** en MySQL. Ver también **`LEEME_BD.txt`** (resumen en español).
 
-## Requisitos previos
+## Requisitos
 
-- Base de datos `MiGymVirtual` creada y con tablas (la app debe haber arrancado al menos una vez).
-- **Importante:** La app carga automáticamente los 60 ejercicios predeterminados al arrancar (DataInitializer). Si no existen ejercicios, el script 03 insertará `serie_ejercicio` con `exercise_id` NULL y las series/rutinas quedarán vacías en las vistas.
-- Al menos un profesor existente (creado por DataInitializer: profesor@migymvirtual.com).
-- Categorías del sistema creadas (FUERZA, CARDIO, FLEXIBILIDAD, FUNCIONAL, HIIT — creadas por DataInitializer al arrancar).
+- Base de datos **`migimvirtual`** (nombre según `application.properties`) creada; tablas generadas (la app debe haber arrancado al menos una vez).
+- **Ejercicios** en tabla `exercise` (carga automática al iniciar, p. ej. 60 predeterminados).
+- Al menos un **profesor** (p. ej. `DataInitializer`).
+- **Categorías** del sistema: FUERZA, CARDIO, FLEXIBILIDAD, etc. (inicialización al arrancar).
 
-**Orden recomendado:** 1) Borrar BD si aplica. 2) Arrancar la app (para que cargue ejercicios, categorías, etc.). 3) Ejecutar scripts 01, 02, 03, 04.
+Sin ejercicios, el script `03` puede insertar filas inconsistentes en `serie_ejercicio`.
 
 ## Orden de ejecución
 
-1. **01_usuarios_prueba.sql** – 10 alumnos de prueba
-2. **02_progresos_prueba.sql** – Progresos asignados a los alumnos
-3. **03_series_prueba.sql** – 10 series de ejercicios (usa ejercicios predeterminados)
-4. **04_rutinas_prueba.sql** – 5 rutinas plantilla (usa las series creadas en paso 3)
+| Orden | Archivo | Descripción |
+|------:|---------|-------------|
+| 0 (opc.) | `00_limpiar_datos_prueba.sql` | Elimina datos de prueba (`test_rutina*`, series plantilla de prueba, `test_asign_*`, usuarios `test_alumno_*`, progresos asociados) |
+| 1 | `01_usuarios_prueba.sql` | **20** alumnos (`test_alumno_1` … `test_alumno_20@migimvirtual.test`) |
+| 2 | `02_progresos_prueba.sql` | Registros en `registro_progreso` (varios por alumno; volumen extra para probar UI) |
+| 3 | `03_series_prueba.sql` | **20** series plantilla con ejercicios |
+| 4 | `04_rutinas_prueba.sql` | **12** rutinas plantilla (`token_publico` `test_rutina*`) |
+| 5 | `06_asignaciones_prueba.sql` | Procedimiento almacenado + **rutinas asignadas** a alumnos (`test_asign_*`) |
+| — | `05_reparar_serie_ejercicios_nulos.sql` | **Solo reparación:** borra `serie_ejercicio` con `exercise_id` NULL |
 
-**Opcional:** `00_limpiar_datos_prueba.sql` – elimina todos los datos de prueba antes de volver a cargar.
-
-**Reparación:** `05_reparar_serie_ejercicios_nulos.sql` – elimina registros de serie_ejercicio con exercise_id NULL (si las series fallan al editar o la vista está vacía).
+**No** ejecutar `06` antes de `04`. Tras limpiar con `00`, volver a ejecutar `01` → `06`.
 
 ## Cómo ejecutar
 
+**MySQL Workbench / DBeaver:** abrir cada archivo en orden y ejecutar (el `06` usa `DELIMITER` y procedimiento; ejecutar el archivo completo).
+
+**CLI:**
+
 ```bash
-# Desde la raíz del proyecto, con MySQL en localhost:
-mysql -u root -p MiGymVirtual < scripts/BD/01_usuarios_prueba.sql
-mysql -u root -p MiGymVirtual < scripts/BD/02_progresos_prueba.sql
-mysql -u root -p MiGymVirtual < scripts/BD/03_series_prueba.sql
-mysql -u root -p MiGymVirtual < scripts/BD/04_rutinas_prueba.sql
+mysql -u root -p migimvirtual < scripts/BD/01_usuarios_prueba.sql
+# ... idem 02, 03, 04, 06
 ```
 
-O desde MySQL Workbench / DBeaver: abrir cada archivo y ejecutarlo en orden.
+## Resumen de datos
 
-## Datos creados
+| Script | Cantidad / notas |
+|--------|------------------|
+| 01 | 20 usuarios alumno de prueba |
+| 02 | Varios `registro_progreso` por alumno |
+| 03 | 20 series plantilla (`serie` + `serie_ejercicio`) |
+| 04 | 12 rutinas plantilla + categorías + series copiadas en cada rutina |
+| 06 | ~18 rutinas **asignadas** (copias con `usuario_id`, token `test_asign_%`) |
 
-| Script | Cantidad | Descripción |
-|--------|----------|-------------|
-| 01 | 10 usuarios | Alumnos con todos los campos del formulario completos |
-| 02 | Variable | 0–4 progresos por alumno (algunos sin progresos) |
-| 03 | 10 series | Cada una con 3–4 ejercicios, reps/peso/tiempo variados |
-| 04 | 5 rutinas | Plantillas que usan las series del script 03 (con categorías en tabla rutina_categoria) |
+Tokens de prueba:
 
-## Notas
+- Plantillas: `test_rutina1_…` … `test_rutina12_…`
+- Asignadas: `test_asign_…`
 
-- Los alumnos de prueba usan correos `test_alumno_N@MiGymVirtual.test` (N = 1 a 10).
-- Los alumnos no tienen contraseña (no inician sesión; se gestionan desde el panel del profesor).
+---
+
+*Actualizado Mar 2026 — alineado con scripts ampliados y `06_asignaciones_prueba.sql`.*

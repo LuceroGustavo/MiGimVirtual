@@ -174,3 +174,22 @@
 .admin-usuarios-sistema-root .usuarios-sistema-sector-listado .card {
   border-color: rgba(2, 136, 209, 0.38);
 }
+
+/* ========== Entorno 2 (≤991px): scroll interno en tablas de lectura (sin tocar escritorio) ==========
+   - mgv-scroll-panel: pantallas “completas” (~15 filas visibles)
+   - mgv-scroll-embed: ficha / contexto embebido (~6 filas)
+   No aplicar a tablas de armado (crear/editar rutina-serie). */
+@media (max-width: 991px) {
+  .table-responsive.mgv-scroll-panel {
+    max-height: min(72vh, 34rem);
+    overflow-y: auto;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  .table-responsive.mgv-scroll-embed {
+    max-height: min(40vh, 15rem);
+    overflow-y: auto;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+}

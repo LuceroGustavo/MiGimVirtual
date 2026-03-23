@@ -4,7 +4,7 @@
 
 Para ver la lista de mejoras pendientes e implementadas (ítem por ítem), el checklist y los pendientes detallados, consultá:
 
-**[PLAN_DE_DESARROLLO_MiGymVirtual.md](PLAN_DE_DESARROLLO_MiGymVirtual.md)** – Fases y subplan de eliminaciones para app 100 % virtual; pendientes.
+**[PLAN_DE_DESARROLLO_MIGIMVIRTUAL.md](PLAN_DE_DESARROLLO_MIGIMVIRTUAL.md)** – Fases y subplan de eliminaciones para app 100 % virtual; pendientes.
 
 ---
 
@@ -139,7 +139,7 @@ Ver GUIA_RESPONSIVE.md §5.2.
 ## Próximos pasos (orden sugerido)
 
 1. ~~**Mejorar front con responsividad** (panel del profesor).~~ ✅ **Hecho (Mar 2026):** login, navbar compacto, dashboard 6 tarjetas en móvil, tabla alumnos (acción, celular icono, ver solo ojo, asignar desde detalle), footer una fila. Ver GUIA_RESPONSIVE.md §5 y CHANGELOG [2026-03-15].
-2. ~~**Vista de ficha del alumno – mejoras para móvil.**~~ ✅ **Hecho (Mar 2026):** contenedor, título y subtítulo adaptados; header (Volver/Eliminar) a ancho completo; tarjetas en 1 columna; bloque alumno-info apilado; botones de tabla con área táctil mínima 38px; breakpoints 991px y 575px. **Vista del alumno terminada:** modal progreso al tocar registro (móvil), modal confirmar eliminar progreso (estilo borrar alumno), botón Guardar notas, Eliminar usuario debajo de todo, barra inferior móvil igual al panel, formato fecha dd/MM/yy. **Rutinas asignadas (Entorno 2):** tabla Fecha|Nombre|Categorías|Estado; fila clickeable abre modal con tarjeta y acciones (Modificar, Ver, Copiar, Pausar/Activar, WhatsApp). Ver CHANGELOG [2026-03-19]. Pendiente: scroll vertical en progresos (móvil, >5 registros).
+2. ~~**Vista de ficha del alumno – mejoras para móvil.**~~ ✅ **Hecho (Mar 2026):** contenedor, título y subtítulo adaptados; header (Volver/Eliminar) a ancho completo; tarjetas en 1 columna; bloque alumno-info apilado; botones de tabla con área táctil mínima 38px; breakpoints 991px y 575px. **Vista del alumno terminada:** modal progreso al tocar registro (móvil), modal confirmar eliminar progreso (estilo borrar alumno), botón Guardar notas, Eliminar usuario debajo de todo, barra inferior móvil igual al panel, formato fecha dd/MM/yy. **Rutinas asignadas (Entorno 2):** tabla Fecha|Nombre|Categorías|Estado; fila clickeable abre modal con tarjeta y acciones (Modificar, Ver, Copiar, Pausar/Activar, WhatsApp). Ver CHANGELOG [2026-03-19]. ~~**Scroll en tablas / progreso (móvil)**~~ ✅ **Mar 2026:** `mgv-scroll-*` en listados + `.progreso-scroll-mobile` en progreso; ver GUIA_RESPONSIVE §5.8 y CHANGELOG [2026-03-15].
 3. ~~**Módulo de series (vista responsive).**~~ ✅ **Hecho (Mar 2026):** ver sección "Módulo de Series" más arriba. Opcional: revisar editar serie y flujos restantes.
 4. ~~**Módulo de rutinas (creación, modificar, panel, hoja, asignar).**~~ ✅ **Hecho (Mar 2026):** CHANGELOG [2026-03-17], [2026-03-18].
 5. ~~**Vista Mis Ejercicios.**~~ ✅ **Hecho (Mar 2026):** Tarjetas con + arriba derecha, mismo tamaño, cantidad grupos musculares; móvil cuadradas; filtros; modal al tocar fila; barra inferior. Ver GUIA_RESPONSIVE.md §5.6 y CHANGELOG [2026-03-21]. ~~Grupos musculares (lista + editar).~~ ~~Crear ejercicio (paleta + responsive).~~ ~~Modificar ejercicio (responsive / alinear con crear).~~ ✅ Módulo Ejercicios responsive completado.
@@ -177,6 +177,7 @@ Ver GUIA_RESPONSIVE.md §5.2.
 
 - Marca **MiGymVirtual** en UI y mensajes; consulta → **WhatsApp** desde modal; consulta móvil **auto “vista”**; tabla consultas **Visto + Eliminar** en una línea; **Celular** en formulario `/planes`; menú admin móvil con **rayitas**; **orden de planes** con flechas en la tarjeta (móvil), no en el modal.
 - **Manual de usuario** (`/profesor/manual`): revisión 100 % virtual, enfoque profesor, **§4.1** imágenes (5 MB), administración **§10**; documentado en **DOCUMENTACION_UNIFICADA §1.3**.
+- **Cierre app (Mar 2026):** scroll interno en tablas de listado móvil (`mgv-scroll-*`, GUIA_RESPONSIVE §5.8); scripts BD ampliados + `06_asignaciones_prueba.sql`; índice **INDICE_DOCUMENTACION.md**; ver **CHANGELOG [2026-03-15]** y **COMMIT_RELEASE_MAR2026.md**.
 
 ---
 

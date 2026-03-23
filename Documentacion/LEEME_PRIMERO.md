@@ -52,17 +52,21 @@ Tras iniciar sesión se redirige al **Panel del profesor** (`/profesor/{id}`).
 
 | Archivo | Para qué sirve |
 |---------|-----------------|
+| **INDICE_DOCUMENTACION.md** | Mapa de **toda** la documentación (raíz + `Documentacion/` + `scripts/BD/`). Empezar aquí si buscás un tema concreto. |
 | **LEEME_PRIMERO.md** (este) | Contexto del proyecto, acceso, evolución realizada, dónde está cada cosa. |
-| **PLAN_DE_DESARROLLO_MiGymVirtual.md** | Plan de desarrollo: fases (BD, renombre, eliminaciones virtual, responsive), subplan de lo que se quita. |
+| **PLAN_DE_DESARROLLO_MIGIMVIRTUAL.md** | Plan de desarrollo: fases (BD, renombre, eliminaciones virtual, responsive), subplan de lo que se quita. |
 | **SUBPLAN_DESARROLLO_MODULOS.md** | Avances por módulo (Alumnos → Series → Rutinas → Asignaciones → Ejercicios → Administrar); checklist y notas. |
 | **ELIMINACION_CALENDARIO_Y_PIZARRA_MAR2026.md** | Detalle de la eliminación de calendario, asistencias y pizarra online (Mar 2026). |
-| **DOCUMENTACION_UNIFICADA.md** | Resúmenes: lo implementado, backup en servidor (§2), despliegue, manual (índice), referencias técnicas. |
+| **DOCUMENTACION_UNIFICADA.md** | Resúmenes: lo implementado, backup en servidor (§2), manual (§1.3), **§1.4 datos de prueba SQL**, referencias técnicas. |
+| **GUIA_RESPONSIVE.md** | Responsive del panel; **§5.8** scroll en tablas móvil (`mgv-scroll-panel` / `mgv-scroll-embed`). |
 | **PALETA_COLORES.md** | Colores por módulo + **sectores de Administración** (backup contenido/alumnos, usuarios perfil/listado). Tonos pastel y derivaciones. |
 | **AYUDA_MEMORIA.md** | Lista rápida de pendientes (ejercicios/vistas), eliminar alumno, backup terminado. |
 
 **Carpeta `servidor/`:** Despliegue en VPS (SSH, Nginx, menú). Ver `servidor/DESPLIEGUE-SERVIDOR.md` y `servidor/nginx-detodoya.conf`.
 
-**En la raíz:** `CHANGELOG.md` – historial de la app.
+**Carpeta `scripts/BD/`:** Datos de prueba MySQL — ver **`scripts/BD/README.md`** (orden 00→06) y **`LEEME_BD.txt`** (resumen en español).
+
+**En la raíz:** `CHANGELOG.md` – historial de la app (**[2026-03-15]** cierre: scroll móvil + BD + documentación).
 
 ---
 
@@ -73,22 +77,23 @@ Tras iniciar sesión se redirige al **Panel del profesor** (`/profesor/{id}`).
 - **Marca e interfaz:** Navbar con logo `mgvirtual_logo1.png` y fondo `fondo-navbar.png`; página pública (carrusel) con videos `video_mgvirtual_inicio_escritorio.mp4` (escritorio) y `Video_mgvirtual_inicio_movil.mp4` (móvil).
 - **Servidor:** Script de menú `./MiGymVirtual` en la raíz; scripts `scripts/servidor/reset_db_MiGymVirtual.sql` y `reset_db_MiGymVirtual.sh`; variables de entorno `MiGymVirtual_DB_USER`, `MiGymVirtual_DB_PASSWORD`.
 
-**Pendiente según plan:** Fase 0 (subplan detallado), Fase 4 (responsive, UX). Fase 3 (eliminar calendario, pizarra, sala, simplificar alumnos) realizada en Mar 2026. Ver ELIMINACION_CALENDARIO_Y_PIZARRA_MAR2026.md y PLAN_DE_DESARROLLO_MiGymVirtual.md.
+**Pendiente según plan:** Fase 0 (subplan detallado), Fase 4 (responsive, UX). Fase 3 (eliminar calendario, pizarra, sala, simplificar alumnos) realizada en Mar 2026. Ver ELIMINACION_CALENDARIO_Y_PIZARRA_MAR2026.md y PLAN_DE_DESARROLLO_MIGIMVIRTUAL.md.
 
 ---
 
 ## 5. Resumen rápido de estado (para la IA)
 
-- **Implementado:** Ejercicios, series, rutinas, grupos musculares, alumnos (sin login), **página pública** (landing + planes con config BD unificada, redes y contacto virtual; ver DOCUMENTACION_UNIFICADA §1.1 bis), **manual de usuario** en `/profesor/manual` (actualizado Mar 2026: enfoque profesor, 11 secciones, §4.1 formatos imagen y 5 MB — ver **§1.3**), sistema de **backup en servidor** (ZIP contenido + JSON alumnos, restauración total, máx. 2 archivos/tipo; export rutinas/series por profesor del panel). **Administrar sistema:** UX de cierre Mar 2026 — sectores con marco de color (backups contenido vs alumnos; usuarios perfil vs listado), estilos en `style.css` para vista con `?fragment=1`. Calendario, asistencias y pizarra/sala eliminados (Mar 2026); app 100 % virtual. Ver DOCUMENTACION_UNIFICADA.md §1.2, **§1.3**, §2, DESPLIEGUE-SERVIDOR §6.6 (carpeta backup en Ubuntu) y ELIMINACION_CALENDARIO_Y_PIZARRA_MAR2026.md.
-- **Pendiente:** Otros refinamientos responsive/UX según plan; replantear página pública para modelo gimnasio virtual (AYUDA_MEMORIA). Ver PLAN_DE_DESARROLLO_MiGymVirtual.md.
+- **Implementado:** Ejercicios, series, rutinas, grupos musculares, alumnos (sin login), **página pública** (landing + planes con config BD unificada, redes y contacto virtual; ver DOCUMENTACION_UNIFICADA §1.1 bis), **manual de usuario** en `/profesor/manual` (actualizado Mar 2026: enfoque profesor, 11 secciones, §4.1 formatos imagen y 5 MB — ver **§1.3**), sistema de **backup en servidor** (ZIP contenido + JSON alumnos, restauración total, máx. 2 archivos/tipo; export rutinas/series por profesor del panel). **Administrar sistema:** UX de cierre Mar 2026 — sectores con marco de color (backups contenido vs alumnos; usuarios perfil vs listado), estilos en `style.css` para vista con `?fragment=1`. **Listados en móvil (Mar 2026):** scroll interno en tablas de lectura (`mgv-scroll-panel` / `mgv-scroll-embed`, ver GUIA_RESPONSIVE §5.8). **Scripts SQL de prueba** ampliados (`scripts/BD/`, §1.4 DOCUMENTACION_UNIFICADA). Calendario, asistencias y pizarra/sala eliminados (Mar 2026); app 100 % virtual. Ver DOCUMENTACION_UNIFICADA.md §1.2, **§1.3**, **§1.4**, §2, DESPLIEGUE-SERVIDOR §6.6 (carpeta backup en Ubuntu) y ELIMINACION_CALENDARIO_Y_PIZARRA_MAR2026.md.
+- **Pendiente:** Refinamientos opcionales de producto (página pública / copy — AYUDA_MEMORIA). Ver PLAN_DE_DESARROLLO_MIGIMVIRTUAL.md.
+- **Cierre Mar 2026:** Documentación reorganizada (`INDICE_DOCUMENTACION.md`, `scripts/BD/README.md`, `CHANGELOG` [2026-03-15]). Instrucciones de commit: **`Documentacion/COMMIT_RELEASE_MAR2026.md`**.
 
 ---
 
 ## 6. Frase para dar contexto a la IA desde otra PC
 
 - *"Leé Documentacion/LEEME_PRIMERO.md y Documentacion/DOCUMENTACION_UNIFICADA.md para tener contexto del proyecto."*
-- *"Plan de desarrollo: Documentacion/PLAN_DE_DESARROLLO_MiGymVirtual.md."*
+- *"Plan de desarrollo: Documentacion/PLAN_DE_DESARROLLO_MIGIMVIRTUAL.md."*
 
 ---
 
-*Última actualización: Marzo 2026 — manual y DOCUMENTACION_UNIFICADA §1.3 (cambios recientes del manual).*
+*Última actualización: Marzo 2026 — cierre documentación + §1.4 datos prueba + GUIA §5.8 + CHANGELOG [2026-03-15].*

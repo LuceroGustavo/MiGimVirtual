@@ -1,0 +1,28 @@
+Datos de prueba — Migimvirtual (MySQL Workbench)
+================================================
+
+Documentación completa (tabla, tokens, CLI): ver README.md en esta carpeta.
+
+Orden recomendado (primera vez o después de limpiar):
+
+  1. 00_limpiar_datos_prueba.sql   — Opcional: borra datos de prueba anteriores
+  2. 01_usuarios_prueba.sql        — 20 alumnos (test_alumno_1 … _20@…)
+  3. 02_progresos_prueba.sql       — Registros de progreso (varios por alumno)
+  4. 03_series_prueba.sql          — 20 series plantilla (requiere ejercicios cargados)
+  5. 04_rutinas_prueba.sql         — 12 rutinas plantilla (token test_rutina*)
+  6. 06_asignaciones_prueba.sql    — Rutinas asignadas a alumnos (token test_asign_*)
+
+Otros:
+
+  • 05_reparar_serie_ejercicios_nulos.sql — Solo si hay filas rotas en serie_ejercicio
+
+Requisitos:
+
+  • Base `migimvirtual` creada y tablas generadas (app iniciada al menos una vez).
+  • Tabla `exercise` con ejercicios (carga por defecto de la app).
+  • Categorías FUERZA / CARDIO / FLEXIBILIDAD (DataInitializer).
+  • En Workbench: si falla por “safe updates”, el script 00 ya desactiva SQL_SAFE_UPDATES.
+
+Para volver a cargar desde cero: ejecutar 00 y luego 01 → 06 en orden.
+
+Índice documentación del proyecto: Documentacion/INDICE_DOCUMENTACION.md

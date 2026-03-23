@@ -1,5 +1,5 @@
 -- =============================================================================
--- Script 1: 10 usuarios (alumnos) de prueba
+-- Script 1: 20 usuarios (alumnos) de prueba
 -- Ejecutar después de que la app haya creado las tablas y el profesor inicial.
 -- Los alumnos tienen todos los campos del formulario de alta completos.
 -- =============================================================================
@@ -59,6 +59,37 @@ INSERT INTO usuario (
 -- Alumno 10
 ('Pablo Jiménez Silva', 38, 'M', 78.0, NULL, 'ALUMNO', '/img/avatar2.png', 'test_alumno_10@migimvirtual.test',
  'Entrenador personal. Quiere complementar su propio entrenamiento.', 'Mantener fuerza y movilidad. Prevenir lesiones por sobrecarga.',
- 'Ninguna.', '+54 11 3456-7890', 'ACTIVO', CURDATE() - INTERVAL 100 DAY, NULL, 'ALTA|2024-12-05', CURDATE() - INTERVAL 100 DAY, @profesor_id);
+ 'Ninguna.', '+54 11 3456-7890', 'ACTIVO', CURDATE() - INTERVAL 100 DAY, NULL, 'ALTA|2024-12-05', CURDATE() - INTERVAL 100 DAY, @profesor_id),
+-- Alumnos 11–20 (datos extra para probar listas / scroll)
+('Lucía Navarro Vega', 29, 'F', 63.0, NULL, 'ALUMNO', '/img/avatar3.png', 'test_alumno_11@migimvirtual.test',
+ 'Prefiere entrenar en casa con bandas.', 'Tonificar piernas y glúteos.', 'Ninguna.',
+ '+54 11 4000-0001', 'ACTIVO', CURDATE() - INTERVAL 70 DAY, NULL, 'ALTA|2025-01-05', CURDATE() - INTERVAL 70 DAY, @profesor_id),
+('Martín Acosta Rey', 33, 'M', 79.0, NULL, 'ALUMNO', '/img/avatar4.png', 'test_alumno_12@migimvirtual.test',
+ 'Corre 10k los fines de semana.', 'Ganar resistencia sin perder masa.', 'Esguince de tobillo hace 1 año.',
+ '+54 11 4000-0002', 'ACTIVO', CURDATE() - INTERVAL 55 DAY, NULL, 'ALTA|2025-01-20', CURDATE() - INTERVAL 55 DAY, @profesor_id),
+('Camila Ortega Ruiz', 24, 'F', 57.0, NULL, 'ALUMNO', '/img/avatar5.png', 'test_alumno_13@migimvirtual.test',
+ 'Estudiante de medicina. Horarios irregulares.', 'Mantener actividad y bajar estrés.', 'Ninguna.',
+ '+54 11 4000-0003', 'ACTIVO', CURDATE() - INTERVAL 40 DAY, NULL, 'ALTA|2025-02-01', CURDATE() - INTERVAL 40 DAY, @profesor_id),
+('Gustavo Paredes Luna', 41, 'M', 92.0, NULL, 'ALUMNO', '/img/avatar6.png', 'test_alumno_14@migimvirtual.test',
+ 'Sedentario reciente. Objetivo salud.', 'Bajar grasa visceral y caminar más.', 'Colesterol alto — dieta en curso.',
+ '+54 11 4000-0004', 'ACTIVO', CURDATE() - INTERVAL 25 DAY, NULL, 'ALTA|2025-02-18', CURDATE() - INTERVAL 25 DAY, @profesor_id),
+('Nadia Ferreira Costa', 27, 'F', 61.0, NULL, 'ALUMNO', '/img/avatar7.png', 'test_alumno_15@migimvirtual.test',
+ 'Crossfit ocasional.', 'Mejorar técnica en levantamientos.', 'Ninguna.',
+ '+54 11 4000-0005', 'ACTIVO', CURDATE() - INTERVAL 18 DAY, NULL, 'ALTA|2025-02-25', CURDATE() - INTERVAL 18 DAY, @profesor_id),
+('Bruno Méndez Soto', 30, 'M', 76.0, NULL, 'ALUMNO', '/img/avatar8.png', 'test_alumno_16@migimvirtual.test',
+ 'Trabajo remoto. Dolor cervical leve.', 'Fortalecer core y postura.', 'Contractura cervical.',
+ '+54 11 4000-0006', 'ACTIVO', CURDATE() - INTERVAL 12 DAY, NULL, 'ALTA|2025-03-01', CURDATE() - INTERVAL 12 DAY, @profesor_id),
+('Julieta Correa Paz', 21, 'F', 54.0, NULL, 'ALUMNO', '/img/avatar1.png', 'test_alumno_17@migimvirtual.test',
+ 'Bailarina. Flexibilidad alta.', 'Ganar fuerza en tren inferior sin perder movilidad.', 'Ninguna.',
+ '+54 11 4000-0007', 'ACTIVO', CURDATE() - INTERVAL 8 DAY, NULL, 'ALTA|2025-03-05', CURDATE() - INTERVAL 8 DAY, @profesor_id),
+('Hernán Villalba Núñez', 46, 'M', 85.0, NULL, 'ALUMNO', '/img/avatar2.png', 'test_alumno_18@migimvirtual.test',
+ 'Vuelve al gym tras pausa de 3 años.', 'Reconstruir hábito 3× semana.', 'Hipertensión leve.',
+ '+54 11 4000-0008', 'ACTIVO', CURDATE() - INTERVAL 5 DAY, NULL, 'ALTA|2025-03-08', CURDATE() - INTERVAL 5 DAY, @profesor_id),
+('Micaela Ríos Duarte', 34, 'F', 67.0, NULL, 'ALUMNO', '/img/avatar3.png', 'test_alumno_19@migimvirtual.test',
+ 'Postparto (6 meses).', 'Recuperar suelo pélvico y fuerza.', 'Control ginecológico al día.',
+ '+54 11 4000-0009', 'ACTIVO', CURDATE() - INTERVAL 3 DAY, NULL, 'ALTA|2025-03-10', CURDATE() - INTERVAL 3 DAY, @profesor_id),
+('Tomás Benítez Arias', 26, 'M', 72.0, NULL, 'ALUMNO', '/img/avatar4.png', 'test_alumno_20@migimvirtual.test',
+ 'Principiante absoluto en pesas.', 'Aprender bases de empuje y tirón.', 'Ninguna.',
+ '+54 11 4000-0010', 'ACTIVO', CURDATE() - INTERVAL 1 DAY, NULL, 'ALTA|2025-03-13', CURDATE() - INTERVAL 1 DAY, @profesor_id);
 
 SELECT CONCAT('Insertados ', ROW_COUNT(), ' usuarios de prueba.') AS resultado;
