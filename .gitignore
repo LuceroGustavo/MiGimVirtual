@@ -43,8 +43,5 @@ application-local.yml
 .migimvirtual_db_password
 .env.production
 
-# Carpeta uploads (imágenes de ejercicios): no versionar; gestionar por backup
-uploads/
-
 # Carpeta backups (ya no se usa: export/import es ZIP y descarga directa)
 backups/

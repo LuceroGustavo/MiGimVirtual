@@ -208,6 +208,84 @@ ssh -p 5638 root@149.50.144.53 "cd /root/migimvirtual && git pull && ./mvnw -q p
 scp -P 5638 archivo_local root@149.50.144.53:/ruta/remota/
 ```
 
+### 9.1 Autenticación SSH por clave (sin pedir contraseña de root)
+
+Objetivo: que `ssh -p 5638 root@149.50.144.53` entre **solo con tu clave privada**, sin teclear contraseña del VPS cada vez.
+
+**1) En tu PC (si aún no tenés par de claves):**
+
+```bash
+ssh-keygen -t ed25519 -C "tu-email-o-nombre" -f ~/.ssh/id_ed25519_migim
+```
+
+(Podés usar `rsa` en lugar de `ed25519` si tu cliente es muy viejo.) **No compartas** el archivo **sin** extensión (`id_ed25519_migim`): es la **privada**.
+
+**2) Copiar la clave pública al servidor** (una vez, puede pedir contraseña de root):
+
+```bash
+type $env:USERPROFILE\.ssh\id_ed25519_migim.pub | ssh -p 5638 root@149.50.144.53 "mkdir -p ~/.ssh && chmod 700 ~/.ssh && cat >> ~/.ssh/authorized_keys && chmod 600 ~/.ssh/authorized_keys"
+```
+
+En **PowerShell** también podés usar:
+
+```powershell
+scp -P 5638 $env:USERPROFILE\.ssh\id_ed25519_migim.pub root@149.50.144.53:/tmp/mi.pub
+ssh -p 5638 root@149.50.144.53 "mkdir -p ~/.ssh && cat /tmp/mi.pub >> ~/.ssh/authorized_keys && chmod 700 ~/.ssh && chmod 600 ~/.ssh/authorized_keys && rm /tmp/mi.pub"
+```
+
+**3) Forzar uso de esa clave** (opcional, archivo `~/.ssh/config` en la PC):
+
+```
+Host migim-vps
+    HostName 149.50.144.53
+    Port 5638
+    User root
+    IdentityFile ~/.ssh/id_ed25519_migim
+```
+
+Luego: `ssh migim-vps`
+
+**4) Si sigue pidiendo contraseña:** revisar permisos en el servidor (`~/.ssh` = 700, `authorized_keys` = 600), que la línea en `authorized_keys` sea **una sola línea** por clave, y que no haya espacios raros al pegar la `.pub`.
+
+---
+
+### 9.2 Copiar la carpeta `uploads` (local → servidor)
+
+En el repo, **`uploads/` está en `.gitignore`** (imágenes de ejercicios, peso, datos de entorno). **No** forma parte del `git pull` habitual. Para **replicar** las imágenes de tu PC al VPS:
+
+**Ruta típica en el servidor:** `/root/migimvirtual/uploads/` (alineada con `user.dir` del JAR y `application-donweb.properties`).
+
+**Opción A — `scp` recursivo (simple, desde PowerShell en la carpeta del proyecto):**
+
+```powershell
+scp -P 5638 -r uploads root@149.50.144.53:/root/migimvirtual/
+```
+
+(Esto crea o sobrescribe `uploads` dentro de `/root/migimvirtual/`.)
+
+**Opción B — `rsync`** (solo cambios, más eficiente; en Windows suele estar en **WSL** o Git Bash):
+
+```bash
+rsync -avz -e "ssh -p 5638" ./uploads/ root@149.50.144.53:/root/migimvirtual/uploads/
+```
+
+**Después:** comprobar permisos de lectura para el usuario que ejecuta la app (`root` suele bastar):
+
+```bash
+ssh -p 5638 root@149.50.144.53 "ls -la /root/migimvirtual/uploads"
+```
+
+---
+
+### 9.3 ¿Sacar `uploads/` del `.gitignore` y subir todo al Hub?
+
+| Enfoque | Qué pasa |
+|---------|----------|
+| **Quitar `uploads/` del `.gitignore` y hacer commit** de las imágenes | Sí: **Git** guardaría esos archivos y un `git pull` en el servidor **podría** traerlos **si** están commiteados. Pero el repo **crece mucho**, mezcla **datos/binarios** con código, y cada cambio de imagen genera historial pesado. **No recomendado** para producción habitual. |
+| **Dejar `uploads/` ignorado** (recomendado) | Las imágenes se suben por **panel de la app**, **backup ZIP**, o **scp/rsync** (§9.2). El código sigue liviano. |
+
+**Resumen:** habilitar `uploads` en Git **no** “sincroniza sola” la carpeta del servidor: solo lo que esté **commiteado y pusheado**; el servidor debe **hacer pull** y además tendrías que **no** pisar imágenes que solo existan en producción. Lo habitual es **mantener `uploads/` fuera del repo** y usar §9.2 o backups.
+
 ---
 
 ## 10. Nginx (proxy inverso)
