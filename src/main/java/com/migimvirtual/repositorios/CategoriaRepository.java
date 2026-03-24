@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -28,4 +29,7 @@ public interface CategoriaRepository extends JpaRepository<Categoria, Long> {
 
     /** Elimina categorías creadas por un profesor (no las del sistema). Tras borrar rutinas que las referencian. */
     void deleteByProfesor_Id(Long profesorId);
+
+    @Query("SELECT COUNT(DISTINCT c.nombre) FROM Categoria c WHERE c.profesor IS NULL AND c.nombre IN :nombres")
+    long countDistinctNombreSistemaPresentes(@Param("nombres") Collection<String> nombres);
 }

@@ -1,0 +1,36 @@
+================================================================================
+PROMPT PARA NOTEBOOKLM — Generar guion / video promocional
+Copiar y pegar en NotebookLM (ajustar duración si te lo pide).
+================================================================================
+
+Eres un creativo audiovisual. Tengo capturas de pantalla de la aplicación web
+MiGymVirtual (panel para profesores de entrenamiento online). También te
+adjunto un documento de contexto que describe qué hace el producto.
+
+TAREA:
+1) Analiza las imágenes en orden y relaciona cada una con una función del
+   producto (panel, alumnos, ejercicios, series, rutinas, asignaciones,
+   progreso, página pública, etc.).
+2) Genera un GUION para un video promocional de 45-60 segundos en español
+   (latinoamericano, neutro), con:
+   - Gancho inicial (5 seg): problema del entrenador sin herramientas integradas.
+   - Desarrollo (cuerpo): 4-6 escenas con texto de voz en off que coincidan
+     con las capturas que subí.
+   - Cierre (5-8 seg): llamada a la acción (probar el flujo, ordenar alumnos,
+     enviar rutinas por enlace).
+3) Incluye sugerencias de texto en pantalla (lower thirds) cortos por escena.
+4) Indica el tono: profesional, moderno, inspirador, sin exagerar promesas
+   médicas.
+5) Si falta información en las capturas, no inventes pantallas: solo describe
+   lo que se ve.
+
+FORMATO DE SALIDA:
+- Título del video (3 opciones).
+- Guion con marcas de tiempo aproximadas.
+- Lista de "textos para pantalla" por escena.
+- 2 variantes de frase final (tagline) de 6-10 palabras.
+
+Opcional: si NotebookLM puede generar audio o storyboard, pide una versión
+resumida de 30 segundos además de la de 60 segundos.
+
+================================================================================

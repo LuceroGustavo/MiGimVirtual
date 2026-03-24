@@ -34,6 +34,27 @@
                 padding-right: 1.5rem !important;
             }
         }
+        /* Entorno 2: evitar desborde horizontal (título, cards, tabla embebida en Administración) */
+        @media (max-width: 991px) {
+            .usuarios-sistema-embed-root {
+                max-width: 100%;
+                overflow-x: hidden;
+                box-sizing: border-box;
+            }
+            .usuarios-sistema-embed-root .usuarios-sistema-sector-cuenta,
+            .usuarios-sistema-embed-root .usuarios-sistema-sector-listado {
+                max-width: 100%;
+                min-width: 0;
+            }
+            .usuarios-sistema-embed-root .table td,
+            .usuarios-sistema-embed-root .table th {
+                word-break: break-word;
+                vertical-align: middle;
+            }
+            .usuarios-sistema-embed-root .table-responsive {
+                max-width: 100%;
+            }
+        }
     </style>
 </head>
 <body>
@@ -41,11 +62,15 @@
 
 <th:block th:fragment="contenido">
 <div class="container-fluid py-3 py-md-4 usuarios-sistema-embed-root admin-section-content admin-usuarios-sistema-root" style="background: linear-gradient(135deg, #e8eaf6 0%, #f3e5f5 100%); min-height: 100vh;">
-    <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-4">
-        <h3 class="mb-0"><i class="fas fa-users-cog me-2" style="color:#5e35b1;"></i>Usuarios del sistema</h3>
-        <div class="d-flex gap-2">
+    <div class="row g-2 align-items-start align-items-md-center mb-4">
+        <div class="col-12 col-md min-w-0">
+            <h3 class="mb-0 text-break"><i class="fas fa-users-cog me-2" style="color:#5e35b1;"></i>Usuarios del sistema</h3>
+        </div>
+        <div class="col-12 col-md-auto">
+            <div class="d-flex flex-wrap gap-2 justify-content-start justify-content-md-end">
             <a th:if="${(param.embed == null || param.embed.isEmpty()) && (param.fragment == null || param.fragment.isEmpty())}" th:href="@{/profesor/administracion}" class="btn btn-outline-secondary btn-sm"><i class="fas fa-arrow-left me-1"></i>Volver al panel</a>
-            <a th:if="${puedeCrearUsuario}" th:href="@{/profesor/usuarios-sistema/crear}" class="btn btn-primary"><i class="fas fa-user-plus me-1"></i>Crear usuario</a>
+            <a th:if="${puedeCrearUsuario}" th:href="@{/profesor/usuarios-sistema/crear}" class="btn btn-primary btn-sm"><i class="fas fa-user-plus me-1"></i>Crear usuario</a>
+            </div>
         </div>
     </div>
 
@@ -144,20 +169,20 @@
                     <i class="fas fa-info-circle me-1 opacity-75"></i>
                     El correo es el <strong>usuario de login</strong> (email válido, único). El nombre es para mostrar. Contraseña: enlace de edición o formulario de usuario.
                 </p>
-                <form th:action="@{/profesor/usuarios-sistema/perfil}" method="post" class="row g-2 align-items-end">
-                    <div class="col-12 col-md-4">
+                <form th:action="@{/profesor/usuarios-sistema/perfil}" method="post" class="row g-2 align-items-end min-w-0">
+                    <div class="col-12 col-md-4 min-w-0">
                         <label class="form-label small">Nombre</label>
                         <input type="text" name="nombre" class="form-control form-control-sm" th:value="${usuarioActual != null ? usuarioActual.nombre : ''}" required maxlength="150" autocomplete="name">
                     </div>
-                    <div class="col-12 col-md-4">
+                    <div class="col-12 col-md-4 min-w-0">
                         <label class="form-label small">Correo (usuario de acceso)</label>
-                        <input type="email" name="correo" class="form-control form-control-sm" th:value="${usuarioActual != null ? usuarioActual.correo : ''}" required maxlength="150" autocomplete="email" inputmode="email">
+                        <input type="email" name="correo" class="form-control form-control-sm text-break" style="min-width:0" th:value="${usuarioActual != null ? usuarioActual.correo : ''}" required maxlength="150" autocomplete="email" inputmode="email">
                     </div>
-                    <div class="col-12 col-md-2">
+                    <div class="col-6 col-md-2 min-w-0">
                         <label class="form-label small">Rol</label>
                         <input type="text" class="form-control form-control-sm" th:value="${usuarioActual != null ? usuarioActual.rol : ''}" disabled>
                     </div>
-                    <div class="col-12 col-md-2">
+                    <div class="col-6 col-md-2">
                         <label class="form-label small d-none d-md-block">&nbsp;</label>
                         <button type="submit" class="btn btn-outline-primary btn-sm w-100">Guardar</button>
                     </div>
@@ -182,8 +207,8 @@
                         </thead>
                         <tbody>
                         <tr th:each="u : ${usuariosSistema}">
-                            <td th:text="${u.nombre}">Nombre</td>
-                            <td th:text="${u.correo}">correo@ejemplo.com</td>
+                            <td class="text-break" th:text="${u.nombre}">Nombre</td>
+                            <td class="text-break small" th:text="${u.correo}">correo@ejemplo.com</td>
                             <td>
                                 <span class="badge bg-secondary" th:text="${u.rol}">ROL</span>
                             </td>

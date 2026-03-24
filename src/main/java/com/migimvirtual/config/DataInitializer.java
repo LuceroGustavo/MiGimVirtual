@@ -52,51 +52,32 @@ public class DataInitializer implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
         long startTime = System.currentTimeMillis();
-            System.out.println("=== Iniciando DataInitializer ===");
+        System.out.println("=== Iniciando DataInitializer ===");
 
         try {
-            // Verificar si ya se ejecutó antes (optimización)
-            if (isDataAlreadyInitialized()) {
-                System.out.println("✅ Datos ya inicializados - Saltando inicialización completa");
-                createProfesorUsuarioIfNeeded();
-                createDeveloperUsuarioIfNeeded();
-                grupoMuscularService.asegurarGruposSistema();
-                categoriaService.asegurarCategoriasSistema();
-                asegurarEjerciciosPredeterminadosSiNecesario();
-                planPublicoService.asegurarPlanesIniciales();
-                configuracionPaginaPublicaService.asegurarConfigInicial();
-                System.out.println("=== DataInitializer completado en " + (System.currentTimeMillis() - startTime) + "ms ===");
-                return;
+            boolean yaInicializado = isDataAlreadyInitialized();
+            if (yaInicializado) {
+                System.out.println("✅ Sistema ya inicializado — modo rápido (grupos/categorías/config con salida temprana)");
             }
 
-            // Crear el usuario principal que maneja el panel: el Profesor (rol ADMIN, vinculado a entidad Profesor)
             createProfesorUsuarioIfNeeded();
-            // Crear usuario developer del sistema
             createDeveloperUsuarioIfNeeded();
-
-            // Asegurar los 6 grupos musculares del sistema (BRAZOS, PIERNAS, PECHO, ESPALDA, CARDIO, ELONGACION)
             grupoMuscularService.asegurarGruposSistema();
-            // Asegurar las categorías del sistema (FUERZA, CARDIO, FLEXIBILIDAD, FUNCIONAL, HIIT)
             categoriaService.asegurarCategoriasSistema();
-            // Asegurar los 60 ejercicios predeterminados (necesarios para scripts de prueba 03 y 04)
             asegurarEjerciciosPredeterminadosSiNecesario();
-            // Asegurar planes y configuración de la página pública
             planPublicoService.asegurarPlanesIniciales();
             configuracionPaginaPublicaService.asegurarConfigInicial();
-            
-            // Asignar avatares solo si es necesario
-            assignAvatarsIfNeeded();
-            
-            // Marcar como inicializado
-            markAsInitialized();
-            
+
+            if (!yaInicializado) {
+                assignAvatarsIfNeeded();
+                markAsInitialized();
+            }
         } catch (Exception e) {
             System.err.println("❌ Error en DataInitializer: " + e.getMessage());
             e.printStackTrace();
         }
-        
-        long totalTime = System.currentTimeMillis() - startTime;
-        System.out.println("=== DataInitializer completado en " + totalTime + "ms ===");
+
+        System.out.println("=== DataInitializer completado en " + (System.currentTimeMillis() - startTime) + "ms ===");
     }
 
     private static final String CORREO_PROFESOR = "profesor@migymvirtual.com";
@@ -242,7 +223,7 @@ public class DataInitializer implements CommandLineRunner {
             } else {
                 System.out.println("ℹ️ Todos los usuarios ya tienen avatares asignados");
             }
-            } catch (Exception e) {
+        } catch (Exception e) {
             System.err.println("❌ Error asignando avatares: " + e.getMessage());
         }
     }

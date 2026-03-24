@@ -111,6 +111,20 @@ Para poblar **alumnos**, **progresos**, **series plantilla**, **rutinas plantill
 
 **Fuente de verdad:** `scripts/BD/README.md` y `scripts/BD/LEEME_BD.txt`. **Índice general:** [INDICE_DOCUMENTACION.md](INDICE_DOCUMENTACION.md).
 
+### 1.5 Mejoras posteriores al cierre documental (Mar 2026) — rendimiento local + UX admin
+
+Tras el commit de cierre descrito en **`CHANGELOG.md` [2026-03-15]** (scroll móvil en tablas, scripts BD ampliados, índice de documentación), se sumaron **sin cambiar reglas de negocio**:
+
+| Tema | Detalle | Referencia |
+|------|---------|------------|
+| **Arranque (dev)** | `lazy-initialization` y pool Hikari más liviano solo en perfil **dev**; comprobación de correos duplicados en **segundo plano** tras `ApplicationReadyEvent`. | `CHANGELOG` [2026-03-16] |
+| **DataInitializer** | Un solo flujo; avatares / marca “inicializado” solo en primer arranque; **menos consultas** si grupos/categorías/config ya existen (`COUNT(DISTINCT…)`, `countByClaveIn`). | `CHANGELOG` [2026-03-16] |
+| **Usuarios del sistema (móvil)** | Vista **Developer** embebida en Administración: sin desborde horizontal; cabecera y tabla con `text-break` / `min-w-0`; dropdown con ellipsis. | `CHANGELOG` [2026-03-23] |
+
+**No incluido a propósito:** migraciones Flyway; medición formal de pantallas lentas; **limpieza masiva de código** (formateo/refactor) — prevista **después** de un commit de respaldo.
+
+**Próximo paso sugerido:** commit + push del estado actual; luego limpieza de código con bajo riesgo. Ver [COMMIT_RELEASE_MAR2026.md](COMMIT_RELEASE_MAR2026.md) (sección *Post-cierre*).
+
 ---
 
 ## 2. Backup y exportación

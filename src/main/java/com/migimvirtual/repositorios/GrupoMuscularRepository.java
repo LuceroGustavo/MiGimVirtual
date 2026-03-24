@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -30,4 +31,8 @@ public interface GrupoMuscularRepository extends JpaRepository<GrupoMuscular, Lo
     Optional<GrupoMuscular> findFirstByNombreAndProfesorIsNull(String nombre);
 
     Optional<GrupoMuscular> findFirstByNombreAndProfesorId(String nombre, Long profesorId);
+
+    /** Cuántos nombres distintos del conjunto de sistema ya existen (profesor null). Una consulta para decidir si asegurarGruposSistema puede omitirse. */
+    @Query("SELECT COUNT(DISTINCT g.nombre) FROM GrupoMuscular g WHERE g.profesor IS NULL AND g.nombre IN :nombres")
+    long countDistinctNombreSistemaPresentes(@Param("nombres") Collection<String> nombres);
 }

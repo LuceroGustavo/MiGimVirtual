@@ -6,6 +6,7 @@ import com.migimvirtual.repositorios.GrupoMuscularRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -94,6 +95,10 @@ public class GrupoMuscularService {
     /** Asegura que existan los 6 grupos del sistema. Idempotente. */
     @Transactional
     public void asegurarGruposSistema() {
+        long presentes = grupoMuscularRepository.countDistinctNombreSistemaPresentes(Arrays.asList(NOMBRES_GRUPOS_SISTEMA));
+        if (presentes >= NOMBRES_GRUPOS_SISTEMA.length) {
+            return;
+        }
         for (String nombre : NOMBRES_GRUPOS_SISTEMA) {
             if (grupoMuscularRepository.findFirstByNombreAndProfesorIsNull(nombre).isEmpty()) {
                 GrupoMuscular g = new GrupoMuscular(nombre, null);

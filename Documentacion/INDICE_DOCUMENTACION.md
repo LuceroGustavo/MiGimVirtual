@@ -18,7 +18,7 @@ Orden sugerido para **contexto** (IA o nueva PC): [LEEME_PRIMERO.md](LEEME_PRIME
 | Archivo | Uso |
 |---------|-----|
 | **LEEME_PRIMERO.md** | Acceso (URLs, credenciales), mapa del código, estado del proyecto |
-| **DOCUMENTACION_UNIFICADA.md** | Resumen implementado, §1 pública/admin, §2 backup, manual §1.3, referencias |
+| **DOCUMENTACION_UNIFICADA.md** | Resumen implementado, §1 pública/admin (**§1.5** post-cierre perf/UX), §2 backup, manual §1.3, referencias |
 | **AYUDA_MEMORIA.md** | Pendientes cortos, recordatorios, próximos pasos |
 | **GUIA_RESPONSIVE.md** | Entornos, breakpoints, módulos del panel (§5.x), **scroll tablas móvil §5.8** |
 | **PALETA_COLORES.md** | Colores por módulo y sectores Administración |

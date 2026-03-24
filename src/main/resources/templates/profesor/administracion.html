@@ -202,6 +202,23 @@
                 height: 480px;
                 min-height: 480px;
             }
+            /* Fragmentos (usuarios, etc.): no desbordar el ancho del panel en móvil */
+            .admin-main .admin-content-wrap .admin-section-content {
+                max-width: 100%;
+                min-width: 0;
+                box-sizing: border-box;
+            }
+            #adminMobileDropdownLabel {
+                flex: 1 1 auto;
+                min-width: 0;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+            }
+            .admin-sidebar-mobile-dropdown .dropdown-toggle {
+                min-width: 0;
+                gap: 0.35rem;
+            }
         }
         @media (min-width: 992px) {
             .admin-sidebar-mobile-dropdown { display: none !important; }

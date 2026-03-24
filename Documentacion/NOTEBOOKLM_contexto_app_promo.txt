@@ -1,0 +1,84 @@
+================================================================================
+MiGymVirtual — Contexto para video promocional (NotebookLM)
+Subir este archivo junto con las capturas de pantalla del celular.
+================================================================================
+
+NOMBRE DEL PRODUCTO
+-------------------
+MiGymVirtual — aplicación web para profesores y entrenadores que gestionan
+entrenamiento online (gimnasio virtual). No requiere app instalada por el
+alumno: todo funciona desde el navegador.
+
+QUÉ PROBLEMA RESUELVE
+---------------------
+Organizar alumnos, ejercicios, series y rutinas en un solo lugar; enviar
+planes de entrenamiento por enlace; dar seguimiento sin depender de asistencia
+a un local físico.
+
+PÚBLICO OBJETIVO
+----------------
+• Profesor / entrenador personal que trabaja 100 % online o híbrido.
+• Alumnos que reciben rutinas por WhatsApp o enlace, sin cuenta de login
+  obligatoria en la app (la ficha del alumno la maneja el profesor).
+
+FUNCIONALIDADES PRINCIPALES (para relacionar con cada captura)
+---------------------------------------------------------------
+1. PANEL DEL PROFESOR
+   Vista central con accesos a: Mis alumnos, Series, Rutinas, Asignaciones,
+   Ejercicios, Administración. Pensado para uso diario desde el celular o PC.
+
+2. ALUMNOS (FICHAS)
+   Alta y seguimiento de cada persona: datos, objetivos, notas del profesor,
+   estado activo/inactivo. Cada alumno tiene su historial sin que el alumno
+   deba “entrar” a la plataforma como usuario.
+
+3. EJERCICIOS Y CATÁLOGO
+   Biblioteca de ejercicios con imágenes, grupos musculares y filtros.
+   El profesor puede crear y editar ejercicios propios.
+
+4. SERIES Y RUTINAS
+   Armar bloques de trabajo (series) y combinarlos en rutinas con categorías
+   (fuerza, cardio, flexibilidad, etc.). Duplicar y editar con flujo claro.
+
+5. ASIGNACIÓN A ALUMNOS
+   Asignar una rutina plantilla a un alumno; nota o reseña para el alumno;
+   estado activa/inactiva; enlace público único por rutina.
+
+6. HOJA DE ENTRENAMIENTO PÚBLICA
+   Cada rutina asignada genera un enlace (token) que el alumno abre en el
+   navegador: ve series, repeticiones, tiempos y puede usar el enlace desde
+   el celular en el gimnasio o en casa.
+
+7. PROGRESO DEL ALUMNO
+   Registro de anotaciones por fecha (grupos musculares, observaciones) para
+   seguimiento clínico/de entrenamiento en la ficha.
+
+8. PÁGINA PÚBLICA DEL NEGOCIO (opcional)
+   Landing y planes configurables: contacto, WhatsApp, redes, textos
+   orientados a servicio virtual.
+
+9. RESPONSIVE / MÓVIL
+   Interfaz adaptada a pantallas chicas: tablas con scroll, modales para ver
+   detalle sin perder contexto, navegación inferior en el panel.
+
+10. RESPALDO Y ADMINISTRACIÓN
+    Backups de contenido y datos de alumnos; usuarios del sistema según rol;
+    manual de usuario integrado.
+
+DIFERENCIADORES (mensaje de marketing)
+----------------------------------------
+• 100 % virtual: sin calendario de sala ni asistencias presenciales; foco en
+  rutinas, enlaces y seguimiento.
+• Un solo panel para el profesor: de la biblioteca de ejercicios al enlace
+  que recibe el alumno.
+• Marca y experiencia profesional; pensado para entrenadores que escalan
+  su servicio online.
+
+TONO SUGERIDO PARA EL VIDEO
+----------------------------
+Profesional, claro, motivador. Enfatizar: orden, rapidez, libertad del alumno
+para entrenar donde sea, y control del profesor sobre el plan.
+
+================================================================================
+Fin del contexto — MiGymVirtual
+================================================================================

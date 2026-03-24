@@ -2,6 +2,43 @@
 
 > Nota: este changelog incluye histórico heredado de MiGym (referencias a admin/chat/websocket).
 
+## [2026-03-24] - docs: consolidación post-cierre (§1.5, COMMIT_RELEASE, índice) ✅
+
+### Resumen
+- **`DOCUMENTACION_UNIFICADA.md`:** nueva **§1.5** — tabla de mejoras posteriores al cierre **[2026-03-15]** (perf arranque dev, `DataInitializer`, UX Usuarios del sistema en móvil) con punteros a entradas **[2026-03-16]** y **[2026-03-23]**; nota sobre limpieza de código futura.
+- **`LEEME_PRIMERO.md`:** línea post-cierre y enlace a `COMMIT_RELEASE_MAR2026.md` § Post-cierre.
+- **`COMMIT_RELEASE_MAR2026.md`:** sección **Post-cierre** con mensaje de commit sugerido y `git add` para Java/templates/CSS.
+- **`INDICE_DOCUMENTACION.md`:** fila `DOCUMENTACION_UNIFICADA` actualizada (§1.5).
+
+### Archivos
+`Documentacion/DOCUMENTACION_UNIFICADA.md`, `Documentacion/LEEME_PRIMERO.md`, `Documentacion/COMMIT_RELEASE_MAR2026.md`, `Documentacion/INDICE_DOCUMENTACION.md`, `CHANGELOG.md`.
+
+---
+
+## [2026-03-23] - fix(ui): responsive Usuarios del sistema (Developer, entorno 2 / Administración) ✅
+
+### Resumen
+- **usuarios-sistema.html:** cabecera en grid (`row`/`col`) con `text-break` y `min-w-0`; formulario Developer con columnas móviles (`col-6` rol/botón); tabla con celdas `text-break`; estilos ≤991px para `max-width:100%` y sin desborde horizontal.
+- **administracion.html:** `#adminMobileDropdownLabel` con ellipsis; ancho mínimo en dropdown; `.admin-section-content` con `min-width:0` en móvil.
+- **style.css:** reglas para `.admin-main .admin-content-wrap .admin-usuarios-sistema-root` (sectores, tabla, `mgv-scroll-panel` más bajo en panel embebido).
+
+### Archivos
+`usuarios-sistema.html`, `administracion.html`, `style.css`, `CHANGELOG.md`.
+
+---
+
+## [2026-03-16] - perf(dev): arranque más ágil sin cambiar lógica de negocio ✅
+
+### Resumen
+- **`DuplicadosCheckRunner`:** deja de usar `ApplicationRunner` síncrono; pasa a `ApplicationListener<ApplicationReadyEvent>` y ejecuta la comprobación de correos duplicados en **segundo plano** (`CompletableFuture`), sin bloquear el inicio.
+- **`application-dev.properties`:** `spring.main.lazy-initialization=true` (solo perfil **dev**) y `spring.datasource.hikari.minimum-idle=2` para aligerar creación de beans y pool al levantar en local. **Producción** no hereda el lazy-init (sigue `application.properties` + `prod` si aplica).
+- **Servicios idempotentes:** `asegurarGruposSistema` / `asegurarCategoriasSistema` hacen **una** consulta `COUNT(DISTINCT nombre)` y salen si ya están todos; `asegurarConfigInicial` hace `countByClaveIn` y sale si todas las claves existen (evita 6+5+11 consultas por arranque en BD madura). **DataInitializer:** un solo flujo; `assignAvatars` + `markAsInitialized` solo en el primer arranque.
+
+### Archivos
+`DuplicadosCheckRunner.java`, `application-dev.properties`, `DataInitializer.java`, `GrupoMuscularRepository.java`, `CategoriaRepository.java`, `ConfiguracionPaginaPublicaRepository.java`, `GrupoMuscularService.java`, `CategoriaService.java`, `ConfiguracionPaginaPublicaService.java`, `CHANGELOG.md`.
+
+---
+
 ## [2026-03-15] - feat(ui)+chore: scroll tablas móvil, datos BD ampliados, docs reorganizadas (cierre) ✅
 
 ### Resumen

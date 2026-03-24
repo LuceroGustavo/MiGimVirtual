@@ -228,6 +228,9 @@ public class ConfiguracionPaginaPublicaService {
                 ConfiguracionPaginaPublica.CLAVE_EMAIL_CONTACTO,
                 ConfiguracionPaginaPublica.CLAVE_ESLOGAN
         );
+        if (configRepository.countByClaveIn(claves) >= claves.size()) {
+            return;
+        }
         for (String clave : claves) {
             if (configRepository.findByClave(clave).isEmpty()) {
                 String valorDefault = switch (clave) {

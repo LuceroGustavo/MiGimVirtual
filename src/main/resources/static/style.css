@@ -175,6 +175,31 @@
   border-color: rgba(2, 136, 209, 0.38);
 }
 
+/* Usuarios del sistema — móvil / fragmento en Administración */
+@media (max-width: 991px) {
+  .admin-main .admin-content-wrap .admin-usuarios-sistema-root {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+  }
+  .admin-main .admin-content-wrap .admin-usuarios-sistema-root .usuarios-sistema-sector-cuenta,
+  .admin-main .admin-content-wrap .admin-usuarios-sistema-root .usuarios-sistema-sector-listado {
+    max-width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+  }
+  .admin-main .admin-content-wrap .admin-usuarios-sistema-root .table td,
+  .admin-main .admin-content-wrap .admin-usuarios-sistema-root .table th {
+    word-break: break-word;
+    vertical-align: middle;
+  }
+  /* Tabla dentro del panel blanco: altura razonable + scroll (el panel ya tiene altura fija en móvil) */
+  .admin-main .admin-content-wrap .admin-usuarios-sistema-root .table-responsive.mgv-scroll-panel {
+    max-height: min(42vh, 16rem);
+  }
+}
+
 /* ========== Entorno 2 (≤991px): scroll interno en tablas de lectura (sin tocar escritorio) ==========
    - mgv-scroll-panel: pantallas “completas” (~15 filas visibles)
    - mgv-scroll-embed: ficha / contexto embebido (~6 filas)

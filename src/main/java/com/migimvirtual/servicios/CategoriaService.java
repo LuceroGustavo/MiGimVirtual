@@ -7,6 +7,7 @@ import com.migimvirtual.repositorios.RutinaRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -81,6 +82,10 @@ public class CategoriaService {
     /** Asegura que existan las categorías del sistema. Idempotente. */
     @Transactional
     public void asegurarCategoriasSistema() {
+        long presentes = categoriaRepository.countDistinctNombreSistemaPresentes(Arrays.asList(NOMBRES_CATEGORIAS_SISTEMA));
+        if (presentes >= NOMBRES_CATEGORIAS_SISTEMA.length) {
+            return;
+        }
         for (String nombre : NOMBRES_CATEGORIAS_SISTEMA) {
             if (categoriaRepository.findFirstByNombreAndProfesorIsNull(nombre).isEmpty()) {
                 Categoria c = new Categoria(nombre, null);
