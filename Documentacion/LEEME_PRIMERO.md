@@ -10,7 +10,8 @@
 |---------|-----|-------|
 | **Producción** | http://detodoya.com.ar | `/login` — requiere correo y contraseña |
 | **Local** | http://localhost:8080 | `/login` — mismo flujo |
-| **Servidor (IP)** | http://149.50.144.53:8080 | Ver [servidor/DESPLIEGUE-SERVIDOR.md](servidor/DESPLIEGUE-SERVIDOR.md) |
+| **Producción MiGymVirtual (HTTPS)** | https://migimvirtual.detodoya.com.ar/ | Ver [servidor/DESPLIEGUE-DONWEB-MIGIMVIRTUAL.md](servidor/DESPLIEGUE-DONWEB-MIGIMVIRTUAL.md) |
+| **Servidor (IP, puerto app)** | http://149.50.144.53:8081/ | Mismo documento (puerto **8081**; Mattfuncional usa **8080** en el mismo VPS) |
 
 **Páginas públicas (sin login):** `/` (landing), `/planes`, `/publica`, `/demo`.
 
@@ -62,7 +63,7 @@ Tras iniciar sesión se redirige al **Panel del profesor** (`/profesor/{id}`).
 | **PALETA_COLORES.md** | Colores por módulo + **sectores de Administración** (backup contenido/alumnos, usuarios perfil/listado). Tonos pastel y derivaciones. |
 | **AYUDA_MEMORIA.md** | Lista rápida de pendientes (ejercicios/vistas), eliminar alumno, backup terminado. |
 
-**Carpeta `servidor/`:** Despliegue en VPS (SSH, Nginx, menú). Ver `servidor/DESPLIEGUE-SERVIDOR.md` y `servidor/nginx-detodoya.conf`.
+**Carpeta `servidor/`:** Despliegue Donweb / VPS — guía principal **[servidor/DESPLIEGUE-DONWEB-MIGIMVIRTUAL.md](servidor/DESPLIEGUE-DONWEB-MIGIMVIRTUAL.md)** (SSH, VNC, puerto 8081, scripts, DNS, HTTPS). `servidor/DESPLIEGUE-SERVIDOR.md` redirige al mismo tema. Plantilla Nginx: `servidor/nginx-detodoya.conf`.
 
 **Carpeta `scripts/BD/`:** Datos de prueba MySQL — ver **`scripts/BD/README.md`** (orden 00→06) y **`LEEME_BD.txt`** (resumen en español).
 

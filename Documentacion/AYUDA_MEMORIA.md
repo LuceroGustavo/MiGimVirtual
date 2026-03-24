@@ -96,7 +96,7 @@ Scripts SQL para cargar datos de prueba y testear la app:
 - **En disco:** ZIP (contenido) y JSON (alumnos) bajo `migimvirtual.backups.dir` (defecto `backup/contenido` y `backup/alumnos`). Máx. **2** archivos por tipo.
 - **Restaurar:** Reemplazo total (no “agregar” desde la UI). Export de rutinas/series **solo del profesor del panel** (`profesorId` en manifest v1.2).
 - **Alumnos:** JSON con mediciones y progresos; sin Excel en esta pantalla (el servicio Excel puede existir aparte).
-- **Ubuntu / servidor:** No hace falta crear `backup` antes: se crea al primer “Guardar backup”. Recomendado: ruta absoluta en `application-*.properties` y permisos de escritura — ver [servidor/DESPLIEGUE-SERVIDOR.md](servidor/DESPLIEGUE-SERVIDOR.md) §6.6.
+- **Ubuntu / servidor:** No hace falta crear `backup` antes: se crea al primer “Guardar backup”. Recomendado: ruta absoluta en `application-*.properties` y permisos de escritura — ver [servidor/DESPLIEGUE-DONWEB-MIGIMVIRTUAL.md](servidor/DESPLIEGUE-DONWEB-MIGIMVIRTUAL.md) §11 (backups en disco).
 - **Resumen técnico:** [DOCUMENTACION_UNIFICADA.md](DOCUMENTACION_UNIFICADA.md) §2.
 - **Interfaz (Mar 2026):** En la pantalla de backups, bloques con **marco violeta** (contenido/ZIP) y **marco azul** (alumnos/JSON). Estilos en `style.css` para que funcionen también con **fragmento** en Administración (`?fragment=1`). Ver [DOCUMENTACION_UNIFICADA.md](DOCUMENTACION_UNIFICADA.md) §1.2.
 

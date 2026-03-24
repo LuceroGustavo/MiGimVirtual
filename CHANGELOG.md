@@ -2,6 +2,18 @@
 
 > Nota: este changelog incluye histórico heredado de MiGym (referencias a admin/chat/websocket).
 
+## [2026-03-24] - docs: despliegue Donweb MiGymVirtual (guía completa) ✅
+
+### Resumen
+- **Nuevo:** `Documentacion/servidor/DESPLIEGUE-DONWEB-MIGIMVIRTUAL.md` — VPS Donweb, puerto **8081**, convivencia con Matt **8080**, SSH (`5638`), VNC, DNS, HTTPS, Nginx, `.env.production`, menú `migimvirtual`, launcher `/root/deploy-all-apps.sh`, MySQL, backups §11, troubleshooting.
+- **`DESPLIEGUE-SERVIDOR.md`:** ahora es puntero al documento anterior (reemplaza texto heredado de otro proyecto).
+- **Enlaces actualizados:** `INDICE_DOCUMENTACION.md`, `LEEME_PRIMERO.md`, `README.md`, `DOCUMENTACION_UNIFICADA.md`, `AYUDA_MEMORIA.md`, javadoc en `BackupStorageService.java`.
+
+### Archivos
+`Documentacion/servidor/DESPLIEGUE-DONWEB-MIGIMVIRTUAL.md`, `Documentacion/servidor/DESPLIEGUE-SERVIDOR.md`, `Documentacion/INDICE_DOCUMENTACION.md`, `Documentacion/LEEME_PRIMERO.md`, `README.md`, `Documentacion/DOCUMENTACION_UNIFICADA.md`, `Documentacion/AYUDA_MEMORIA.md`, `src/main/java/com/migimvirtual/servicios/BackupStorageService.java`, `CHANGELOG.md`.
+
+---
+
 ## [2026-03-24] - docs: plan unificado §1.6 + COMMIT_MAR2026_UNIFICADO ✅
 
 ### Resumen

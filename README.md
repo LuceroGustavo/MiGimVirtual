@@ -12,6 +12,6 @@ App de gestión de gimnasio virtual: ejercicios, series, rutinas y hoja por toke
 
 **Scripts SQL de prueba:** `scripts/BD/README.md` — orden `00` (opcional) → `01` … `06`.
 
-**Backups y despliegue Ubuntu:** `Documentacion/DOCUMENTACION_UNIFICADA.md` §2 y `Documentacion/servidor/DESPLIEGUE-SERVIDOR.md` §6.6 (carpeta `backup`).
+**Backups y despliegue Ubuntu / Donweb:** `Documentacion/DOCUMENTACION_UNIFICADA.md` §2; despliegue completo (puerto 8081, SSH, VNC, Nginx): **`Documentacion/servidor/DESPLIEGUE-DONWEB-MIGIMVIRTUAL.md`**. Carpeta `backup` en servidor: ver ese documento y §2 de la documentación unificada.
 
 **Stack:** Spring Boot, Thymeleaf, MySQL, Bootstrap. Código en `src/main/java/com/migimvirtual/`.

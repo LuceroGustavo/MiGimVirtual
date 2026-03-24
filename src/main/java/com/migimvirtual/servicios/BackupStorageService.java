@@ -21,7 +21,7 @@ import java.util.stream.Stream;
  * <p>
  * Al primer guardado crea automáticamente las carpetas {@code contenido/} y {@code alumnos/} bajo
  * {@code migimvirtual.backups.dir} (no hace falta crear {@code backup} a mano). En Ubuntu/producción
- * conviene una ruta absoluta y permisos de escritura; ver {@code Documentacion/servidor/DESPLIEGUE-SERVIDOR.md} §6.6.
+ * conviene una ruta absoluta y permisos de escritura; ver {@code Documentacion/servidor/DESPLIEGUE-DONWEB-MIGIMVIRTUAL.md} §11.
  */
 @Service
 public class BackupStorageService {

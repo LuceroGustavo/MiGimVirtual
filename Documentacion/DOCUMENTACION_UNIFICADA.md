@@ -86,7 +86,7 @@ Para **diferenciar** bloques dentro de **Administrar sistema** (vista embebida c
 **Referencia UX responsive:** [GUIA_RESPONSIVE.md](GUIA_RESPONSIVE.md) §5.7.
 
 **Pendiente de producto (ver AYUDA_MEMORIA):** Refinar **contenidos** de la página pública (imágenes del carrusel `/img/publica/`, textos finos, FAQ opcional). La base técnica “virtual” y la configuración administrable ya están (§1.1 bis).
-- **Backup (terminado / actualizado Mar 2026):** Guardado en servidor, restauración total, export acotado al profesor del panel. Ver sección 2 y despliegue Ubuntu en [servidor/DESPLIEGUE-SERVIDOR.md](servidor/DESPLIEGUE-SERVIDOR.md) (carpeta `backup`).
+- **Backup (terminado / actualizado Mar 2026):** Guardado en servidor, restauración total, export acotado al profesor del panel. Ver sección 2 y despliegue Ubuntu en [servidor/DESPLIEGUE-DONWEB-MIGIMVIRTUAL.md](servidor/DESPLIEGUE-DONWEB-MIGIMVIRTUAL.md) (carpeta `backup`).
 - **Depuración de datos:** Módulo eliminado en Mar 2026 (ya no existe en Administración).
 
 ### 1.3 Manual del usuario — últimos cambios (Mar 2026)
@@ -181,7 +181,7 @@ chore: SLF4J, permiso ficha alumno, confirmaciones móvil + fix fragment navbar 
 
 **Historial de cambios:** `CHANGELOG.md` — **[2026-03-22]** (cierre UX Administración, sectores de color, `style.css` + fragmentos); **[2026-03-21]** (backup en servidor, fix export por `profesorId`, manifest v1.2).
 
-**Despliegue Ubuntu / VPS:** No hace falta crear la carpeta `backup` a mano antes del primer uso: la app crea `backup/contenido` y `backup/alumnos` al primer guardado. Recomendaciones de permisos y ruta absoluta: [servidor/DESPLIEGUE-SERVIDOR.md](servidor/DESPLIEGUE-SERVIDOR.md) (sección carpeta backup).
+**Despliegue Ubuntu / VPS:** No hace falta crear la carpeta `backup` a mano antes del primer uso: la app crea `backup/contenido` y `backup/alumnos` al primer guardado. Recomendaciones de permisos y ruta absoluta: [servidor/DESPLIEGUE-DONWEB-MIGIMVIRTUAL.md](servidor/DESPLIEGUE-DONWEB-MIGIMVIRTUAL.md) (sección carpeta backup).
 
 **Manual en la app:** `/profesor/manual` §10.3 Sistema de backups (texto alineado con este flujo).
 
@@ -224,7 +224,7 @@ El módulo "Depuración de datos" fue eliminado por completo en marzo 2026. No e
 
 **Resumen:** App en VPS Donweb. Acceso SSH: `ssh -p 5638 root@149.50.144.53`. Aplicación en puerto 8080. Si PowerShell está bloqueado, usar Consola VNC de Donweb y menú `./MiGymVirtual` / `screen -r MiGymVirtual`. **Backups en disco:** ver §2 y en despliegue la sección **Carpeta `backup` (Ubuntu / producción)** — creación automática al primer guardado; opcional ruta absoluta y permisos. **Nginx:** el flujo de backup actual es por formularios en el panel (no subida masiva por proxy en muchos casos); si en el futuro se suben archivos grandes por HTTP, mantener `client_max_body_size` en Nginx; ejemplo en `servidor/nginx-detodoya.conf`.
 
-**Detalle completo:** [servidor/DESPLIEGUE-SERVIDOR.md](servidor/DESPLIEGUE-SERVIDOR.md) (acceso SSH, Consola VNC, menú, Nginx, reinicio, uploads, carpeta backup).
+**Detalle completo:** [servidor/DESPLIEGUE-DONWEB-MIGIMVIRTUAL.md](servidor/DESPLIEGUE-DONWEB-MIGIMVIRTUAL.md) (acceso SSH, Consola VNC, menú, Nginx, reinicio, uploads, carpeta backup).
 
 ---
 
@@ -259,7 +259,7 @@ El manual en la app (`/profesor/manual`) incluye:
 | **Página pública** | Fase 8. Landing `/`, Planes `/planes`, consultas; hero con video/carrusel; administración en panel. |
 | **Ejercicios predeterminados** | `ExerciseCargaDefaultOptimizado.asegurarEjerciciosPredeterminados()`; imágenes en `uploads/ejercicios/` (1.webp–60.webp). |
 | **Imágenes ejercicio (subida)** | `ImagenServicio`: máx. **5 MB**; extensiones `png`, `gif`, `bmp`, `webp`, `jpg`/`jpeg`; GIF/WebP sin re-encode para no perder animación (`ImageOptimizationService`). |
-| **Backups en servidor** | `BackupStorageService` + `migimvirtual.backups.dir`; ZIP contenido (`ExerciseZipBackupService`, `profesorId` en export) y JSON alumnos; máx. 2 archivos/tipo; ver §2 y DESPLIEGUE-SERVIDOR (carpeta backup). |
+| **Backups en servidor** | `BackupStorageService` + `migimvirtual.backups.dir`; ZIP contenido (`ExerciseZipBackupService`, `profesorId` en export) y JSON alumnos; máx. 2 archivos/tipo; ver §2 y DESPLIEGUE-DONWEB-MIGIMVIRTUAL (§11 backup en disco). |
 | **Restricción AYUDANTE** | No puede acceder a "Administrar sistema"; redirección y mensaje si intenta entrar a `/profesor/administracion`. |
 | **Eliminar alumno** | `UsuarioService.eliminarUsuario`: borra asistencias, mediciones, excepciones, rutinas asignadas; luego el usuario. |
 | **Depuración de datos** | `DepuracionService`; panel en `/profesor/depuracion`; elimina asistencias o rutinas asignadas anteriores a una fecha elegida. |

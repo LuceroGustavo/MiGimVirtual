@@ -8,11 +8,19 @@ JAR_NAME="migimvirtual-0.0.1-SNAPSHOT.jar"
 JAR_PATH="$APP_DIR/target/$JAR_NAME"
 LOG_FILE="$APP_DIR/logs/migimvirtual.log"
 PID_FILE="$APP_DIR/migimvirtual.pid"
-APP_PORT="${MIGIMVIRTUAL_APP_PORT:-8080}"
 SPRING_PROFILE="donweb"
+# VPS / despliegue: .env.production (no commitear; chmod 600). Cargar ANTES de fijar APP_PORT.
+if [ -f "$APP_DIR/.env.production" ]; then
+  set -a
+  # shellcheck source=/dev/null
+  source "$APP_DIR/.env.production"
+  set +a
+fi
 # Cargar variables de BD: .bashrc (sesión interactiva) o archivo .migimvirtual_db_password en el proyecto (servidor)
 [ -f "$HOME/.bashrc" ] && source "$HOME/.bashrc"
 [ -z "$MIGIMVIRTUAL_DB_PASSWORD" ] && [ -f "$APP_DIR/.migimvirtual_db_password" ] && export MIGIMVIRTUAL_DB_PASSWORD=$(cat "$APP_DIR/.migimvirtual_db_password" | tr -d '\n\r')
+# Puerto: debe leerse después de .env.production y .bashrc (si no, queda 8080 y choca con Mattfuncional).
+APP_PORT="${MIGIMVIRTUAL_APP_PORT:-8080}"
 JAVA_DB_OPTS=""
 [ -n "$MIGIMVIRTUAL_DB_USER" ] && JAVA_DB_OPTS="$JAVA_DB_OPTS -Dspring.datasource.username=$MIGIMVIRTUAL_DB_USER"
 [ -n "$MIGIMVIRTUAL_DB_PASSWORD" ] && JAVA_DB_OPTS="$JAVA_DB_OPTS -Dspring.datasource.password=$MIGIMVIRTUAL_DB_PASSWORD"
