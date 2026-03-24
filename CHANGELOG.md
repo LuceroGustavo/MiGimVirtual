@@ -2,6 +2,54 @@
 
 > Nota: este changelog incluye histórico heredado de MiGym (referencias a admin/chat/websocket).
 
+## [2026-03-24] - docs: plan unificado §1.6 + COMMIT_MAR2026_UNIFICADO ✅
+
+### Resumen
+- **`DOCUMENTACION_UNIFICADA.md`:** nueva **§1.6** — tabla única (refactor SLF4J, permiso ficha alumno, confirmaciones móvil, fix `th:block` navbar), archivos, mensaje de commit sugerido.
+- **`COMMIT_MAR2026_UNIFICADO.md`:** instrucciones `git add` / `commit` / `push`.
+- **`LEEME_PRIMERO.md`:** punteros §1.6 y CHANGELOG [2026-03-24].
+- **`INDICE_DOCUMENTACION.md`:** fila `DOCUMENTACION_UNIFICADA` (§1.6) + `COMMIT_MAR2026_UNIFICADO.md`.
+
+### Archivos
+`Documentacion/DOCUMENTACION_UNIFICADA.md`, `Documentacion/COMMIT_MAR2026_UNIFICADO.md`, `Documentacion/LEEME_PRIMERO.md`, `Documentacion/INDICE_DOCUMENTACION.md`, `CHANGELOG.md`.
+
+---
+
+## [2026-03-24] - fix(ui): fragmento navbar incluye modal + script Thymeleaf ✅
+
+### Resumen
+- **Bug:** `th:fragment="navbar"` estaba solo en `<nav>`; el `th:replace` no insertaba el modal ni `mgv-salida-movil.js`. **Fix:** fragmento envuelto en `<th:block th:fragment="navbar">` (barra + modal + script).
+- **Fallback:** si faltan nodos del modal, `showModal` usa `window.confirm` en lugar de ejecutar la acción sin aviso.
+
+---
+
+## [2026-03-24] - feat(ui): confirmaciones de salida en móvil (entorno 2) ✅
+
+### Resumen
+- **Modal único** `#modalMgvConfirmSalida` en `fragments/navbar.html` (cabeceras `modal-confirmar-header` / pie `modal-confirmar-footer`, gradiente Mattfuncional).
+- **Script** `static/js/mgv-salida-movil.js`: **Cerrar sesión** y **consultas (sobre)** en cualquier ancho; pie y **botón atrás** solo móvil (`max-width: 991px`); fallback `window.confirm` si Bootstrap no está listo.
+- **bottom-nav:** atributos `data-mgv-salida` por destino.
+
+### Archivos
+`fragments/navbar.html`, `fragments/bottom-nav.html`, `static/js/mgv-salida-movil.js`, `CHANGELOG.md`.
+
+---
+
+## [2026-03-24] - refactor(log): System.out/err → SLF4J (sin cambiar lógica) ✅
+
+### Resumen
+- **`DataInitializer`:** `Logger` SLF4J; `Optional` importado; errores con stack trace vía `log.error(..., e)`; sin `printStackTrace`.
+- **`UsuarioService.asignarAvataresAUsuariosExistentes`:** mismo flujo; detalle por usuario en `log.debug`.
+- **`ProfesorService.eliminarProfesor`:** `log.warn` / `log.info` en los mismos puntos.
+- **`ProfesorController` `/mis-ejercicios/debug`:** `logger.debug`; import `Exercise` en lugar de FQN.
+- **`ProfesorController` `GET /alumnos/{id}`:** validación de sesión y de que el alumno pertenezca al profesor en sesión (mismo criterio que los POST de progreso); imports no usados eliminados.
+- **Código fuente `src/main/java`:** sin `System.out` / `System.err` (búsqueda verificada).
+
+### Archivos
+`DataInitializer.java`, `UsuarioService.java`, `ProfesorService.java`, `ProfesorController.java`, `CHANGELOG.md`.
+
+---
+
 ## [2026-03-24] - docs: consolidación post-cierre (§1.5, COMMIT_RELEASE, índice) ✅
 
 ### Resumen

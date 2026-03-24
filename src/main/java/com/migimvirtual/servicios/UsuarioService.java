@@ -15,6 +15,8 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,6 +27,8 @@ import java.util.stream.Collectors;
 @Service
 @Transactional
 public class UsuarioService {
+
+    private static final Logger log = LoggerFactory.getLogger(UsuarioService.class);
 
     /** Formato de correo para usuarios de sistema (login = correo). No permite “usuario” sin @. */
     private static final String PATRON_CORREO_SISTEMA = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$";
@@ -385,31 +389,29 @@ public class UsuarioService {
      */
     @CacheEvict(value = "usuarios", allEntries = true)
     public void asignarAvataresAUsuariosExistentes() {
-        System.out.println("=== Iniciando asignación de avatares ===");
-        
+        log.info("Iniciando asignación de avatares");
+
         List<Usuario> todosLosUsuarios = usuarioRepository.findAll();
-        System.out.println("Total de usuarios encontrados: " + todosLosUsuarios.size());
-        
+        log.debug("Total de usuarios encontrados: {}", todosLosUsuarios.size());
+
         List<Usuario> usuariosSinAvatar = todosLosUsuarios.stream()
-                .filter(u -> u.getAvatar() == null || 
-                           u.getAvatar().trim().isEmpty() || 
+                .filter(u -> u.getAvatar() == null ||
+                           u.getAvatar().trim().isEmpty() ||
                            u.getAvatar().equals("/img/not_imagen.png"))
                 .collect(Collectors.toList());
-        
-        System.out.println("Usuarios sin avatar válido: " + usuariosSinAvatar.size());
-        
+
+        log.info("Usuarios sin avatar válido: {}", usuariosSinAvatar.size());
+
         for (Usuario usuario : usuariosSinAvatar) {
             int avatarNumber = (int) (Math.random() * 8) + 1; // Número aleatorio entre 1 y 8
             String avatarPath = "/img/avatar" + avatarNumber + ".png";
             usuario.setAvatar(avatarPath);
             usuarioRepository.save(usuario);
-            System.out.println("Avatar asignado a " + usuario.getNombre() + " (ID: " + usuario.getId() + "): " + avatarPath);
+            log.debug("Avatar asignado a {} (ID: {}): {}", usuario.getNombre(), usuario.getId(), avatarPath);
         }
-        
-        System.out.println("=== Asignación de avatares completada ===");
-    }
 
-    // --- MÉTODOS EXISTENTES (sin cambios) ---
+        log.info("Asignación de avatares completada");
+    }
 
     public Usuario getUsuarioActual() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();

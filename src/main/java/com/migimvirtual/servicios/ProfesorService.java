@@ -6,6 +6,8 @@ import com.migimvirtual.entidades.Exercise;
 import com.migimvirtual.repositorios.ProfesorRepository;
 import com.migimvirtual.repositorios.UsuarioRepository;
 import com.migimvirtual.repositorios.ExerciseRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
@@ -18,6 +20,8 @@ import java.util.Optional;
 @Service
 @Transactional
 public class ProfesorService {
+
+    private static final Logger log = LoggerFactory.getLogger(ProfesorService.class);
 
     @Autowired
     private ProfesorRepository profesorRepository;
@@ -87,8 +91,7 @@ public class ProfesorService {
                 }
             }
         } catch (Exception e) {
-            // Log del error pero continuar con la eliminación
-            System.err.println("Error al eliminar usuario del profesor: " + e.getMessage());
+            log.warn("Error al eliminar usuario del profesor: {}", e.getMessage());
         }
         
         // 2. Desasignar a todos los alumnos de este profesor (no eliminarlos, solo quitar la relación)
@@ -99,8 +102,7 @@ public class ProfesorService {
                 usuarioRepository.save(alumno);
             }
         } catch (Exception e) {
-            // Log del error pero continuar con la eliminación
-            System.err.println("Error al desasignar alumnos del profesor: " + e.getMessage());
+            log.warn("Error al desasignar alumnos del profesor: {}", e.getMessage());
         }
         
         // 3. ELIMINAR TODOS LOS EJERCICIOS DEL PROFESOR (NUEVO)
@@ -109,10 +111,9 @@ public class ProfesorService {
             for (Exercise ejercicio : ejerciciosDelProfesor) {
                 exerciseRepository.delete(ejercicio);
             }
-            System.out.println("Se eliminaron " + ejerciciosDelProfesor.size() + " ejercicios del profesor");
+            log.info("Se eliminaron {} ejercicios del profesor", ejerciciosDelProfesor.size());
         } catch (Exception e) {
-            // Log del error pero continuar con la eliminación
-            System.err.println("Error al eliminar ejercicios del profesor: " + e.getMessage());
+            log.warn("Error al eliminar ejercicios del profesor: {}", e.getMessage());
         }
         
         // 4. Finalmente eliminar el profesor

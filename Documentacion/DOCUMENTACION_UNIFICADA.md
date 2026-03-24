@@ -123,7 +123,40 @@ Tras el commit de cierre descrito en **`CHANGELOG.md` [2026-03-15]** (scroll mó
 
 **No incluido a propósito:** migraciones Flyway; medición formal de pantallas lentas; **limpieza masiva de código** (formateo/refactor) — prevista **después** de un commit de respaldo.
 
-**Próximo paso sugerido:** commit + push del estado actual; luego limpieza de código con bajo riesgo. Ver [COMMIT_RELEASE_MAR2026.md](COMMIT_RELEASE_MAR2026.md) (sección *Post-cierre*).
+**Próximo paso sugerido:** commit + push del estado actual; luego limpieza de código con bajo riesgo. Ver [COMMIT_MAR2026_UNIFICADO.md](COMMIT_MAR2026_UNIFICADO.md).
+
+---
+
+### 1.6 Plan unificado — limpieza, seguridad y UX móvil (Mar 2026) — para commit
+
+Resumen **único** de lo hecho después de §1.5 (incluye refactor, confirmaciones y corrección Thymeleaf). Detalle por entrada en **`CHANGELOG.md`** (fechas **[2026-03-24]**).
+
+| Bloque | Qué se hizo |
+|--------|-------------|
+| **Refactor logging** | `System.out` / `System.err` sustituidos por **SLF4J** en `DataInitializer`, `UsuarioService` (avatares), `ProfesorService`, `ProfesorController` (debug ejercicios). Sin cambio de reglas de negocio. |
+| **Seguridad panel** | `GET /profesor/alumnos/{id}`: comprobación de que el alumno pertenezca al **profesor en sesión** (alineado con POST de progreso). |
+| **UX móvil (entorno 2)** | Modal de confirmación estilo **`modal-confirmar-header`** / **`modal-confirmar-footer`**: cerrar sesión e icono consultas en **cualquier ancho**; barra inferior (`bottom-nav`, `data-mgv-salida`) y botón **atrás** del sistema solo **≤991px**; script `static/js/mgv-salida-movil.js`. |
+| **Fix Thymeleaf** | El fragmento **`navbar`** envuelto en **`<th:block th:fragment="navbar">`** para que `th:replace` inserte **navbar + modal + script** (antes solo el `<nav>`, el modal y el JS no llegaban al HTML). |
+| **Fallback** | Si faltan nodos del modal, `window.confirm`; si Bootstrap falla, mismo criterio. |
+
+**Archivos principales:** `fragments/navbar.html`, `fragments/bottom-nav.html`, `static/js/mgv-salida-movil.js`, `DataInitializer.java`, `UsuarioService.java`, `ProfesorService.java`, `ProfesorController.java`, `CHANGELOG.md`, esta §1.6.
+
+**Sugerencia de mensaje de commit (una línea):**
+
+```text
+chore: SLF4J, permiso ficha alumno, confirmaciones móvil + fix fragment navbar Thymeleaf
+```
+
+**Cuerpo opcional:**
+
+```text
+- Log: DataInitializer, UsuarioService, ProfesorService, ProfesorController (debug)
+- ProfesorController: validar alumno del profesor en GET ficha
+- UI: mgv-salida-movil.js, modal en fragment navbar (th:block), data-mgv-salida en bottom-nav
+- Docs: DOCUMENTACION_UNIFICADA §1.6, LEEME, índice, COMMIT_MAR2026_UNIFICADO
+```
+
+**Instrucciones `git`:** ver [COMMIT_MAR2026_UNIFICADO.md](COMMIT_MAR2026_UNIFICADO.md).
 
 ---
 

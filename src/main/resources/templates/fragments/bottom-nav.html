@@ -6,11 +6,11 @@
 <body>
     <!-- Barra inferior móvil: accesos rápidos (Inicio=pública, Manual, Consultas, Más=config) -->
     <nav class="bottom-nav-mobile" id="bottomNavMobile" aria-label="Accesos rápidos" th:fragment="bottom-nav">
-        <a th:href="@{/}" class="bottom-nav-item" aria-label="Inicio"><i class="fa-solid fa-house"></i><span>Inicio</span></a>
-        <a th:href="@{/profesor/manual}" class="bottom-nav-item" aria-label="Manual"><i class="fa-solid fa-book"></i><span>Manual</span></a>
-        <a th:href="@{/profesor/administracion(seccion='pagina')}" class="bottom-nav-item" aria-label="Consultas"><i class="fa-solid fa-envelope"></i><span>Consultas</span></a>
-        <a th:href="@{/profesor/administracion}" class="bottom-nav-item" th:if="${#authentication != null && #authentication.principal != null && (#authentication.principal.rol == 'ADMIN' || #authentication.principal.rol == 'DEVELOPER')}" aria-label="Más"><i class="fa-solid fa-gear"></i><span>Más</span></a>
-        <a th:href="@{/profesor/dashboard}" class="bottom-nav-item" th:if="${#authentication != null && #authentication.principal != null && #authentication.principal.rol != 'ADMIN' && #authentication.principal.rol != 'DEVELOPER'}" aria-label="Más"><i class="fa-solid fa-ellipsis"></i><span>Más</span></a>
+        <a th:href="@{/}" class="bottom-nav-item" data-mgv-salida="publico" aria-label="Inicio"><i class="fa-solid fa-house"></i><span>Inicio</span></a>
+        <a th:href="@{/profesor/manual}" class="bottom-nav-item" data-mgv-salida="manual" aria-label="Manual"><i class="fa-solid fa-book"></i><span>Manual</span></a>
+        <a th:href="@{/profesor/administracion(seccion='pagina')}" class="bottom-nav-item" data-mgv-salida="consultas" aria-label="Consultas"><i class="fa-solid fa-envelope"></i><span>Consultas</span></a>
+        <a th:href="@{/profesor/administracion}" class="bottom-nav-item" data-mgv-salida="mas" th:if="${#authentication != null && #authentication.principal != null && (#authentication.principal.rol == 'ADMIN' || #authentication.principal.rol == 'DEVELOPER')}" aria-label="Más"><i class="fa-solid fa-gear"></i><span>Más</span></a>
+        <a th:href="@{/profesor/dashboard}" class="bottom-nav-item" data-mgv-salida="dashboard" th:if="${#authentication != null && #authentication.principal != null && #authentication.principal.rol != 'ADMIN' && #authentication.principal.rol != 'DEVELOPER'}" aria-label="Más"><i class="fa-solid fa-ellipsis"></i><span>Más</span></a>
     </nav>
 </body>
 </html>

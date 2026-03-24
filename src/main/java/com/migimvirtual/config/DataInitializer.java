@@ -11,13 +11,19 @@ import com.migimvirtual.servicios.GrupoMuscularService;
 import com.migimvirtual.servicios.PlanPublicoService;
 import com.migimvirtual.servicios.ProfesorService;
 import com.migimvirtual.servicios.UsuarioService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
+import java.util.Optional;
+
 @Component
 public class DataInitializer implements CommandLineRunner {
+
+    private static final Logger log = LoggerFactory.getLogger(DataInitializer.class);
 
     @Autowired
     private UsuarioRepository usuarioRepository;
@@ -52,12 +58,12 @@ public class DataInitializer implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
         long startTime = System.currentTimeMillis();
-        System.out.println("=== Iniciando DataInitializer ===");
+        log.info("=== Iniciando DataInitializer ===");
 
         try {
             boolean yaInicializado = isDataAlreadyInitialized();
             if (yaInicializado) {
-                System.out.println("✅ Sistema ya inicializado — modo rápido (grupos/categorías/config con salida temprana)");
+                log.info("Sistema ya inicializado — modo rápido (grupos/categorías/config con salida temprana)");
             }
 
             createProfesorUsuarioIfNeeded();
@@ -73,11 +79,10 @@ public class DataInitializer implements CommandLineRunner {
                 markAsInitialized();
             }
         } catch (Exception e) {
-            System.err.println("❌ Error en DataInitializer: " + e.getMessage());
-            e.printStackTrace();
+            log.error("Error en DataInitializer: {}", e.getMessage(), e);
         }
 
-        System.out.println("=== DataInitializer completado en " + (System.currentTimeMillis() - startTime) + "ms ===");
+        log.info("=== DataInitializer completado en {}ms ===", System.currentTimeMillis() - startTime);
     }
 
     private static final String CORREO_PROFESOR = "profesor@migymvirtual.com";
@@ -93,7 +98,7 @@ public class DataInitializer implements CommandLineRunner {
                     .map(u -> u.getAvatar() != null && !u.getAvatar().isEmpty())
                     .orElse(false);
         } catch (Exception e) {
-            System.out.println("⚠️ Error verificando estado de inicialización: " + e.getMessage());
+            log.warn("Error verificando estado de inicialización: {}", e.getMessage());
             return false;
         }
     }
@@ -104,7 +109,7 @@ public class DataInitializer implements CommandLineRunner {
      */
     private void createProfesorUsuarioIfNeeded() {
         try {
-            java.util.Optional<Usuario> usuarioExistente = usuarioRepository.findFirstByCorreo(CORREO_PROFESOR);
+            Optional<Usuario> usuarioExistente = usuarioRepository.findFirstByCorreo(CORREO_PROFESOR);
             if (usuarioExistente.isPresent()) {
                 Usuario usuario = usuarioExistente.get();
                 boolean actualizado = false;
@@ -125,7 +130,7 @@ public class DataInitializer implements CommandLineRunner {
                         profesor.setCorreo(CORREO_PROFESOR);
                         profesor.setTelefono("-");
                         profesorService.guardarProfesor(profesor);
-                        System.out.println("✅ Entidad Profesor creada");
+                        log.info("Entidad Profesor creada");
                     }
                     usuario.setProfesor(profesor);
                     actualizado = true;
@@ -133,13 +138,13 @@ public class DataInitializer implements CommandLineRunner {
 
                 if (actualizado) {
                     usuarioRepository.save(usuario);
-                    System.out.println("✅ Usuario administrador actualizado");
+                    log.info("Usuario administrador actualizado");
                 } else {
-                    System.out.println("ℹ️ Usuario administrador ya existe");
+                    log.info("Usuario administrador ya existe");
                 }
                 return;
             }
-            System.out.println("🔧 Creando usuario Administrador (único gestor del panel)...");
+            log.info("Creando usuario Administrador (único gestor del panel)...");
 
             Profesor profesor = profesorService.getProfesorByCorreo(CORREO_PROFESOR);
             if (profesor == null) {
@@ -152,7 +157,7 @@ public class DataInitializer implements CommandLineRunner {
                 profesor.setCorreo(CORREO_PROFESOR);
                 profesor.setTelefono("-");
                 profesorService.guardarProfesor(profesor);
-                System.out.println("✅ Entidad Profesor creada");
+                log.info("Entidad Profesor creada");
             }
 
             Usuario usuario = new Usuario();
@@ -166,15 +171,15 @@ public class DataInitializer implements CommandLineRunner {
             usuario.setProfesor(profesor);
 
             usuarioRepository.save(usuario);
-            System.out.println("✅ Usuario Administrador creado y vinculado (correo: " + CORREO_PROFESOR + ")");
+            log.info("Usuario Administrador creado y vinculado (correo: {})", CORREO_PROFESOR);
         } catch (Exception e) {
-            System.err.println("❌ Error creando usuario profesor: " + e.getMessage());
+            log.error("Error creando usuario profesor: {}", e.getMessage(), e);
         }
     }
 
     private void createDeveloperUsuarioIfNeeded() {
         try {
-            java.util.Optional<Usuario> usuarioExistente = usuarioRepository.findFirstByCorreo(CORREO_DEVELOPER);
+            Optional<Usuario> usuarioExistente = usuarioRepository.findFirstByCorreo(CORREO_DEVELOPER);
             if (usuarioExistente.isPresent()) {
                 Usuario usuario = usuarioExistente.get();
                 boolean actualizado = false;
@@ -189,7 +194,7 @@ public class DataInitializer implements CommandLineRunner {
                 if (actualizado) {
                     usuarioRepository.save(usuario);
                 }
-                System.out.println("ℹ️ Usuario developer ya existe");
+                log.info("Usuario developer ya existe");
                 return;
             }
 
@@ -203,9 +208,9 @@ public class DataInitializer implements CommandLineRunner {
             usuario.setAvatar("/img/avatar1.png");
 
             usuarioRepository.save(usuario);
-            System.out.println("✅ Usuario developer creado (correo: " + CORREO_DEVELOPER + ")");
+            log.info("Usuario developer creado (correo: {})", CORREO_DEVELOPER);
         } catch (Exception e) {
-            System.err.println("❌ Error creando usuario developer: " + e.getMessage());
+            log.error("Error creando usuario developer: {}", e.getMessage(), e);
         }
     }
 
@@ -217,14 +222,14 @@ public class DataInitializer implements CommandLineRunner {
             // Solo ejecutar si hay usuarios sin avatar
             long usuariosSinAvatar = usuarioRepository.countByAvatarIsNullOrAvatar("");
             if (usuariosSinAvatar > 0) {
-                System.out.println("🎨 Asignando avatares a " + usuariosSinAvatar + " usuarios...");
+                log.info("Asignando avatares a {} usuarios...", usuariosSinAvatar);
                 usuarioService.asignarAvataresAUsuariosExistentes();
-                System.out.println("✅ Avatares asignados correctamente");
+                log.info("Avatares asignados correctamente");
             } else {
-                System.out.println("ℹ️ Todos los usuarios ya tienen avatares asignados");
+                log.info("Todos los usuarios ya tienen avatares asignados");
             }
         } catch (Exception e) {
-            System.err.println("❌ Error asignando avatares: " + e.getMessage());
+            log.error("Error asignando avatares: {}", e.getMessage(), e);
         }
     }
 
@@ -235,12 +240,12 @@ public class DataInitializer implements CommandLineRunner {
     private void asegurarEjerciciosPredeterminadosSiNecesario() {
         try {
             if (exerciseService.countEjerciciosPredeterminados() == 0) {
-                System.out.println("📦 Cargando 60 ejercicios predeterminados...");
+                log.info("Cargando 60 ejercicios predeterminados...");
                 int cargados = exerciseCargaDefaultOptimizado.asegurarEjerciciosPredeterminados();
-                System.out.println("✅ Ejercicios predeterminados cargados: " + cargados);
+                log.info("Ejercicios predeterminados cargados: {}", cargados);
             }
         } catch (Exception e) {
-            System.err.println("⚠️ No se pudieron cargar ejercicios predeterminados: " + e.getMessage());
+            log.warn("No se pudieron cargar ejercicios predeterminados: {}", e.getMessage());
         }
     }
 
@@ -249,13 +254,11 @@ public class DataInitializer implements CommandLineRunner {
      */
     private void markAsInitialized() {
         try {
-            usuarioRepository.findFirstByCorreo(CORREO_PROFESOR).ifPresent(u -> {
-                System.out.println("✅ Sistema inicializado correctamente:");
-                System.out.println("   Usuario: " + u.getNombre() + " (" + u.getCorreo() + ")");
-                System.out.println("   Rol: " + u.getRol());
-            });
+            usuarioRepository.findFirstByCorreo(CORREO_PROFESOR).ifPresent(u ->
+                    log.info("Sistema inicializado correctamente — Usuario: {} ({}) — Rol: {}",
+                            u.getNombre(), u.getCorreo(), u.getRol()));
         } catch (Exception e) {
-            System.err.println("⚠️ Error verificando inicialización: " + e.getMessage());
+            log.warn("Error verificando inicialización: {}", e.getMessage());
         }
     }
 }

@@ -15,15 +15,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import org.springframework.http.ResponseEntity;
-
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
-import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.time.LocalDate;
@@ -34,6 +29,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.Objects;
+import com.migimvirtual.entidades.Exercise;
 import com.migimvirtual.entidades.GrupoMuscular;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.multipart.MultipartFile;
@@ -311,6 +307,12 @@ public class ProfesorController {
             return "redirect:/profesor/dashboard?error=alumno_sin_profesor";
         }
         Profesor profesor = getProfesorParaUsuarioActual(usuarioActual);
+        if (usuarioActual == null || profesor == null) {
+            return "redirect:/login?error=true";
+        }
+        if (!profesor.getId().equals(alumno.getProfesor().getId())) {
+            return "redirect:/profesor/dashboard?error=No+tiene+permiso";
+        }
         model.addAttribute("alumno", alumno);
         model.addAttribute("usuariosSistema", usuarioService.getUsuariosSistema());
         model.addAttribute("historialEstadoFormateado", formatearFechasEnHistorialEstado(alumno.getHistorialEstado()));
@@ -1048,21 +1050,19 @@ public class ProfesorController {
         }
 
         Long profesorId = profesor.getId();
-        System.out.println("=== DEBUG ENDPOINT: Profesor ID: " + profesorId + " ===");
-        
-        List<com.migimvirtual.entidades.Exercise> ejercicios = exerciseService.findExercisesByProfesorId(profesorId);
-        System.out.println("=== DEBUG ENDPOINT: Ejercicios encontrados: " + ejercicios.size() + " ===");
-        
-        // Debug: Imprimir TODOS los ejercicios
+        logger.debug("DEBUG mis-ejercicios: Profesor ID: {}", profesorId);
+
+        List<Exercise> ejercicios = exerciseService.findExercisesByProfesorId(profesorId);
+        logger.debug("DEBUG mis-ejercicios: ejercicios encontrados: {}", ejercicios.size());
+
         for (int i = 0; i < ejercicios.size(); i++) {
-            com.migimvirtual.entidades.Exercise e = ejercicios.get(i);
-            System.out.println("=== DEBUG ENDPOINT: Ejercicio " + i + ": ID=" + e.getId() + 
-                             ", Nombre=" + e.getName() + 
-                             ", Profesor=" + (e.getProfesor() != null ? e.getProfesor().getId() : "NULL") + " ===");
+            Exercise e = ejercicios.get(i);
+            logger.debug("DEBUG mis-ejercicios: [{}] ID={} Nombre={} Profesor={}",
+                    i, e.getId(), e.getName(),
+                    e.getProfesor() != null ? e.getProfesor().getId() : "NULL");
         }
-        
-        // Debug: Verificar el modelo
-        System.out.println("=== DEBUG ENDPOINT: Agregando ejercicios al modelo: " + ejercicios.size() + " ===");
+
+        logger.debug("DEBUG mis-ejercicios: agregando {} ejercicios al modelo", ejercicios.size());
         
         model.addAttribute("ejercicios", ejercicios);
         model.addAttribute("totalEjercicios", ejercicios.size());

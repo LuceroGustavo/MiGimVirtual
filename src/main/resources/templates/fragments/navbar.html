@@ -1,6 +1,6 @@
-<!-- fragments/navbar.html - MiGymVirtual. Fondo unificado y texto negro. Móvil: compacto (logo, texto, sobre, nombre, logout). -->
-<nav th:fragment="navbar" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/springsecurity"
-     class="navbar navbar-expand-lg navbar-matt shadow-sm"
+<!-- fragments/navbar.html - MiGymVirtual. Fragmento navbar = barra + modal salida + script (todo junto para th:replace). -->
+<th:block th:fragment="navbar" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/springsecurity">
+<nav class="navbar navbar-expand-lg navbar-matt shadow-sm"
      style="background-image: url('/img/fondo-navbar.png'); background-size: cover; background-position: center; background-color: #e0e0e0;">
     <style>
         .navbar-matt .navbar-brand span, .navbar-matt .text-navbar { color: #000 !important; }
@@ -41,7 +41,7 @@
                 <a th:if="${currentUser.rol == 'ADMIN' or currentUser.rol == 'AYUDANTE' or currentUser.rol == 'DEVELOPER'}" th:href="@{/profesor/dashboard}" class="btn btn-outline-navbar me-3 navbar-panel">
                     <i class="fas fa-tachometer-alt me-1"></i> Ir a mi Panel
                 </a>
-                <a th:if="${currentUser.rol == 'ADMIN' or currentUser.rol == 'DEVELOPER'}" th:href="@{/profesor/pagina-publica}" class="btn btn-outline-navbar me-3 position-relative navbar-envelope-mobile" title="Consultas recibidas">
+                <a th:if="${currentUser.rol == 'ADMIN' or currentUser.rol == 'DEVELOPER'}" th:href="@{/profesor/pagina-publica}" class="btn btn-outline-navbar me-3 position-relative navbar-envelope-mobile" data-mgv-salida="consultas-nav" title="Consultas recibidas">
                     <i class="fas fa-envelope"></i>
                     <span th:if="${cantidadConsultas != null && cantidadConsultas > 0}" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" th:text="${cantidadConsultas}">0</span>
                 </a>
@@ -53,7 +53,7 @@
                 <img th:src="${currentUser.avatar != null and !#strings.isEmpty(currentUser.avatar) and currentUser.avatar != 'null' and currentUser.avatar != '/img/not_imagen.png' ? currentUser.avatar : '/img/avatar1.png'}"
                      alt="Avatar" style="width: 45px; height: 45px;" class="rounded-circle border border-secondary navbar-avatar"
                      onerror="this.src='/img/avatar1.png'">
-                <a th:href="@{/logout}" class="btn btn-danger ms-3 btn-logout-mobile">Salir</a>
+                <a th:href="@{/logout}" class="btn btn-danger ms-3 btn-logout-mobile" data-mgv-salida="logout">Salir</a>
             </div>
 
             <div sec:authorize="!isAuthenticated()">
@@ -64,3 +64,35 @@
         </div>
     </div>
 </nav>
+
+<!-- Modal confirmación salida (móvil ≤991px, entorno 2) — mismo estilo que modales del panel -->
+<div class="modal fade" id="modalMgvConfirmSalida" tabindex="-1" aria-labelledby="modalMgvConfirmSalidaTitulo" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header modal-confirmar-header">
+                <h5 class="modal-title" id="modalMgvConfirmSalidaTitulo"><i class="fas fa-question-circle me-2"></i>Confirmar</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <div class="modal-body text-muted" id="modalMgvConfirmSalidaBody"></div>
+            <div class="modal-footer modal-confirmar-footer d-flex gap-2 justify-content-end flex-wrap">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal" id="modalMgvConfirmSalidaCancel">Cancelar</button>
+                <button type="button" class="btn btn-primary" id="modalMgvConfirmSalidaBtn">Aceptar</button>
+            </div>
+        </div>
+    </div>
+</div>
+<style>
+    /* Fallback si la página no carga style.css (p. ej. manual embebido): gradiente Mattfuncional */
+    #modalMgvConfirmSalida .modal-confirmar-header {
+        background: linear-gradient(135deg, #5e35b1 0%, #7e57c2 100%) !important;
+        color: #fff !important;
+        border-radius: 0.5rem 0.5rem 0 0;
+    }
+    #modalMgvConfirmSalida .modal-confirmar-header .btn-close { filter: brightness(0) invert(1); }
+    #modalMgvConfirmSalida .modal-confirmar-footer .btn-primary {
+        background: linear-gradient(135deg, #5e35b1, #7e57c2);
+        border: none;
+    }
+</style>
+<script th:src="@{/js/mgv-salida-movil.js}" defer></script>
+</th:block>
