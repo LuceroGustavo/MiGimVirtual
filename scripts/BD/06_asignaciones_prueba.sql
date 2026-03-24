@@ -65,26 +65,26 @@ END$$
 DELIMITER ;
 
 -- Plantillas: test_rutina1_abc123456789 … test_rutina12_cde789012345678
--- Tokens asignación: exactamente ≤32 caracteres y únicos
+-- Tokens asignación: máx. 32 caracteres (columna token_publico); prefijo test_asgnNN_
 
-CALL mgv_asignar_rutina_plantilla('test_rutina1_abc123456789', 'test_alumno_1@migimvirtual.test', 'test_asign01_abcdefghij1234567890', 'Plan fuerza — seguimos con 3 series por bloque.');
-CALL mgv_asignar_rutina_plantilla('test_rutina2_def456789012', 'test_alumno_2@migimvirtual.test', 'test_asign02_abcdefghij1234567891', 'Cardio + full body para bajar impacto en rodilla.');
-CALL mgv_asignar_rutina_plantilla('test_rutina3_ghi789012345', 'test_alumno_3@migimvirtual.test', 'test_asign03_abcdefghij1234567892', 'Split superior/inferior — ajustar cargas según PA.');
-CALL mgv_asignar_rutina_plantilla('test_rutina4_jkl012345678', 'test_alumno_4@migimvirtual.test', 'test_asign04_abcdefghij1234567893', 'Hombros + movilidad antes de competencia.');
-CALL mgv_asignar_rutina_plantilla('test_rutina5_mno345678901', 'test_alumno_5@migimvirtual.test', 'test_asign05_abcdefghij1234567894', 'Alta intensidad — cuidar lumbar en remo.');
-CALL mgv_asignar_rutina_plantilla('test_rutina6_klm789012345678', 'test_alumno_6@migimvirtual.test', 'test_asign06_abcdefghij1234567895', 'Core y cardio suave por diabetes.');
-CALL mgv_asignar_rutina_plantilla('test_rutina1_abc123456789', 'test_alumno_7@migimvirtual.test', 'test_asign07_abcdefghij1234567896', 'Misma base que María — volumen acuático.');
-CALL mgv_asignar_rutina_plantilla('test_rutina8_qrs345678901234', 'test_alumno_9@migimvirtual.test', 'test_asign08_abcdefghij1234567897', 'Push/pull inclinado para definición.');
-CALL mgv_asignar_rutina_plantilla('test_rutina10_wxy567890123456', 'test_alumno_11@migimvirtual.test', 'test_asign09_abcdefghij1234567898', 'Énfasis piernas en máquina.');
-CALL mgv_asignar_rutina_plantilla('test_rutina7_nop234567890123', 'test_alumno_12@migimvirtual.test', 'test_asign10_abcdefghij1234567899', 'HIIT corto + cadera para running.');
-CALL mgv_asignar_rutina_plantilla('test_rutina11_zab678901234567', 'test_alumno_13@migimvirtual.test', 'test_asign11_abcdefghij1234567900', 'Brazos y agarre — progresar cada 2 semanas.');
-CALL mgv_asignar_rutina_plantilla('test_rutina12_cde789012345678', 'test_alumno_14@migimvirtual.test', 'test_asign12_abcdefghij1234567901', 'Circuito completo + core.');
-CALL mgv_asignar_rutina_plantilla('test_rutina5_mno345678901', 'test_alumno_15@migimvirtual.test', 'test_asign13_abcdefghij1234567902', 'Intensidad alta — descansos 90s.');
-CALL mgv_asignar_rutina_plantilla('test_rutina9_tuv456789012345', 'test_alumno_16@migimvirtual.test', 'test_asign14_abcdefghij1234567903', 'Sesión suave — priorizar cuello.');
-CALL mgv_asignar_rutina_plantilla('test_rutina2_def456789012', 'test_alumno_17@migimvirtual.test', 'test_asign15_abcdefghij1234567904', 'Full body + cardio para danza.');
-CALL mgv_asignar_rutina_plantilla('test_rutina3_ghi789012345', 'test_alumno_18@migimvirtual.test', 'test_asign16_abcdefghij1234567905', 'Split clásico — controlar presión.');
-CALL mgv_asignar_rutina_plantilla('test_rutina4_jkl012345678', 'test_alumno_19@migimvirtual.test', 'test_asign17_abcdefghij1234567906', 'Movilidad + hombros post-parto.');
-CALL mgv_asignar_rutina_plantilla('test_rutina1_abc123456789', 'test_alumno_20@migimvirtual.test', 'test_asign18_abcdefghij1234567907', 'Fuerza general — técnica primero.');
+CALL mgv_asignar_rutina_plantilla('test_rutina1_abc123456789', 'test_alumno_1@migimvirtual.test', 'test_asgn01_abcdefghij1234567890', 'Plan fuerza — seguimos con 3 series por bloque.');
+CALL mgv_asignar_rutina_plantilla('test_rutina2_def456789012', 'test_alumno_2@migimvirtual.test', 'test_asgn02_abcdefghij1234567891', 'Cardio + full body para bajar impacto en rodilla.');
+CALL mgv_asignar_rutina_plantilla('test_rutina3_ghi789012345', 'test_alumno_3@migimvirtual.test', 'test_asgn03_abcdefghij1234567892', 'Split superior/inferior — ajustar cargas según PA.');
+CALL mgv_asignar_rutina_plantilla('test_rutina4_jkl012345678', 'test_alumno_4@migimvirtual.test', 'test_asgn04_abcdefghij1234567893', 'Hombros + movilidad antes de competencia.');
+CALL mgv_asignar_rutina_plantilla('test_rutina5_mno345678901', 'test_alumno_5@migimvirtual.test', 'test_asgn05_abcdefghij1234567894', 'Alta intensidad — cuidar lumbar en remo.');
+CALL mgv_asignar_rutina_plantilla('test_rutina6_klm789012345678', 'test_alumno_6@migimvirtual.test', 'test_asgn06_abcdefghij1234567895', 'Core y cardio suave por diabetes.');
+CALL mgv_asignar_rutina_plantilla('test_rutina1_abc123456789', 'test_alumno_7@migimvirtual.test', 'test_asgn07_abcdefghij1234567896', 'Misma base que María — volumen acuático.');
+CALL mgv_asignar_rutina_plantilla('test_rutina8_qrs345678901234', 'test_alumno_9@migimvirtual.test', 'test_asgn08_abcdefghij1234567897', 'Push/pull inclinado para definición.');
+CALL mgv_asignar_rutina_plantilla('test_rutina10_wxy567890123456', 'test_alumno_11@migimvirtual.test', 'test_asgn09_abcdefghij1234567898', 'Énfasis piernas en máquina.');
+CALL mgv_asignar_rutina_plantilla('test_rutina7_nop234567890123', 'test_alumno_12@migimvirtual.test', 'test_asgn10_abcdefghij1234567899', 'HIIT corto + cadera para running.');
+CALL mgv_asignar_rutina_plantilla('test_rutina11_zab678901234567', 'test_alumno_13@migimvirtual.test', 'test_asgn11_abcdefghij1234567900', 'Brazos y agarre — progresar cada 2 semanas.');
+CALL mgv_asignar_rutina_plantilla('test_rutina12_cde789012345678', 'test_alumno_14@migimvirtual.test', 'test_asgn12_abcdefghij1234567901', 'Circuito completo + core.');
+CALL mgv_asignar_rutina_plantilla('test_rutina5_mno345678901', 'test_alumno_15@migimvirtual.test', 'test_asgn13_abcdefghij1234567902', 'Intensidad alta — descansos 90s.');
+CALL mgv_asignar_rutina_plantilla('test_rutina9_tuv456789012345', 'test_alumno_16@migimvirtual.test', 'test_asgn14_abcdefghij1234567903', 'Sesión suave — priorizar cuello.');
+CALL mgv_asignar_rutina_plantilla('test_rutina2_def456789012', 'test_alumno_17@migimvirtual.test', 'test_asgn15_abcdefghij1234567904', 'Full body + cardio para danza.');
+CALL mgv_asignar_rutina_plantilla('test_rutina3_ghi789012345', 'test_alumno_18@migimvirtual.test', 'test_asgn16_abcdefghij1234567905', 'Split clásico — controlar presión.');
+CALL mgv_asignar_rutina_plantilla('test_rutina4_jkl012345678', 'test_alumno_19@migimvirtual.test', 'test_asgn17_abcdefghij1234567906', 'Movilidad + hombros post-parto.');
+CALL mgv_asignar_rutina_plantilla('test_rutina1_abc123456789', 'test_alumno_20@migimvirtual.test', 'test_asgn18_abcdefghij1234567907', 'Fuerza general — técnica primero.');
 
 DROP PROCEDURE IF EXISTS mgv_asignar_rutina_plantilla;
 
@@ -92,4 +92,4 @@ SET SQL_SAFE_UPDATES = 1;
 
 SELECT CONCAT('Rutinas asignadas de prueba: ', COUNT(*), '.') AS resultado
 FROM rutina
-WHERE token_publico LIKE 'test_asign_%';
+WHERE token_publico LIKE 'test_asgn_%';

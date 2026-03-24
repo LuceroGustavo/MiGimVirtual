@@ -10,7 +10,7 @@ Orden recomendado (primera vez o después de limpiar):
   3. 02_progresos_prueba.sql       — Registros de progreso (varios por alumno)
   4. 03_series_prueba.sql          — 20 series plantilla (requiere ejercicios cargados)
   5. 04_rutinas_prueba.sql         — 12 rutinas plantilla (token test_rutina*)
-  6. 06_asignaciones_prueba.sql    — Rutinas asignadas a alumnos (token test_asign_*)
+  6. 06_asignaciones_prueba.sql    — Rutinas asignadas a alumnos (tokens test_asgn_*)
 
 Otros:
 

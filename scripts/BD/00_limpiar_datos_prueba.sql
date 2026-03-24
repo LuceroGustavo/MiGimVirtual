@@ -52,21 +52,21 @@ DELETE FROM serie WHERE es_plantilla = 1 AND rutina_id IS NULL AND profesor_id =
     'Enfriamiento Activo', 'Superserie Brazos'
   );
 
--- Rutinas asignadas de prueba (tokens test_asign_*) — antes de borrar usuarios
+-- Rutinas asignadas de prueba (tokens test_asign_* o test_asgn_* ≤32 caracteres) — antes de borrar usuarios
 DELETE se FROM serie_ejercicio se
 JOIN serie s ON se.serie_id = s.id
 JOIN rutina r ON s.rutina_id = r.id
-WHERE r.token_publico LIKE 'test_asign_%' AND r.profesor_id = @profesor_id;
+WHERE (r.token_publico LIKE 'test_asign_%' OR r.token_publico LIKE 'test_asgn_%') AND r.profesor_id = @profesor_id;
 
 DELETE s FROM serie s
 JOIN rutina r ON s.rutina_id = r.id
-WHERE r.token_publico LIKE 'test_asign_%' AND r.profesor_id = @profesor_id;
+WHERE (r.token_publico LIKE 'test_asign_%' OR r.token_publico LIKE 'test_asgn_%') AND r.profesor_id = @profesor_id;
 
 DELETE rc FROM rutina_categoria rc
 JOIN rutina r ON rc.rutina_id = r.id
-WHERE r.token_publico LIKE 'test_asign_%' AND r.profesor_id = @profesor_id;
+WHERE (r.token_publico LIKE 'test_asign_%' OR r.token_publico LIKE 'test_asgn_%') AND r.profesor_id = @profesor_id;
 
-DELETE FROM rutina WHERE token_publico LIKE 'test_asign_%' AND profesor_id = @profesor_id;
+DELETE FROM rutina WHERE (token_publico LIKE 'test_asign_%' OR token_publico LIKE 'test_asgn_%') AND profesor_id = @profesor_id;
 
 -- Eliminar progresos de usuarios de prueba
 DELETE rp FROM registro_progreso rp

@@ -15,12 +15,12 @@ Sin ejercicios, el script `03` puede insertar filas inconsistentes en `serie_eje
 
 | Orden | Archivo | Descripción |
 |------:|---------|-------------|
-| 0 (opc.) | `00_limpiar_datos_prueba.sql` | Elimina datos de prueba (`test_rutina*`, series plantilla de prueba, `test_asign_*`, usuarios `test_alumno_*`, progresos asociados) |
+| 0 (opc.) | `00_limpiar_datos_prueba.sql` | Elimina datos de prueba (`test_rutina*`, series plantilla de prueba, `test_asign_*` / `test_asgn_*`, usuarios `test_alumno_*`, progresos asociados) |
 | 1 | `01_usuarios_prueba.sql` | **20** alumnos (`test_alumno_1` … `test_alumno_20@migimvirtual.test`) |
 | 2 | `02_progresos_prueba.sql` | Registros en `registro_progreso` (varios por alumno; volumen extra para probar UI) |
 | 3 | `03_series_prueba.sql` | **20** series plantilla con ejercicios |
 | 4 | `04_rutinas_prueba.sql` | **12** rutinas plantilla (`token_publico` `test_rutina*`) |
-| 5 | `06_asignaciones_prueba.sql` | Procedimiento almacenado + **rutinas asignadas** a alumnos (`test_asign_*`) |
+| 5 | `06_asignaciones_prueba.sql` | Procedimiento almacenado + **rutinas asignadas** a alumnos (`test_asgn_*`, ≤32 caracteres) |
 | — | `05_reparar_serie_ejercicios_nulos.sql` | **Solo reparación:** borra `serie_ejercicio` con `exercise_id` NULL |
 
 **No** ejecutar `06` antes de `04`. Tras limpiar con `00`, volver a ejecutar `01` → `06`.
@@ -44,12 +44,12 @@ mysql -u root -p migimvirtual < scripts/BD/01_usuarios_prueba.sql
 | 02 | Varios `registro_progreso` por alumno |
 | 03 | 20 series plantilla (`serie` + `serie_ejercicio`) |
 | 04 | 12 rutinas plantilla + categorías + series copiadas en cada rutina |
-| 06 | ~18 rutinas **asignadas** (copias con `usuario_id`, token `test_asign_%`) |
+| 06 | ~18 rutinas **asignadas** (copias con `usuario_id`, token `test_asgn_%`) |
 
 Tokens de prueba:
 
 - Plantillas: `test_rutina1_…` … `test_rutina12_…`
-- Asignadas: `test_asign_…`
+- Asignadas: `test_asgn_…`
 
 ---
 
