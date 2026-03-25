@@ -6,6 +6,8 @@ Documentación de referencia para **producción** en el servidor Donweb: misma m
 
 **Perfil Spring en servidor:** `donweb` (`--spring.profiles.active=donweb`)
 
+**Alcance del entorno:** el VPS descrito aquí es **controlado por el titular del proyecto** y se usa de forma habitual para **pruebas, demos con clientes y promoción** de MiGymVirtual. No define por sí solo un “servidor final” obligatorio para terceros: cada despliegue comercial puede usar otro hosting o infraestructura según contrato.
+
 ---
 
 ## 1. Cómo encaja en el VPS (dos apps, dos puertos)

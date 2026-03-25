@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import jakarta.servlet.http.HttpServletRequest;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -41,7 +43,7 @@ public class PortalControlador {
 
     /** Página de inicio: landing pública (estilo RedFit). Acceso a la parte privada por ícono de login arriba. */
     @GetMapping("/")
-    public String index(Model model) {
+    public String index(Model model, HttpServletRequest request) {
         try {
             com.migimvirtual.entidades.Usuario usuarioActual = usuarioService.getUsuarioActual();
             if (usuarioActual != null) {
@@ -51,21 +53,40 @@ public class PortalControlador {
             // Usuario no autenticado
         }
         configuracionPaginaPublicaService.rellenarModeloPaginaPublica(model);
+        rellenarOpenGraph(model, request, "/",
+                "MiGymVirtual — Envío de rutinas y seguimiento virtual",
+                "Plataforma para profesores: rutinas personalizadas, seguimiento de alumnos y entrenamiento online donde estés.");
         return "index-publica";
     }
 
     /** Ruta alternativa que también muestra la misma página pública (por si se enlaza desde algún lado). */
     @GetMapping("/publica")
-    public String indexPublica(Model model) {
-        return index(model);
+    public String indexPublica(Model model, HttpServletRequest request) {
+        return index(model, request);
     }
 
     /** Página de planes (pública). Cards con precios, servicios, días/horarios y formulario de consulta. */
     @GetMapping("/planes")
-    public String planes(Model model) {
+    public String planes(Model model, HttpServletRequest request) {
         configuracionPaginaPublicaService.rellenarModeloPaginaPublica(model);
         model.addAttribute("planes", planPublicoService.getPlanesActivosParaPublica());
+        rellenarOpenGraph(model, request, "/planes",
+                "Planes y servicios — MiGymVirtual",
+                "Consultá opciones de entrenamiento, seguimiento virtual y rutinas personalizadas para vos o tu equipo.");
         return "planes-publica";
+    }
+
+    /** URLs absolutas y textos para Open Graph / WhatsApp (misma imagen que el navbar: mgvirtual_logo1.png). */
+    private static void rellenarOpenGraph(Model model, HttpServletRequest request, String pathRelativo,
+                                         String ogTitle, String ogDescription) {
+        int port = request.getServerPort();
+        String baseUrl = request.getScheme() + "://" + request.getServerName()
+                + (port != 80 && port != 443 ? ":" + port : "");
+        String path = pathRelativo.startsWith("/") ? pathRelativo : "/" + pathRelativo;
+        model.addAttribute("ogTitle", ogTitle);
+        model.addAttribute("ogDescription", ogDescription);
+        model.addAttribute("ogImageUrl", baseUrl + "/img/mgvirtual_logo1.png");
+        model.addAttribute("ogPageUrl", baseUrl + path);
     }
 
     /* GET /login lo maneja WebMvcConfig (view "login") para mostrar siempre la plantilla Iniciar Sesión. */
@@ -117,9 +138,9 @@ public class PortalControlador {
             
             // Verificar archivos estáticos
             try {
-                Resource logoResource = new ClassPathResource("static/img/logo.png");
+                Resource logoResource = new ClassPathResource("static/img/mgvirtual_logo1.png");
                 status.put("logoExiste", logoResource.exists());
-                status.put("logoPath", "/img/logo.png");
+                status.put("logoPath", "/img/mgvirtual_logo1.png");
             } catch (Exception e) {
                 status.put("logoExiste", false);
                 status.put("logoError", e.getMessage());

@@ -1194,7 +1194,7 @@ public class ProfesorController {
             int port = request.getServerPort();
             String baseUrl = request.getScheme() + "://" + request.getServerName()
                     + (port != 80 && port != 443 ? ":" + port : "");
-            model.addAttribute("ogImageUrl", baseUrl + "/img/logo.png");
+            model.addAttribute("ogImageUrl", baseUrl + "/img/mgvirtual_logo1.png");
             model.addAttribute("ogPageUrl", baseUrl + "/profesor/rutinas/ver/" + id);
             model.addAttribute("esVistaEscritorio", false); // Responsive: misma vista que enlace compartido (1 col móvil)
             return "rutinas/verRutina";
