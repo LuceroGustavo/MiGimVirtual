@@ -9,9 +9,10 @@
     <meta property="og:title" content="MiGymVirtual te ha enviado una rutina">
     <meta property="og:description" content="Tu profesor te compartió una rutina en MiGymVirtual. Abrí el enlace para ver ejercicios y seguimiento.">
     <meta property="og:image" th:content="${ogImageUrl}">
+    <th:block th:replace="~{fragments/open-graph-image-meta :: og-image-extra}"></th:block>
     <meta property="og:url" th:content="${ogPageUrl}">
     <meta property="og:locale" content="es_AR">
-    <meta name="twitter:card" content="summary">
+    <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="MiGymVirtual te ha enviado una rutina">
     <meta name="twitter:description" content="Tu profesor te compartió una rutina en MiGymVirtual. Abrí el enlace para ver ejercicios y seguimiento.">
     <meta name="twitter:image" th:content="${ogImageUrl}">

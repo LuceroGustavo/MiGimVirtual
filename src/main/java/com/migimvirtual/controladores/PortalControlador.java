@@ -6,6 +6,7 @@ import com.migimvirtual.servicios.PlanPublicoService;
 import com.migimvirtual.servicios.UsuarioService;
 import com.migimvirtual.servicios.ExerciseService;
 import com.migimvirtual.servicios.ProfesorService;
+import com.migimvirtual.config.OpenGraphBrandLogo;
 import com.migimvirtual.config.PublicBaseUrlResolver;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -87,7 +88,7 @@ public class PortalControlador {
         String path = pathRelativo.startsWith("/") ? pathRelativo : "/" + pathRelativo;
         model.addAttribute("ogTitle", ogTitle);
         model.addAttribute("ogDescription", ogDescription);
-        model.addAttribute("ogImageUrl", baseUrl + "/img/mgvirtual_logo1.png");
+        OpenGraphBrandLogo.addLogoToModel(model, baseUrl);
         model.addAttribute("ogPageUrl", baseUrl + path);
     }
 

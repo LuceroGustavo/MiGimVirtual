@@ -19,11 +19,13 @@
 | Qué | Dónde |
 |-----|--------|
 | Confianza en cabeceras del proxy (`X-Forwarded-Proto`, etc.) | `application-donweb.properties`: `server.forward-headers-strategy=framework` |
-| URL base pública opcional por variable de entorno | `migimvirtual.public-base-url=${MIGIMVIRTUAL_PUBLIC_BASE_URL:}` (mismo archivo) |
+| URL base pública HTTPS por defecto en **donweb** (si no hay env) | `migimvirtual.public-base-url=${MIGIMVIRTUAL_PUBLIC_BASE_URL:https://migimvirtual.detodoya.com.ar}` — evita `og:image` con `http://…:8081` cuando el crawler no refleja bien los forwarded headers |
 | Resolución centralizada de la base URL para OG | `com.migimvirtual.config.PublicBaseUrlResolver` |
-| Uso del resolvedor + imagen **`/img/mgvirtual_logo1.png`** (mismo logo que el navbar) | `PortalControlador` (landing `/` y `/planes`), `RutinaControlador` (`/rutinas/hoja/{token}`), `ProfesorController` (vista privada de rutina que reutiliza OG) |
+| Mismo logo que navbar + dimensiones para Meta | `com.migimvirtual.config.OpenGraphBrandLogo` (`PATH`, `WIDTH`/`HEIGHT` 738×738); `addLogoToModel` en controladores |
+| Meta extra `og:image:secure_url`, `width`, `height`, `type`, `alt` | Fragmento `fragments/open-graph-image-meta.html` incluido en `index-publica`, `planes-publica`, `verRutina` |
+| Uso del resolvedor + logo | `PortalControlador` (landing `/` y `/planes`), `RutinaControlador` (`/rutinas/hoja/{token}`), `ProfesorController` (vista privada de rutina que reutiliza OG) |
 | Meta tags OG en plantillas públicas | `index-publica.html`, `planes-publica.html`; hoja pública `verRutina.html` |
-| Endpoint `/status` comprobando existencia del logo en classpath | `PortalControlador` (ruta `/img/mgvirtual_logo1.png`) |
+| Endpoint `/status` comprobando existencia del logo en classpath | `PortalControlador` (recurso `static/img/mgvirtual_logo1.png`) |
 
 **Imagen social:** siempre **`mgvirtual_logo1.png`** (no `logo.png` ni `logo matt.jpeg`).
 
@@ -73,10 +75,9 @@ Guardar, `nginx -t`, `systemctl reload nginx`.
 
 ## 7. Pendiente / revisión posterior
 
-- [ ] Confirmar en el servidor que el JAR desplegado incluye estos cambios (`git pull`, build, reinicio).
+- [ ] Desplegar JAR con `OpenGraphBrandLogo`, fragmento `open-graph-image-meta` y default `migimvirtual.public-base-url` en **donweb** (`git pull`, `mvn package`, reinicio).
 - [ ] Confirmar `proxy_set_header` en el `server` real del subdominio (no solo la plantilla del repo).
-- [ ] Si sigue fallando: fijar `MIGIMVIRTUAL_PUBLIC_BASE_URL`, reiniciar, repetir §5.
-- [ ] Limpiar caché en el depurador de Meta y reintentar WhatsApp.
+- [ ] [Sharing Debugger](https://developers.facebook.com/tools/debug/) → “Scrape Again” y volver a pegar el enlace en WhatsApp (caché).
 
 ---
 

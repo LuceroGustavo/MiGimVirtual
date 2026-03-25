@@ -36,6 +36,7 @@ import org.springframework.web.multipart.MultipartFile;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import com.migimvirtual.config.OpenGraphBrandLogo;
 import com.migimvirtual.config.PublicBaseUrlResolver;
 
 @Controller
@@ -1196,7 +1197,7 @@ public class ProfesorController {
                 model.addAttribute("fechaFormateada", "");
             }
             String baseUrl = publicBaseUrlResolver.resolvePublicBaseUrl(request);
-            model.addAttribute("ogImageUrl", baseUrl + "/img/mgvirtual_logo1.png");
+            OpenGraphBrandLogo.addLogoToModel(model, baseUrl);
             model.addAttribute("ogPageUrl", baseUrl + "/profesor/rutinas/ver/" + id);
             model.addAttribute("esVistaEscritorio", false); // Responsive: misma vista que enlace compartido (1 col móvil)
             return "rutinas/verRutina";

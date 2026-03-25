@@ -10,6 +10,7 @@ import com.migimvirtual.servicios.UsuarioService;
 import com.migimvirtual.servicios.SerieService;
 import com.migimvirtual.servicios.ProfesorService;
 import com.migimvirtual.excepciones.ResourceNotFoundException;
+import com.migimvirtual.config.OpenGraphBrandLogo;
 import com.migimvirtual.config.PublicBaseUrlResolver;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -309,7 +310,7 @@ public class RutinaControlador {
             }
             // URLs absolutas para Open Graph / WhatsApp (HTTPS vía Nginx, no :8081)
             String baseUrl = publicBaseUrlResolver.resolvePublicBaseUrl(request);
-            model.addAttribute("ogImageUrl", baseUrl + "/img/mgvirtual_logo1.png");
+            OpenGraphBrandLogo.addLogoToModel(model, baseUrl);
             model.addAttribute("ogPageUrl", baseUrl + "/rutinas/hoja/" + rutina.getTokenPublico());
             model.addAttribute("esVistaEscritorio", false); // Responsive: rutina asignada (enlace alumno)
             return "rutinas/verRutina";

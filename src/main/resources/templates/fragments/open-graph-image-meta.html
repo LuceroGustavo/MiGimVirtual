@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<!-- Meta adicionales para crawlers Meta/WhatsApp (mismo logo que navbar: mgvirtual_logo1.png) -->
+<th:block th:fragment="og-image-extra">
+    <meta property="og:image:secure_url" th:content="${ogImageUrl}">
+    <meta property="og:image:width" th:content="${ogImageWidth}">
+    <meta property="og:image:height" th:content="${ogImageHeight}">
+    <meta property="og:image:type" content="image/png">
+    <meta property="og:image:alt" content="MiGymVirtual">
+</th:block>
+</body>
+</html>
