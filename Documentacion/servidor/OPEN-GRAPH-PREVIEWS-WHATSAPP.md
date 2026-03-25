@@ -20,7 +20,7 @@
 |-----|--------|
 | Confianza en cabeceras del proxy (`X-Forwarded-Proto`, etc.) | `application-donweb.properties`: `server.forward-headers-strategy=framework` |
 | URL base pública HTTPS por defecto en **donweb** (si no hay env) | `migimvirtual.public-base-url=${MIGIMVIRTUAL_PUBLIC_BASE_URL:https://migimvirtual.detodoya.com.ar}` — evita `og:image` con `http://…:8081` cuando el crawler no refleja bien los forwarded headers |
-| Resolución centralizada de la base URL para OG | `com.migimvirtual.config.PublicBaseUrlResolver` — si el `Host` es `migimvirtual.detodoya.com.ar`, fuerza `https://…` aunque el request llegue como `http` (crawlers detrás del proxy) |
+| Resolución centralizada de la base URL para OG | `com.migimvirtual.config.PublicBaseUrlResolver` — si el `Host` es `migimvirtual.detodoya.com.ar`, fuerza `https://…`; si `migimvirtual.public-base-url` o la env `MIGIMVIRTUAL_PUBLIC_BASE_URL` vienen como `http://migimvirtual.detodoya.com.ar`, se normalizan a **https** (evita `og:url` en HTTP cuando la canonical es HTTPS) |
 | Mismo logo que navbar + dimensiones para Meta | `com.migimvirtual.config.OpenGraphBrandLogo` (`PATH`, `WIDTH`/`HEIGHT` 738×738); `addLogoToModel` en controladores |
 | Meta extra `og:image:secure_url`, `width`, `height`, `type`, `alt` | Fragmento `fragments/open-graph-image-meta.html` incluido en `index-publica`, `planes-publica`, `verRutina` |
 | Uso del resolvedor + logo | `PortalControlador` (landing `/` y `/planes`), `RutinaControlador` (`/rutinas/hoja/{token}`), `ProfesorController` (vista privada de rutina que reutiliza OG) |
@@ -66,14 +66,20 @@ Guardar, `nginx -t`, `systemctl reload nginx`.
 
 ---
 
-## 6. WhatsApp y caché
+## 6. Advertencia `fb:app_id` en el depurador
+
+Meta puede mostrar *“Falta la propiedad fb:app_id”*. **No es obligatoria** para la vista previa de enlace (título, descripción, imagen). Solo hace falta si usás funciones que dependen de una app de Facebook. Podés ignorarla para MiGymVirtual o añadir más adelante un `<meta property="fb:app_id" content="...">` si creás una app en developers.facebook.com.
+
+---
+
+## 7. WhatsApp y caché
 
 - Los previews **se cachean**. Tras cambiar OG o desplegar, puede tardar o requerir el depurador de Meta y **volver a pegar el enlace** en un chat de prueba.
 - No confundir con el favicon del teléfono: lo que importa para la tarjeta es `og:image` y que la URL sea accesible públicamente por HTTPS.
 
 ---
 
-## 7. Pendiente / revisión posterior
+## 8. Pendiente / revisión posterior
 
 - [ ] Desplegar JAR con `OpenGraphBrandLogo`, fragmento `open-graph-image-meta` y default `migimvirtual.public-base-url` en **donweb** (`git pull`, `mvn package`, reinicio).
 - [ ] Confirmar `proxy_set_header` en el `server` real del subdominio (no solo la plantilla del repo).
