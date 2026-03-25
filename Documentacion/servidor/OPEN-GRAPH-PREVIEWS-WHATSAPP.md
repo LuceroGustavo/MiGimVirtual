@@ -20,7 +20,7 @@
 |-----|--------|
 | Confianza en cabeceras del proxy (`X-Forwarded-Proto`, etc.) | `application-donweb.properties`: `server.forward-headers-strategy=framework` |
 | URL base pública HTTPS por defecto en **donweb** (si no hay env) | `migimvirtual.public-base-url=${MIGIMVIRTUAL_PUBLIC_BASE_URL:https://migimvirtual.detodoya.com.ar}` — evita `og:image` con `http://…:8081` cuando el crawler no refleja bien los forwarded headers |
-| Resolución centralizada de la base URL para OG | `com.migimvirtual.config.PublicBaseUrlResolver` |
+| Resolución centralizada de la base URL para OG | `com.migimvirtual.config.PublicBaseUrlResolver` — si el `Host` es `migimvirtual.detodoya.com.ar`, fuerza `https://…` aunque el request llegue como `http` (crawlers detrás del proxy) |
 | Mismo logo que navbar + dimensiones para Meta | `com.migimvirtual.config.OpenGraphBrandLogo` (`PATH`, `WIDTH`/`HEIGHT` 738×738); `addLogoToModel` en controladores |
 | Meta extra `og:image:secure_url`, `width`, `height`, `type`, `alt` | Fragmento `fragments/open-graph-image-meta.html` incluido en `index-publica`, `planes-publica`, `verRutina` |
 | Uso del resolvedor + logo | `PortalControlador` (landing `/` y `/planes`), `RutinaControlador` (`/rutinas/hoja/{token}`), `ProfesorController` (vista privada de rutina que reutiliza OG) |

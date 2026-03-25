@@ -23,6 +23,10 @@ public class PublicBaseUrlResolver {
         int port = request.getServerPort();
         String scheme = request.getScheme();
         String host = request.getServerName();
+        // Detrás de Nginx, algunos crawlers (Meta) a veces ven scheme=http; el sitio público es siempre HTTPS.
+        if ("migimvirtual.detodoya.com.ar".equalsIgnoreCase(host)) {
+            return "https://migimvirtual.detodoya.com.ar";
+        }
         boolean defaultPort = ("http".equals(scheme) && port == 80)
                 || ("https".equals(scheme) && port == 443);
         return scheme + "://" + host + (defaultPort ? "" : ":" + port);
