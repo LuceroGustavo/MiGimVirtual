@@ -313,6 +313,8 @@ export MIGIMVIRTUAL_PUBLIC_BASE_URL=https://migimvirtual.detodoya.com.ar
 
 (Propiedad Spring: `migimvirtual.public-base-url`.) Tras cambiar textos o imágenes OG, WhatsApp puede **cachear** la vista previa: probá de nuevo más tarde o el [depurador de compartidos de Meta](https://developers.facebook.com/tools/debug/).
 
+**Guía detallada (archivos tocados, checklist, verificación):** [OPEN-GRAPH-PREVIEWS-WHATSAPP.md](OPEN-GRAPH-PREVIEWS-WHATSAPP.md).
+
 **Tamaño de subida:** si subís ZIP grandes, en Nginx puede hacer falta `client_max_body_size` (p. ej. `50M`) en el `server` del subdominio.
 
 ---

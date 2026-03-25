@@ -28,6 +28,7 @@ Orden sugerido para **contexto** (IA o nueva PC): [LEEME_PRIMERO.md](LEEME_PRIME
 | **ELIMINACION_CALENDARIO_Y_PIZARRA_MAR2026.md** | Histórico eliminación calendario / pizarra |
 | **CAMBIOS_PANEL_ALUMNO_Y_ASISTENCIAS_MAR2026.md** | Cambios panel alumno (histórico) |
 | **servidor/DESPLIEGUE-DONWEB-MIGIMVIRTUAL.md** | **Producción Donweb:** puerto 8081, SSH/VNC, DNS, Nginx HTTPS, scripts, `.env.production` |
+| **servidor/OPEN-GRAPH-PREVIEWS-WHATSAPP.md** | Previews WhatsApp/Meta: forward headers, `og:image`, Nginx, checklist y verificación |
 | **servidor/DESPLIEGUE-SERVIDOR.md** | Puntero al documento anterior (compatibilidad) |
 
 ---
