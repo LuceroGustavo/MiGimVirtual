@@ -297,6 +297,22 @@ ssh -p 5638 root@149.50.144.53 "ls -la /root/migimvirtual/uploads"
 
 Cabeceras típicas: `Host`, `X-Real-IP`, `X-Forwarded-For`, `X-Forwarded-Proto` (importante para que Spring Security y enlaces HTTPS se comporten bien).
 
+**Open Graph / WhatsApp (preview al compartir rutina o inicio):** el navegador ve HTTPS, pero **Tomcat recibe** `http://127.0.0.1:8081`. Sin cabeceras reenviadas, Spring generaba URLs como `http://dominio:8081/img/...`; los crawlers de Meta/WhatsApp **no** cargan bien esa imagen (puerto cerrado al exterior o mezcla HTTP/HTTPS). En el perfil **`donweb`** está **`server.forward-headers-strategy=framework`** para que el request refleje esquema **https** y puerto **443**. En el `location` del subdominio MiGymVirtual, incluir al menos:
+
+```nginx
+proxy_set_header Host $host;
+proxy_set_header X-Forwarded-Proto $scheme;
+proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+```
+
+Si algo del proxy no reenvía bien las cabeceras, en **`.env.production`** podés fijar (sin barra final):
+
+```bash
+export MIGIMVIRTUAL_PUBLIC_BASE_URL=https://migimvirtual.detodoya.com.ar
+```
+
+(Propiedad Spring: `migimvirtual.public-base-url`.) Tras cambiar textos o imágenes OG, WhatsApp puede **cachear** la vista previa: probá de nuevo más tarde o el [depurador de compartidos de Meta](https://developers.facebook.com/tools/debug/).
+
 **Tamaño de subida:** si subís ZIP grandes, en Nginx puede hacer falta `client_max_body_size` (p. ej. `50M`) en el `server` del subdominio.
 
 ---

@@ -6,6 +6,7 @@ import com.migimvirtual.servicios.PlanPublicoService;
 import com.migimvirtual.servicios.UsuarioService;
 import com.migimvirtual.servicios.ExerciseService;
 import com.migimvirtual.servicios.ProfesorService;
+import com.migimvirtual.config.PublicBaseUrlResolver;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -40,6 +41,9 @@ public class PortalControlador {
 
     @Autowired
     private ConfiguracionPaginaPublicaService configuracionPaginaPublicaService;
+
+    @Autowired
+    private PublicBaseUrlResolver publicBaseUrlResolver;
 
     /** Página de inicio: landing pública (estilo RedFit). Acceso a la parte privada por ícono de login arriba. */
     @GetMapping("/")
@@ -77,11 +81,9 @@ public class PortalControlador {
     }
 
     /** URLs absolutas y textos para Open Graph / WhatsApp (misma imagen que el navbar: mgvirtual_logo1.png). */
-    private static void rellenarOpenGraph(Model model, HttpServletRequest request, String pathRelativo,
+    private void rellenarOpenGraph(Model model, HttpServletRequest request, String pathRelativo,
                                          String ogTitle, String ogDescription) {
-        int port = request.getServerPort();
-        String baseUrl = request.getScheme() + "://" + request.getServerName()
-                + (port != 80 && port != 443 ? ":" + port : "");
+        String baseUrl = publicBaseUrlResolver.resolvePublicBaseUrl(request);
         String path = pathRelativo.startsWith("/") ? pathRelativo : "/" + pathRelativo;
         model.addAttribute("ogTitle", ogTitle);
         model.addAttribute("ogDescription", ogDescription);

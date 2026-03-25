@@ -10,6 +10,7 @@ import com.migimvirtual.servicios.UsuarioService;
 import com.migimvirtual.servicios.SerieService;
 import com.migimvirtual.servicios.ProfesorService;
 import com.migimvirtual.excepciones.ResourceNotFoundException;
+import com.migimvirtual.config.PublicBaseUrlResolver;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -26,6 +27,9 @@ import java.util.stream.Collectors;
 @Controller
 @RequestMapping("/rutinas")
 public class RutinaControlador {
+
+    @Autowired
+    private PublicBaseUrlResolver publicBaseUrlResolver;
 
     @Autowired
     private UsuarioService usuarioService;
@@ -303,10 +307,8 @@ public class RutinaControlador {
             } else {
                 model.addAttribute("fechaFormateada", "");
             }
-            // URLs absolutas para Open Graph / WhatsApp (Thymeleaf 3.1 no expone #request por defecto)
-            int port = request.getServerPort();
-            String baseUrl = request.getScheme() + "://" + request.getServerName()
-                    + (port != 80 && port != 443 ? ":" + port : "");
+            // URLs absolutas para Open Graph / WhatsApp (HTTPS vía Nginx, no :8081)
+            String baseUrl = publicBaseUrlResolver.resolvePublicBaseUrl(request);
             model.addAttribute("ogImageUrl", baseUrl + "/img/mgvirtual_logo1.png");
             model.addAttribute("ogPageUrl", baseUrl + "/rutinas/hoja/" + rutina.getTokenPublico());
             model.addAttribute("esVistaEscritorio", false); // Responsive: rutina asignada (enlace alumno)

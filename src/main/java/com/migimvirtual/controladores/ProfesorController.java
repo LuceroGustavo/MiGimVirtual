@@ -36,12 +36,16 @@ import org.springframework.web.multipart.MultipartFile;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import com.migimvirtual.config.PublicBaseUrlResolver;
 
 @Controller
 @RequestMapping("/profesor")
 public class ProfesorController {
 
     private static final Logger logger = LoggerFactory.getLogger(ProfesorController.class);
+
+    @Autowired
+    private PublicBaseUrlResolver publicBaseUrlResolver;
 
     @Autowired
     private UsuarioService usuarioService;
@@ -1191,9 +1195,7 @@ public class ProfesorController {
             } else {
                 model.addAttribute("fechaFormateada", "");
             }
-            int port = request.getServerPort();
-            String baseUrl = request.getScheme() + "://" + request.getServerName()
-                    + (port != 80 && port != 443 ? ":" + port : "");
+            String baseUrl = publicBaseUrlResolver.resolvePublicBaseUrl(request);
             model.addAttribute("ogImageUrl", baseUrl + "/img/mgvirtual_logo1.png");
             model.addAttribute("ogPageUrl", baseUrl + "/profesor/rutinas/ver/" + id);
             model.addAttribute("esVistaEscritorio", false); // Responsive: misma vista que enlace compartido (1 col móvil)
