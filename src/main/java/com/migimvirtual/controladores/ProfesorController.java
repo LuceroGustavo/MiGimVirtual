@@ -1197,7 +1197,7 @@ public class ProfesorController {
                 model.addAttribute("fechaFormateada", "");
             }
             String baseUrl = publicBaseUrlResolver.resolvePublicBaseUrl(request);
-            OpenGraphBrandLogo.addLogoToModel(model, baseUrl);
+            OpenGraphBrandLogo.addRutinaShareImageToModel(model, baseUrl);
             model.addAttribute("ogPageUrl", baseUrl + "/profesor/rutinas/ver/" + id);
             model.addAttribute("esVistaEscritorio", false); // Responsive: misma vista que enlace compartido (1 col móvil)
             return "rutinas/verRutina";

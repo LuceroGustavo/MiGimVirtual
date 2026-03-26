@@ -21,13 +21,15 @@
 | Confianza en cabeceras del proxy (`X-Forwarded-Proto`, etc.) | `application-donweb.properties`: `server.forward-headers-strategy=framework` |
 | URL base pública HTTPS por defecto en **donweb** (si no hay env) | `migimvirtual.public-base-url=${MIGIMVIRTUAL_PUBLIC_BASE_URL:https://migimvirtual.detodoya.com.ar}` — evita `og:image` con `http://…:8081` cuando el crawler no refleja bien los forwarded headers |
 | Resolución centralizada de la base URL para OG | `com.migimvirtual.config.PublicBaseUrlResolver` — si el `Host` es `migimvirtual.detodoya.com.ar`, fuerza `https://…`; si `migimvirtual.public-base-url` o la env `MIGIMVIRTUAL_PUBLIC_BASE_URL` vienen como `http://migimvirtual.detodoya.com.ar`, se normalizan a **https** (evita `og:url` en HTTP cuando la canonical es HTTPS) |
-| Imagen OG liviana (WhatsApp) + dimensiones | `com.migimvirtual.config.OpenGraphBrandLogo` (`/img/og-share-migymvirtual.jpg`, 512×512, `image/jpeg`); navbar sigue usando `mgvirtual_logo1.png` |
+| Imagen OG liviana (WhatsApp) + dimensiones | `OpenGraphBrandLogo`: home/planes → `/img/og-share-migymvirtual.jpg` (512×512, JPEG); **hoja de rutina** → `/img/envio_rutina.png` (600×367, PNG); navbar sigue usando `mgvirtual_logo1.png` |
 | Meta extra `og:image:secure_url`, `width`, `height`, `type`, `alt` | Fragmento `fragments/open-graph-image-meta.html` incluido en `index-publica`, `planes-publica`, `verRutina` |
 | Uso del resolvedor + logo | `PortalControlador` (landing `/` y `/planes`), `RutinaControlador` (`/rutinas/hoja/{token}`), `ProfesorController` (vista privada de rutina que reutiliza OG) |
 | Meta tags OG en plantillas públicas | `index-publica.html`, `planes-publica.html`; hoja pública `verRutina.html` |
 | Endpoint `/status` comprobando existencia del logo en classpath | `PortalControlador` (recurso `static/img/mgvirtual_logo1.png`) |
 
-**Imagen en previews (WhatsApp/Meta):** **`og-share-migymvirtual.jpg`** (peso bajo). El logo grande del sitio sigue siendo **`mgvirtual_logo1.png`** en la UI.
+**Imagen en previews (WhatsApp/Meta):** home/planes → **`og-share-migymvirtual.jpg`**; enlace de **rutina** (`/rutinas/hoja/…`) → **`envio_rutina.png`**. El logo en la UI sigue siendo **`mgvirtual_logo1.png`**.
+
+Si cambiás el PNG de rutina, actualizá en código **`RUTINA_SHARE_WIDTH` / `RUTINA_SHARE_HEIGHT`** en `OpenGraphBrandLogo` para que coincidan con el archivo (Meta usa esos metadatos).
 
 ---
 

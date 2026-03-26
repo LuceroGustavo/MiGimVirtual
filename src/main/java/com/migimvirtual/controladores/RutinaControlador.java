@@ -310,7 +310,7 @@ public class RutinaControlador {
             }
             // URLs absolutas para Open Graph / WhatsApp (HTTPS vía Nginx, no :8081)
             String baseUrl = publicBaseUrlResolver.resolvePublicBaseUrl(request);
-            OpenGraphBrandLogo.addLogoToModel(model, baseUrl);
+            OpenGraphBrandLogo.addRutinaShareImageToModel(model, baseUrl);
             model.addAttribute("ogPageUrl", baseUrl + "/rutinas/hoja/" + rutina.getTokenPublico());
             model.addAttribute("esVistaEscritorio", false); // Responsive: rutina asignada (enlace alumno)
             return "rutinas/verRutina";

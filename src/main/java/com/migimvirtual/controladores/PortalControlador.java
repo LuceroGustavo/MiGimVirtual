@@ -147,6 +147,9 @@ public class PortalControlador {
                 Resource ogShare = new ClassPathResource("static/img/og-share-migymvirtual.jpg");
                 status.put("ogShareImageExiste", ogShare.exists());
                 status.put("ogShareImagePath", "/img/og-share-migymvirtual.jpg");
+                Resource ogRutina = new ClassPathResource("static/img/envio_rutina.png");
+                status.put("ogRutinaShareImageExiste", ogRutina.exists());
+                status.put("ogRutinaShareImagePath", "/img/envio_rutina.png");
             } catch (Exception e) {
                 status.put("logoExiste", false);
                 status.put("logoError", e.getMessage());
