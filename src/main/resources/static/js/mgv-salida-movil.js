@@ -132,13 +132,34 @@
       });
     }
 
-    /** Botón atrás del sistema (Android): pedir confirmación antes de salir del panel. Solo móvil. */
+    /**
+     * Solo la vista del panel (dashboard), no detalle de alumno ni otras rutas /profesor/*.
+     * Coincide con /profesor/dashboard y /profesor/{id} numérico (misma pantalla que el panel).
+     */
+    function isProfesorDashboardPanelPath() {
+      var p = window.location.pathname;
+      if (p === '/profesor/dashboard') return true;
+      return /^\/profesor\/\d+$/.test(p);
+    }
+
+    /** Botón atrás del sistema (Android): confirmar solo en el panel del profesor. En detalle alumno u otras vistas el atrás es navegación normal. */
     function bindBackGuard() {
-      if (!window.location.pathname.startsWith('/profesor')) return;
+      if (!isProfesorDashboardPanelPath()) return;
       if (!isMobile()) return;
 
       var popHandler = function () {
         if (!isMobile()) return;
+        var modalAbierto = document.querySelector('.modal.show');
+        if (modalAbierto) {
+          try {
+            if (typeof bootstrap !== 'undefined' && bootstrap.Modal) {
+              var inst = bootstrap.Modal.getInstance(modalAbierto);
+              if (inst) inst.hide();
+            }
+          } catch (err) {}
+          history.pushState({ mgvPanel: 1 }, '', location.href);
+          return;
+        }
         history.pushState({ mgvPanel: 1 }, '', location.href);
         showModal(
           'Salir del panel',
