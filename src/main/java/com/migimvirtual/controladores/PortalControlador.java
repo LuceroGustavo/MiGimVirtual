@@ -81,7 +81,7 @@ public class PortalControlador {
         return "planes-publica";
     }
 
-    /** URLs absolutas y textos para Open Graph / WhatsApp (misma imagen que el navbar: mgvirtual_logo1.png). */
+    /** URLs absolutas y textos para Open Graph / WhatsApp (imagen liviana vía {@link com.migimvirtual.config.OpenGraphBrandLogo}, no el PNG grande del navbar). */
     private void rellenarOpenGraph(Model model, HttpServletRequest request, String pathRelativo,
                                          String ogTitle, String ogDescription) {
         String baseUrl = publicBaseUrlResolver.resolvePublicBaseUrl(request);
@@ -144,6 +144,9 @@ public class PortalControlador {
                 Resource logoResource = new ClassPathResource("static/img/mgvirtual_logo1.png");
                 status.put("logoExiste", logoResource.exists());
                 status.put("logoPath", "/img/mgvirtual_logo1.png");
+                Resource ogShare = new ClassPathResource("static/img/og-share-migymvirtual.jpg");
+                status.put("ogShareImageExiste", ogShare.exists());
+                status.put("ogShareImagePath", "/img/og-share-migymvirtual.jpg");
             } catch (Exception e) {
                 status.put("logoExiste", false);
                 status.put("logoError", e.getMessage());

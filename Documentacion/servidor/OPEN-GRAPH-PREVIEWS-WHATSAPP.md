@@ -9,7 +9,7 @@
 ## 1. Problema que se intentó corregir
 
 - La app en el VPS escucha en **`8081`**; **Nginx** termina HTTPS y hace `proxy_pass` a `http://127.0.0.1:8081`.
-- Sin tratar cabeceras `Forwarded`, Spring puede armar URLs absolutas como **`http://` + host + `:8081`**. Los crawlers de Meta/WhatsApp piden la página por **`https://migimvirtual.detodoya.com.ar`** y deben poder descargar **`og:image`** desde una URL **pública y coherente** (normalmente `https://…/img/mgvirtual_logo1.png`).
+- Sin tratar cabeceras `Forwarded`, Spring puede armar URLs absolutas como **`http://` + host + `:8081`**. Los crawlers de Meta/WhatsApp piden la página por **`https://migimvirtual.detodoya.com.ar`** y deben poder descargar **`og:image`** desde una URL **pública y coherente** (JPEG liviano `https://…/img/og-share-migymvirtual.jpg`; el PNG del navbar es pesado y WhatsApp a menudo **no** muestra la miniatura si `og:image` supera ~300–600 KB).
 - **Mattfuncional en 8080** es otra app: no se “mezcla” en runtime, pero **caché** de previews o URLs mal generadas pueden hacer que el usuario vea logo o datos que no corresponden a MiGymVirtual.
 
 ---
@@ -21,13 +21,13 @@
 | Confianza en cabeceras del proxy (`X-Forwarded-Proto`, etc.) | `application-donweb.properties`: `server.forward-headers-strategy=framework` |
 | URL base pública HTTPS por defecto en **donweb** (si no hay env) | `migimvirtual.public-base-url=${MIGIMVIRTUAL_PUBLIC_BASE_URL:https://migimvirtual.detodoya.com.ar}` — evita `og:image` con `http://…:8081` cuando el crawler no refleja bien los forwarded headers |
 | Resolución centralizada de la base URL para OG | `com.migimvirtual.config.PublicBaseUrlResolver` — si el `Host` es `migimvirtual.detodoya.com.ar`, fuerza `https://…`; si `migimvirtual.public-base-url` o la env `MIGIMVIRTUAL_PUBLIC_BASE_URL` vienen como `http://migimvirtual.detodoya.com.ar`, se normalizan a **https** (evita `og:url` en HTTP cuando la canonical es HTTPS) |
-| Mismo logo que navbar + dimensiones para Meta | `com.migimvirtual.config.OpenGraphBrandLogo` (`PATH`, `WIDTH`/`HEIGHT` 738×738); `addLogoToModel` en controladores |
+| Imagen OG liviana (WhatsApp) + dimensiones | `com.migimvirtual.config.OpenGraphBrandLogo` (`/img/og-share-migymvirtual.jpg`, 512×512, `image/jpeg`); navbar sigue usando `mgvirtual_logo1.png` |
 | Meta extra `og:image:secure_url`, `width`, `height`, `type`, `alt` | Fragmento `fragments/open-graph-image-meta.html` incluido en `index-publica`, `planes-publica`, `verRutina` |
 | Uso del resolvedor + logo | `PortalControlador` (landing `/` y `/planes`), `RutinaControlador` (`/rutinas/hoja/{token}`), `ProfesorController` (vista privada de rutina que reutiliza OG) |
 | Meta tags OG en plantillas públicas | `index-publica.html`, `planes-publica.html`; hoja pública `verRutina.html` |
 | Endpoint `/status` comprobando existencia del logo en classpath | `PortalControlador` (recurso `static/img/mgvirtual_logo1.png`) |
 
-**Imagen social:** siempre **`mgvirtual_logo1.png`** (no `logo.png` ni `logo matt.jpeg`).
+**Imagen en previews (WhatsApp/Meta):** **`og-share-migymvirtual.jpg`** (peso bajo). El logo grande del sitio sigue siendo **`mgvirtual_logo1.png`** en la UI.
 
 ---
 
@@ -60,8 +60,8 @@ Guardar, `nginx -t`, `systemctl reload nginx`.
 
 ## 5. Cómo verificar sin WhatsApp
 
-1. **Ver HTML:** abrir en el navegador (idealmente sesión incógnito) `https://migimvirtual.detodoya.com.ar/` y **ver código fuente** (Ctrl+U). Buscar `og:image`: debe ser `https://migimvirtual.detodoya.com.ar/img/mgvirtual_logo1.png` (sin `:8081`).
-2. **Probar la imagen:** abrir esa URL de imagen directamente en el navegador; debe devolver **200** y el PNG.
+1. **Ver HTML:** abrir en el navegador (idealmente sesión incógnito) `https://migimvirtual.detodoya.com.ar/` y **ver código fuente** (Ctrl+U). Buscar `og:image`: debe ser `https://migimvirtual.detodoya.com.ar/img/og-share-migymvirtual.jpg` (sin `:8081`).
+2. **Probar la imagen:** abrir esa URL de imagen directamente en el navegador; debe devolver **200** y el JPEG.
 3. **Depurador Meta:** [Sharing Debugger](https://developers.facebook.com/tools/debug/) → pegar la URL de la home o de una hoja `/rutinas/hoja/{token}` → “Scrape Again” para forzar refresco de caché.
 
 ---

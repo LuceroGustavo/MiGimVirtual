@@ -3,14 +3,16 @@ package com.migimvirtual.config;
 import org.springframework.ui.Model;
 
 /**
- * Logo para Open Graph / WhatsApp: misma ruta estática que el navbar ({@code /img/mgvirtual_logo1.png}).
+ * Imagen para Open Graph / WhatsApp: JPEG liviano (WhatsApp suele no mostrar previews si {@code og:image} pesa cientos de KB;
+ * el logo del navbar {@code /img/mgvirtual_logo1.png} se mantiene en alta calidad para la UI).
  */
 public final class OpenGraphBrandLogo {
 
-    public static final String PATH = "/img/mgvirtual_logo1.png";
-    /** Dimensiones reales de {@code mgvirtual_logo1.png} (Meta/WhatsApp las usan para la tarjeta). */
-    public static final int WIDTH = 738;
-    public static final int HEIGHT = 738;
+    /** Archivo para compartir: peso bajo (el PNG del navbar ronda 780 KB y WhatsApp a menudo omite la imagen). */
+    public static final String PATH = "/img/og-share-migymvirtual.jpg";
+    public static final String MIME_TYPE = "image/jpeg";
+    public static final int WIDTH = 512;
+    public static final int HEIGHT = 512;
 
     private OpenGraphBrandLogo() {}
 
@@ -22,5 +24,6 @@ public final class OpenGraphBrandLogo {
         model.addAttribute("ogImageUrl", base + PATH);
         model.addAttribute("ogImageWidth", WIDTH);
         model.addAttribute("ogImageHeight", HEIGHT);
+        model.addAttribute("ogImageType", MIME_TYPE);
     }
 }
