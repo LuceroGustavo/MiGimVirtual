@@ -79,28 +79,29 @@ stop_app() {
 update_code() {
     print_option "2️⃣ Actualizando código desde GitHub..."
     cd "$APP_DIR" || { print_error "Error: No se pudo cambiar al directorio del proyecto"; return 1; }
+    # VPS = copia del remoto: fetch + reset evita merges a medias y conflictos tras stash+pull.
+    # No borra .env.production, uploads/ ni otros ignorados por .gitignore.
     if ! git diff --quiet 2>/dev/null || ! git diff --cached --quiet 2>/dev/null; then
-        print_warning "Hay cambios locales sin commitear. Guardando cambios..."
-        git stash push -m "Cambios locales antes de pull - $(date +%Y-%m-%d_%H:%M:%S)"
-        print_success "Cambios locales guardados en stash"
+        print_warning "Descartando cambios locales en archivos versionados (alineación con origin)"
     fi
     git fetch origin
     if git rev-parse --verify origin/main > /dev/null 2>&1; then
-        if git pull origin main; then
-            print_success "Código actualizado desde main"
-            if git stash list | grep -q "Cambios locales antes de pull"; then
-                print_warning "Intentando aplicar cambios locales guardados..."
-                git stash pop 2>/dev/null || print_warning "Revisa con: git stash list"
-            fi
+        if git reset --hard origin/main; then
+            print_success "Código alineado con origin/main"
         else
             print_error "Error al actualizar código desde main"
             return 1
         fi
     else
-        if git pull origin master; then
-            print_success "Código actualizado desde master"
+        if git rev-parse --verify origin/master > /dev/null 2>&1; then
+            if git reset --hard origin/master; then
+                print_success "Código alineado con origin/master"
+            else
+                print_error "Error al actualizar código desde master"
+                return 1
+            fi
         else
-            print_error "Error al actualizar código"
+            print_error "No se encontró origin/main ni origin/master"
             return 1
         fi
     fi

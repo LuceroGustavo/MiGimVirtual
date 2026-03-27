@@ -348,6 +348,7 @@ Dos aplicaciones Spring Boot en paralelo consumen mucha RAM. Es razonable limita
 | Script con errores raros de sintaxis tras editar desde Windows | Fin de línea CRLF: en Linux `sed -i 's/\r$//' migimvirtual` |
 | Tras `git pull`, **`migimvirtual` aparece modificado** (sin cambios de texto) o el despliegue **stash** se queja | Suele ser solo el **bit ejecutable** (`chmod +x` en el servidor). En el clon del VPS, **una vez:** `cd /root/migimvirtual && git config core.fileMode false`. En el repo remoto el script puede ir versionado como ejecutable (`100755`) para alinear Linux y Windows. |
 | Archivo **`start-remote-deploy.sh`** sin trackear en el servidor | Script local opcional; está en **`.gitignore`** del repo para no ensuciar `git status`. |
+| **`git pull` falla** con “unmerged files” / conflictos en `scripts/BD/` | El menú **`./migimvirtual`** usa **`git fetch` + `git reset --hard origin/main`** en “actualizar código”: el VPS queda igual que GitHub (sin merge local). Si quedaste a mitad de merge: `git fetch origin && git reset --hard origin/main`. Los archivos en **`.gitignore`** (`.env.production`, `uploads/`) no se pierden. |
 
 ---
 
