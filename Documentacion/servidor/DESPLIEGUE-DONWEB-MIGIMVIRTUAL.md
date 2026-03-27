@@ -346,6 +346,8 @@ Dos aplicaciones Spring Boot en paralelo consumen mucha RAM. Es razonable limita
 | HTTPS con error de certificado en el subdominio | DNS A correcto; Certbot emitido para ese `server_name` |
 | BD “Access denied” | Usuario/clave en `.env.production` y usuario MySQL creado en la base `migimvirtual` |
 | Script con errores raros de sintaxis tras editar desde Windows | Fin de línea CRLF: en Linux `sed -i 's/\r$//' migimvirtual` |
+| Tras `git pull`, **`migimvirtual` aparece modificado** (sin cambios de texto) o el despliegue **stash** se queja | Suele ser solo el **bit ejecutable** (`chmod +x` en el servidor). En el clon del VPS, **una vez:** `cd /root/migimvirtual && git config core.fileMode false`. En el repo remoto el script puede ir versionado como ejecutable (`100755`) para alinear Linux y Windows. |
+| Archivo **`start-remote-deploy.sh`** sin trackear en el servidor | Script local opcional; está en **`.gitignore`** del repo para no ensuciar `git status`. |
 
 ---
 

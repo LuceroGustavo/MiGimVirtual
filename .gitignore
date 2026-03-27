@@ -48,3 +48,6 @@ uploads/
 
 # Carpeta backups (ya no se usa: export/import es ZIP y descarga directa)
 backups/
+
+# Script de despliegue local en VPS (no versionar; opcional por máquina)
+start-remote-deploy.sh
