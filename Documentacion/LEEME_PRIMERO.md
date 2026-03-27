@@ -31,7 +31,9 @@ Tras iniciar sesión se redirige al **Panel del profesor** (`/profesor/{id}`).
 - **Nombre:** MiGymVirtual (evolución desde Mattfuncional).
 - **Qué hace:** App para un profesor/entrenador: gestiona **alumnos** (ficha, sin login), **ejercicios**, **series** y **rutinas** (asignación por alumno, enlace público por token). Orientación 100 % virtual: sin calendario, asistencias ni pizarra en sala (eliminados Mar 2026).
 - **Quién usa:** Roles **DEVELOPER** (super admin), **ADMIN** y **AYUDANTE**. No hay panel alumno ni panel admin separado.
-- **Stack:** Spring Boot, Thymeleaf, MySQL, Bootstrap. Código en `src/main/java/com/MiGymVirtual/` (controladores, servicios, entidades, repositorios, config, dto, enums).
+- **Stack:** Spring Boot, Thymeleaf, MySQL, Bootstrap. Código Java bajo `src/main/java/com/migimvirtual/` (controladores, servicios, entidades, repositorios, config, dto, enums).
+
+**Nombres (marca vs técnico):** el producto se llama **MiGymVirtual** (textos, UI y nombre visible en `pom.xml`). La **carpeta del repo** en el disco puede ser `Migimvirtual` u otro nombre; no afecta al código. En Java y Maven se usa **minúsculas** en paquetes y artefactos (`com.migimvirtual`, `migimvirtual`) por convención; el contenido y la marca siguen siendo MiGymVirtual.
 
 ---
 
@@ -73,10 +75,10 @@ Tras iniciar sesión se redirige al **Panel del profesor** (`/profesor/{id}`).
 
 ## 4. Evolución ya realizada (MiGymVirtual)
 
-- **Base de datos:** Nueva BD `MiGymVirtual`; en `application*.properties` la URL apunta a `MiGymVirtual`. MySQL crea la BD si no existe; Hibernate crea/actualiza tablas con `ddl-auto=update`.
-- **Renombre completo:** Paquete `com.mattfuncional` → `com.MiGymVirtual`; clase principal `MiGymVirtualApplication`; `pom.xml` (groupId/artifactId/name) MiGymVirtual; credenciales de desarrollo `profesor@migymvirtual.com` y `lucerogustavosi@gmail.com`.
+- **Base de datos:** BD MySQL `migimvirtual` (nombre en minúsculas en `application*.properties`). MySQL crea la BD si no existe; Hibernate crea/actualiza tablas con `ddl-auto=update`.
+- **Código:** Paquete `com.migimvirtual`; clase principal `MigimvirtualApplication`; `pom.xml`: `groupId`/`artifactId` `com.migimvirtual` / `migimvirtual`, nombre visible del proyecto **MiGymVirtual**; credenciales de desarrollo `profesor@migymvirtual.com` y `lucerogustavosi@gmail.com`.
 - **Marca e interfaz:** Navbar con logo `mgvirtual_logo1.png` y fondo `fondo-navbar.png`; página pública (carrusel) con videos `video_mgvirtual_inicio_escritorio.mp4` (escritorio) y `Video_mgvirtual_inicio_movil.mp4` (móvil).
-- **Servidor:** Script de menú `./MiGymVirtual` en la raíz; scripts `scripts/servidor/reset_db_MiGymVirtual.sql` y `reset_db_MiGymVirtual.sh`; variables de entorno `MiGymVirtual_DB_USER`, `MiGymVirtual_DB_PASSWORD`.
+- **Servidor:** Menú bash `./migimvirtual` en la raíz del repo; scripts `scripts/servidor/reset_db_migimvirtual.sql` y `reset_db_migimvirtual.sh`; en VPS, variables típicas `MIGIMVIRTUAL_DB_USER`, `MIGIMVIRTUAL_DB_PASSWORD`, etc. (ver `servidor/DESPLIEGUE-DONWEB-MIGIMVIRTUAL.md`).
 
 **Pendiente según plan:** Fase 0 (subplan detallado), Fase 4 (responsive, UX). Fase 3 (eliminar calendario, pizarra, sala, simplificar alumnos) realizada en Mar 2026. Ver ELIMINACION_CALENDARIO_Y_PIZARRA_MAR2026.md y PLAN_DE_DESARROLLO_MIGIMVIRTUAL.md.
 

@@ -21,11 +21,11 @@ Contenido importante reunido de los documentos del proyecto. Para contexto: [LEE
 
 ## 0. Evolución MiGymVirtual (realizada)
 
-- **Proyecto:** Nombre MiGymVirtual; paquete `com.MiGymVirtual`; clase principal `MiGymVirtualApplication`.
-- **Base de datos:** `MiGymVirtual` (URL en `application*.properties`); se crea al arrancar si no existe; tablas con `ddl-auto=update`.
+- **Proyecto:** Nombre comercial MiGymVirtual; paquete Java `com.migimvirtual`; clase principal `MigimvirtualApplication`; artefacto Maven `migimvirtual`.
+- **Base de datos:** `migimvirtual` (URL en `application*.properties`); se crea al arrancar si no existe; tablas con `ddl-auto=update`.
 - **Credenciales de desarrollo:** `profesor@migymvirtual.com` / `profesor`; `lucerogustavosi@gmail.com` / `Qbasic.1977`.
 - **Marca:** Navbar con logo `mgvirtual_logo1.png` y fondo `fondo-navbar.png`. Página pública: carrusel con videos `video_mgvirtual_inicio_escritorio.mp4` (escritorio) y `Video_mgvirtual_inicio_movil.mp4` (móvil).
-- **Servidor:** Menú `./MiGymVirtual`; scripts `reset_db_MiGymVirtual.sql` / `reset_db_MiGymVirtual.sh`; variables `MiGymVirtual_DB_USER`, `MiGymVirtual_DB_PASSWORD`.
+- **Servidor:** Menú `./migimvirtual`; scripts `scripts/servidor/reset_db_migimvirtual.sql` / `reset_db_migimvirtual.sh`; en VPS variables `MIGIMVIRTUAL_*` (ver despliegue Donweb).
 
 ---
 
